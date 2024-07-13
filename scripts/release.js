@@ -20,7 +20,10 @@ function logStep(name) {
 
 function packageExists({ name, version }) {
   try {
-    const { stdout, stderr } = execa.sync('npm', ['info', `${name}@${version}`,]);
+    const { stdout, stderr } = execa.sync('npm', [
+      'info',
+      `${name}@${version}`,
+    ]);
     if (stderr) return false;
     return stdout.length > 0;
   } catch (error) {
@@ -41,19 +44,19 @@ async function release() {
     );
   }
 
-  // // Check npm registry
-  // logStep('check npm registry');
-  // const userRegistry = execa.sync('npm', ['config', 'get', 'registry']).stdout;
-  // console.log(`npm registry: ${userRegistry}`);
-  // if (userRegistry.includes('https://registry.yarnpkg.com')) {
-  //   printErrorAndExit(
-  //     `Release failed, please use ${chalk.blue('npm run release')}.`,
-  //   );
-  // }
-  // if (!userRegistry.includes('https://registry.npmjs.org')) {
-  //   const registry = chalk.blue('https://registry.npmjs.org');
-  //   printErrorAndExit(`Release failed, npm registry must be ${registry}.`);
-  // }
+  // Check npm registry
+  logStep('check npm registry');
+  const userRegistry = execa.sync('npm', ['config', 'get', 'registry']).stdout;
+  console.log(`npm registry: ${userRegistry}`);
+  if (userRegistry.includes('https://registry.yarnpkg.com')) {
+    printErrorAndExit(
+      `Release failed, please use ${chalk.blue('npm run release')}.`,
+    );
+  }
+  if (!userRegistry.includes('https://registry.npmjs.org')) {
+    const registry = chalk.blue('https://registry.npmjs.org');
+    printErrorAndExit(`Release failed, npm registry must be ${registry}.`);
+  }
 
   let updated = null;
   if (!args.publishOnly) {
@@ -157,10 +160,9 @@ async function release() {
     if (!args.publishOnly || !isPackageExist) {
       console.log(` Publish package ${name} ${isNext ? 'with next tag' : ''}`);
       // 默认设置为 tag 检查通过之后在设置为 latest
-      let tag = isNext ? 'next' : 'beta';
-      if (args.tag) { tag = args.tag; }
-      let cliArgs = ['publish', '--registry', 'https://registry.npmjs.org', '--tag', tag];
-      await execa('npm', cliArgs, { cwd: pkgPath, });
+      let tag = args.tag ? args.tag : isNext ? 'next' : 'beta';
+      let cliArgs = ['publish', '--tag', tag,];
+      await execa('npm', cliArgs, { cwd: pkgPath });
     }
   }
   console.log('发布成功！');
