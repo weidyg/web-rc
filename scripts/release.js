@@ -5,7 +5,6 @@ const inquirer = require('inquirer');
 const exec = require('./utils/exec');
 const getPackages = require('./utils/getPackages');
 const isNextVersion = require('./utils/isNextVersion');
-
 const cwd = process.cwd();
 const args = yParser(process.argv);
 const lernaCli = require.resolve('lerna/cli');
@@ -21,10 +20,7 @@ function logStep(name) {
 
 function packageExists({ name, version }) {
   try {
-    const { stdout, stderr } = execa.sync('npm', [
-      'info',
-      `${name}@${version}`,
-    ]);
+    const { stdout, stderr } = execa.sync('npm', ['info',`${name}@${version}`,]);
     if (stderr) return false;
     return stdout.length > 0;
   } catch (error) {
@@ -95,17 +91,17 @@ async function release() {
 
     const conventionalGraduate = args.conventionalGraduate
       ? ['--conventional-graduate'].concat(
-          Array.isArray(args.conventionalGraduate)
-            ? args.conventionalGraduate.join(',')
-            : [],
-        )
+        Array.isArray(args.conventionalGraduate)
+          ? args.conventionalGraduate.join(',')
+          : [],
+      )
       : [];
     const conventionalPrerelease = args.conventionalPrerelease
       ? ['--conventional-prerelease'].concat(
-          Array.isArray(args.conventionalPrerelease)
-            ? args.conventionalPrerelease.join(',')
-            : [],
-        )
+        Array.isArray(args.conventionalPrerelease)
+          ? args.conventionalPrerelease.join(',')
+          : [],
+      )
       : [];
 
     const major = args.major ? ['major'] : [];
@@ -170,9 +166,7 @@ async function release() {
       if (args.tag) {
         cliArgs = ['publish', '--tag', args.tag];
       }
-      await execa('npm', cliArgs, {
-        cwd: pkgPath,
-      });
+      await execa('npm', cliArgs, { cwd: pkgPath, });
     }
   }
   console.log('发布成功！');
