@@ -1,6 +1,6 @@
 {
   "name": "@web-react/utils",
-  "version": "1.0.0-beta.1",
+  "version": "1.0.0-beta.2",
   "description": "@web-react/utils",
   "keywords": [],
   "repository": {
@@ -22,7 +22,6 @@
     "> 1%",
     "ie >= 11"
   ],
-  "peerDependencies": {},
   "publishConfig": {
     "access": "public"
   },
