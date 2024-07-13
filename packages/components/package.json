@@ -1,6 +1,6 @@
 {
   "name": "@web-react/components",
-  "version": "1.0.0-beta.2",
+  "version": "1.0.0-beta.3",
   "description": "@web-react/components",
   "keywords": [],
   "repository": {
@@ -9,6 +9,7 @@
   },
   "license": "MIT",
   "main": "lib/index.js",
+  "unpkg": "dist/components.min.js",
   "module": "es/index.js",
   "types": "es/index.d.ts",
   "files": [
@@ -18,9 +19,6 @@
   ],
   "scripts": {
     "build": "father build"
-  }, 
-   "dependencies": {
-    "@babel/runtime": "7.24.8"
   },
   "browserslist": [
     "last 2 versions",
@@ -28,6 +26,9 @@
     "> 1%",
     "ie >= 11"
   ],
+  "dependencies": {
+    "@babel/runtime": "7.24.8"
+  },
   "publishConfig": {
     "access": "public"
   },
