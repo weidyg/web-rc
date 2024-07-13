@@ -28,7 +28,7 @@
   ],
   "dependencies": {
     "@babel/runtime": "^7.22.5",
-    "@web-react/account": "1.0.0-beta.2"
+    "@web-react/account": "1.0.0-beta.1"
   },
   "publishConfig": {
     "access": "public"
