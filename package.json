@@ -6,9 +6,8 @@
   "scripts": {
     "start": "npm run dev",
     "dev": "npm run version && dumi dev",
-    "release": "npm run node:release",
     "bootstrap": "node ./scripts/bootstrap.js",
-    "node:release": "node ./scripts/release.js",
+    "release": "node ./scripts/release.js",
     "version": "node ./scripts/gen_version.js"
   },
   "lint-staged": {
