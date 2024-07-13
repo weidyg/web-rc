@@ -1,6 +1,6 @@
 {
   "name": "@web-react/components",
-  "version": "1.0.0-beta.1",
+  "version": "1.0.0-beta.2",
   "description": "@web-react/components",
   "keywords": [],
   "repository": {
@@ -28,7 +28,7 @@
   ],
   "dependencies": {
     "@babel/runtime": "^7.22.5",
-    "@web-react/account": "1.0.0-beta.1"
+    "@web-react/account": "1.0.0-beta.2"
   },
   "publishConfig": {
     "access": "public"
