@@ -7,6 +7,8 @@
     "start": "npm run dev",
     "dev": "npm run version && dumi dev",
     "bootstrap": "node ./scripts/bootstrap.js",
+    "build": "npm run version && npm run build-components",
+    "build-components": "pnpm --filter \"@web-react/**\" build",
     "release": "node ./scripts/release.js",
     "version": "node ./scripts/gen_version.js"
   },
