@@ -4,15 +4,11 @@
   "description": "A static site based on dumi",
   "license": "MIT",
   "scripts": {
-    "bootstrap": "node ./scripts/bootstrap.js",
-    "bootstrap:force": "node ./scripts/bootstrap.js --force=true",
-    "build": "dumi build",
-    "dev": "npm run version && dumi dev",
-    "prepare": "husky install && dumi setup",
-    "preview": "dumi preview",
-    "publishOnly": "node ./scripts/release.js --publishOnly",
-    "release": "node ./scripts/release.js --skipGitStatusCheck",
     "start": "npm run dev",
+    "dev": "npm run version && dumi dev",
+    "release": "npm run node:release",
+    "bootstrap": "node ./scripts/bootstrap.js",
+    "node:release": "node ./scripts/release.js",
     "version": "node ./scripts/gen_version.js"
   },
   "lint-staged": {

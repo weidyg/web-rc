@@ -17,7 +17,7 @@ const pkgList = readdirSync(join(__dirname, 'packages')).filter(
 
 const alias = pkgList.reduce((pre, pkg) => {
   pre[`@web-react/${pkg}`] = join(__dirname, 'packages', pkg, 'src');
-  return {...pre,};
+  return { ...pre, };
 }, {} as Record<string, string>);
 console.log(`🌼 alias list \n${chalk.blue(Object.keys(alias).join('\n'))}`);
 
@@ -59,6 +59,10 @@ const config: IDumiConfig = {
       columns: [],
       copyright: 'Copyright © 2024',
       bottom: 'Powered by weidyg',
+    },
+    apiHeader: {
+      pkg: '@web-react/components',
+      match: ["/api", "/components"],
     },
     prefersColor: {
       default: 'light',

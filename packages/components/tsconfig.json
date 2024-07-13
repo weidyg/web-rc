@@ -1,4 +1,4 @@
-{
+﻿{
   "compilerOptions": {
     "baseUrl": "./",
     "target": "esnext",
@@ -14,10 +14,8 @@
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "paths": {
-      "@@/*": [".dumi/tmp/*"],
-      "@web-react/components": ["./packages/components/src/index.tsx"],
       "@web-react/account":["../../packages/account/src/index.tsx"],
     }
   },
-  "include": [".dumirc.ts"]
+  "include": ["./src"]
 }

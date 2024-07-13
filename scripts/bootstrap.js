@@ -31,6 +31,9 @@ const { yParser } = require('@umijs/utils');
         module: 'es/index.js',
         types: 'es/index.d.ts',
         files: ['dist', 'lib', 'es'],
+        scripts: {
+          build: "father build"
+        },
         repository: {
           type: 'git',
           url: 'https://github.com/weidyg/web-react',
@@ -99,5 +102,6 @@ $ yarn add ${name}
 `,
       );
     }
+
   });
-})();
+})();w

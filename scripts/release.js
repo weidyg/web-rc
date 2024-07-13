@@ -176,7 +176,7 @@ async function release() {
     }
   }
   console.log('发布成功！');
-  await exec('npm', ['run', 'prettier']);
+  // await exec('npm', ['run', 'prettier']);
   logStep('done');
 }
 

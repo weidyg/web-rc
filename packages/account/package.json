@@ -1,13 +1,7 @@
 {
-  "name": "@web-react/components",
-  "version": "1.0.0-beta.2",
-  "description": "@web-react/components",
-  "keywords": [],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/weidyg/web-react"
-  },
-  "license": "MIT",
+  "name": "@web-react/account",
+  "version": "1.0.0-beta.1",
+  "description": "@web-react/account",
   "main": "lib/index.js",
   "module": "es/index.js",
   "types": "es/index.d.ts",
@@ -18,9 +12,10 @@
   ],
   "scripts": {
     "build": "father build"
-  }, 
-   "dependencies": {
-    "@babel/runtime": "7.24.8"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/weidyg/web-react"
   },
   "browserslist": [
     "last 2 versions",
@@ -28,10 +23,13 @@
     "> 1%",
     "ie >= 11"
   ],
-  "publishConfig": {
-    "access": "public"
-  },
+  "keywords": [],
   "authors": [
     "weidyg <weidyg@163.com> (https://github.com/weidyg)"
-  ]
+  ],
+  "license": "MIT",
+  "peerDependencies": {},
+  "publishConfig": {
+    "access": "public"
+  }
 }
