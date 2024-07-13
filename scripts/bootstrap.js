@@ -1,4 +1,4 @@
-const { existsSync, writeFileSync, readdirSync } = require('fs');
+const { existsSync, mkdirSync, writeFileSync, readdirSync } = require('fs');
 const { join } = require('path');
 const { yParser } = require('@umijs/utils');
 
@@ -12,16 +12,11 @@ const { yParser } = require('@umijs/utils');
 
   pkgs.forEach((shortName) => {
     const name = `@web-react/${shortName}`;
+    const pkgPath = join(__dirname, '..', 'packages', shortName);
 
-    const pkgJSONPath = join(
-      __dirname,
-      '..',
-      'packages',
-      shortName,
-      'package.json',
-    );
-    const pkgJSONExists = existsSync(pkgJSONPath);
     let json = {};
+    const pkgJSONPath = join(pkgPath, 'package.json',);
+    const pkgJSONExists = existsSync(pkgJSONPath);
     if (args.force || !pkgJSONExists) {
       json = {
         name,
@@ -72,36 +67,72 @@ const { yParser } = require('@umijs/utils');
       });
     }
 
-    const readmePath = join(
-      __dirname,
-      '..',
-      'packages',
-      shortName,
-      'README.md',
-    );
+    const readmePath = join(pkgPath, 'README.md',);
     if (args.force || !existsSync(readmePath)) {
-      writeFileSync(
-        readmePath,
-        `# ${name}
+      const readmeText = `# ${name}
 
-> ${json.description}.
-
-## Install
-
-Using npm:
-
-\`\`\`bash
-$ npm install --save ${name}
-\`\`\`
-
-or using yarn:
-
-\`\`\`bash
-$ yarn add ${name}
-\`\`\`
-`,
-      );
+      > ${json.description}.
+      
+      ## Install
+      
+      Using npm:
+      
+      \`\`\`bash
+      $ npm install --save ${name}
+      \`\`\`
+      
+      or using yarn:
+      
+      \`\`\`bash
+      $ yarn add ${name}
+      \`\`\`
+      `;
+      writeFileSync(readmePath, readmeText,);
     }
 
+    const tsconfigPath = join(pkgPath, 'tsconfig.json',);
+    if (args.force || !existsSync(tsconfigPath)) {
+      const tsconfigJson = {
+        "compilerOptions": {
+          "baseUrl": "./",
+          "target": "esnext",
+          "module": "ESNext",
+          "moduleResolution": "node",
+          "jsx": "react-jsx",
+          "esModuleInterop": true,
+          "experimentalDecorators": true,
+          "strict": true,
+          "forceConsistentCasingInFileNames": true,
+          "noImplicitReturns": true,
+          "declaration": true,
+          "skipLibCheck": true,
+          "resolveJsonModule": true,
+          "paths": {
+            // "@web-react/components": ["../../packages/components/src/index.tsx"],
+          }
+        },
+        "include": ["./src"]
+      };
+      writeFileSync(tsconfigPath, `${JSON.stringify(tsconfigJson, null, 2)}\n`);
+    }
+
+    const fatherrcPath = join(pkgPath, '.fatherrc.ts',);
+    if (args.force || !existsSync(fatherrcPath)) {
+      const fatherrcConfig =
+        `import { defineConfig } from 'father';
+
+export default defineConfig({
+  extends: '../../.fatherrc.base.ts',
+});
+ `;
+      writeFileSync(fatherrcPath, fatherrcConfig,);
+    }
+
+    const srcIndexPath = join(pkgPath, 'src', 'index.tsx',);
+    if (args.force || !existsSync(srcIndexPath)) {
+      const srcDir = join(pkgPath, 'src');
+      if (!existsSync(srcDir)) { mkdirSync(srcDir); }
+      writeFileSync(srcIndexPath, '');
+    }
   });
-})();w
+})();
