@@ -11,7 +11,7 @@
     "prepare": "husky install && dumi setup",
     "preview": "dumi preview",
     "publishOnly": "node ./scripts/release.js --publishOnly",
-    "release": "node ./scripts/release.js",
+    "release": "node ./scripts/release.js --skipGitStatusCheck",
     "start": "npm run dev",
     "version": "node ./scripts/gen_version.js"
   },
