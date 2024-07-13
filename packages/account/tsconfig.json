@@ -15,7 +15,7 @@
     "resolveJsonModule": true,
     "paths": {
       "@web-react/components": ["../../packages/components/src/index.tsx"],
-      "@web-react/account": ["../../packages/account/src/index.tsx"],
+      "@web-react/account": ["../../packages/account/src/index.tsx"]
     }
   },
   "include": ["./src"]

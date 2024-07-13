@@ -4,14 +4,14 @@
   "description": "A static site based on dumi",
   "license": "MIT",
   "scripts": {
-    "start": "npm run dev",
-    "dev": "npm run version && dumi dev",
     "bootstrap": "node ./scripts/bootstrap.js",
     "build": "npm run version && npm run build-components",
     "build-components": "pnpm --filter \"@web-react/**\" build",
+    "dev": "npm run version && dumi dev",
+    "prettier": "prettier --write \"**/**.{js,jsx,tsx,ts,less,md,yaml,json}\" --loglevel warn",
     "release": "node ./scripts/release.js",
-    "version": "node ./scripts/gen_version.js",  
-    "prettier": "prettier --write \"**/**.{js,jsx,tsx,ts,less,md,yaml,json}\" --loglevel warn"
+    "start": "npm run dev",
+    "version": "node ./scripts/gen_version.js"
   },
   "lint-staged": {
     "*.{md,json}": [

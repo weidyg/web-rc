@@ -15,7 +15,7 @@ const { yParser } = require('@umijs/utils');
     const pkgPath = join(__dirname, '..', 'packages', shortName);
 
     let json = {};
-    const pkgJSONPath = join(pkgPath, 'package.json',);
+    const pkgJSONPath = join(pkgPath, 'package.json');
     const pkgJSONExists = existsSync(pkgJSONPath);
     if (args.force || !pkgJSONExists) {
       json = {
@@ -27,7 +27,7 @@ const { yParser } = require('@umijs/utils');
         types: 'es/index.d.ts',
         files: ['dist', 'lib', 'es'],
         scripts: {
-          build: "father build"
+          build: 'father build',
         },
         repository: {
           type: 'git',
@@ -35,13 +35,9 @@ const { yParser } = require('@umijs/utils');
         },
         browserslist: ['last 2 versions', 'Firefox ESR', '> 1%', 'ie >= 11'],
         keywords: [],
-        authors: [
-          'weidyg <weidyg@163.com> (https://github.com/weidyg)',
-        ],
+        authors: ['weidyg <weidyg@163.com> (https://github.com/weidyg)'],
         license: 'MIT',
-        peerDependencies: {
-
-        },
+        peerDependencies: {},
         publishConfig: {
           access: 'public',
         },
@@ -63,11 +59,13 @@ const { yParser } = require('@umijs/utils');
         'module',
         'description',
       ].forEach((key) => {
-        if (pkg[key]) { json[key] = pkg[key] };
+        if (pkg[key]) {
+          json[key] = pkg[key];
+        }
       });
     }
 
-    const readmePath = join(pkgPath, 'README.md',);
+    const readmePath = join(pkgPath, 'README.md');
     if (args.force || !existsSync(readmePath)) {
       const readmeText = `# ${name}
 
@@ -87,51 +85,52 @@ const { yParser } = require('@umijs/utils');
       $ yarn add ${name}
       \`\`\`
       `;
-      writeFileSync(readmePath, readmeText,);
+      writeFileSync(readmePath, readmeText);
     }
 
-    const tsconfigPath = join(pkgPath, 'tsconfig.json',);
+    const tsconfigPath = join(pkgPath, 'tsconfig.json');
     if (args.force || !existsSync(tsconfigPath)) {
       const tsconfigJson = {
-        "compilerOptions": {
-          "baseUrl": "./",
-          "target": "esnext",
-          "module": "ESNext",
-          "moduleResolution": "node",
-          "jsx": "react-jsx",
-          "esModuleInterop": true,
-          "experimentalDecorators": true,
-          "strict": true,
-          "forceConsistentCasingInFileNames": true,
-          "noImplicitReturns": true,
-          "declaration": true,
-          "skipLibCheck": true,
-          "resolveJsonModule": true,
-          "paths": {
+        compilerOptions: {
+          baseUrl: './',
+          target: 'esnext',
+          module: 'ESNext',
+          moduleResolution: 'node',
+          jsx: 'react-jsx',
+          esModuleInterop: true,
+          experimentalDecorators: true,
+          strict: true,
+          forceConsistentCasingInFileNames: true,
+          noImplicitReturns: true,
+          declaration: true,
+          skipLibCheck: true,
+          resolveJsonModule: true,
+          paths: {
             // "@web-react/components": ["../../packages/components/src/index.tsx"],
-          }
+          },
         },
-        "include": ["./src"]
+        include: ['./src'],
       };
       writeFileSync(tsconfigPath, `${JSON.stringify(tsconfigJson, null, 2)}\n`);
     }
 
-    const fatherrcPath = join(pkgPath, '.fatherrc.ts',);
+    const fatherrcPath = join(pkgPath, '.fatherrc.ts');
     if (args.force || !existsSync(fatherrcPath)) {
-      const fatherrcConfig =
-        `import { defineConfig } from 'father';
+      const fatherrcConfig = `import { defineConfig } from 'father';
 
 export default defineConfig({
   extends: '../../.fatherrc.base.ts',
 });
  `;
-      writeFileSync(fatherrcPath, fatherrcConfig,);
+      writeFileSync(fatherrcPath, fatherrcConfig);
     }
 
-    const srcIndexPath = join(pkgPath, 'src', 'index.tsx',);
+    const srcIndexPath = join(pkgPath, 'src', 'index.tsx');
     if (args.force || !existsSync(srcIndexPath)) {
       const srcDir = join(pkgPath, 'src');
-      if (!existsSync(srcDir)) { mkdirSync(srcDir); }
+      if (!existsSync(srcDir)) {
+        mkdirSync(srcDir);
+      }
       writeFileSync(srcIndexPath, '');
     }
   });

@@ -1,12 +1,11 @@
-
 import chalk from 'chalk';
-import { join } from 'path';
 import { readdirSync } from 'fs';
+import { join } from 'path';
 
 import { defineConfig } from 'dumi';
-import { IDumiUserConfig } from 'dumi/dist/types';
 import { IHero, SiteThemeConfig } from 'dumi-theme-antd-style';
 import { IThemeConfig } from 'dumi/dist/client/theme-api/types';
+import { IDumiUserConfig } from 'dumi/dist/types';
 
 const headPkgList: string[] = [];
 // utils must build before core
@@ -17,7 +16,7 @@ const pkgList = readdirSync(join(__dirname, 'packages')).filter(
 
 const alias = pkgList.reduce((pre, pkg) => {
   pre[`@web-react/${pkg}`] = join(__dirname, 'packages', pkg, 'src');
-  return { ...pre, };
+  return { ...pre };
 }, {} as Record<string, string>);
 console.log(`🌼 alias list \n${chalk.blue(Object.keys(alias).join('\n'))}`);
 
@@ -62,18 +61,19 @@ const config: IDumiConfig = {
     },
     apiHeader: {
       pkg: '@web-react/components',
-      match: ["/api", "/components"],
+      match: ['/api', '/components'],
     },
     prefersColor: {
       default: 'light',
       switch: true,
     },
   },
-}
+};
 
 export interface IDumiConfig extends IDumiUserConfig {
-  themeConfig?: IThemeConfig & Omit<SiteThemeConfig, 'hero'> & {
-    hero?: IHero;
-  };
+  themeConfig?: IThemeConfig &
+    Omit<SiteThemeConfig, 'hero'> & {
+      hero?: IHero;
+    };
 }
 export default defineConfig(config);

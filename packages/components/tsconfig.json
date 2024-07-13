@@ -14,7 +14,7 @@
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "paths": {
-      "@web-react/account":["../../packages/account/src/index.tsx"],
+      "@web-react/account": ["../../packages/account/src/index.tsx"]
     }
   },
   "include": ["./src"]
