@@ -27,7 +27,8 @@
     "ie >= 11"
   ],
   "dependencies": {
-    "@babel/runtime": "7.24.8"
+    "@web-react/account":"^1.0.0-beta.2",
+    "@babel/runtime": "^7.22.5"
   },
   "publishConfig": {
     "access": "public"
