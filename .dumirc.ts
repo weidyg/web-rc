@@ -1,4 +1,3 @@
-import chalk from 'chalk';
 import { readdirSync } from 'fs';
 import { join } from 'path';
 
@@ -18,7 +17,8 @@ const alias = pkgList.reduce((pre, pkg) => {
   pre[`@web-react/${pkg}`] = join(__dirname, 'packages', pkg, 'src');
   return { ...pre };
 }, {} as Record<string, string>);
-console.log(`🌼 alias list \n${chalk.blue(Object.keys(alias).join('\n'))}`);
+
+// console.log(`🌼 alias list \n${chalk.blue(Object.keys(alias).join('\n'))}`);
 
 const tailPkgList = pkgList.map((path) => `packages/${path}/src/components`);
 
@@ -28,8 +28,6 @@ const config: IDumiConfig = {
   resolve: {
     docDirs: ['docs'],
     atomDirs: tailPkgList.map((dir) => ({ type: 'component', dir })),
-    // atomDirs: [{ type: 'component', dir: 'src' }],
-    // entryFile: './src/index.tsx',
   },
   styles: [`.markdown table{table-layout: fixed;}`],
   locales: [
