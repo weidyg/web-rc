@@ -1,0 +1,42 @@
+{
+  "name": "web-react",
+  "version": "0.0.1",
+  "description": "A static site based on dumi",
+  "license": "MIT",
+  "scripts": {
+    "bootstrap": "node ./scripts/bootstrap.js",
+    "bootstrap:force": "node ./scripts/bootstrap.js --force=true",
+    "build": "dumi build",
+    "dev": "npm run version && dumi dev",
+    "prepare": "husky install && dumi setup",
+    "preview": "dumi preview",
+    "publishOnly": "node ./scripts/release.js --publishOnly",
+    "release": "node ./scripts/release.js",
+    "start": "npm run dev",
+    "version": "node ./scripts/gen_version.js"
+  },
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
+  },
+  "lint-staged": {
+    "*.{md,json}": [
+      "prettier --write --no-error-on-unmatched-pattern"
+    ]
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^17.1.2",
+    "@commitlint/config-conventional": "^17.1.0",
+    "dumi": "^2.3.0",
+    "dumi-theme-antd-style": "^0.31.0",
+    "father": "^4.4.5",
+    "husky": "^8.0.1",
+    "lerna": "^8.1.6",
+    "lint-staged": "^13.0.3",
+    "prettier": "^2.7.1"
+  },
+  "authors": [
+    "weidyg@163.com"
+  ]
+}
