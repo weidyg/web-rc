@@ -10,7 +10,8 @@
     "build": "npm run version && npm run build-components",
     "build-components": "pnpm --filter \"@web-react/**\" build",
     "release": "node ./scripts/release.js",
-    "version": "node ./scripts/gen_version.js"
+    "version": "node ./scripts/gen_version.js",  
+    "prettier": "prettier --write \"**/**.{js,jsx,tsx,ts,less,md,yaml,json}\" --loglevel warn"
   },
   "lint-staged": {
     "*.{md,json}": [

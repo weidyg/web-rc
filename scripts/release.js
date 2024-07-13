@@ -170,13 +170,13 @@ async function release() {
       if (args.tag) {
         cliArgs = ['publish', '--tag', args.tag];
       }
-      // await execa('npm', cliArgs, {
-      //   cwd: pkgPath,
-      // });
+      await execa('npm', cliArgs, {
+        cwd: pkgPath,
+      });
     }
   }
   console.log('发布成功！');
-  // await exec('npm', ['run', 'prettier']);
+  await exec('npm', ['run', 'prettier']);
   logStep('done');
 }
 
