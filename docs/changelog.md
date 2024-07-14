@@ -1,3 +1,3 @@
-## @web-react/components
+## @web-react/biz-components
 
-`2024-07-12`
+`2024-01-01`

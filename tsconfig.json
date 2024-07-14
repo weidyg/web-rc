@@ -15,8 +15,8 @@
     "resolveJsonModule": true,
     "paths": {
       "@@/*": [".dumi/tmp/*"],
-      "@web-react/components": ["./packages/components/src/index.tsx"],
-      "@web-react/account": ["../../packages/account/src/index.tsx"]
+      "@web-react/biz-components": ["./packages/components/src/index.tsx"],
+      "@web-react/biz-form": ["../../packages/form/src/index.tsx"]
     }
   },
   "include": [".dumirc.ts"]

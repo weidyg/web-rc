@@ -1,6 +1,6 @@
 ---
 hero:
-  title: AntComponents
+  title: BizComponents
   description: 🏆 让中后台开发更简单
   actions:
     - text: 🏮🏮 快速开始 →

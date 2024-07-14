@@ -14,7 +14,7 @@ const pkgList = readdirSync(join(__dirname, 'packages')).filter(
 );
 
 const alias = pkgList.reduce((pre, pkg) => {
-  pre[`@web-react/${pkg}`] = join(__dirname, 'packages', pkg, 'src');
+  pre[`@web-react/biz-${pkg}`] = join(__dirname, 'packages', pkg, 'src');
   return { ...pre };
 }, {} as Record<string, string>);
 
@@ -58,7 +58,7 @@ const config: IDumiConfig = {
       bottom: 'Powered by weidyg',
     },
     apiHeader: {
-      pkg: '@web-react/components',
+      pkg: '@web-react/biz-components',
       match: ['/api', '/components'],
     },
     prefersColor: {

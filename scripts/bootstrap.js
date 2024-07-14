@@ -11,7 +11,7 @@ const { yParser } = require('@umijs/utils');
   );
 
   pkgs.forEach((shortName) => {
-    const name = `@web-react/${shortName}`;
+    const name = `@web-react/biz-${shortName}`;
     const pkgPath = join(__dirname, '..', 'packages', shortName);
 
     let json = {};
@@ -106,7 +106,7 @@ const { yParser } = require('@umijs/utils');
           skipLibCheck: true,
           resolveJsonModule: true,
           paths: {
-            // "@web-react/components": ["../../packages/components/src/index.tsx"],
+            // "@web-react/biz-components": ["../../packages/components/src/index.tsx"],
           },
         },
         include: ['./src'],
