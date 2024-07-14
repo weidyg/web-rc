@@ -2,7 +2,10 @@
   "name": "@web-react/biz-components",
   "version": "1.0.0-beta.5",
   "description": "@web-react/biz-components",
-  "keywords": [],
+  "keywords": [
+    "react",
+    "biz"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/weidyg/web-react"
@@ -28,7 +31,7 @@
   ],
   "dependencies": {
     "@babel/runtime": "^7.22.5",
-    "@web-react/biz-form": "1.0.0-beta.2"
+    "@web-react/biz-form": "1.0.0-beta.5"
   },
   "publishConfig": {
     "access": "public"

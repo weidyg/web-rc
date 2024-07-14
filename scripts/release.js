@@ -159,7 +159,6 @@ async function release() {
 
     if (!args.publishOnly || !isPackageExist) {
       console.log(` Publish package ${name} ${isNext ? 'with next tag' : ''}`);
-      // 默认设置为 tag 检查通过之后在设置为 latest
       let tag = args.tag ? args.tag : isNext ? 'next' : 'beta';
       let cliArgs = ['publish', '--tag', tag];
       await execa('npm', cliArgs, { cwd: pkgPath });

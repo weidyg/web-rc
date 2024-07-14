@@ -36,9 +36,9 @@ const config: IDumiConfig = {
   ],
   themeConfig: {
     lastUpdated: true,
-    name: 'ant-components',
+    name: 'biz-components',
     logo: 'https://gw.alipayobjects.com/zos/antfincdn/upvrAjAPQX/Logo_Tech%252520UI.svg',
-    github: 'https://github.com/weidyg/ant-components',
+    github: 'https://github.com/weidyg/web-react',
     siteToken: { demoInheritSiteTheme: true },
     nav: {
       'zh-CN': [
