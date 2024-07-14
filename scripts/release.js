@@ -92,17 +92,17 @@ async function release() {
 
     const conventionalGraduate = args.conventionalGraduate
       ? ['--conventional-graduate'].concat(
-        Array.isArray(args.conventionalGraduate)
-          ? args.conventionalGraduate.join(',')
-          : [],
-      )
+          Array.isArray(args.conventionalGraduate)
+            ? args.conventionalGraduate.join(',')
+            : [],
+        )
       : [];
     const conventionalPrerelease = args.conventionalPrerelease
       ? ['--conventional-prerelease'].concat(
-        Array.isArray(args.conventionalPrerelease)
-          ? args.conventionalPrerelease.join(',')
-          : [],
-      )
+          Array.isArray(args.conventionalPrerelease)
+            ? args.conventionalPrerelease.join(',')
+            : [],
+        )
       : [];
 
     const major = args.major ? ['major'] : [];
@@ -161,7 +161,7 @@ async function release() {
       console.log(` Publish package ${name} ${isNext ? 'with next tag' : ''}`);
       // 默认设置为 tag 检查通过之后在设置为 latest
       let tag = args.tag ? args.tag : isNext ? 'next' : 'beta';
-      let cliArgs = ['publish', '--tag', tag,];
+      let cliArgs = ['publish', '--tag', tag];
       await execa('npm', cliArgs, { cwd: pkgPath });
     }
   }
