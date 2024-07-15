@@ -1,2 +1,4 @@
 import { ImageSpace } from '@web-react/biz-components';
-export default () => <ImageSpace />;
+export default () => {
+    return <ImageSpace />;
+} 

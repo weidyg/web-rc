@@ -27,6 +27,7 @@
     "@umijs/utils": "^4.3.6",
     "antd": "^5.19.1",
     "antd-style": "^3.6.2",
+    "classnames": "^2.5.1",
     "cross-env": "^7.0.3",
     "dumi": "^2.3.0",
     "dumi-theme-antd-style": "^0.31.0",
