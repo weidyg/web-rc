@@ -1,8 +1,7 @@
-import { Button, ConfigProvider } from "antd";
+import { Button, ConfigProvider, Typography } from "antd";
 import { useContext } from "react";
 import { useStyle } from "./style";
 import classNames from 'classnames';
-import Link from "antd/es/typography/Link";
 
 type ImageSpaceProps = {
   /** 类名 */
@@ -31,7 +30,7 @@ const ImageSpace: React.FC<ImageSpaceProps> = (props) => {
       </div>
       <div className={classNames(`${prefixCls}-footer`, hashId)}>
         <div style={{ display: 'flex', alignItems: 'center' }}>
-          <Link target="_blank" style={{ marginLeft: '18px' }}>进入图片空间</Link>
+          <Typography.Link target="_blank" style={{ marginLeft: '18px' }}>进入图片空间</Typography.Link>
         </div>
         <div style={{ width: 'calc(100% - 460px)' }}></div>
         <div style={{ display: 'flex', alignItems: 'center', flexDirection: 'row-reverse' }}>
