@@ -1,4 +1,4 @@
-﻿const { readdirSync, existsSync, fstat, writeFileSync } = require('fs');
+﻿const { readdirSync, existsSync, writeFileSync } = require('fs');
 const { join } = require('path');
 const prettier = require('prettier');
 
@@ -9,7 +9,7 @@ const pkgList = readdirSync(packagesPath)
   .filter((pkg) => pkg.charAt(0) !== '.')
   .map((pkg) => {
     const package_path = join(packagesPath, pkg);
-    if (!existsSync(join(package_path, 'package.json'))) return;
+    if (!existsSync(join(package_path, 'package.json'))) { return; }
     const json = require(join(package_path, 'package.json'));
     return {
       name: json.name,
@@ -20,11 +20,11 @@ const pkgList = readdirSync(packagesPath)
 const file_content = `
 
 export const version = {
-    ${pkgList
-      .map((pak) => {
-        return `"${pak.name}": '${pak.version}'`;
-      })
-      .join(',\n    ')}    
+    ${pkgList.filter(f => f !== undefined)
+    .map((pak) => {
+      return `"${pak.name}": '${pak.version}'`;
+    })
+    .join(',\n    ')}    
 }
 `;
 

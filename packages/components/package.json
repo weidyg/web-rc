@@ -1,11 +1,8 @@
 {
   "name": "@web-react/biz-components",
   "version": "1.0.0-beta.5",
-  "description": "@web-react/biz-components",
-  "keywords": [
-    "react",
-    "biz"
-  ],
+  "description": "",
+  "keywords": [],
   "repository": {
     "type": "git",
     "url": "https://github.com/weidyg/web-react"

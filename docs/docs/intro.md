@@ -1,10 +1,10 @@
 ---
 title: 简介
-order: 1
+order: 0
 
 nav:
   title: 文档
-  order: 1
+  order: 0
   path: /docs
 ---
 
