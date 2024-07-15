@@ -23,7 +23,6 @@ const alias = pkgList.reduce((pre, pkg) => {
 const tailPkgList = pkgList.map((path) => `packages/${path}/src/components`);
 
 const config: IDumiConfig = {
-  outputPath: 'docs-dist',
   alias,
   resolve: {
     docDirs: ['docs'],

@@ -22,9 +22,7 @@ import React from 'react';
 import { Foo } from '@web-react/biz-components';
 
 export default () => {
-  return (
-    <Foo title="Hello react!" />
-  );
+  return <Foo title="Hello react!" />;
 };
 ```
 

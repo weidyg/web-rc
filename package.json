@@ -11,7 +11,10 @@
     "release": "node ./scripts/release.js",
     "publishOnly": "node ./scripts/release.js --publishOnly",
     "start": "npm run dev",
-    "version": "node ./scripts/gen_version.js"
+    "version": "node ./scripts/gen_version.js",
+    "dumi": "node ./scripts/preDeploy && cross-env SITE_DEPLOY='TRUE' dumi build",
+    "site": "npm run build && cross-env SITE_DEPLOY='TRUE' dumi build",
+    "deploy": "cross-env SITE_DEPLOY='TRUE' npm run site && gh-pages -d ./dist"
   },
   "lint-staged": {
     "*.{md,json}": [
@@ -21,15 +24,19 @@
   "devDependencies": {
     "@types/react": "^18.3.3",
     "@umijs/utils": "^4.3.6",
+    "antd": "^5.19.1",
+    "antd-style": "^3.6.2",
     "dumi": "^2.3.0",
     "dumi-theme-antd-style": "^0.31.0",
+    "react": "^18.3.1",
     "execa": "^5.1.1",
     "father": "^4.4.5",
     "inquirer": "^8.2.6",
     "lerna": "^8.1.6",
-    "lint-staged": "^13.0.3",
+    "cross-env": "^7.0.3",
+    "gh-pages": "^5.0.0",
     "prettier": "^2.7.1",
-    "react": "^18.3.1"
+    "lint-staged": "^13.0.3"
   },
   "authors": [
     "weidyg@163.com"

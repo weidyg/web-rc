@@ -1,4 +1,4 @@
-﻿{
+{
   "compilerOptions": {
     "baseUrl": "./",
     "target": "esnext",
@@ -13,9 +13,7 @@
     "declaration": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,
-    "paths": {
-      // "@web-react/biz-form": ["../../packages/form/src/index.tsx"]
-    }
+    "paths": {}
   },
   "include": ["./src"]
 }

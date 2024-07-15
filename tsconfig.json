@@ -14,9 +14,11 @@
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "paths": {
-      "@@/*": [".dumi/tmp/*"],
-      "@web-react/biz-components": ["./packages/components/src/index.tsx"],
-      "@web-react/biz-form": ["../../packages/form/src/index.tsx"]
+      "@@/*": [".dumi/tmp/*"]
+      // "@web-react/biz-components": ["./packages/components/src/index.tsx"],
+      // "@web-react/biz-form": ["../../packages/form/src/index.tsx"],
+      // "@web-react/biz-form": ["../../packages/form/src/index.tsx"],
+      // "@web-react/biz-form": ["../../packages/form/src/index.tsx"]
     }
   },
   "include": [".dumirc.ts"]
