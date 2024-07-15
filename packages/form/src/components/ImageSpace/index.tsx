@@ -1,4 +1,4 @@
-export type ImageSpaceProps = {
+type ImageSpaceProps = {
   /** 类名 */
   className?: string;
   /** 样式 */
@@ -7,8 +7,11 @@ export type ImageSpaceProps = {
   children?: React.ReactNode;
 };
 
-export const WaterMark: React.FC<ImageSpaceProps> = (props) => {
+const ImageSpace: React.FC<ImageSpaceProps> = (props) => {
   const { children, style, className } = props;
 
   return <div>{children}</div>;
 };
+
+export type { ImageSpaceProps };
+export default ImageSpace;

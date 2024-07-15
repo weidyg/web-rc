@@ -30,7 +30,8 @@
     "@babel/runtime": "^7.22.5",
     "@web-react/biz-form": "1.0.0-beta.5",
     "@web-react/biz-provider": "1.0.0-beta.1",
-    "@web-react/biz-utils": "1.0.0-beta.5"
+    "@web-react/biz-layout": "1.0.0-beta.1",
+    "@web-react/biz-utils": "1.0.0-beta.1"
   },
   "publishConfig": {
     "access": "public"

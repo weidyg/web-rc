@@ -1,1 +1,5 @@
-export { default as Foo } from './components/Foo';
+
+import type { ImageSpaceProps } from './components/ImageSpace';
+import ImageSpace from './components/ImageSpace';
+export type { ImageSpaceProps };
+export { ImageSpace };

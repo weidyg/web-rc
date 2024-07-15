@@ -91,24 +91,7 @@ const { yParser } = require('@umijs/utils');
     const tsconfigPath = join(pkgPath, 'tsconfig.json');
     if (args.force || !existsSync(tsconfigPath)) {
       const tsconfigJson = {
-        compilerOptions: {
-          baseUrl: './',
-          target: 'esnext',
-          module: 'ESNext',
-          moduleResolution: 'node',
-          jsx: 'react-jsx',
-          esModuleInterop: true,
-          experimentalDecorators: true,
-          strict: true,
-          forceConsistentCasingInFileNames: true,
-          noImplicitReturns: true,
-          declaration: true,
-          skipLibCheck: true,
-          resolveJsonModule: true,
-          paths: {
-            // "@web-react/biz-components": ["../../packages/components/src/index.tsx"],
-          },
-        },
+        extends: "../../tsconfig.json",
         include: ['./src'],
       };
       writeFileSync(tsconfigPath, `${JSON.stringify(tsconfigJson, null, 2)}\n`);

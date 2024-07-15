@@ -22,21 +22,22 @@
     ]
   },
   "devDependencies": {
+    "@ant-design/pro-components": "^2.7.10",
     "@types/react": "^18.3.3",
     "@umijs/utils": "^4.3.6",
     "antd": "^5.19.1",
     "antd-style": "^3.6.2",
+    "cross-env": "^7.0.3",
     "dumi": "^2.3.0",
     "dumi-theme-antd-style": "^0.31.0",
-    "react": "^18.3.1",
     "execa": "^5.1.1",
     "father": "^4.4.5",
+    "gh-pages": "^5.0.0",
     "inquirer": "^8.2.6",
     "lerna": "^8.1.6",
-    "cross-env": "^7.0.3",
-    "gh-pages": "^5.0.0",
+    "lint-staged": "^13.0.3",
     "prettier": "^2.7.1",
-    "lint-staged": "^13.0.3"
+    "react": "^18.3.1"
   },
   "authors": [
     "weidyg@163.com"

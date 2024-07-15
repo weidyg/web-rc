@@ -28,6 +28,9 @@
     "weidyg <weidyg@163.com> (https://github.com/weidyg)"
   ],
   "license": "MIT",
+  "dependencies": {
+    "swr": "^2.2.5"
+  },
   "peerDependencies": {},
   "publishConfig": {
     "access": "public"
