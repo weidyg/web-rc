@@ -47,176 +47,59 @@ const ImageSpace: React.FC<ImageSpaceProps> = (props) => {
 
   };
 
-  const PicCard: React.FC = () => {
+  type PicCardProps = {
+    defaultChecked?: boolean;
+    checked?: boolean;
+    onChange?: () => void;
+  }
+  const PicCard: React.FC = (props: PicCardProps) => {
+    const { checked = true } = props;
     return (
-      <div className="PicList_PicturesShow_main-show__QVvZn"
-        style={{
-          position: 'relative',
-          width: '122px',
-          height: '153px',
-          margin: '10px 12px 0 0'
-        }}
-      >
-        <div className="PicList_pic_background__pGTdV" style={{
-          height: '120px',
-          width: '120px',
-          borderRadius: '12px',
-          position: 'relative',
-          display: 'inline-block',
-          backgroundColor: '#f7faf8',
-          backgroundSize: 'contain',
-          textAlign: 'center'
-        }}>
-
+      <div className={classNames(`${prefixCls}-pic-card`, hashId)} >
+        <div className={classNames(`${prefixCls}-pic-background`, hashId)}>
           <label>
-            <div className="PicList_pic_imgBox__c0HXw" style={{
-              verticalAlign: 'middle',
-              display: 'table-cell',
-              position: 'relative',
-              textAlign: 'center',
-              width: '120px',
-              height: '120px',
-              borderRadius: '8px',
-              overflow: 'hidden'
-            }}>
-              <img
-                src="https://img.alicdn.com/imgextra/i2/1035339340/O1CN01wu2MZa2IrmD7FVKKo_!!1035339340.png_120x120q90?t=1715407909000"
-              />
-              <span className="PicList_ai-entry__DXyqG" style={{
-                fontSize: '12px',
-                // display: 'none' 
-                display: 'inline-flex !important',
-                position: 'absolute',
-                width: '70px',
-                height: '20px',
-                backgroundColor: 'rgba(0, 0, 0, .5)',
-                top: '12px',
-                left: '8px',
-                color: '#eaeaea',
-                borderRadius: '5px',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: 'pointer',
-                zIndex: '1000'
-              }}>
+            <div className={classNames(`${prefixCls}-pic-imgBox`, hashId)}>
+              <img src="https://img.alicdn.com/imgextra/i2/1035339340/O1CN01wu2MZa2IrmD7FVKKo_!!1035339340.png_120x120q90?t=1715407909000" />
+              <span className={classNames(`${prefixCls}-pic-ai-entry`, hashId)}>
                 AI图片编辑
               </span>
             </div>
-            <Checkbox
-              className="PicList_checkbox__769at PicList_active_style__HZItk checked"
-              style={{
-                // display: 'none',
-                // display: 'block',//:hover checked
-                position: 'absolute',
-                top: '13px',
-                right: '10px'
-              }}
+            <Checkbox checked={checked}
+              className={classNames(`${prefixCls}-pic-checkbox`, hashId, {
+                ['checked']: checked
+              })}
             />
-
-
-            <div className="PicList_controlWrap__8Hkz3" style={{
-              //  display: 'flex' 
-              display: 'flex',
-              alignItems: 'center',
-              padding: '0 8px',
-              position: 'absolute',
-              left: '0',
-              top: '84px',
-              borderRadius: '0 0 12px 12px',
-              width: '100%',
-              height: '36px',
-              backgroundImage: 'linear-gradient(180deg, rgba(0, 0, 0, .05), rgba(0, 0, 0, .3))',
-              boxSizing: 'border-box',
-              WebkitBoxSizing: 'border-box'
-            }}>
-              {/* <span className="PicList_spec__jxD6Y"
-                style={{
-                  height: '14px',
-                  width: '30px',
-                  fontFamily: 'AlibabaSans102-Medium',
-                  fontWeight: '400',
-                  fontSize: '14px',
-                  color: '#fff',
-                  letterSpacing: '0',
-                  lineHeight: '14px'
-                }}>800x729</span> */}
-
-              <CopyOutlined style={{
-                // display: 'none',
-                color: '#fff',
-                marginRight: '8px',
-                cursor: 'pointer'
-              }} />
-              <ExpandOutlined style={{
-                marginLeft: 'auto',
-                cursor: 'pointer',
-                color: '#fff'
-              }} />
-              {/* <span className="qn_copy qn_iconfont PicList_controlIcon_copy__DtbPR"
-                style={{
-                  // display: 'none',
-                  color: '#fff',
-                  marginRight: '8px',
-                  cursor: 'pointer'
-                }}
-              ></span> */}
-              {/* <span className="qn_fullscreen_bold qn_iconfont PicList_controlIcon_fullView__G2KlC"
-                style={{
-                  marginLeft: 'auto',
-                  cursor: 'pointer',
-                  color: '#fff'
-                }}></span> */}
+            <div className={classNames(`${prefixCls}-pic-controlWrap`, hashId)}>
+              <span className={classNames(`${prefixCls}-pic-spec`, hashId)}>
+                800x729
+              </span>
+              <CopyOutlined className={classNames(`${prefixCls}-pic-copy`, hashId)} />
+              <ExpandOutlined className={classNames(`${prefixCls}-pic-fullView`, hashId)} />
             </div>
           </label>
-
-          <div className="PicList_title_wrap__7URR4" style={{
-            display: 'inline-flex',
-            width: '108px',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}>
-            <div className="ReferenceTable_svg__ZDTEW" style={{
-              flexShrink: 0,
-              height: '16px',
-              width: '16px',
-              cursor: 'pointer'
-            }}>
-              <img
+          <div className={classNames(`${prefixCls}-pic-title-wrap`, hashId)} >
+            <div className={classNames(`${prefixCls}-pic-title-svg`, hashId)} >
+              <img alt="引用图片" style={{ width: '100%', height: '100%' }}
                 src="https://img.alicdn.com/imgextra/i1/O1CN01saONG01pL90lyzsON_!!6000000005343-2-tps-42-42.png"
-                alt="引用图片"
-                style={{
-                  width: '100%',
-                  height: '100%'
-                }} />
+              />
             </div>
-            <div className="PicList_tip_title__aQfti" style={{
-              whiteSpace: 'nowrap',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              cursor: 'pointer',
-              height: '18px',
-              fontWeight: '400',
-              fontSize: '12px',
-              color: '#111',
-              lineHeight: '18px'
-            }}>
+            <div className={classNames(`${prefixCls}-pic-title-tip`, hashId)} >
               <span>aigc-白底图.jpg</span>
             </div>
           </div>
-        </div>
-      </div>
+        </div >
+      </div >
     );
   };
 
   return wrapSSR(
     <div className={classString} style={style}>
-      <div className={classNames(`${prefixCls}-body`, hashId)} style={{ paddingLeft: '15px' }}>
-        <div className={classNames(`${prefixCls}-body-aside`, hashId)} style={{ display: 'flex' }}>
+      <div className={classNames(`${prefixCls}-body`, hashId)} >
+        <div className={classNames(`${prefixCls}-body-aside`, hashId)} >
           <div className={classNames(`${prefixCls}-body-treeDom`, hashId)} />
         </div>
-        <div className={classNames(`${prefixCls}-body-dashboard`, hashId)}
-          style={{ position: 'relative', paddingLeft: '24px', display: 'flex' }}>
-          <div style={{ display: 'flex', flexGrow: 1, flexBasis: '100%', position: 'absolute', background: 'rgba(255, 255, 255, 0.5)', zIndex: -1, width: '100%', height: '100%' }} />
+        <div className={classNames(`${prefixCls}-body-dashboard`, hashId)}>
+          {/* <div style={{ display: 'flex', flexGrow: 1, flexBasis: '100%', position: 'absolute', background: 'rgba(255, 255, 255, 0.5)', zIndex: -1, width: '100%', height: '100%' }} /> */}
           <div className={classNames(`${prefixCls}-body-dashboard-header`, hashId)}>
             <div className={classNames(`${prefixCls}-body-dashboard-header-actions`, hashId)}>
               <div className={classNames(`${prefixCls}-body-dashboard-header-actions-left`, hashId)}>
@@ -228,7 +111,7 @@ const ImageSpace: React.FC<ImageSpaceProps> = (props) => {
                     : token.colorTextSecondary
                 }}
                   onClick={() => {
-                    setCardview(false);
+                    setCardview(true);
                   }}
                 />
                 <UnorderedListOutlined style={{
@@ -238,7 +121,7 @@ const ImageSpace: React.FC<ImageSpaceProps> = (props) => {
                     : token.colorPrimaryTextActive
                 }}
                   onClick={() => {
-                    setCardview(true);
+                    setCardview(false);
                   }}
                 />
                 <Button style={{
@@ -246,7 +129,6 @@ const ImageSpace: React.FC<ImageSpaceProps> = (props) => {
                   height: "30px",
                   marginLeft: "9px",
                   marginRight: "9px",
-                  color: "rgb(102, 102, 102)",
                   fontSize: "12px"
                 }}>
                   刷新

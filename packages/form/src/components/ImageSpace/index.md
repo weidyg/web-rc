@@ -9,8 +9,7 @@ atomId: ImageSpace
 ## 何时使用
 
 ## 代码演示
-<code title="基本使用" description="基本的图片空间展示"
- src="./demos/basic.tsx" background="var(--main-bg-color)" ></code>
+<code iframe="650"  title="基本使用" description="基本的图片空间展示" src="./demos/basic.tsx" ></code>
 
 ## API
 
