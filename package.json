@@ -22,6 +22,7 @@
     ]
   },
   "devDependencies": {
+    "@ant-design/icons": "^5.3.7",
     "@ant-design/pro-components": "^2.7.10",
     "@types/react": "^18.3.3",
     "@umijs/utils": "^4.3.6",
