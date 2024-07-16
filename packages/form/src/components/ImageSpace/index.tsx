@@ -140,6 +140,7 @@ const ImageSpace: React.FC<ImageSpaceProps> = (props) => {
                   letterSpacing: '0',
                   lineHeight: '14px'
                 }}>800x729</span> */}
+
               <CopyOutlined style={{
                 // display: 'none',
                 color: '#fff',
@@ -315,7 +316,6 @@ const ImageSpace: React.FC<ImageSpaceProps> = (props) => {
                     margin: '10px 12px 0 0'
                   }}></i>
                 ))}
-
               </div>
             </div>
             : <div className={classNames(`${prefixCls}-body-dashboard-table`, hashId)}>

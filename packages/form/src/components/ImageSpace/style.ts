@@ -71,7 +71,7 @@ const genProStyle: GenerateStyle<ImageSpaceToken> = (token) => {
           boxSizing: 'border-box',
           maxHeight: '100vh',
           height: '100%',
-          flex: '1 1 auto', // 注意：在JS中，'1 1 auto' 是更明确的写法，以避免被解析为数字
+          flex: '1 1 auto',
           display: 'flex',
           flexDirection: 'column',
           overflow: 'hidden',
