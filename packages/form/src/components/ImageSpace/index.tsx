@@ -19,9 +19,10 @@ const ImageSpace: React.FC<ImageSpaceProps> = (props) => {
   const { getPrefixCls } = useContext(ConfigProvider.ConfigContext);
   const prefixCls = `${props.prefixCls || getPrefixCls('biz')}-image-space`;
   const { wrapSSR, hashId } = useStyle(prefixCls);
+  const classString = classNames(prefixCls, className, hashId, {});
 
   return wrapSSR(
-    <div className={classNames(`${prefixCls}-container`, hashId)}>
+    <div className={classString} style={style}>
       <div className={classNames(`${prefixCls}-header`, hashId)}>
         header
       </div>

@@ -8,9 +8,7 @@ export interface ImageSpaceToken extends ProAliasToken {
 const genProStyle: GenerateStyle<ImageSpaceToken> = (token) => {
   return {
     [token.componentCls]: {
-      '&-container': {
-
-      },
+  
       '&-header': {
 
       },

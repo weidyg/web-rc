@@ -1,16 +1,12 @@
+
+import { createContext, useContext, useMemo } from 'react';
 import { ConfigProvider as AntdConfigProvider } from 'antd';
-import { useContext, useMemo } from 'react';
-// import { SWRConfig, useSWRConfig } from 'swr';
+import { ProConfigProvider } from '@ant-design/pro-components';
 
+const BizConfigContext = createContext<ConfigContextPropsType>({
 
-/**
- * 用于配置 Pro 的组件,分装之后会简单一些
- * @param props
- * @returns
- */
-const ConfigProviderContainer: React.FC<{
-    children: React.ReactNode;
-}> = (props) => {
+});
+const ConfigProviderContainer: React.FC<BizConfigProviderProps> = (props) => {
     const {
         children,
     } = props;
@@ -21,9 +17,9 @@ const ConfigProviderContainer: React.FC<{
 
     const configProviderDom = useMemo(() => {
         return (
-            <>
+            <BizConfigContext.Provider value={{}}>
                 {children}
-            </>
+            </BizConfigContext.Provider>
         );
     }, [
         restConfig,
@@ -37,24 +33,19 @@ const ConfigProviderContainer: React.FC<{
     );
 };
 
-/**
- * 用于配置 Biz 的一些全局性的东西
- * @param props
- * @returns
- */
-export const BizConfigProvider: React.FC<{
-    children: React.ReactNode;
-}> = (props) => {
-    const { locale, theme, ...rest } = useContext(
-        AntdConfigProvider.ConfigContext,
-    );
-    const configProvider = {
-        ...rest,
-    } as typeof theme;
+export type ConfigContextPropsType = {
 
+};
+export type BizConfigProviderProps = {
+    children: React.ReactNode;
+}
+export const BizConfigProvider: React.FC<BizConfigProviderProps> = (props) => {
     return (
-        <AntdConfigProvider {...configProvider}>
+        <ProConfigProvider>
             <ConfigProviderContainer {...props} />
-        </AntdConfigProvider>
+        </ProConfigProvider>
     );
 };
+BizConfigProvider.displayName = 'BizProvider';
+export const BizProvider = BizConfigContext;
+export default BizConfigContext;
