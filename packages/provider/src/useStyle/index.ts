@@ -52,6 +52,7 @@ export function useStyle(
     token.antCls = `.${getPrefixCls()}`;
     token.bizComponentsCls = `.${token.bizComponentsCls?.replace(/^\./, '') ?? getPrefixCls('biz')}`;
     token.componentCls = `.${(prefixCls ?? token.bizComponentsCls)?.replace(/^\./, '')}-${suffixCls}`;
+    console.log('token.componentCls',token.componentCls);
     return {
         wrapSSR: useStyleRegister({
             token,

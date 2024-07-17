@@ -1,5 +1,6 @@
-import { Checkbox } from "antd";
+import { Checkbox, ConfigProvider } from "antd";
 import classNames from "classnames";
+import { useContext } from "react";
 import { useStyle } from "./style";
 import { CopyOutlined, ExpandOutlined } from "@ant-design/icons";
 
@@ -8,21 +9,16 @@ type PicCardProps = {
     checked?: boolean;
     onChange?: () => void;
     prefixCls?: string;
-
-    id?: string | number;
-    name?: string;
-    fullUrl?: string;
-    pixel?: string;
 }
 const PicCard: React.FC = (props: PicCardProps) => {
-    const { checked, id, name = 'aigc-白底图.jpg', pixel = '800x729', fullUrl = 'https://img.alicdn.com/imgextra/i2/1035339340/O1CN01wu2MZa2IrmD7FVKKo_!!1035339340.png' } = props;
-    const { wrapSSR, prefixCls, hashId } = useStyle(props.prefixCls);
+    const { checked = true } = props;
+    const { prefixCls, wrapSSR, hashId } = useStyle(props?.prefixCls);
     return wrapSSR(
         <div className={classNames(`${prefixCls}-pic-card`, hashId)} >
             <div className={classNames(`${prefixCls}-pic-background`, hashId)}>
                 <label>
                     <div className={classNames(`${prefixCls}-pic-imgBox`, hashId)}>
-                        <img src={fullUrl} alt={name} />
+                        <img src="https://img.alicdn.com/imgextra/i2/1035339340/O1CN01wu2MZa2IrmD7FVKKo_!!1035339340.png_120x120q90?t=1715407909000" />
                         <span className={classNames(`${prefixCls}-pic-ai-entry`, hashId)}>
                             AI图片编辑
                         </span>
@@ -34,7 +30,7 @@ const PicCard: React.FC = (props: PicCardProps) => {
                     />
                     <div className={classNames(`${prefixCls}-pic-controlWrap`, hashId)}>
                         <span className={classNames(`${prefixCls}-pic-spec`, hashId)}>
-                            {pixel}
+                            800x729
                         </span>
                         <CopyOutlined className={classNames(`${prefixCls}-pic-copy`, hashId)} />
                         <ExpandOutlined className={classNames(`${prefixCls}-pic-fullView`, hashId)} />
@@ -47,7 +43,7 @@ const PicCard: React.FC = (props: PicCardProps) => {
                         />
                     </div>
                     <div className={classNames(`${prefixCls}-pic-title-tip`, hashId)} >
-                        <span>{name}</span>
+                        <span>aigc-白底图.jpg</span>
                     </div>
                 </div>
             </div >
