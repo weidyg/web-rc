@@ -1,11 +1,11 @@
-﻿import type { GenerateStyle, ProAliasToken } from '@ant-design/pro-components';
-import { useStyle as useAntdStyle } from '@ant-design/pro-components';
+﻿import type { GenerateStyle, BizAliasToken } from '@web-react/biz-components';
+import { useStyle as useAntdStyle } from '@web-react/biz-components';
 
-export interface ImageSpaceToken extends ProAliasToken {
+export interface ImageSpaceToken extends BizAliasToken {
   componentCls: string;
 }
 
-const genProStyle: GenerateStyle<ImageSpaceToken> = (token) => {
+const genBizStyle: GenerateStyle<ImageSpaceToken> = (token) => {
   return {
     [token.componentCls]: {
       display: 'flex',
@@ -280,6 +280,7 @@ export function useStyle(prefixCls: string) {
       ...token,
       componentCls: `.${prefixCls}`,
     };
-    return [genProStyle(imageSpaceToken)];
+    return [genBizStyle(imageSpaceToken)];
   });
 }
+

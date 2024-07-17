@@ -176,7 +176,8 @@ const ImageSpace: React.FC<ImageSpaceProps> = (props) => {
             ? <div className={classNames(`${prefixCls}-body-dashboard-list`, hashId)}>
               <div className={classNames(`${prefixCls}-body-dashboard-list-document`, hashId)}>
                 <Image
-                  style={{ display: 'none' }}
+                  wrapperStyle={{ display: 'none' }}
+                  src="https://img.alicdn.com/imgextra/i2/1035339340/O1CN01wu2MZa2IrmD7FVKKo_!!1035339340.png"
                   preview={{
                     visible: false,
                     maskStyle: { backgroundColor: 'rgba(0, 0, 0, 0.65)' },
