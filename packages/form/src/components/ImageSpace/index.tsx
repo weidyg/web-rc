@@ -94,18 +94,6 @@ const ImageSpace: React.FC<ImageSpaceProps> = (props) => {
           <div className={classNames(`${prefixCls}-treeDom`, hashId)} />
         </div>
         <div className={classNames(`${prefixCls}-dashboard`, hashId)}>
-          <Image
-            wrapperStyle={{ display: 'none' }}
-            src="https://img.alicdn.com/imgextra/i2/1035339340/O1CN01wu2MZa2IrmD7FVKKo_!!1035339340.png"
-            preview={{
-              visible: false,
-              maskStyle: { backgroundColor: 'rgba(0, 0, 0, 0.65)' },
-              src: 'https://img.alicdn.com/imgextra/i2/1035339340/O1CN01wu2MZa2IrmD7FVKKo_!!1035339340.png',
-              onVisibleChange: (value) => {
-                // setVisible(value);
-              },
-            }}
-          />
           {/* <div style={{ display: 'flex', flexGrow: 1, flexBasis: '100%', position: 'absolute', background: 'rgba(255, 255, 255, 0.5)', zIndex: -1, width: '100%', height: '100%' }} /> */}
           <div className={classNames(`${prefixCls}-dashboard-header`, hashId)}>
             <div className={classNames(`${prefixCls}-dashboard-header-actions`, hashId)}>

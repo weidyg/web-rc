@@ -136,13 +136,13 @@ const genBizStyle: GenerateStyle<BizAliasToken> = (token) => {
             [token.componentCls]: {
               '&-pic': {
                 '&-checkbox': {
-                  display: 'flex',
+                  display: 'flex !important;',
                 },
                 '&-spec': {
-                  display: 'none',
+                  display: 'none !important;',
                 },
                 '&-copy': {
-                  display: 'block',
+                  display: 'block !important;',
                 }
               }
             }
