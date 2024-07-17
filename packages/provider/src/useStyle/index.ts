@@ -21,17 +21,8 @@ export const useToken = bizTheme.useToken;
 
 export type BizAliasToken = GlobalToken & {
     themeId: number;
-    /**
-     * biz 的 className
-     * @type {string}
-     * @example .ant-biz
-     */
     bizComponentsCls: string;
-    /**
-     * antd 的 className
-     * @type {string}
-     * @example .ant
-     */
+    componentCls: string;
     antCls: string;
 };
 
@@ -44,27 +35,30 @@ export type BizAliasToken = GlobalToken & {
 export function useStyle(
     componentName: string,
     styleFn: (token: BizAliasToken) => CSSInterpolation,
+    prefixCls?: string,
 ) {
     let { token = {} as Record<string, any> as BizAliasToken } = useContext(BizProvider);
     const { hashed, theme: provideTheme } = useContext(BizProvider);
-
     const { token: antdToken, hashId } = useToken();
     const { getPrefixCls } = useContext(AntdConfigProvider.ConfigContext);
+    const suffixCls = componentName
+        ?.replace(/([A-Z])/g, (_, g) => "-" + g.toLowerCase())
+        ?.replace(/^\-/, '')
+        ?.replace(/^biz\-/, '');
 
     // 如果不在 Provider 里面，就用 antd 的
     // if (!token.layout) { token = { ...antdToken } as any; }
     token = { ...antdToken } as any;
     token.antCls = `.${getPrefixCls()}`;
-    token.bizComponentsCls = token.bizComponentsCls ?? `.${getPrefixCls('biz')}`;
+    token.bizComponentsCls = `.${token.bizComponentsCls?.replace(/^\./, '') ?? getPrefixCls('biz')}`;
+    token.componentCls = `.${(prefixCls ?? token.bizComponentsCls)?.replace(/^\./, '')}-${suffixCls}`;
     return {
-        wrapSSR: useStyleRegister(
-            {
-                theme: provideTheme!,
-                token,
-                path: [componentName],
-            },
-            () => styleFn(token as BizAliasToken),
-        ),
+        wrapSSR: useStyleRegister({
+            token,
+            theme: provideTheme!,
+            path: [componentName],
+        }, () => styleFn(token as BizAliasToken)),
         hashId: hashed ? hashId : '',
+        prefixCls: token.componentCls?.replace(/^\./, ''),
     };
 }

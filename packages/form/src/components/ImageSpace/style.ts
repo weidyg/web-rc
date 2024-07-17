@@ -1,11 +1,7 @@
 ﻿import type { GenerateStyle, BizAliasToken } from '@web-react/biz-components';
 import { useStyle as useAntdStyle } from '@web-react/biz-components';
 
-export interface ImageSpaceToken extends BizAliasToken {
-  componentCls: string;
-}
-
-const genBizStyle: GenerateStyle<ImageSpaceToken> = (token) => {
+const genBizStyle: GenerateStyle<BizAliasToken> = (token) => {
   return {
     [token.componentCls]: {
       display: 'flex',
@@ -17,8 +13,7 @@ const genBizStyle: GenerateStyle<ImageSpaceToken> = (token) => {
       left: 0,
       flexDirection: 'column',
       overflowX: 'auto',
-      backgroundColor: token.colorBgContainer,
-
+      backgroundColor: token.colorBgLayout,
       '&-header': {
 
       },
@@ -26,99 +21,6 @@ const genBizStyle: GenerateStyle<ImageSpaceToken> = (token) => {
         display: 'flex',
         flex: '1 1',
         overflowY: 'hidden',
-        // padding: '0 15px',
-        '&-aside': {
-          width: '158px',
-          display: 'flex',
-          flexDirection: 'column',
-          boxSizing: 'border-box',
-          position: 'relative',
-          overflow: 'hidden',
-          backgroundColor: token.colorBgElevated,
-          padding: '6px 6px 0',
-          height: '100%',
-          flexShrink: 0
-        },
-        '&-treeDom': {
-          flex: '1 1',
-          overflow: 'auto',
-          padding: '0 8px 0 6px',
-          maxHeight: 'calc(100% - 1px)',
-          '&::-webkit-scrollbar': {
-            width: '7.5px',
-            height: ' 7.5px',
-            borderRadius: '6px',
-          },
-          '&::-webkit-scrollbar-thumb': {
-            width: '7.5px',
-            height: '7.5px',
-            borderRadius: '6px',
-            '&:hover': {
-              backgroundColor: token.colorBorder,
-            }
-          },
-          '&::-webkit-scrollbar-track': {
-            background: 'transparent',
-            padding: '0',
-            width: '4px',
-            height: '4px',
-            borderRadius: '6px',
-          }
-        },
-        '&-dashboard': {
-          padding: '6px 0 0 24px',
-          boxSizing: 'border-box',
-          maxHeight: '100vh',
-          height: '100%',
-          flex: '1 1 auto',
-          display: 'flex',
-          flexDirection: 'column',
-          overflow: 'hidden',
-          minWidth: '685px',
-          position: 'relative',
-
-          '&-header': {
-            margin: '5px 0 8px',
-            height: '35px',
-            display: 'flex',
-            '&-actions': {
-              display: 'flex',
-              flexShrink: 0,
-              width: '100%',
-              height: '30px',
-              alignItems: 'center',
-              transform: 'translateX(-8px)',
-              '&-left': {
-                flex: '1 1',
-                display: 'flex',
-                alignItems: 'center',
-                marginRight: '8px',
-              },
-              '&-right': {
-                height: '30px'
-              },
-            },
-          },
-          '&-list': {
-            boxSizing: 'border-box',
-            height: '100%',
-            overflowY: 'auto',
-            '&-document': {
-              display: 'flex',
-              flexWrap: 'wrap',
-              justifyContent: 'space-between'
-            }
-          },
-          '&-table': {
-            boxSizing: 'border-box',
-            padding: '5px 0 0',
-            marginTop: '9px',
-            overflow: 'hidden',
-            WebkitUserSelect: 'none',
-            MozUserSelect: 'none',
-            userSelect: 'none'
-          }
-        },
       },
       '&-footer': {
         width: '100%',
@@ -133,8 +35,97 @@ const genBizStyle: GenerateStyle<ImageSpaceToken> = (token) => {
           marginRight: '25px',
         }
       },
+      '&-aside': {
+        width: '158px',
+        display: 'flex',
+        flexDirection: 'column',
+        boxSizing: 'border-box',
+        position: 'relative',
+        overflow: 'hidden',
+        padding: '6px 6px 0',
+        height: '100%',
+        flexShrink: 0
+      },
+      '&-treeDom': {
+        flex: '1 1',
+        overflow: 'auto',
+        padding: '0 8px 0 6px',
+        maxHeight: 'calc(100% - 1px)',
+        '&::-webkit-scrollbar': {
+          width: '7.5px',
+          height: ' 7.5px',
+          borderRadius: '6px',
+        },
+        '&::-webkit-scrollbar-thumb': {
+          width: '7.5px',
+          height: '7.5px',
+          borderRadius: '6px',
+          '&:hover': {
+            backgroundColor: token.colorBorder,
+          }
+        },
+        '&::-webkit-scrollbar-track': {
+          background: 'transparent',
+          padding: '0',
+          width: '4px',
+          height: '4px',
+          borderRadius: '6px',
+        }
+      },
+      '&-dashboard': {
+        padding: '6px 0 0 24px',
+        boxSizing: 'border-box',
+        maxHeight: '100vh',
+        height: '100%',
+        flex: '1 1 auto',
+        display: 'flex',
+        flexDirection: 'column',
+        overflow: 'hidden',
+        minWidth: '685px',
+        position: 'relative',
 
-
+        '&-header': {
+          margin: '5px 0 8px',
+          height: '35px',
+          display: 'flex',
+          '&-actions': {
+            display: 'flex',
+            flexShrink: 0,
+            width: '100%',
+            height: '30px',
+            alignItems: 'center',
+            transform: 'translateX(-8px)',
+            '&-left': {
+              flex: '1 1',
+              display: 'flex',
+              alignItems: 'center',
+              marginRight: '8px',
+            },
+            '&-right': {
+              height: '30px'
+            },
+          },
+        },
+        '&-list': {
+          boxSizing: 'border-box',
+          height: '100%',
+          overflowY: 'auto',
+          '&-document': {
+            display: 'flex',
+            flexWrap: 'wrap',
+            justifyContent: 'space-between'
+          }
+        },
+        '&-table': {
+          boxSizing: 'border-box',
+          padding: '5px 0 0',
+          marginTop: '9px',
+          overflow: 'hidden',
+          WebkitUserSelect: 'none',
+          MozUserSelect: 'none',
+          userSelect: 'none'
+        }
+      },
       '&-pic': {
         '&-card': {
           position: 'relative',
@@ -147,9 +138,6 @@ const genBizStyle: GenerateStyle<ImageSpaceToken> = (token) => {
                 '&-checkbox': {
                   display: 'flex',
                 },
-                '&-ai-entry': {
-                  display: 'inline-flex !important',
-                },
                 '&-spec': {
                   display: 'none',
                 },
@@ -158,7 +146,6 @@ const genBizStyle: GenerateStyle<ImageSpaceToken> = (token) => {
                 }
               }
             }
-
           }
         },
         '&-background': {
@@ -179,7 +166,16 @@ const genBizStyle: GenerateStyle<ImageSpaceToken> = (token) => {
           width: '120px',
           height: '120px',
           borderRadius: '8px',
-          overflow: 'hidden'
+          overflow: 'hidden',
+          '&:hover': {
+            [token.componentCls]: {
+              '&-pic': {
+                '&-ai-entry': {
+                  display: 'inline-flex !important',
+                },
+              }
+            }
+          }
         },
         '&-checkbox': {
           display: 'none',
@@ -267,20 +263,22 @@ const genBizStyle: GenerateStyle<ImageSpaceToken> = (token) => {
             lineHeight: '18px',
             margin: '0 4px'
           }
+        },
+        '&-dom': {
+          visibility: 'hidden',
+          position: 'relative',
+          width: '122px',
+          height: '153px',
+          margin: '10px 12px 0 0'
         }
       }
     },
   };
 };
 
-
-export function useStyle(prefixCls: string) {
+export function useStyle(prefixCls?: string) {
   return useAntdStyle('BizImageSpace', (token) => {
-    const imageSpaceToken: ImageSpaceToken = {
-      ...token,
-      componentCls: `.${prefixCls}`,
-    };
-    return [genBizStyle(imageSpaceToken)];
-  });
+    return [genBizStyle(token)];
+  }, prefixCls);
 }
 
