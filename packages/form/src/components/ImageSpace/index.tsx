@@ -174,10 +174,14 @@ const ImageSpace: React.FC<ImageSpaceProps> = (props) => {
                 <div className={classNames(`${prefixCls}-dashboard-list-document`, hashId)}>
                   {dataJson.files.fileModule.map((item, index) => (
                     <PicCard key={index}
+                      id={item.pictureId}
                       name={item.name}
                       fullUrl={item.fullUrl}
                       pixel={item.pixel}
                       isRef={item.ref}
+                      onChange={(value: boolean, prevValue: boolean) => {
+                        console.log('PicCard onChange', value, prevValue);
+                      }}
                     />
                   ))}
                   {Array.from({ length: 10 }).map((item, index) => (

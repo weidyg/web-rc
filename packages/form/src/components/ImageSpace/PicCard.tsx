@@ -12,17 +12,18 @@ const refImage = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACoAAAAqCAYAAADF
 type PicCardProps = {
     defaultChecked?: boolean;
     checked?: boolean;
-    onChange?: () => void;
+    onChange?: (value: boolean, prevValue: boolean) => void;
     prefixCls?: string;
 
     id?: string | number;
     name?: string;
     pixel?: string;
     fullUrl?: string;
-    isRef?: boolean
+    isRef?: boolean;
+    onAiEdit?: (id?: string | number, fullUrl?: string) => void | Promise<void>
 }
 const PicCard: React.FC<PicCardProps> = (props) => {
-    const { id, name, fullUrl = '', pixel, isRef } = props;
+    const { id, name, fullUrl = '', pixel, isRef, onAiEdit } = props;
     const { prefixCls, wrapSSR, hashId } = useStyle(props?.prefixCls);
     const [preview, setPreview] = useState(false);
     const { copied, copyLoading, onClick: onCopyClick } = useCopyClick({ copyConfig: { text: fullUrl } });
@@ -32,14 +33,10 @@ const PicCard: React.FC<PicCardProps> = (props) => {
         onChange: props?.onChange,
     });
     return wrapSSR(
-        <div className={classNames(`${prefixCls}-pic-card`, hashId)} >
+        <div className={classNames(`${prefixCls}-pic`, hashId)} >
             <div className={classNames(`${prefixCls}-pic-background`, hashId)}>
                 <label>
-                    <div className={classNames(`${prefixCls}-pic-imgBox`, hashId)}
-                        onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                        }}>
+                    <div className={classNames(`${prefixCls}-pic-imgBox`, hashId)}>
                         <Image
                             src={fullUrl}
                             // fallback={errImage}
@@ -53,8 +50,13 @@ const PicCard: React.FC<PicCardProps> = (props) => {
                                 },
                             }}
                         />
-                        {fullUrl &&
-                            <span className={classNames(`${prefixCls}-pic-ai-entry`, hashId)}>
+                        {fullUrl && onAiEdit &&
+                            <span className={classNames(`${prefixCls}-pic-ai-entry`, hashId)}
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    onAiEdit?.(id, fullUrl);
+                                }}>
                                 AI图片编辑
                             </span>
                         }
@@ -65,7 +67,11 @@ const PicCard: React.FC<PicCardProps> = (props) => {
                                 ['checked']: checked
                             })}
                         />
-                        <div className={classNames(`${prefixCls}-pic-controlWrap`, hashId)}>
+                        <div className={classNames(`${prefixCls}-pic-controlWrap`, hashId)}
+                            onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                            }}>
                             {pixel &&
                                 <span className={classNames(`${prefixCls}-pic-spec`, hashId)}>
                                     {pixel}
@@ -90,7 +96,7 @@ const PicCard: React.FC<PicCardProps> = (props) => {
                         <img src={refImage} alt="引用图片" style={{ width: '100%', height: '100%' }} />
                     </div>}
                     <div className={classNames(`${prefixCls}-pic-title-tip`, hashId)} >
-                        <span>{name}</span>
+                        <span title={name}>{name}</span>
                     </div>
                 </div>
             </div >

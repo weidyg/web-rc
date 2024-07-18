@@ -16,7 +16,6 @@ import { BizProvider } from '../index';
 export const setAlpha = (baseColor: string, alpha: number) =>
     new TinyColor(baseColor).setAlpha(alpha).toRgbString();
 
-
 export type GenerateStyle<
     ComponentToken extends object = GlobalToken,
     ReturnType = CSSInterpolation,
@@ -64,7 +63,7 @@ export function useStyle(
     token.antCls = `.${getPrefixCls()}`;
     token.bizComponentsCls = `.${token.bizComponentsCls?.replace(/^\./, '') ?? getPrefixCls('biz')}`;
     token.componentCls = `.${(prefixCls ?? token.bizComponentsCls)?.replace(/^\./, '')}-${suffixCls}`;
-    console.log('token.componentCls',token.componentCls);
+    console.log('token.componentCls', token.componentCls);
     return {
         wrapSSR: useStyleRegister({
             token,
