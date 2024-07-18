@@ -154,7 +154,7 @@ const genBizStyle: GenerateStyle<BizAliasToken> = (token) => {
           borderRadius: '12px',
           position: 'relative',
           display: 'inline-block',
-          backgroundColor: token.colorBgLayout,
+          backgroundColor: token.colorBgElevated,
           backgroundSize: 'contain',
           textAlign: 'center'
         },
@@ -175,7 +175,11 @@ const genBizStyle: GenerateStyle<BizAliasToken> = (token) => {
                 },
               }
             }
-          }
+          },
+          'img': {
+            maxHeight: '120px',
+            maxWidth: '120px',
+          },
         },
         '&-checkbox': {
           display: 'none',
@@ -203,7 +207,6 @@ const genBizStyle: GenerateStyle<BizAliasToken> = (token) => {
           zIndex: '1000'
         },
         '&-controlWrap': {
-          //  display: 'flex' 
           display: 'flex',
           alignItems: 'center',
           padding: '0 8px',

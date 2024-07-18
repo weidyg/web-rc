@@ -4,6 +4,7 @@ import { Image, Button, ConfigProvider, Input, MenuProps, Select, Space, theme, 
 import classNames from 'classnames';
 import { useStyle } from "./style";
 import PicCard from "./PicCard";
+import dataJson from "./data.json";
 
 type ImageSpaceProps = {
   /** 类名 */
@@ -17,7 +18,7 @@ type ImageSpaceProps = {
 
 const ImageSpace: React.FC<ImageSpaceProps> = (props) => {
   const { children, style, className } = props;
-  
+
   const { prefixCls, wrapSSR, hashId } = useStyle(props.prefixCls);
 
   const { token } = theme.useToken();
@@ -171,8 +172,13 @@ const ImageSpace: React.FC<ImageSpaceProps> = (props) => {
             ? (
               <div className={classNames(`${prefixCls}-dashboard-list`, hashId)}>
                 <div className={classNames(`${prefixCls}-dashboard-list-document`, hashId)}>
-                  {Array.from({ length: 100 }).map((item, index) => (
-                    <PicCard />
+                  {dataJson.files.fileModule.map((item, index) => (
+                    <PicCard key={index}
+                      name={item.name}
+                      fullUrl={item.fullUrl}
+                      pixel={item.pixel}
+                      isRef={item.ref}
+                    />
                   ))}
                   {Array.from({ length: 10 }).map((item, index) => (
                     <i className={classNames(`${prefixCls}-pic-dom`, hashId)} />
