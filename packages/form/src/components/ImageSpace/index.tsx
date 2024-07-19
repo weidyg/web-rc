@@ -1,10 +1,27 @@
-import { useContext, useState } from "react";
-import { AppstoreOutlined, CopyOutlined, ExpandOutlined, SearchOutlined, UnorderedListOutlined } from '@ant-design/icons';
-import { Image, Button, ConfigProvider, Input, MenuProps, Select, Space, theme, Typography, Checkbox } from "antd";
+import { useContext, useState } from 'react';
+import {
+  AppstoreOutlined,
+  CopyOutlined,
+  ExpandOutlined,
+  SearchOutlined,
+  UnorderedListOutlined,
+} from '@ant-design/icons';
+import {
+  Image,
+  Button,
+  ConfigProvider,
+  Input,
+  MenuProps,
+  Select,
+  Space,
+  theme,
+  Typography,
+  Checkbox,
+} from 'antd';
 import classNames from 'classnames';
-import { useStyle } from "./style";
-import PicCard from "./PicCard";
-import dataJson from "./data.json";
+import { useStyle } from './style';
+import PicCard from './PicCard';
+import dataJson from './data.json';
 
 type ImageSpaceProps = {
   /** 类名 */
@@ -28,7 +45,7 @@ const ImageSpace: React.FC<ImageSpaceProps> = (props) => {
   const items: MenuItem[] = [
     {
       key: 'sub1',
-      label: '全部图片'
+      label: '全部图片',
     },
     {
       key: 'sub2',
@@ -36,7 +53,7 @@ const ImageSpace: React.FC<ImageSpaceProps> = (props) => {
       children: [
         {
           key: 'g1',
-          label: '202407'
+          label: '202407',
         },
       ],
     },
@@ -44,9 +61,7 @@ const ImageSpace: React.FC<ImageSpaceProps> = (props) => {
 
   const [cardview, setCardview] = useState(true);
   const [okDisabled, setOkDisabled] = useState(true);
-  const handleOkClick = (e: any) => {
-
-  };
+  const handleOkClick = (e: any) => {};
 
   // const PicCard: React.FC = (props: any) => {
   //   const { checked = true } = props;
@@ -90,61 +105,79 @@ const ImageSpace: React.FC<ImageSpaceProps> = (props) => {
 
   return wrapSSR(
     <div className={classString} style={style}>
-      <div className={classNames(`${prefixCls}-body`, hashId)} >
-        <div className={classNames(`${prefixCls}-aside`, hashId)} >
+      <div className={classNames(`${prefixCls}-body`, hashId)}>
+        <div className={classNames(`${prefixCls}-aside`, hashId)}>
           <div className={classNames(`${prefixCls}-treeDom`, hashId)} />
         </div>
         <div className={classNames(`${prefixCls}-dashboard`, hashId)}>
           {/* <div style={{ display: 'flex', flexGrow: 1, flexBasis: '100%', position: 'absolute', background: 'rgba(255, 255, 255, 0.5)', zIndex: -1, width: '100%', height: '100%' }} /> */}
           <div className={classNames(`${prefixCls}-dashboard-header`, hashId)}>
-            <div className={classNames(`${prefixCls}-dashboard-header-actions`, hashId)}>
-              <div className={classNames(`${prefixCls}-dashboard-header-actions-left`, hashId)}>
-                <AppstoreOutlined style={{
-                  marginRight: '3px',
-                  cursor: 'pointer',
-                  color: cardview
-                    ? token.colorPrimaryTextActive
-                    : token.colorTextSecondary
-                }}
+            <div
+              className={classNames(
+                `${prefixCls}-dashboard-header-actions`,
+                hashId,
+              )}
+            >
+              <div
+                className={classNames(
+                  `${prefixCls}-dashboard-header-actions-left`,
+                  hashId,
+                )}
+              >
+                <AppstoreOutlined
+                  style={{
+                    marginRight: '3px',
+                    cursor: 'pointer',
+                    color: cardview
+                      ? token.colorPrimaryTextActive
+                      : token.colorTextSecondary,
+                  }}
                   onClick={() => {
                     setCardview(true);
                   }}
                 />
-                <UnorderedListOutlined style={{
-                  cursor: 'pointer',
-                  color: cardview
-                    ? token.colorTextSecondary
-                    : token.colorPrimaryTextActive
-                }}
+                <UnorderedListOutlined
+                  style={{
+                    cursor: 'pointer',
+                    color: cardview
+                      ? token.colorTextSecondary
+                      : token.colorPrimaryTextActive,
+                  }}
                   onClick={() => {
                     setCardview(false);
                   }}
                 />
-                <Button style={{
-                  width: "72px",
-                  height: "30px",
-                  marginLeft: "9px",
-                  marginRight: "9px",
-                  fontSize: "12px"
-                }}>
+                <Button
+                  style={{
+                    width: '72px',
+                    height: '30px',
+                    marginLeft: '9px',
+                    marginRight: '9px',
+                    fontSize: '12px',
+                  }}
+                >
                   刷新
                 </Button>
                 <Space.Compact>
-                  <Select style={{ width: '100px' }}
+                  <Select
+                    style={{ width: '100px' }}
                     popupMatchSelectWidth={false}
                     defaultValue={'picture'}
                     options={[
                       { label: '图片', value: 'picture' },
                       { label: '宝贝名称', value: 'name' },
                       { label: '宝贝ID', value: 'id' },
-                    ]} />
-                  <Input style={{ width: '120px' }}
+                    ]}
+                  />
+                  <Input
+                    style={{ width: '120px' }}
                     suffix={<SearchOutlined />}
                     placeholder={'搜索'}
                   />
                 </Space.Compact>
 
-                <Select defaultValue={'timeDes'}
+                <Select
+                  defaultValue={'timeDes'}
                   options={[
                     { label: '文件名升序', value: 'nameAsc' },
                     { label: '文件名降序', value: 'nameDes' },
@@ -154,13 +187,18 @@ const ImageSpace: React.FC<ImageSpaceProps> = (props) => {
                   style={{
                     width: '147px',
                     marginRight: '9px',
-                    marginLeft: '9px'
+                    marginLeft: '9px',
                   }}
                 />
-
               </div>
-              <div className={classNames(`${prefixCls}-dashboard-header-actions-right`, hashId)}>
-                <Button type='primary'
+              <div
+                className={classNames(
+                  `${prefixCls}-dashboard-header-actions-right`,
+                  hashId,
+                )}
+              >
+                <Button
+                  type="primary"
                   style={{ height: '30px', fontSize: '12px' }}
                 >
                   上传图片
@@ -168,42 +206,55 @@ const ImageSpace: React.FC<ImageSpaceProps> = (props) => {
               </div>
             </div>
           </div>
-          {cardview
-            ? (
-              <div className={classNames(`${prefixCls}-dashboard-list`, hashId)}>
-                <div className={classNames(`${prefixCls}-dashboard-list-document`, hashId)}>
-                  {dataJson.files.fileModule.map((item, index) => (
-                    <PicCard key={index}
-                      id={item.pictureId}
-                      name={item.name}
-                      fullUrl={item.fullUrl}
-                      pixel={item.pixel}
-                      isRef={item.ref}
-                      onChange={(value: boolean, prevValue: boolean) => {
-                        console.log('PicCard onChange', value, prevValue);
-                      }}
-                    />
-                  ))}
-                  {Array.from({ length: 10 }).map((item, index) => (
-                    <i className={classNames(`${prefixCls}-pic-dom`, hashId)} />
-                  ))}
-                </div>
+          {cardview ? (
+            <div className={classNames(`${prefixCls}-dashboard-list`, hashId)}>
+              <div
+                className={classNames(
+                  `${prefixCls}-dashboard-list-document`,
+                  hashId,
+                )}
+              >
+                {dataJson.files.fileModule.map((item, index) => (
+                  <PicCard
+                    key={index}
+                    id={item.pictureId}
+                    name={item.name}
+                    fullUrl={item.fullUrl}
+                    pixel={item.pixel}
+                    isRef={item.ref}
+                    onChange={(value: boolean, prevValue: boolean) => {
+                      console.log('PicCard onChange', value, prevValue);
+                    }}
+                  />
+                ))}
+                {Array.from({ length: 10 }).map((item, index) => (
+                  <i className={classNames(`${prefixCls}-pic-dom`, hashId)} />
+                ))}
               </div>
-            ) : (
-              <div className={classNames(`${prefixCls}-dashboard-table`, hashId)}>
-
-              </div>
-            )
-          }
+            </div>
+          ) : (
+            <div
+              className={classNames(`${prefixCls}-dashboard-table`, hashId)}
+            ></div>
+          )}
         </div>
       </div>
       <div className={classNames(`${prefixCls}-footer`, hashId)}>
-        <div style={{ display: 'flex', alignItems: 'center' }} >
-          <Typography.Link target="_blank" style={{ marginLeft: '18px' }}>进入图片空间</Typography.Link>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <Typography.Link target="_blank" style={{ marginLeft: '18px' }}>
+            进入图片空间
+          </Typography.Link>
         </div>
         <div style={{ width: 'calc(100% - 460px)' }} />
-        <div style={{ display: 'flex', alignItems: 'center', flexDirection: 'row-reverse' }} >
-          <Button type='primary'
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            flexDirection: 'row-reverse',
+          }}
+        >
+          <Button
+            type="primary"
             className={classNames(`${prefixCls}-footer-selectOk`, hashId)}
             disabled={okDisabled}
             onClick={handleOkClick}
@@ -212,7 +263,7 @@ const ImageSpace: React.FC<ImageSpaceProps> = (props) => {
           </Button>
         </div>
       </div>
-    </div>
+    </div>,
   );
 };
 

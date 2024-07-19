@@ -1,7 +1,6 @@
 ﻿import type { GenerateStyle, BizAliasToken } from '@web-react/biz-components';
 import { setAlpha, useStyle as useAntdStyle } from '@web-react/biz-components';
 
-
 const genBizStyle: GenerateStyle<BizImageSpaceToken> = (token) => {
   return {
     [token.componentCls]: {
@@ -15,9 +14,7 @@ const genBizStyle: GenerateStyle<BizImageSpaceToken> = (token) => {
       flexDirection: 'column',
       overflowX: 'auto',
       backgroundColor: token.colorBgPage,
-      '&-header': {
-
-      },
+      '&-header': {},
       '&-body': {
         display: 'flex',
         flex: '1 1',
@@ -34,7 +31,7 @@ const genBizStyle: GenerateStyle<BizImageSpaceToken> = (token) => {
           height: '36px',
           width: '107px',
           marginRight: '25px',
-        }
+        },
       },
       '&-aside': {
         width: '158px',
@@ -64,7 +61,7 @@ const genBizStyle: GenerateStyle<BizImageSpaceToken> = (token) => {
           borderRadius: '6px',
           '&:hover': {
             backgroundColor: token.colorBorder,
-          }
+          },
         },
         '&::-webkit-scrollbar-track': {
           background: 'transparent',
@@ -72,7 +69,7 @@ const genBizStyle: GenerateStyle<BizImageSpaceToken> = (token) => {
           width: '4px',
           height: '4px',
           borderRadius: '6px',
-        }
+        },
       },
       '&-dashboard': {
         padding: '6px 0 0 24px',
@@ -105,7 +102,7 @@ const genBizStyle: GenerateStyle<BizImageSpaceToken> = (token) => {
               marginRight: '8px',
             },
             '&-right': {
-              height: '30px'
+              height: '30px',
             },
           },
         },
@@ -116,8 +113,8 @@ const genBizStyle: GenerateStyle<BizImageSpaceToken> = (token) => {
           '&-document': {
             display: 'flex',
             flexWrap: 'wrap',
-            justifyContent: 'space-between'
-          }
+            justifyContent: 'space-between',
+          },
         },
         '&-table': {
           boxSizing: 'border-box',
@@ -126,8 +123,8 @@ const genBizStyle: GenerateStyle<BizImageSpaceToken> = (token) => {
           overflow: 'hidden',
           WebkitUserSelect: 'none',
           MozUserSelect: 'none',
-          userSelect: 'none'
-        }
+          userSelect: 'none',
+        },
       },
       '&-pic': {
         position: 'relative',
@@ -145,9 +142,9 @@ const genBizStyle: GenerateStyle<BizImageSpaceToken> = (token) => {
               },
               '&-copy': {
                 display: 'block !important;',
-              }
-            }
-          }
+              },
+            },
+          },
         },
         '&-background': {
           height: '120px',
@@ -157,7 +154,7 @@ const genBizStyle: GenerateStyle<BizImageSpaceToken> = (token) => {
           display: 'inline-block',
           backgroundColor: token.colorBgPicCard,
           backgroundSize: 'contain',
-          textAlign: 'center'
+          textAlign: 'center',
         },
         '&-imgBox': {
           verticalAlign: 'middle',
@@ -174,10 +171,10 @@ const genBizStyle: GenerateStyle<BizImageSpaceToken> = (token) => {
                 '&-ai-entry': {
                   display: 'inline-flex !important',
                 },
-              }
-            }
+              },
+            },
           },
-          'img': {
+          img: {
             maxHeight: '120px',
             maxWidth: '120px',
           },
@@ -189,7 +186,7 @@ const genBizStyle: GenerateStyle<BizImageSpaceToken> = (token) => {
           right: '10px',
           '&.checked': {
             display: 'flex',
-          }
+          },
         },
         '&-ai-entry': {
           fontSize: '12px',
@@ -205,7 +202,7 @@ const genBizStyle: GenerateStyle<BizImageSpaceToken> = (token) => {
           alignItems: 'center',
           justifyContent: 'center',
           cursor: 'pointer',
-          zIndex: '1000'
+          zIndex: '1000',
         },
         '&-controlWrap': {
           display: 'flex',
@@ -217,9 +214,12 @@ const genBizStyle: GenerateStyle<BizImageSpaceToken> = (token) => {
           borderRadius: '0 0 12px 12px',
           width: '100%',
           height: '36px',
-          backgroundImage: `linear-gradient(180deg, ${setAlpha(token.colorTextBase, .05)}, ${setAlpha(token.colorTextBase, .3)})`,
+          backgroundImage: `linear-gradient(180deg, ${setAlpha(
+            token.colorTextBase,
+            0.05,
+          )}, ${setAlpha(token.colorTextBase, 0.3)})`,
           boxSizing: 'border-box',
-          WebkitBoxSizing: 'border-box'
+          WebkitBoxSizing: 'border-box',
         },
         '&-spec': {
           height: '14px',
@@ -228,18 +228,18 @@ const genBizStyle: GenerateStyle<BizImageSpaceToken> = (token) => {
           fontSize: '14px',
           letterSpacing: '0',
           lineHeight: '14px',
-          color: token.colorControlText
+          color: token.colorControlText,
         },
         '&-copy': {
           display: 'none',
           marginRight: '8px',
           cursor: 'pointer',
-          color: token.colorControlText
+          color: token.colorControlText,
         },
         '&-fullView': {
           marginLeft: 'auto',
           cursor: 'pointer',
-          color: token.colorControlText
+          color: token.colorControlText,
         },
         '&-title': {
           '&-wrap': {
@@ -252,7 +252,7 @@ const genBizStyle: GenerateStyle<BizImageSpaceToken> = (token) => {
             flexShrink: 0,
             height: '16px',
             width: '16px',
-            cursor: 'pointer'
+            cursor: 'pointer',
           },
           '&-tip': {
             whiteSpace: 'nowrap',
@@ -264,17 +264,17 @@ const genBizStyle: GenerateStyle<BizImageSpaceToken> = (token) => {
             fontSize: '12px',
             color: token.colorText,
             lineHeight: '18px',
-            margin: '0 4px'
-          }
+            margin: '0 4px',
+          },
         },
         '&-dom': {
           visibility: 'hidden',
           position: 'relative',
           width: '122px',
           height: '153px',
-          margin: '10px 12px 0 0'
-        }
-      }
+          margin: '10px 12px 0 0',
+        },
+      },
     },
   };
 };
@@ -288,16 +288,20 @@ interface BizImageSpaceToken extends BizAliasToken {
   colorControlText: string;
 }
 export function useStyle(prefixCls?: string) {
-  return useAntdStyle('BizImageSpace', (token) => {
-    const bizToken: BizImageSpaceToken = {
-      ...token,
-      colorBgPage: token.colorBgElevated,
-      colorBgFooter: token.colorBgElevated,
-      colorBgDashboard: token.colorBgContainer,
-      colorBgPicCard: token.colorBgLayout,
-      colorBgSide: token.colorBgLayout,
-      colorControlText: token.colorWhite
-    };
-    return [genBizStyle(bizToken)];
-  }, prefixCls);
+  return useAntdStyle(
+    'BizImageSpace',
+    (token) => {
+      const bizToken: BizImageSpaceToken = {
+        ...token,
+        colorBgPage: token.colorBgElevated,
+        colorBgFooter: token.colorBgElevated,
+        colorBgDashboard: token.colorBgContainer,
+        colorBgPicCard: token.colorBgLayout,
+        colorBgSide: token.colorBgLayout,
+        colorControlText: token.colorWhite,
+      };
+      return [genBizStyle(bizToken)];
+    },
+    prefixCls,
+  );
 }

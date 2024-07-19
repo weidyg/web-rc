@@ -91,7 +91,7 @@ const { yParser } = require('@umijs/utils');
     const tsconfigPath = join(pkgPath, 'tsconfig.json');
     if (args.force || !existsSync(tsconfigPath)) {
       const tsconfigJson = {
-        extends: "../../tsconfig.json",
+        extends: '../../tsconfig.json',
         include: ['./src'],
       };
       writeFileSync(tsconfigPath, `${JSON.stringify(tsconfigJson, null, 2)}\n`);
