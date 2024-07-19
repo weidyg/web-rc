@@ -129,7 +129,7 @@ const PicCard: React.FC<PicCardProps> = (props) => {
           )}
         </label>
         <div className={classNames(`${prefixCls}-pic-title-wrap`, hashId)}>
-          {!isRef && (
+          {isRef && (
             <div className={classNames(`${prefixCls}-pic-title-svg`, hashId)}>
               <img
                 src={refImage}

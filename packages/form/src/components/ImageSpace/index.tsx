@@ -17,6 +17,8 @@ import {
   theme,
   Typography,
   Checkbox,
+  Table,
+  Flex,
 } from 'antd';
 import classNames from 'classnames';
 import { useStyle } from './style';
@@ -61,47 +63,7 @@ const ImageSpace: React.FC<ImageSpaceProps> = (props) => {
 
   const [cardview, setCardview] = useState(true);
   const [okDisabled, setOkDisabled] = useState(true);
-  const handleOkClick = (e: any) => {};
-
-  // const PicCard: React.FC = (props: any) => {
-  //   const { checked = true } = props;
-  //   return (
-  //     <div className={classNames(`${prefixCls}-pic-card`, hashId)} >
-  //       <div className={classNames(`${prefixCls}-pic-background`, hashId)}>
-  //         <label>
-  //           <div className={classNames(`${prefixCls}-pic-imgBox`, hashId)}>
-  //             <img src="https://img.alicdn.com/imgextra/i2/1035339340/O1CN01wu2MZa2IrmD7FVKKo_!!1035339340.png_120x120q90?t=1715407909000" />
-  //             <span className={classNames(`${prefixCls}-pic-ai-entry`, hashId)}>
-  //               AI图片编辑
-  //             </span>
-  //           </div>
-  //           <Checkbox checked={checked}
-  //             className={classNames(`${prefixCls}-pic-checkbox`, hashId, {
-  //               ['checked']: checked
-  //             })}
-  //           />
-  //           <div className={classNames(`${prefixCls}-pic-controlWrap`, hashId)}>
-  //             <span className={classNames(`${prefixCls}-pic-spec`, hashId)}>
-  //               800x729
-  //             </span>
-  //             <CopyOutlined className={classNames(`${prefixCls}-pic-copy`, hashId)} />
-  //             <ExpandOutlined className={classNames(`${prefixCls}-pic-fullView`, hashId)} />
-  //           </div>
-  //         </label>
-  //         <div className={classNames(`${prefixCls}-pic-title-wrap`, hashId)} >
-  //           <div className={classNames(`${prefixCls}-pic-title-svg`, hashId)} >
-  //             <img alt="引用图片" style={{ width: '100%', height: '100%' }}
-  //               src="https://img.alicdn.com/imgextra/i1/O1CN01saONG01pL90lyzsON_!!6000000005343-2-tps-42-42.png"
-  //             />
-  //           </div>
-  //           <div className={classNames(`${prefixCls}-pic-title-tip`, hashId)} >
-  //             <span>aigc-白底图.jpg</span>
-  //           </div>
-  //         </div>
-  //       </div >
-  //     </div >
-  //   );
-  // };
+  const handleOkClick = (e: any) => { };
 
   return wrapSSR(
     <div className={classString} style={style}>
@@ -228,14 +190,86 @@ const ImageSpace: React.FC<ImageSpaceProps> = (props) => {
                   />
                 ))}
                 {Array.from({ length: 10 }).map((item, index) => (
-                  <i className={classNames(`${prefixCls}-pic-dom`, hashId)} />
+                  <i key={index} className={classNames(`${prefixCls}-pic-dom`, hashId)} />
                 ))}
               </div>
             </div>
           ) : (
             <div
               className={classNames(`${prefixCls}-dashboard-table`, hashId)}
-            ></div>
+            >
+              {/* //max-height: calc(-170px + 100vh); position: relative; */}
+              <Table
+                size='middle'
+                scroll={{ y: 'calc(-170px + 100vh)' }}
+                pagination={false}
+                columns={[
+                  {
+                    dataIndex: 'name', title: '文件',
+                    render: (value, record) => (
+                      <div style={{ overflow: 'hidden', display: 'flex' }}>
+                        <div style={{
+                          marginTop: '8px',
+                          marginRight: '10px'
+                        }}>
+                          <Checkbox></Checkbox>
+                        </div>
+                        <div style={{
+                          width: '36px',
+                          height: '36px',
+                          borderRadius: '6px',
+                          objectFit: 'contain'
+                        }}>
+                          <img src={record.fullUrl}
+                            style={{
+                              width: '36px',
+                              height: '36px',
+                              borderRadius: '6px',
+                              objectFit: 'contain'
+                            }} />
+                        </div>
+                        <div style={{
+                          maxWidth: '105px',
+                          fontWeight: '400',
+                          fontFamily: 'PingFangSC',
+                          marginLeft: '10px',
+                          transform: 'translateY(-4px)',
+                          cursor: 'pointer'
+                        }}>
+                          <p style={{
+                            fontSize: '12px',
+                            textAlign: 'center',
+                            whiteSpace: 'nowrap',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis'
+                          }}>
+                            {value}
+                          </p>
+                        </div>
+                      </div>
+                    ),
+                  },
+                  { dataIndex: 'pixel', title: '尺寸', },
+                  { dataIndex: 'sizes', title: '大小', },
+                  { dataIndex: 'status', title: '状态', },
+                  {
+                    dataIndex: 'ref', title: '是否引用', render: (value, record) => (
+                      <> {value + ''}</>
+                    ),
+                  },
+                  { dataIndex: 'gmtModified', title: '修改时间', },
+                  {
+                    dataIndex: 'action', title: '操作', render: (_, record) => (
+                      <Flex gap={4}>
+                        <Button type='link' style={{ padding: 'unset' }}>预览</Button>
+                        <Button type='link' style={{ padding: 'unset' }}>AI图片编辑</Button>
+                      </Flex>
+                    ),
+                  },
+                ]}
+                dataSource={dataJson.files.fileModule}
+              />
+            </div>
           )}
         </div>
       </div>
