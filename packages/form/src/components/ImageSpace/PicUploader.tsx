@@ -150,9 +150,10 @@ const PicUploader: React.FC = () => {
                                     width: '100%',
                                     height: '95%'
                                 }}>
-
-                                <Upload.Dragger
+                                <Upload
+                                    hasControlInside={true}
                                     name='file'
+                                    type="drag"
                                     multiple={true}
                                     accept='image/jpeg,image/bmp,image/gif,.heic,image/png,.webp'
                                     className="UploadPanel_uploadBoard__JQ-Yg"
@@ -202,7 +203,7 @@ const PicUploader: React.FC = () => {
                                             color: '#999'
                                         }}
                                     >图片仅支持3MB以内jpg、bmp、gif、heic、png、jpeg、webp格式。</p>
-                                </Upload.Dragger>
+                                </Upload>
                             </div>
                         </div>
                     </Form>
