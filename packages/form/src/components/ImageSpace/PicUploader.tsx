@@ -144,70 +144,65 @@ const PicUploader: React.FC = () => {
                                 height: '100%',
                                 margin: 0
                             }}>
-                            <div style={{ height: '95%' }}>
-                                <div
-                                    className="UploadPanel_uploadLoading__O-uQm"
+                            <div
+                                className="UploadPanel_uploadLoading__O-uQm"
+                                style={{
+                                    width: '100%',
+                                    height: '95%'
+                                }}>
+
+                                <Upload.Dragger
+                                    name='file'
+                                    multiple={true}
+                                    accept='image/jpeg,image/bmp,image/gif,.heic,image/png,.webp'
+                                    className="UploadPanel_uploadBoard__JQ-Yg"
                                     style={{
+                                        position: 'relative',
+                                        //==--
+                                        height: '100%',
                                         width: '100%',
-                                        height: '100%'
-                                    }}>
-
-                                    <Upload.Dragger
-                                        name='file'
-                                        multiple={true}
-                                        accept='image/jpeg,image/bmp,image/gif,.heic,image/png,.webp'
-                                        className="UploadPanel_uploadBoard__JQ-Yg"
+                                        marginTop: '9px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        flexDirection: 'column',
+                                        cursor: 'pointer'
+                                    }}
+                                >
+                                    <Button type='primary' icon={<UploadOutlined />}
+                                        className="UploadPanel_uploadButton__RUgKt"
                                         style={{
-                                            position: 'relative',
-                                            //==--
-                                            height: '100%',
-                                            width: '100%',
-                                            marginTop: '9px',
-                                            backgroundColor: '#f7f8fa',
-                                            border: '1px dashed #d7dbe0',
-                                            borderRadius: '12px',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            flexDirection: 'column',
-                                            cursor: 'pointer'
-                                        }}
-                                    >
-                                        <Button type='primary' icon={<UploadOutlined />}
-                                            className="UploadPanel_uploadButton__RUgKt"
-                                            style={{
-                                                zIndex: 1,
-                                                //--
+                                            zIndex: 1,
+                                            //--
 
-                                                fontSize: '16px',
-                                                height: '48px',
-                                                padding: '0 18px'
-                                            }}
-                                        >上传</Button>
-                                        <p className="UploadPanel_uploadTips__77Fa1"
-                                            style={{
-                                                marginTop: '18px',
-                                                marginRight: '0',
-                                                marginBottom: '0',
-                                                marginLeft: '0',
-                                                fontWeight: '400',
-                                                fontSize: '14px',
-                                                color: '#333'
-                                            }}
-                                        >点击按钮或将图片拖拽至此处上传</p>
-                                        <p className="UploadPanel_uploadFormat__Qez3d"
-                                            style={{
-                                                marginTop: '14px',
-                                                marginRight: '0',
-                                                marginBottom: '0',
-                                                marginLeft: '0',
-                                                fontWeight: '400',
-                                                fontSize: '12px',
-                                                color: '#999'
-                                            }}
-                                        >图片仅支持3MB以内jpg、bmp、gif、heic、png、jpeg、webp格式。</p>
-                                    </Upload.Dragger>
-                                </div>
+                                            fontSize: '16px',
+                                            height: '48px',
+                                            padding: '0 18px'
+                                        }}
+                                    >上传</Button>
+                                    <p className="UploadPanel_uploadTips__77Fa1"
+                                        style={{
+                                            marginTop: '18px',
+                                            marginRight: '0',
+                                            marginBottom: '0',
+                                            marginLeft: '0',
+                                            fontWeight: '400',
+                                            fontSize: '14px',
+                                            color: '#333'
+                                        }}
+                                    >点击按钮或将图片拖拽至此处上传</p>
+                                    <p className="UploadPanel_uploadFormat__Qez3d"
+                                        style={{
+                                            marginTop: '14px',
+                                            marginRight: '0',
+                                            marginBottom: '0',
+                                            marginLeft: '0',
+                                            fontWeight: '400',
+                                            fontSize: '12px',
+                                            color: '#999'
+                                        }}
+                                    >图片仅支持3MB以内jpg、bmp、gif、heic、png、jpeg、webp格式。</p>
+                                </Upload.Dragger>
                             </div>
                         </div>
                     </Form>
