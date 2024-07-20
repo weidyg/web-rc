@@ -2,6 +2,8 @@ import { LoadingOutlined, UploadOutlined, UpOutlined } from '@ant-design/icons';
 import { Button, Cascader, Checkbox, Form, Input, InputNumber, Radio, Select, Spin, Upload } from 'antd';
 import Alert from 'antd/es/alert/Alert';
 import React, { CSSProperties } from 'react';
+
+
 const baseConfigItem: CSSProperties = {
     alignItems: 'center',
     display: 'flex',
@@ -170,16 +172,18 @@ const PicUploader: React.FC = () => {
                                         cursor: 'pointer'
                                     }}
                                 >
-                                    <Button type='primary' icon={<UploadOutlined />}
-                                        className="UploadPanel_uploadButton__RUgKt"
-                                        style={{
-                                            zIndex: 1,
-                                            //--
-                                            fontSize: '16px',
-                                            height: '48px',
-                                            padding: '0 18px'
-                                        }}
-                                    >上传</Button>
+                                    <Upload>
+                                        <Button type='primary' icon={<UploadOutlined />}
+                                            className="UploadPanel_uploadButton__RUgKt"
+                                            style={{
+                                                zIndex: 1,
+                                                //--
+                                                fontSize: '16px',
+                                                height: '48px',
+                                                padding: '0 18px'
+                                            }}
+                                        >上传</Button>
+                                    </Upload>
                                     <p className="UploadPanel_uploadTips__77Fa1"
                                         style={{
                                             marginTop: '18px',
