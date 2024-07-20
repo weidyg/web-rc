@@ -24,6 +24,7 @@ import classNames from 'classnames';
 import { useStyle } from './style';
 import PicCard from './PicCard';
 import dataJson from './data.json';
+import PicUploader from './PicUploader';
 
 type ImageSpaceProps = {
   /** 类名 */
@@ -67,6 +68,28 @@ const ImageSpace: React.FC<ImageSpaceProps> = (props) => {
 
   return wrapSSR(
     <div className={classString} style={style}>
+      <div className="Home_header__LnDec" style={{ display: 'none' }}>
+        <div style={{
+          display: 'none',
+          alignItems: 'center'
+        }}>
+          <span className="Home_header-title__W71cm">选择图片</span>
+          <span className="Home_header-tip__iQU2C"></span>
+        </div>
+      </div>
+      <span className="qn_iconfont qn_close_blod" style={{
+        cursor: 'pointer',
+        position: 'absolute',
+        top: '18px',
+        right: '15px',
+        width: '30px',
+        height: '30px',
+        fontWeight: '900',
+        display: 'none',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}></span>
+
       <div className={classNames(`${prefixCls}-body`, hashId)}>
         <div className={classNames(`${prefixCls}-aside`, hashId)}>
           <div className={classNames(`${prefixCls}-treeDom`, hashId)} />
@@ -88,7 +111,7 @@ const ImageSpace: React.FC<ImageSpaceProps> = (props) => {
               >
                 <AppstoreOutlined
                   style={{
-                    marginRight: '3px',
+                    marginRight: '8px',
                     cursor: 'pointer',
                     color: cardview
                       ? token.colorPrimaryTextActive
@@ -137,7 +160,6 @@ const ImageSpace: React.FC<ImageSpaceProps> = (props) => {
                     placeholder={'搜索'}
                   />
                 </Space.Compact>
-
                 <Select
                   defaultValue={'timeDes'}
                   options={[
@@ -170,11 +192,7 @@ const ImageSpace: React.FC<ImageSpaceProps> = (props) => {
           </div>
           {cardview ? (
             <div className={classNames(`${prefixCls}-dashboard-list`, hashId)}>
-              <div
-                className={classNames(
-                  `${prefixCls}-dashboard-list-document`,
-                  hashId,
-                )}
+              <div className={classNames(`${prefixCls}-dashboard-list-document`, hashId)}
               >
                 {dataJson.files.fileModule.map((item, index) => (
                   <PicCard
@@ -198,7 +216,6 @@ const ImageSpace: React.FC<ImageSpaceProps> = (props) => {
             <div
               className={classNames(`${prefixCls}-dashboard-table`, hashId)}
             >
-              {/* //max-height: calc(-170px + 100vh); position: relative; */}
               <Table
                 size='middle'
                 scroll={{ y: 'calc(-170px + 100vh)' }}
@@ -272,6 +289,9 @@ const ImageSpace: React.FC<ImageSpaceProps> = (props) => {
             </div>
           )}
         </div>
+
+        <PicUploader />
+
       </div>
       <div className={classNames(`${prefixCls}-footer`, hashId)}>
         <div style={{ display: 'flex', alignItems: 'center' }}>
