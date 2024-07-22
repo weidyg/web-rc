@@ -15,7 +15,7 @@ const PicUploader: React.FC<PicUploaderProps> = (props) => {
     const prefixCls = `${componentCls}-picUploader`;
     const [form] = Form.useForm();
 
-    const croppedImg = (
+    const crop = (
         file: Blob,
         pixelCrop: {
             width: number;
@@ -77,6 +77,28 @@ const PicUploader: React.FC<PicUploaderProps> = (props) => {
         });
     }
 
+    const resizeSize = (file: Blob, size: { width?: number, height?: number }): Promise<Blob> => {
+        const { width, height } = size || {};
+        if (!width && !height) { return Promise.resolve(file); }
+        return new Promise<Blob>((resolve) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => {
+                const img = document.createElement('img');
+                img.src = reader.result as string;
+                img.onload = () => {
+                    const widthRatio = (width || img.width) / img.width;
+                    const heightRatio = (height || img.height) / img.height;
+                    const canvas = document.createElement('canvas');
+                    canvas.width = img.width * widthRatio;
+                    canvas.height = img.height * heightRatio;
+                    const ctx = canvas.getContext('2d')!;
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    canvas.toBlob((result) => resolve(result as any));
+                };
+            };
+        });
+    }
 
     const [fileList, setFileList] = useState<UploadFile[]>([]);
     const [uploading, setUploading] = useState(false);
