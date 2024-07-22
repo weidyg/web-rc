@@ -5,6 +5,7 @@ import { CloseCircleFilled, LoadingOutlined, UploadOutlined } from '@ant-design/
 import { Alert, Button, Cascader, Checkbox, Form, GetProp, InputNumber, Radio, Select, Upload, UploadFile, UploadProps } from 'antd';
 import { useStyle } from './style';
 import dataJson from './data.json';
+import { resizeImgSize } from '@web-react/biz-utils';
 
 type PicUploaderProps = {
     prefixCls?: string;
@@ -15,90 +16,7 @@ const PicUploader: React.FC<PicUploaderProps> = (props) => {
     const prefixCls = `${componentCls}-picUploader`;
     const [form] = Form.useForm();
 
-    const crop = (
-        file: Blob,
-        pixelCrop: {
-            width: number;
-            height: number;
-            x: number;
-            y: number;
-        }, rotation = 0
-    ): Promise<Blob> => {
-        return new Promise<Blob>((resolve) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = () => {
-                const img = document.createElement('img');
-                img.src = reader.result as string;
-                img.onload = () => {
-                    const canvas = document.createElement('canvas');
-                    const imageSize = 2 * ((Math.max(img.width, img.height) / 2) * Math.sqrt(2));
-                    canvas.width = imageSize;
-                    canvas.height = imageSize;
-                    const ctx = canvas.getContext('2d')!;
-                    if (rotation) {
-                        ctx.translate(imageSize / 2, imageSize / 2);
-                        ctx.rotate((rotation * Math.PI) / 180);
-                        ctx.translate(-imageSize / 2, -imageSize / 2);
-                    }
-                    ctx.drawImage(img, imageSize / 2 - img.width / 2, imageSize / 2 - img.height / 2);
-                    const data = ctx.getImageData(0, 0, imageSize, imageSize);
-                    canvas.width = pixelCrop.width;
-                    canvas.height = pixelCrop.height;
-                    ctx.putImageData(data,
-                        Math.round(0 - imageSize / 2 + img.width * 0.5 - pixelCrop.x),
-                        Math.round(0 - imageSize / 2 + img.height * 0.5 - pixelCrop.y)
-                    );
-                    canvas.toBlob((blob) => resolve(blob as any));
-                };
-            };
-        });
-    }
-    const watermark = (file: Blob, text: string): Promise<Blob> => {
-        return new Promise<Blob>((resolve) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = () => {
-                const img = document.createElement('img');
-                img.src = reader.result as string;
-                img.onload = () => {
-                    const canvas = document.createElement('canvas');
-                    canvas.width = img.naturalWidth;
-                    canvas.height = img.naturalHeight;
-                    const ctx = canvas.getContext('2d')!;
-                    ctx.drawImage(img, 0, 0);
-                    ctx.fillStyle = 'red';
-                    ctx.textBaseline = 'middle';
-                    ctx.font = '33px Arial';
-                    ctx.fillText(text, 20, 20);
-                    canvas.toBlob((result) => resolve(result as any));
-                };
-            };
-        });
-    }
 
-    const resizeSize = (file: Blob, size: { width?: number, height?: number }): Promise<Blob> => {
-        const { width, height } = size || {};
-        if (!width && !height) { return Promise.resolve(file); }
-        return new Promise<Blob>((resolve) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = () => {
-                const img = document.createElement('img');
-                img.src = reader.result as string;
-                img.onload = () => {
-                    const widthRatio = (width || img.width) / img.width;
-                    const heightRatio = (height || img.height) / img.height;
-                    const canvas = document.createElement('canvas');
-                    canvas.width = img.width * widthRatio;
-                    canvas.height = img.height * heightRatio;
-                    const ctx = canvas.getContext('2d')!;
-                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                    canvas.toBlob((result) => resolve(result as any));
-                };
-            };
-        });
-    }
 
     const [fileList, setFileList] = useState<UploadFile[]>([]);
     const [uploading, setUploading] = useState(false);
@@ -113,7 +31,7 @@ const PicUploader: React.FC<PicUploaderProps> = (props) => {
             setFileList(fileList);
         },
         beforeUpload: (file, fileList) => {
-            return watermark(file, '水印');
+            return resizeImgSize(file, { width: 100 });
         },
         onRemove: (file) => {
             const index = fileList.indexOf(file);
