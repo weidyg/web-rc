@@ -15,38 +15,83 @@ const PicUploader: React.FC<PicUploaderProps> = (props) => {
     const prefixCls = `${componentCls}-picUploader`;
     const [form] = Form.useForm();
 
+    const croppedImg = (
+        file: Blob,
+        pixelCrop: {
+            width: number;
+            height: number;
+            x: number;
+            y: number;
+        }, rotation = 0
+    ): Promise<Blob> => {
+        return new Promise<Blob>((resolve) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => {
+                const img = document.createElement('img');
+                img.src = reader.result as string;
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const imageSize = 2 * ((Math.max(img.width, img.height) / 2) * Math.sqrt(2));
+                    canvas.width = imageSize;
+                    canvas.height = imageSize;
+                    const ctx = canvas.getContext('2d')!;
+                    if (rotation) {
+                        ctx.translate(imageSize / 2, imageSize / 2);
+                        ctx.rotate((rotation * Math.PI) / 180);
+                        ctx.translate(-imageSize / 2, -imageSize / 2);
+                    }
+                    ctx.drawImage(img, imageSize / 2 - img.width / 2, imageSize / 2 - img.height / 2);
+                    const data = ctx.getImageData(0, 0, imageSize, imageSize);
+                    canvas.width = pixelCrop.width;
+                    canvas.height = pixelCrop.height;
+                    ctx.putImageData(data,
+                        Math.round(0 - imageSize / 2 + img.width * 0.5 - pixelCrop.x),
+                        Math.round(0 - imageSize / 2 + img.height * 0.5 - pixelCrop.y)
+                    );
+                    canvas.toBlob((blob) => resolve(blob as any));
+                };
+            };
+        });
+    }
+    const watermark = (file: Blob, text: string): Promise<Blob> => {
+        return new Promise<Blob>((resolve) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => {
+                const img = document.createElement('img');
+                img.src = reader.result as string;
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = img.naturalWidth;
+                    canvas.height = img.naturalHeight;
+                    const ctx = canvas.getContext('2d')!;
+                    ctx.drawImage(img, 0, 0);
+                    ctx.fillStyle = 'red';
+                    ctx.textBaseline = 'middle';
+                    ctx.font = '33px Arial';
+                    ctx.fillText(text, 20, 20);
+                    canvas.toBlob((result) => resolve(result as any));
+                };
+            };
+        });
+    }
+
+
     const [fileList, setFileList] = useState<UploadFile[]>([]);
     const [uploading, setUploading] = useState(false);
     const uploadProps: UploadProps = {
         name: 'file',
         multiple: true,
         showUploadList: false,
+        action: '/',
         accept: 'image/jpeg,image/bmp,image/gif,.heic,image/png,.webp',
         fileList: fileList,
         onChange: ({ file, fileList, event }) => {
             setFileList(fileList);
         },
         beforeUpload: (file, fileList) => {
-            return new Promise((resolve) => {
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = () => {
-                    const img = document.createElement('img');
-                    img.src = reader.result as string;
-                    img.onload = () => {
-                        const canvas = document.createElement('canvas');
-                        canvas.width = img.naturalWidth;
-                        canvas.height = img.naturalHeight;
-                        const ctx = canvas.getContext('2d')!;
-                        ctx.drawImage(img, 0, 0);
-                        ctx.fillStyle = 'red';
-                        ctx.textBaseline = 'middle';
-                        ctx.font = '33px Arial';
-                        ctx.fillText('Ant Design', 20, 20);
-                        canvas.toBlob((result) => resolve(result as any));
-                    };
-                };
-            });
+            return watermark(file, '水印');
         },
         onRemove: (file) => {
             const index = fileList.indexOf(file);
