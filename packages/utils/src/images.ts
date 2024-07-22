@@ -87,24 +87,24 @@ const loadImg = (file: Blob | string): Promise<HTMLImageElement> => {
 
 
 export const resizeImgSize = async (
-    file: Blob,
+    file: File,
     size: {
         width?: number,
         height?: number
     }
-): Promise<Blob> => {
+): Promise<File> => {
     const { width, height } = size || {};
     if (!width && !height) { return Promise.resolve(file); }
     const img = await loadImg(file);
     const widthRatio = (width || img.width) / img.width;
     const heightRatio = (height || img.height) / img.height;
-    return new Promise<Blob>((resolve) => {
+    return new Promise<File>((resolve) => {
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d')!;
         canvas.width = img.width * widthRatio;
         canvas.height = img.height * heightRatio;
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-        canvas.toBlob((result) => resolve(result as any));
+        canvas.toBlob((blob) => resolve(new File([blob!], file.name, { type: file.type })));
     });
 }
 
