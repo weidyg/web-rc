@@ -275,6 +275,82 @@ const genBizStyle: GenerateStyle<BizImageSpaceToken> = (token) => {
           margin: '10px 12px 0 0',
         },
       },
+      '&-picUploader': {
+        '&-container': {
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          overflow: 'hidden',
+          borderRadius: '12px',
+          zIndex: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          backgroundColor: token.colorBgContainer,
+        },
+        '&-body': {
+          height: 'calc(100% - 65px)',
+          flex: '1 1'
+        },
+        '&-panel': {
+          padding: '4px 21px 0',
+          height: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          '&-form': {
+            height: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            flexWrap: 'nowrap'
+          },
+          '&-config': {
+            display: 'flex',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            '&-item': {
+              margin: 0,
+              padding: '4px 0',
+              display: 'flex',
+              flexWrap: 'nowrap',
+              alignItems: 'center',
+            },
+          },
+          '&-board': {
+            height: '100%',
+            width: '100%',
+            marginTop: '9px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexDirection: 'column',
+            cursor: 'pointer'
+          },
+          '&-btn': {
+            fontSize: '16px',
+            height: '48px',
+            padding: '0 18px'
+          },
+          '&-tips': {
+            marginTop: '18px',
+            marginRight: '0',
+            marginBottom: '0',
+            marginLeft: '0',
+            fontWeight: '400',
+            fontSize: '14px',
+            color: token.colorTextSecondary
+          },
+          '&-format': {
+            marginTop: '14px',
+            marginRight: '0',
+            marginBottom: '0',
+            marginLeft: '0',
+            fontWeight: '400',
+            fontSize: '12px',
+            color: token.colorTextDescription
+          },
+        }
+      }
     },
   };
 };

@@ -1,231 +1,331 @@
-import { LoadingOutlined, UploadOutlined, UpOutlined } from '@ant-design/icons';
-import { Button, Cascader, Checkbox, Form, Input, InputNumber, Radio, Select, Spin, Upload } from 'antd';
-import Alert from 'antd/es/alert/Alert';
-import React, { CSSProperties } from 'react';
 
+import React, { CSSProperties, useState } from 'react';
+import classNames from 'classnames';
+import { CloseCircleFilled, LoadingOutlined, UploadOutlined } from '@ant-design/icons';
+import { Alert, Button, Cascader, Checkbox, Form, GetProp, InputNumber, Radio, Select, Upload, UploadFile, UploadProps } from 'antd';
+import { useStyle } from './style';
+import dataJson from './data.json';
 
-const baseConfigItem: CSSProperties = {
-    alignItems: 'center',
-    display: 'flex',
-    margin: 0,
-    flexWrap: 'nowrap',
-    padding: '4px 0'
+type PicUploaderProps = {
+    prefixCls?: string;
 };
-const PicUploader: React.FC = () => {
-    return (
-        <div className="PicUploader_picUploader-container__XGqts"
-            style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                width: '100%',
-                height: '100%',
-                overflow: 'hidden',
-                borderRadius: '12px',
-                zIndex: 1,
-                backgroundColor: '#fff',
-                display: 'flex',
-                flexDirection: 'column',
-            }}>
-            <div className="PicUploader_picUploader-header__9XsP1"
-                style={{ display: 'none' }}>
-                <span className="PicUploader_picUploader-title__9vZAn">上传图片</span>
-                <span className="qn_iconfont qn_close_blod"
-                    style={{
-                        cursor: 'pointer',
-                        width: '30px',
-                        height: '30px',
-                        fontWeight: '900',
-                        textAlign: 'center',
-                        lineHeight: '30px'
-                    }}>
-                </span>
-            </div>
-            <div className="PicUploader_picUploader-body__kzhzS"
-                style={{
-                    height: 'calc(100% - 65px)',
-                    flex: '1 1'
-                }}
-            >
-                <div className="UploadPanel_uploadPanel__sIQfY"
-                    style={{
-                        padding: '4px 21px 0',
-                        height: '100%',
-                        display: 'flex',
-                        flexDirection: 'column'
-                    }}
-                >
-                    <Form layout='inline'
-                        className='UploadPanel_uploadPanelForm__1t2ha'
+const PicUploader: React.FC<PicUploaderProps> = (props) => {
+    const { } = props;
+    const { prefixCls: componentCls, wrapSSR, hashId } = useStyle(props?.prefixCls);
+    const prefixCls = `${componentCls}-picUploader`;
+    const [form] = Form.useForm();
+
+    const [fileList, setFileList] = useState<UploadFile[]>([]);
+    const [uploading, setUploading] = useState(false);
+    const uploadProps: UploadProps = {
+        name: 'file',
+        multiple: true,
+        showUploadList: false,
+        accept: 'image/jpeg,image/bmp,image/gif,.heic,image/png,.webp',
+        fileList: fileList,
+        onChange: ({ file, fileList, event }) => {
+            setFileList(fileList);
+        },
+        beforeUpload: (file, fileList) => {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => {
+                    const img = document.createElement('img');
+                    img.src = reader.result as string;
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        canvas.width = img.naturalWidth;
+                        canvas.height = img.naturalHeight;
+                        const ctx = canvas.getContext('2d')!;
+                        ctx.drawImage(img, 0, 0);
+                        ctx.fillStyle = 'red';
+                        ctx.textBaseline = 'middle';
+                        ctx.font = '33px Arial';
+                        ctx.fillText('Ant Design', 20, 20);
+                        canvas.toBlob((result) => resolve(result as any));
+                    };
+                };
+            });
+        },
+        onRemove: (file) => {
+            const index = fileList.indexOf(file);
+            const newFileList = fileList.slice();
+            newFileList.splice(index, 1);
+            setFileList(newFileList);
+        },
+        // customRequest: ({ file, onProgress, onSuccess, onError }) => {
+
+        // }
+    };
+
+    // type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
+    // const handleUpload = () => {
+    //     const formData = new FormData();
+    //     fileList.forEach((file) => {
+    //         formData.append('files[]', file as FileType);
+    //     });
+    //     setUploading(true);
+    //     // You can use any AJAX library you like
+    //     fetch('https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload', {
+    //         method: 'POST',
+    //         body: formData,
+    //     })
+    //         .then((res) => res.json())
+    //         .then(() => {
+    //             setFileList([]);
+    //             message.success('upload successfully.');
+    //         })
+    //         .catch(() => {
+    //             message.error('upload failed.');
+    //         })
+    //         .finally(() => {
+    //             setUploading(false);
+    //         });
+    // };
+
+
+
+    function getOptions(list: any[]): any[] {
+        return list.map(m => {
+            return {
+                value: m.id,
+                label: m.name,
+                children: m.children && getOptions(m.children)
+            }
+        })
+    }
+    const cascaderOptions = getOptions([
+        { ...dataJson.dirs, children: [] },
+        ...dataJson.dirs.children,
+    ])
+
+    return wrapSSR(
+        <div className={classNames(`${prefixCls}-container`, hashId)}>
+            <div className={classNames(`${prefixCls}-body`, hashId)}>
+                <div className={classNames(`${prefixCls}-panel`, hashId)}>
+                    <Form form={form} layout='inline'
                         style={{
-                            // display: 'flex'，
-                            //</div></div>
-                            height: '100%',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            flexWrap: 'nowrap'
+                            // display: 'none' 
                         }}
-                    >
-                        <div className="UploadPanel_baseConfig__6-Vm-"
-                            style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                flexWrap: 'wrap'
-                            }}
-                        >
-                            <Form.Item label='上传至'
-                                className='UploadPanel_baseConfigItem__aYP9-'
-                                style={{ color: 'red', display: 'flex' }}
+                        className={classNames(`${prefixCls}-panel-form`, hashId)}
+                        onValuesChange={(changedValues, allValues) => {
+                            const { picWidth, picWidthOption } = changedValues || {};
+                            if (picWidth === false) { form.setFieldsValue({ picWidthOption: undefined }); }
+                            if (picWidthOption !== -1) { form.setFieldsValue({ picWidthValue: 0 }); }
+                            console.log(changedValues, allValues);
+                        }}>
+                        <div className={classNames(`${prefixCls}-panel-config`, hashId)}>
+                            <Form.Item label='上传至' name='folderId'
+                                className={classNames(`${prefixCls}-panel-config-item`, hashId)}
                             >
-                                <Cascader changeOnSelect
-                                    className="UploadPanel_uploadDirSelect__0EQ2a" />
+                                <Cascader
+                                    changeOnSelect
+                                    style={{ width: '150px' }}
+                                    options={cascaderOptions}
+                                />
                             </Form.Item>
-                            <Form.Item
-                                className='UploadPanel_baseConfigItem__aYP9-'
-                                style={{
-                                    marginRight: '3px',
-                                    ...baseConfigItem,
-                                }}
+                            <Form.Item name='picWidth'
+                                style={{ marginRight: '3px', }}
+                                valuePropName={'checked'}
+                                className={classNames(`${prefixCls}-panel-config-item`, hashId)}
                             >
-                                <Checkbox rootClassName="UploadPanel_uploadRadio__uP+TD">
+                                <Checkbox>
                                     <span style={{ fontSize: '12px' }}>图片宽度调整</span>
                                 </Checkbox>
                             </Form.Item>
-
-
-                            <Form.Item
-                                className='UploadPanel_baseConfigItem__aYP9-'
-                                style={{
-                                    ...baseConfigItem,
-                                }}
-                            >
-                                <Select />
+                            <Form.Item noStyle dependencies={['picWidth']}>
+                                {({ getFieldValue }) => (getFieldValue('picWidth') && (
+                                    <Form.Item name='picWidthOption'
+                                        className={classNames(`${prefixCls}-panel-config-item`, hashId)}>
+                                        <Select
+                                            style={{ width: '140px' }}
+                                            options={[
+                                                { label: '手机图片(620px)', value: 620 },
+                                                { label: '800px', value: 800 },
+                                                { label: '640px', value: 640 },
+                                                { label: '自定义', value: -1 },
+                                            ]} />
+                                    </Form.Item>
+                                ))}
                             </Form.Item>
-
-                            <Form.Item
-                                className='UploadPanel_baseConfigItem__aYP9-'
-                                style={{
-                                    ...baseConfigItem,
-                                }}
-                            >
-                                <InputNumber min={0} max={10000} suffix='px' />
+                            <Form.Item noStyle dependencies={['picWidth', 'picWidthOption']}>
+                                {({ getFieldValue }) => (getFieldValue('picWidthOption') === -1 && (
+                                    <Form.Item name='picWidthValue'
+                                        className={classNames(`${prefixCls}-panel-config-item`, hashId)}>
+                                        <InputNumber min={0} max={10000} suffix='px' />
+                                    </Form.Item>
+                                ))}
                             </Form.Item>
-
-
-                            <Form.Item
-                                className='UploadPanel_baseConfigItem__aYP9-'
-                                style={{
-                                    marginRight: '3px',
-                                    ...baseConfigItem,
-                                }}
-                            >
-                                <Checkbox rootClassName="UploadPanel_uploadRadio__uP+TD">
-                                    <span style={{ fontSize: '12px' }}>图片宽度调整</span>
-                                </Checkbox>
-                            </Form.Item>
-
-                            <Form.Item
-                                className='UploadPanel_baseConfigItem__aYP9-'
-                                style={{
-                                    marginRight: '3px',
-                                    ...baseConfigItem,
-                                }}
+                            <Form.Item name='originSize'
+                                style={{ marginRight: '3px', }}
+                                className={classNames(`${prefixCls}-panel-config-item`, hashId)}
                             >
                                 <Radio.Group
                                     options={[
-                                        { label: <span style={{ fontSize: '12px' }}>原图上传</span>, value: 1 },
-                                        { label: <span style={{ fontSize: '12px' }}>图片无损压缩上传</span>, value: 2 },
+                                        { label: <span style={{ fontSize: '12px' }}>原图上传</span>, value: true },
+                                        { label: <span style={{ fontSize: '12px' }}>图片无损压缩上传</span>, value: false },
                                     ]} />
                             </Form.Item>
                             <Button style={{ marginLeft: 'auto' }}>取消上传</Button>
                         </div>
-                        <div className='UploadPanel_uploadBoardFormItem__byBo0'
-                            style={{
-                                display: 'block !important',
-                                width: '100%',
-                                height: '100%',
-                                margin: 0
-                            }}>
-                            <div
-                                className="UploadPanel_uploadLoading__O-uQm"
-                                style={{
-                                    width: '100%',
-                                    height: '95%'
-                                }}>
+                        <div style={{ display: 'block !important', width: '100%', height: '100%', margin: 0 }}>
+                            <div style={{ width: '100%', height: '95%' }}>
                                 <Upload.Dragger
-                                    name='file'
-                                    multiple={true}
+                                    {...uploadProps}
                                     openFileDialogOnClick={false}
-                                    showUploadList={false}
-                                    accept='image/jpeg,image/bmp,image/gif,.heic,image/png,.webp'
-                                    className="UploadPanel_uploadBoard__JQ-Yg"
-                                    style={{
-                                        position: 'relative',
-                                        //==--
-                                        height: '100%',
-                                        width: '100%',
-                                        marginTop: '9px',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        flexDirection: 'column',
-                                        cursor: 'pointer'
-                                    }}
+                                    className={classNames(`${prefixCls}-panel-board`, hashId)}
+                                    style={{ position: 'relative', }}
                                 >
-                                    <Upload>
+                                    <Upload   {...uploadProps}>
                                         <Button type='primary' icon={<UploadOutlined />}
-                                            className="UploadPanel_uploadButton__RUgKt"
-                                            style={{
-                                                zIndex: 1,
-                                                //--
-                                                fontSize: '16px',
-                                                height: '48px',
-                                                padding: '0 18px'
-                                            }}
-                                        >上传</Button>
+                                            className={classNames(`${prefixCls}-panel-btn`, hashId)}
+                                            style={{ zIndex: 1, }}
+                                        >
+                                            上传
+                                        </Button>
                                     </Upload>
-                                    <p className="UploadPanel_uploadTips__77Fa1"
-                                        style={{
-                                            marginTop: '18px',
-                                            marginRight: '0',
-                                            marginBottom: '0',
-                                            marginLeft: '0',
-                                            fontWeight: '400',
-                                            fontSize: '14px',
-                                            color: '#333'
-                                        }}
-                                    >点击按钮或将图片拖拽至此处上传</p>
-                                    <p className="UploadPanel_uploadFormat__Qez3d"
-                                        style={{
-                                            marginTop: '14px',
-                                            marginRight: '0',
-                                            marginBottom: '0',
-                                            marginLeft: '0',
-                                            fontWeight: '400',
-                                            fontSize: '12px',
-                                            color: '#999'
-                                        }}
-                                    >图片仅支持3MB以内jpg、bmp、gif、heic、png、jpeg、webp格式。</p>
+                                    <p className={classNames(`${prefixCls}-panel-tips`, hashId)}>
+                                        点击按钮或将图片拖拽至此处上传
+                                    </p>
+                                    <p className={classNames(`${prefixCls}-panel-format`, hashId)}>
+                                        图片仅支持3MB以内jpg、bmp、gif、heic、png、jpeg、webp格式。
+                                    </p>
                                 </Upload.Dragger>
                             </div>
                         </div>
                     </Form>
-                    <div className="UploadPanel_uploadListPanelContainer__OYsv5" style={{ display: 'none' }}>
-                        <div className="UploadPanel_uploadListPanel__7wFcN">
-                            <Alert banner icon={<LoadingOutlined />} message={`上传中，正在上传 0 个文件`} />
-                            <div className="UploadPanel_uploadFileList__MYDpC">
+                    <div className="UploadPanel_uploadListPanelContainer__OYsv5" style={{
+                        display: 'none',
+                        // display: 'flex',
+                        flex: '1 1',
+                        height: 'calc(100vh - 65px)',
+                        flexDirection: 'column'
+                    }}>
+                        <div className="UploadPanel_uploadListPanel__7wFcN"
+                            style={{
+                                display: 'flex',
+                                flex: '1 1',
+                                width: '100%',
+                                height: '100%',
+                                flexDirection: 'column',
+                                paddingBottom: '20px'
+                            }}>
+                            <Alert
+                                banner
+                                showIcon
+                                type='error'
+                                // icon={<LoadingOutlined />}
+                                message={
+                                    // `上传中，正在上传 0 个文件`
+                                    `有 1 个上传失败，本次共成功上传 0 个文件，请稍后重试。`
+                                } />
+                            <div className="UploadPanel_uploadFileList__MYDpC"
+                                style={{
+                                    display: 'flex',
+                                    marginTop: '12px',
+                                    flexDirection: 'column',
+                                    width: '100%',
+                                    height: 'calc(100% - 118px)',
+                                    // overflowY: 'scroll',
+                                    // overflowY: 'overlay'
+                                }}
+                            >
+
+                                <div className="UploadPanel_fileItem"
+                                    style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        borderRadius: '9px',
+                                        marginBottom: '12px'
+                                        //:last-child { margin-bottom: 0;}
+                                    }}
+                                >
+                                    <div className="UploadPanel_fileImg"
+                                        style={{
+                                            height: '48px',
+                                            width: '48px',
+                                            backgroundColor: '#f7f8fa',
+                                            borderRadius: '12px',
+                                            flexShrink: 0
+                                        }}>
+                                        <img alt="" />
+                                    </div>
+                                    <div className="UploadPanel_fileContent"
+                                        style={{
+                                            width: '40%',
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            justifyContent: 'space-between',
+                                            marginLeft: '12px',
+                                            height: '100%',
+                                            overflow: 'hidden',
+                                            flexShrink: 0
+                                        }}
+                                    >
+                                        <div className="UploadPanel_fileName" style={{
+                                            fontWeight: '500',
+                                            fontSize: '12px',
+                                            color: '#333',
+                                            flex: '1 1',
+                                            overflow: 'hidden',
+                                            textOverflow: 'ellipsis',
+                                            display: '-webkit-box',
+                                            whiteSpace: 'break-all',
+                                            WebkitLineClamp: '2',
+                                            WebkitBoxOrient: 'vertical'
+                                        }}>
+                                            屏幕截图 2024-05-28 102108.png
+                                        </div>
+                                        <div className="UploadPanel_fileDesc"
+                                            style={{
+                                                flexShrink: 0,
+                                                fontSize: '12px',
+                                                color: '#999'
+                                            }}
+                                        >50.71K</div>
+                                    </div>
+                                    <div className="UploadPanel_fileState"
+                                        style={{
+                                            flex: '1 1',
+                                            width: '30%',
+                                            textOverflow: 'ellipsis',
+                                            overflow: 'hidden',
+                                            whiteSpace: 'nowrap'
+                                        }}
+                                    >
+                                        <div style={{
+                                            overflow: 'hidden',
+                                            textOverflow: 'ellipsis'
+                                        }}>
+                                            <CloseCircleFilled style={{ color: 'rgb(255, 51, 51)', marginRight: '10px' }} />
+                                            上传失败&nbsp;&nbsp;网络错误，请尝试禁止浏览器插件或者换浏览器或者换电脑重试
+                                        </div>
+                                    </div>
+                                </div>
 
                             </div>
-                            <div className="UploadPanel_uploadAction__YgoMH">
-                                <div className="UploadPanel_actions__Ht6ba">
+                            <div className="UploadPanel_uploadAction__YgoMH"
+                                style={{
+                                    marginTop: '20px',
+                                    flexShrink: 0,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'space-between'
+                                }}>
+                                <div className="UploadPanel_actions__Ht6ba"
+                                    style={{
+                                        display: 'flex',
+                                        alignItems: 'center'
+                                    }}>
                                     <Button type='text'>继续上传</Button>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div >
-        </div >
+            </div>
+        </div>
     );
 };
 

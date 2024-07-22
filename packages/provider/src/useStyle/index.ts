@@ -69,7 +69,6 @@ export function useStyle(
     /^\./,
     '',
   )}-${suffixCls}`;
-  console.log('token.componentCls', token.componentCls);
   return {
     wrapSSR: useStyleRegister(
       {
