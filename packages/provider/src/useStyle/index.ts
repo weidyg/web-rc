@@ -62,9 +62,8 @@ export function useStyle(
   // if (!token.layout) { token = { ...antdToken } as any; }
   token = { ...antdToken } as any;
   token.antCls = `.${getPrefixCls()}`;
-  token.bizComponentsCls = `.${
-    token.bizComponentsCls?.replace(/^\./, '') ?? getPrefixCls('biz')
-  }`;
+  token.bizComponentsCls = `.${token.bizComponentsCls?.replace(/^\./, '') ?? getPrefixCls('biz')
+    }`;
   token.componentCls = `.${(prefixCls ?? token.bizComponentsCls)?.replace(
     /^\./,
     '',
@@ -78,6 +77,7 @@ export function useStyle(
       },
       () => styleFn(token as BizAliasToken),
     ),
+    token,
     hashId: hashed ? hashId : '',
     prefixCls: token.componentCls?.replace(/^\./, ''),
   };

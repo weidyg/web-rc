@@ -1,37 +1,43 @@
 
-import React, { CSSProperties, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import classNames from 'classnames';
-import { CloseCircleFilled, LoadingOutlined, UploadOutlined } from '@ant-design/icons';
-import { Alert, Button, Cascader, Checkbox, Form, GetProp, InputNumber, Radio, Select, Upload, UploadFile, UploadProps } from 'antd';
+import { CheckCircleFilled, CloseCircleFilled, LoadingOutlined, UploadOutlined } from '@ant-design/icons';
+import { Alert, Button, Cascader, Checkbox, Form, Image, InputNumber, Radio, Select, Upload, UploadFile, UploadProps } from 'antd';
+import { updateFileList, previewImage } from 'antd/es/upload/utils';
+import useForceUpdate from 'antd/es/_util/hooks/useForceUpdate';
 import { useStyle } from './style';
 import dataJson from './data.json';
-import { resizeImgSize } from '@web-react/biz-utils';
+import { convertByteUnit } from '@web-react/biz-utils';
 
 type PicUploaderProps = {
     prefixCls?: string;
 };
 const PicUploader: React.FC<PicUploaderProps> = (props) => {
     const { } = props;
-    const { prefixCls: componentCls, wrapSSR, hashId } = useStyle(props?.prefixCls);
+    const { prefixCls: componentCls, wrapSSR, hashId, token } = useStyle(props?.prefixCls);
     const prefixCls = `${componentCls}-picUploader`;
     const [form] = Form.useForm();
-
-
-
-    const [fileList, setFileList] = useState<UploadFile[]>([]);
     const [uploading, setUploading] = useState(false);
+    const [fileList, setFileList] = useState<UploadFile[]>([]);
+
+
     const uploadProps: UploadProps = {
         name: 'file',
         multiple: true,
         showUploadList: false,
-        action: '/',
+        action: "https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload",
         accept: 'image/jpeg,image/bmp,image/gif,.heic,image/png,.webp',
         fileList: fileList,
-        onChange: ({ file, fileList, event }) => {
-            setFileList(fileList);
+        onChange: ({ file, event }) => {
+            console.log('upload Change', file, fileList, event);
+            if (file.status === 'done') {
+                // setUploading(false);
+            }
+            setFileList(updateFileList(file, fileList));
+            setUploading(true);
         },
         beforeUpload: (file, fileList) => {
-            return resizeImgSize(file, { width: 100 });
+            // return resizeImgSize(file, { width: 100 });
         },
         onRemove: (file) => {
             const index = fileList.indexOf(file);
@@ -90,9 +96,7 @@ const PicUploader: React.FC<PicUploaderProps> = (props) => {
             <div className={classNames(`${prefixCls}-body`, hashId)}>
                 <div className={classNames(`${prefixCls}-panel`, hashId)}>
                     <Form form={form} layout='inline'
-                        style={{
-                            // display: 'none' 
-                        }}
+                        style={{ display: uploading ? 'none' : 'flex' }}
                         className={classNames(`${prefixCls}-panel-form`, hashId)}
                         onValuesChange={(changedValues, allValues) => {
                             const { picWidth, picWidthOption } = changedValues || {};
@@ -162,7 +166,7 @@ const PicUploader: React.FC<PicUploaderProps> = (props) => {
                                     className={classNames(`${prefixCls}-panel-board`, hashId)}
                                     style={{ position: 'relative', }}
                                 >
-                                    <Upload   {...uploadProps}>
+                                    <Upload {...uploadProps}>
                                         <Button type='primary' icon={<UploadOutlined />}
                                             className={classNames(`${prefixCls}-panel-btn`, hashId)}
                                             style={{ zIndex: 1, }}
@@ -180,129 +184,59 @@ const PicUploader: React.FC<PicUploaderProps> = (props) => {
                             </div>
                         </div>
                     </Form>
-                    <div className="UploadPanel_uploadListPanelContainer__OYsv5" style={{
-                        display: 'none',
-                        // display: 'flex',
-                        flex: '1 1',
-                        height: 'calc(100vh - 65px)',
-                        flexDirection: 'column'
-                    }}>
-                        <div className="UploadPanel_uploadListPanel__7wFcN"
-                            style={{
-                                display: 'flex',
-                                flex: '1 1',
-                                width: '100%',
-                                height: '100%',
-                                flexDirection: 'column',
-                                paddingBottom: '20px'
-                            }}>
+                    <div style={{ display: !uploading ? 'none' : 'flex' }}
+                        className={classNames(`${prefixCls}-list-container`, hashId)}
+                    >
+                        <div className={classNames(`${prefixCls}-list`, hashId)}>
                             <Alert
                                 banner
                                 showIcon
                                 type='error'
-                                // icon={<LoadingOutlined />}
+                                icon={uploading ? <LoadingOutlined /> : undefined}
                                 message={
-                                    // `上传中，正在上传 0 个文件`
-                                    `有 1 个上传失败，本次共成功上传 0 个文件，请稍后重试。`
+                                    `上传中，正在上传 ${fileList.length} 个文件`
+                                    // `有 1 个上传失败，本次共成功上传 0 个文件，请稍后重试。`
                                 } />
-                            <div className="UploadPanel_uploadFileList__MYDpC"
-                                style={{
-                                    display: 'flex',
-                                    marginTop: '12px',
-                                    flexDirection: 'column',
-                                    width: '100%',
-                                    height: 'calc(100% - 118px)',
-                                    // overflowY: 'scroll',
-                                    // overflowY: 'overlay'
-                                }}
-                            >
+                            <div className={classNames(`${prefixCls}-list-files`, hashId)}>
+                                {fileList.map((file, index) => (
+                                    <div key={index} className={classNames(`${prefixCls}-list-item`, hashId)}>
+                                        <div className={classNames(`${prefixCls}-list-item-img`, hashId)}>
+                                            <img src={file.thumbUrl || file.url} />
+                                        </div>
+                                        <div className={classNames(`${prefixCls}-list-item-content`, hashId)}>
+                                            <div className={classNames(`${prefixCls}-list-item-name`, hashId)}>
+                                                {file.name}
+                                            </div>
+                                            <div className={classNames(`${prefixCls}-list-item-desc`, hashId)}>
+                                                {convertByteUnit(file.size || 0)}
+                                            </div>
+                                        </div>
+                                        <div className={classNames(`${prefixCls}-list-item-state`, hashId)}>
+                                            <div style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                                {file.status === 'done'
+                                                    ? (<>
+                                                        <CheckCircleFilled style={{ color: token.colorSuccess, marginRight: '10px' }} />
+                                                        上传成功
+                                                    </>)
+                                                    : file.status === 'error' ? (<>
+                                                        <CloseCircleFilled style={{ color: token.colorError, marginRight: '10px' }} />
+                                                        上传失败&nbsp;&nbsp;网络错误，请尝试禁止浏览器插件或者换浏览器或者换电脑重试
+                                                    </>)
+                                                        : file.status === 'uploading' ? (<>
+                                                            <LoadingOutlined style={{ color: token.colorPrimary, marginRight: '10px' }} />
+                                                            上传中
+                                                        </>)
+                                                            : <></>
+                                                }
 
-                                <div className="UploadPanel_fileItem"
-                                    style={{
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        borderRadius: '9px',
-                                        marginBottom: '12px'
-                                        //:last-child { margin-bottom: 0;}
-                                    }}
-                                >
-                                    <div className="UploadPanel_fileImg"
-                                        style={{
-                                            height: '48px',
-                                            width: '48px',
-                                            backgroundColor: '#f7f8fa',
-                                            borderRadius: '12px',
-                                            flexShrink: 0
-                                        }}>
-                                        <img alt="" />
-                                    </div>
-                                    <div className="UploadPanel_fileContent"
-                                        style={{
-                                            width: '40%',
-                                            display: 'flex',
-                                            flexDirection: 'column',
-                                            justifyContent: 'space-between',
-                                            marginLeft: '12px',
-                                            height: '100%',
-                                            overflow: 'hidden',
-                                            flexShrink: 0
-                                        }}
-                                    >
-                                        <div className="UploadPanel_fileName" style={{
-                                            fontWeight: '500',
-                                            fontSize: '12px',
-                                            color: '#333',
-                                            flex: '1 1',
-                                            overflow: 'hidden',
-                                            textOverflow: 'ellipsis',
-                                            display: '-webkit-box',
-                                            whiteSpace: 'break-all',
-                                            WebkitLineClamp: '2',
-                                            WebkitBoxOrient: 'vertical'
-                                        }}>
-                                            屏幕截图 2024-05-28 102108.png
-                                        </div>
-                                        <div className="UploadPanel_fileDesc"
-                                            style={{
-                                                flexShrink: 0,
-                                                fontSize: '12px',
-                                                color: '#999'
-                                            }}
-                                        >50.71K</div>
-                                    </div>
-                                    <div className="UploadPanel_fileState"
-                                        style={{
-                                            flex: '1 1',
-                                            width: '30%',
-                                            textOverflow: 'ellipsis',
-                                            overflow: 'hidden',
-                                            whiteSpace: 'nowrap'
-                                        }}
-                                    >
-                                        <div style={{
-                                            overflow: 'hidden',
-                                            textOverflow: 'ellipsis'
-                                        }}>
-                                            <CloseCircleFilled style={{ color: 'rgb(255, 51, 51)', marginRight: '10px' }} />
-                                            上传失败&nbsp;&nbsp;网络错误，请尝试禁止浏览器插件或者换浏览器或者换电脑重试
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
+                                ))}
 
                             </div>
-                            <div className="UploadPanel_uploadAction__YgoMH"
-                                style={{
-                                    marginTop: '20px',
-                                    flexShrink: 0,
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'space-between'
-                                }}>
-                                <div className="UploadPanel_actions__Ht6ba"
-                                    style={{
-                                        display: 'flex',
-                                        alignItems: 'center'
-                                    }}>
+                            <div className={classNames(`${prefixCls}-list-actions-wrap`, hashId)}>
+                                <div className={classNames(`${prefixCls}-list-actions`, hashId)}>
                                     <Button type='text'>继续上传</Button>
                                 </div>
                             </div>

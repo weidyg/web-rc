@@ -349,7 +349,96 @@ const genBizStyle: GenerateStyle<BizImageSpaceToken> = (token) => {
             fontSize: '12px',
             color: token.colorTextDescription
           },
-        }
+        },
+        '&-list': {
+          display: 'flex',
+          flex: '1 1',
+          width: '100%',
+          height: '100%',
+          flexDirection: 'column',
+          paddingBottom: '20px',
+          '&-container': {
+            display: 'none',
+            flex: '1 1',
+            height: 'calc(100vh - 65px)',
+            flexDirection: 'column',
+          },
+          '&-files': {
+            display: 'flex',
+            marginTop: '12px',
+            flexDirection: 'column',
+            width: '100%',
+            height: 'calc(100% - 118px)',
+            // overflowY: 'scroll',
+            // overflowY: 'overlay'
+          },
+          '&-item': {
+            display: 'flex',
+            alignItems: 'center',
+            borderRadius: '9px',
+            marginBottom: '12px',
+            '&:last-child': {
+              marginBottom: 0
+            },
+            '&-img': {
+              backgroundColor: '#f7f8fa',
+              borderRadius: '12px',
+              flexShrink: 0,
+              height: '48px',
+              width: '48px',
+              'img': {
+                width: '100%',
+                height: '100%',
+                objectFit: 'contain',
+              }
+            },
+            '&-content': {
+              width: '40%',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+              marginLeft: '12px',
+              height: '100%',
+              overflow: 'hidden',
+              flexShrink: 0
+            },
+            '&-name': {
+              fontWeight: '500',
+              fontSize: '12px',
+              color: '#333',
+              flex: '1 1',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              display: '-webkit-box',
+              whiteSpace: 'break-all',
+              WebkitLineClamp: '2',
+              WebkitBoxOrient: 'vertical'
+            },
+            '&-desc': {
+              flexShrink: 0,
+              fontSize: '12px',
+              color: '#999'
+            },
+            '&-state': {
+              flex: '1 1',
+              width: '30%',
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap'
+            }
+          },
+          '&-actions': {
+            '&-wrap': {
+              marginTop: '20px',
+              flexShrink: 0,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            },
+            display: 'flex',
+            alignItems: 'center'
+          }
+        },
       }
     },
   };
