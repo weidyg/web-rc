@@ -194,8 +194,9 @@ const PicUploader: React.FC<PicUploaderProps> = (props) => {
                                 type='error'
                                 icon={uploading ? <LoadingOutlined /> : undefined}
                                 message={
-                                    `上传中，正在上传 ${fileList.length} 个文件`
-                                    // `有 1 个上传失败，本次共成功上传 0 个文件，请稍后重试。`
+                                    fileList.filter(f => f.status === 'uploading').length > 0
+                                        ? `上传中，正在上传 ${fileList.length} 个文件`
+                                        : `有 ${fileList.filter(f => f.status === 'error').length} 个上传失败，本次共成功上传 ${fileList.filter(f => f.status === 'done').length} 个文件，请稍后重试。`
                                 } />
                             <div className={classNames(`${prefixCls}-list-files`, hashId)}>
                                 {fileList.map((file, index) => (
