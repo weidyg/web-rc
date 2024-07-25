@@ -215,22 +215,16 @@ const PicUploader: React.FC<PicUploaderProps> = (props) => {
                                         <div className={classNames(`${prefixCls}-list-item-state`, hashId)}>
                                             <div style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>
                                                 {
-                                                    file.status === 'uploading'
-                                                        ? <>
-                                                            <LoadingOutlined style={{ color: token.colorPrimary, marginRight: '10px' }} />
-                                                            上传中
-                                                        </>
-                                                        : file.status === 'done'
-                                                            ? <>
-                                                                <CheckCircleFilled style={{ color: token.colorSuccess, marginRight: '10px' }} />
-                                                                上传成功
-                                                            </>
-                                                            : file.status === 'error'
-                                                                ? <>
-                                                                    <CloseCircleFilled style={{ color: token.colorError, marginRight: '10px' }} />
-                                                                    上传失败&nbsp;&nbsp;网络错误，请尝试禁止浏览器插件或者换浏览器或者换电脑重试
-                                                                </>
-                                                                : <></>
+                                                    file.status === 'uploading' ? <>
+                                                        <LoadingOutlined style={{ color: token.colorPrimary, marginRight: '10px' }} />
+                                                        上传中
+                                                    </> : file.status === 'done' ? <>
+                                                        <CheckCircleFilled style={{ color: token.colorSuccess, marginRight: '10px' }} />
+                                                        上传成功
+                                                    </> : file.status === 'error' ? <>
+                                                        <CloseCircleFilled style={{ color: token.colorError, marginRight: '10px' }} />
+                                                        上传失败&nbsp;&nbsp;网络错误，请尝试禁止浏览器插件或者换浏览器或者换电脑重试
+                                                    </> : <></>
                                                 }
                                             </div>
                                         </div>
