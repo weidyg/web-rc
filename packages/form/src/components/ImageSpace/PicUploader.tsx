@@ -191,8 +191,14 @@ const PicUploader: React.FC<PicUploaderProps> = (props) => {
                             <Alert
                                 banner
                                 showIcon
-                                type='error'
-                                icon={uploading ? <LoadingOutlined /> : undefined}
+                                type={
+                                    fileList.some(f => f.status === 'uploading')
+                                        ? 'info'
+                                        : fileList.some(f => f.status === 'error')
+                                            ? 'error'
+                                            : 'success'
+                                }
+                                icon={fileList.filter(f => f.status === 'uploading').length > 0 ? <LoadingOutlined /> : undefined}
                                 message={
                                     fileList.filter(f => f.status === 'uploading').length > 0
                                         ? `上传中，正在上传 ${fileList.length} 个文件`
@@ -217,7 +223,7 @@ const PicUploader: React.FC<PicUploaderProps> = (props) => {
                                                 {
                                                     file.status === 'uploading' ? <>
                                                         <LoadingOutlined style={{ color: token.colorPrimary, marginRight: '10px' }} />
-                                                        上传中
+                                                        {`上传中 ${file.percent?.toFixed(2)}%`}
                                                     </> : file.status === 'done' ? <>
                                                         <CheckCircleFilled style={{ color: token.colorSuccess, marginRight: '10px' }} />
                                                         上传成功

@@ -424,7 +424,9 @@ const genBizStyle: GenerateStyle<BizImageSpaceToken> = (token) => {
               width: '30%',
               textOverflow: 'ellipsis',
               overflow: 'hidden',
-              whiteSpace: 'nowrap'
+              whiteSpace: 'nowrap',
+              fontSize: '12px',
+
             }
           },
           '&-actions': {
