@@ -1,10 +1,5 @@
 import { Checkbox, Image, message } from 'antd';
-import {
-  CheckOutlined,
-  CopyOutlined,
-  ExpandOutlined,
-  LoadingOutlined,
-} from '@ant-design/icons';
+import { CheckOutlined, CopyOutlined, ExpandOutlined, LoadingOutlined } from '@ant-design/icons';
 import classNames from 'classnames';
 import { useStyle } from './style';
 import { useEffect, useState } from 'react';
@@ -32,23 +27,16 @@ const PicCard: React.FC<PicCardProps> = (props) => {
   const { id, name, fullUrl = '', pixel, isRef, onAiEdit } = props;
   const { prefixCls, wrapSSR, hashId } = useStyle(props?.prefixCls);
   const [preview, setPreview] = useState(false);
-  const {
-    copied,
-    copyLoading,
-    onClick: onCopyClick,
-  } = useCopyClick({ copyConfig: { text: fullUrl } });
+  const { copied, copyLoading, onClick: onCopyClick } = useCopyClick({ copyConfig: { text: fullUrl } });
   useEffect(() => {
     if (copied) {
       message.success('复制成功');
     }
   }, [copied]);
-  const [checked, setChecked] = useMergedState<boolean>(
-    props?.defaultChecked ?? false,
-    {
-      value: props?.checked,
-      onChange: props?.onChange,
-    },
-  );
+  const [checked, setChecked] = useMergedState<boolean>(props?.defaultChecked ?? false, {
+    value: props?.checked,
+    onChange: props?.onChange,
+  });
   return wrapSSR(
     <div className={classNames(`${prefixCls}-pic`, hashId)}>
       <div className={classNames(`${prefixCls}-pic-background`, hashId)}>
@@ -100,23 +88,13 @@ const PicCard: React.FC<PicCardProps> = (props) => {
                   e.stopPropagation();
                 }}
               >
-                {pixel && (
-                  <span className={classNames(`${prefixCls}-pic-spec`, hashId)}>
-                    {pixel}
-                  </span>
-                )}
+                {pixel && <span className={classNames(`${prefixCls}-pic-spec`, hashId)}>{pixel}</span>}
                 <TransButton
                   style={{ display: 'none' }}
                   className={classNames(`${prefixCls}-pic-copy`, hashId)}
                   onClick={onCopyClick}
                 >
-                  {copied ? (
-                    <CheckOutlined />
-                  ) : copyLoading ? (
-                    <LoadingOutlined />
-                  ) : (
-                    <CopyOutlined />
-                  )}
+                  {copied ? <CheckOutlined /> : copyLoading ? <LoadingOutlined /> : <CopyOutlined />}
                 </TransButton>
                 <ExpandOutlined
                   className={classNames(`${prefixCls}-pic-fullView`, hashId)}
@@ -131,11 +109,7 @@ const PicCard: React.FC<PicCardProps> = (props) => {
         <div className={classNames(`${prefixCls}-pic-title-wrap`, hashId)}>
           {isRef && (
             <div className={classNames(`${prefixCls}-pic-title-svg`, hashId)}>
-              <img
-                src={refImage}
-                alt="引用图片"
-                style={{ width: '100%', height: '100%' }}
-              />
+              <img src={refImage} alt="引用图片" style={{ width: '100%', height: '100%' }} />
             </div>
           )}
           <div className={classNames(`${prefixCls}-pic-title-tip`, hashId)}>

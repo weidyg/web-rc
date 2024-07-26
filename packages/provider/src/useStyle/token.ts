@@ -254,9 +254,8 @@ export const defaultToken = {
   motionDurationSlow: '0.3s',
   fontSizes: [12, 14, 16, 20, 24, 30, 38, 46, 56, 68],
   lineHeights: [
-    1.6666666666666667, 1.5714285714285714, 1.5, 1.4, 1.3333333333333333,
-    1.2666666666666666, 1.2105263157894737, 1.173913043478261,
-    1.1428571428571428, 1.1176470588235294,
+    1.6666666666666667, 1.5714285714285714, 1.5, 1.4, 1.3333333333333333, 1.2666666666666666, 1.2105263157894737,
+    1.173913043478261, 1.1428571428571428, 1.1176470588235294,
   ],
   lineWidthBold: 2,
   borderRadiusXS: 1,
@@ -338,8 +337,7 @@ export const defaultToken = {
   marginLG: 24,
   marginXL: 32,
   marginXXL: 48,
-  boxShadow:
-    '0 1px 2px 0 rgba(0, 0, 0, 0.03),0 1px 6px -1px rgba(0, 0, 0, 0.02),0 2px 4px 0 rgba(0, 0, 0, 0.02)',
+  boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.03),0 1px 6px -1px rgba(0, 0, 0, 0.02),0 2px 4px 0 rgba(0, 0, 0, 0.02)',
   boxShadowSecondary:
     '0 6px 16px 0 rgba(0, 0, 0, 0.08),0 3px 6px -4px rgba(0, 0, 0, 0.12),0 9px 28px 8px rgba(0, 0, 0, 0.05)',
   screenXS: 480,
@@ -387,12 +385,8 @@ export const hashCode = (str: string, seed = 1) => {
     h1 = Math.imul(h1 ^ ch, 2654435761);
     h2 = Math.imul(h2 ^ ch, 1597334677);
   }
-  h1 =
-    Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^
-    Math.imul(h2 ^ (h2 >>> 13), 3266489909);
-  h2 =
-    Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^
-    Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+  h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+  h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
   return 4294967296 * (2097151 & h2) + (h1 >>> 0);
 };
 

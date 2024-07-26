@@ -13,13 +13,12 @@ import { BizProvider } from '../index';
  * @param alpha {0-1}
  * @returns rgba {string}
  */
-export const setAlpha = (baseColor: string, alpha: number) =>
-  new TinyColor(baseColor).setAlpha(alpha).toRgbString();
+export const setAlpha = (baseColor: string, alpha: number) => new TinyColor(baseColor).setAlpha(alpha).toRgbString();
 
-export type GenerateStyle<
-  ComponentToken extends object = GlobalToken,
-  ReturnType = CSSInterpolation,
-> = (token: ComponentToken, ...rest: any[]) => ReturnType;
+export type GenerateStyle<ComponentToken extends object = GlobalToken, ReturnType = CSSInterpolation> = (
+  token: ComponentToken,
+  ...rest: any[]
+) => ReturnType;
 
 const genTheme = (): any => {
   if (typeof theme === 'undefined' || !theme) {
@@ -48,8 +47,7 @@ export function useStyle(
   styleFn: (token: BizAliasToken) => CSSInterpolation,
   prefixCls?: string,
 ) {
-  let { token = {} as Record<string, any> as BizAliasToken } =
-    useContext(BizProvider);
+  let { token = {} as Record<string, any> as BizAliasToken } = useContext(BizProvider);
   const { hashed, theme: provideTheme } = useContext(BizProvider);
   const { token: antdToken, hashId } = useToken();
   const { getPrefixCls } = useContext(AntdConfigProvider.ConfigContext);
@@ -62,12 +60,8 @@ export function useStyle(
   // if (!token.layout) { token = { ...antdToken } as any; }
   token = { ...antdToken } as any;
   token.antCls = `.${getPrefixCls()}`;
-  token.bizComponentsCls = `.${token.bizComponentsCls?.replace(/^\./, '') ?? getPrefixCls('biz')
-    }`;
-  token.componentCls = `.${(prefixCls ?? token.bizComponentsCls)?.replace(
-    /^\./,
-    '',
-  )}-${suffixCls}`;
+  token.bizComponentsCls = `.${token.bizComponentsCls?.replace(/^\./, '') ?? getPrefixCls('biz')}`;
+  token.componentCls = `.${(prefixCls ?? token.bizComponentsCls)?.replace(/^\./, '')}-${suffixCls}`;
   return {
     wrapSSR: useStyleRegister(
       {

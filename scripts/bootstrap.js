@@ -6,9 +6,7 @@ const { yParser } = require('@umijs/utils');
   const args = yParser(process.argv);
   const version = '1.0.0-beta.1';
 
-  const pkgs = readdirSync(join(__dirname, '../packages')).filter(
-    (pkg) => pkg.charAt(0) !== '.',
-  );
+  const pkgs = readdirSync(join(__dirname, '../packages')).filter((pkg) => pkg.charAt(0) !== '.');
 
   pkgs.forEach((shortName) => {
     const name = `@web-react/biz-${shortName}`;

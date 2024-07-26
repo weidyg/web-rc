@@ -1,8 +1,20 @@
-
 import React, { useEffect, useMemo, useState } from 'react';
 import classNames from 'classnames';
 import { CheckCircleFilled, CloseCircleFilled, LoadingOutlined, UploadOutlined } from '@ant-design/icons';
-import { Alert, Button, Cascader, Checkbox, Form, Image, InputNumber, Radio, Select, Upload, UploadFile, UploadProps } from 'antd';
+import {
+    Alert,
+    Button,
+    Cascader,
+    Checkbox,
+    Form,
+    Image,
+    InputNumber,
+    Radio,
+    Select,
+    Upload,
+    UploadFile,
+    UploadProps,
+} from 'antd';
 import { updateFileList, previewImage } from 'antd/es/upload/utils';
 import useForceUpdate from 'antd/es/_util/hooks/useForceUpdate';
 import { useStyle } from './style';
@@ -24,24 +36,12 @@ const PicUploader: React.FC<PicUploaderProps> = (props) => {
         name: 'file',
         multiple: true,
         showUploadList: false,
-        action: "https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload",
+        action: 'https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload',
         accept: 'image/jpeg,image/bmp,image/gif,.heic,image/png,.webp',
         fileList: fileList,
         onChange: ({ file, fileList, event }) => {
             setFileList(fileList);
         },
-        beforeUpload: (file, fileList) => {
-            // return resizeImgSize(file, { width: 100 });
-        },
-        onRemove: (file) => {
-            const index = fileList.indexOf(file);
-            const newFileList = fileList.slice();
-            newFileList.splice(index, 1);
-            setFileList(newFileList);
-        },
-        // customRequest: ({ file, onProgress, onSuccess, onError }) => {
-
-        // }
     };
 
     // type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
@@ -70,22 +70,19 @@ const PicUploader: React.FC<PicUploaderProps> = (props) => {
     // };
 
     function getOptions(list: any[]): any[] {
-        return list.map(m => {
+        return list.map((m) => {
             return {
                 value: m.id,
                 label: m.name,
-                children: m.children && getOptions(m.children)
-            }
-        })
+                children: m.children && getOptions(m.children),
+            };
+        });
     }
-    const cascaderOptions = getOptions([
-        { ...dataJson.dirs, children: [] },
-        ...dataJson.dirs.children,
-    ])
+    const cascaderOptions = getOptions([{ ...dataJson.dirs, children: [] }, ...dataJson.dirs.children]);
 
     const count = useMemo(() => {
-        let count = { uploading: 0, success: 0, failed: 0, };
-        fileList.forEach(file => {
+        let count = { uploading: 0, success: 0, failed: 0 };
+        fileList.forEach((file) => {
             switch (file.status) {
                 case 'uploading':
                     count.uploading++;
@@ -99,33 +96,45 @@ const PicUploader: React.FC<PicUploaderProps> = (props) => {
             }
         });
         return count;
-    }, fileList)
+    }, fileList);
 
     return wrapSSR(
-        <div className={classNames(`${prefixCls}-container`, hashId)}>
+        <div style={{ display: !uploading ? 'none' : 'flex' }}
+            className={classNames(`${prefixCls}-container`, hashId)}>
             <div className={classNames(`${prefixCls}-body`, hashId)}>
                 <div className={classNames(`${prefixCls}-panel`, hashId)}>
-                    <Form form={form} layout='inline'
+                    <Form
+                        form={form}
+                        layout="inline"
                         style={{ display: uploading ? 'none' : 'flex' }}
                         className={classNames(`${prefixCls}-panel-form`, hashId)}
                         onValuesChange={(changedValues, allValues) => {
                             const { picWidth, picWidthOption } = changedValues || {};
-                            if (picWidth === false) { form.setFieldsValue({ picWidthOption: undefined }); }
-                            if (picWidthOption !== -1) { form.setFieldsValue({ picWidthValue: 0 }); }
+                            if (picWidth === false) {
+                                form.setFieldsValue({ picWidthOption: undefined });
+                            }
+                            if (picWidthOption !== -1) {
+                                form.setFieldsValue({ picWidthValue: 0 });
+                            }
                             console.log(changedValues, allValues);
-                        }}>
+                        }}
+                    >
                         <div className={classNames(`${prefixCls}-panel-config`, hashId)}>
-                            <Form.Item label='上传至' name='folderId'
+                            <Form.Item
+                                label="上传至"
+                                name="folderId"
                                 className={classNames(`${prefixCls}-panel-config-item`, hashId)}
                             >
                                 <Cascader
+                                    allowClear={false}
                                     changeOnSelect
                                     style={{ width: '150px' }}
                                     options={cascaderOptions}
                                 />
                             </Form.Item>
-                            <Form.Item name='picWidth'
-                                style={{ marginRight: '3px', }}
+                            <Form.Item
+                                name="picWidth"
+                                style={{ marginRight: '3px' }}
                                 valuePropName={'checked'}
                                 className={classNames(`${prefixCls}-panel-config-item`, hashId)}
                             >
@@ -134,37 +143,42 @@ const PicUploader: React.FC<PicUploaderProps> = (props) => {
                                 </Checkbox>
                             </Form.Item>
                             <Form.Item noStyle dependencies={['picWidth']}>
-                                {({ getFieldValue }) => (getFieldValue('picWidth') && (
-                                    <Form.Item name='picWidthOption'
-                                        className={classNames(`${prefixCls}-panel-config-item`, hashId)}>
-                                        <Select
-                                            style={{ width: '140px' }}
-                                            options={[
-                                                { label: '手机图片(620px)', value: 620 },
-                                                { label: '800px', value: 800 },
-                                                { label: '640px', value: 640 },
-                                                { label: '自定义', value: -1 },
-                                            ]} />
-                                    </Form.Item>
-                                ))}
+                                {({ getFieldValue }) =>
+                                    getFieldValue('picWidth') && (
+                                        <Form.Item name="picWidthOption" className={classNames(`${prefixCls}-panel-config-item`, hashId)}>
+                                            <Select
+                                                style={{ width: '140px' }}
+                                                options={[
+                                                    { label: '手机图片(620px)', value: 620 },
+                                                    { label: '800px', value: 800 },
+                                                    { label: '640px', value: 640 },
+                                                    { label: '自定义', value: -1 },
+                                                ]}
+                                            />
+                                        </Form.Item>
+                                    )
+                                }
                             </Form.Item>
                             <Form.Item noStyle dependencies={['picWidth', 'picWidthOption']}>
-                                {({ getFieldValue }) => (getFieldValue('picWidthOption') === -1 && (
-                                    <Form.Item name='picWidthValue'
-                                        className={classNames(`${prefixCls}-panel-config-item`, hashId)}>
-                                        <InputNumber min={0} max={10000} suffix='px' />
-                                    </Form.Item>
-                                ))}
+                                {({ getFieldValue }) =>
+                                    getFieldValue('picWidthOption') === -1 && (
+                                        <Form.Item name="picWidthValue" className={classNames(`${prefixCls}-panel-config-item`, hashId)}>
+                                            <InputNumber min={0} max={10000} suffix="px" />
+                                        </Form.Item>
+                                    )
+                                }
                             </Form.Item>
-                            <Form.Item name='originSize'
-                                style={{ marginRight: '3px', }}
+                            <Form.Item
+                                name="originSize"
+                                style={{ marginRight: '3px' }}
                                 className={classNames(`${prefixCls}-panel-config-item`, hashId)}
                             >
                                 <Radio.Group
                                     options={[
                                         { label: <span style={{ fontSize: '12px' }}>原图上传</span>, value: true },
                                         { label: <span style={{ fontSize: '12px' }}>图片无损压缩上传</span>, value: false },
-                                    ]} />
+                                    ]}
+                                />
                             </Form.Item>
                             <Button style={{ marginLeft: 'auto' }}>取消上传</Button>
                         </div>
@@ -174,19 +188,19 @@ const PicUploader: React.FC<PicUploaderProps> = (props) => {
                                     {...uploadProps}
                                     openFileDialogOnClick={false}
                                     className={classNames(`${prefixCls}-panel-board`, hashId)}
-                                    style={{ position: 'relative', }}
+                                    style={{ position: 'relative' }}
                                 >
                                     <Upload {...uploadProps}>
-                                        <Button type='primary' icon={<UploadOutlined />}
+                                        <Button
+                                            type="primary"
+                                            icon={<UploadOutlined />}
                                             className={classNames(`${prefixCls}-panel-btn`, hashId)}
-                                            style={{ zIndex: 1, }}
+                                            style={{ zIndex: 1 }}
                                         >
                                             上传
                                         </Button>
                                     </Upload>
-                                    <p className={classNames(`${prefixCls}-panel-tips`, hashId)}>
-                                        点击按钮或将图片拖拽至此处上传
-                                    </p>
+                                    <p className={classNames(`${prefixCls}-panel-tips`, hashId)}>点击按钮或将图片拖拽至此处上传</p>
                                     <p className={classNames(`${prefixCls}-panel-format`, hashId)}>
                                         图片仅支持3MB以内jpg、bmp、gif、heic、png、jpeg、webp格式。
                                     </p>
@@ -194,7 +208,8 @@ const PicUploader: React.FC<PicUploaderProps> = (props) => {
                             </div>
                         </div>
                     </Form>
-                    <div style={{ display: !uploading ? 'none' : 'flex' }}
+                    <div
+                        style={{ display: !uploading ? 'none' : 'flex' }}
                         className={classNames(`${prefixCls}-list-container`, hashId)}
                     >
                         <div className={classNames(`${prefixCls}-list`, hashId)}>
@@ -203,10 +218,12 @@ const PicUploader: React.FC<PicUploaderProps> = (props) => {
                                 showIcon
                                 type={count.uploading > 0 ? 'info' : count.failed > 0 ? 'error' : 'success'}
                                 icon={count.uploading > 0 ? <LoadingOutlined /> : undefined}
-                                message={count.uploading > 0
-                                    ? `上传中，正在上传 ${fileList.length} 个文件`
-                                    : `有 ${count.failed} 个上传失败，本次共成功上传 ${count.success} 个文件，请稍后重试。`
-                                } />
+                                message={
+                                    count.uploading > 0
+                                        ? `上传中，正在上传 ${fileList.length} 个文件`
+                                        : `有 ${count.failed} 个上传失败，本次共成功上传 ${count.success} 个文件，请稍后重试。`
+                                }
+                            />
                             <div className={classNames(`${prefixCls}-list-files`, hashId)}>
                                 {fileList.map((file, index) => (
                                     <div key={index} className={classNames(`${prefixCls}-list-item`, hashId)}>
@@ -214,43 +231,46 @@ const PicUploader: React.FC<PicUploaderProps> = (props) => {
                                             <img src={file.thumbUrl || file.url} />
                                         </div>
                                         <div className={classNames(`${prefixCls}-list-item-content`, hashId)}>
-                                            <div className={classNames(`${prefixCls}-list-item-name`, hashId)}>
-                                                {file.name}
-                                            </div>
+                                            <div className={classNames(`${prefixCls}-list-item-name`, hashId)}>{file.name}</div>
                                             <div className={classNames(`${prefixCls}-list-item-desc`, hashId)}>
                                                 {convertByteUnit(file.size || 0)}
                                             </div>
                                         </div>
                                         <div className={classNames(`${prefixCls}-list-item-state`, hashId)}>
                                             <div style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                                                {
-                                                    file.status === 'uploading' ? <>
+                                                {file.status === 'uploading' ? (
+                                                    <>
                                                         <LoadingOutlined style={{ color: token.colorPrimary, marginRight: '10px' }} />
                                                         {`上传中 ${file.percent?.toFixed(2)}%`}
-                                                    </> : file.status === 'done' ? <>
+                                                    </>
+                                                ) : file.status === 'done' ? (
+                                                    <>
                                                         <CheckCircleFilled style={{ color: token.colorSuccess, marginRight: '10px' }} />
                                                         上传成功
-                                                    </> : file.status === 'error' ? <>
+                                                    </>
+                                                ) : file.status === 'error' ? (
+                                                    <>
                                                         <CloseCircleFilled style={{ color: token.colorError, marginRight: '10px' }} />
                                                         上传失败&nbsp;&nbsp;网络错误，请尝试禁止浏览器插件或者换浏览器或者换电脑重试
-                                                    </> : <></>
-                                                }
+                                                    </>
+                                                ) : (
+                                                    <></>
+                                                )}
                                             </div>
                                         </div>
                                     </div>
                                 ))}
-
                             </div>
                             <div className={classNames(`${prefixCls}-list-actions-wrap`, hashId)}>
                                 <div className={classNames(`${prefixCls}-list-actions`, hashId)}>
-                                    <Button type='text'>继续上传</Button>
+                                    <Button type="text">继续上传</Button>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </div>,
     );
 };
 

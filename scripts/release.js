@@ -20,10 +20,7 @@ function logStep(name) {
 
 function packageExists({ name, version }) {
   try {
-    const { stdout, stderr } = execa.sync('npm', [
-      'info',
-      `${name}@${version}`,
-    ]);
+    const { stdout, stderr } = execa.sync('npm', ['info', `${name}@${version}`]);
     if (stderr) return false;
     return stdout.length > 0;
   } catch (error) {
@@ -39,9 +36,7 @@ async function release() {
       printErrorAndExit(`Your git status is not clean. Aborting.`);
     }
   } else {
-    logStep(
-      'git status check is skipped, since --skip-git-status-check is supplied',
-    );
+    logStep('git status check is skipped, since --skip-git-status-check is supplied');
   }
 
   // Check npm registry
@@ -49,9 +44,7 @@ async function release() {
   const userRegistry = execa.sync('npm', ['config', 'get', 'registry']).stdout;
   console.log(`npm registry: ${userRegistry}`);
   if (userRegistry.includes('https://registry.yarnpkg.com')) {
-    printErrorAndExit(
-      `Release failed, please use ${chalk.blue('npm run release')}.`,
-    );
+    printErrorAndExit(`Release failed, please use ${chalk.blue('npm run release')}.`);
   }
   if (!userRegistry.includes('https://registry.npmjs.org')) {
     const registry = chalk.blue('https://registry.npmjs.org');
@@ -92,16 +85,12 @@ async function release() {
 
     const conventionalGraduate = args.conventionalGraduate
       ? ['--conventional-graduate'].concat(
-          Array.isArray(args.conventionalGraduate)
-            ? args.conventionalGraduate.join(',')
-            : [],
+          Array.isArray(args.conventionalGraduate) ? args.conventionalGraduate.join(',') : [],
         )
       : [];
     const conventionalPrerelease = args.conventionalPrerelease
       ? ['--conventional-prerelease'].concat(
-          Array.isArray(args.conventionalPrerelease)
-            ? args.conventionalPrerelease.join(',')
-            : [],
+          Array.isArray(args.conventionalPrerelease) ? args.conventionalPrerelease.join(',') : [],
         )
       : [];
 
@@ -151,9 +140,7 @@ async function release() {
     if (args.publishOnly) {
       isPackageExist = packageExists({ name, version });
       if (isPackageExist) {
-        console.log(
-          `package ${name}@${version} is already exists on npm, skip.`,
-        );
+        console.log(`package ${name}@${version} is already exists on npm, skip.`);
       }
     }
 

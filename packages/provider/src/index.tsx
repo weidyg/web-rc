@@ -8,8 +8,7 @@ import { merge } from './utils/merge';
 export const isNeedOpenHash = () => {
   if (
     typeof process !== 'undefined' &&
-    (process.env.NODE_ENV?.toUpperCase() === 'TEST' ||
-      process.env.NODE_ENV?.toUpperCase() === 'DEV')
+    (process.env.NODE_ENV?.toUpperCase() === 'TEST' || process.env.NODE_ENV?.toUpperCase() === 'DEV')
   ) {
     return false;
   }
@@ -25,14 +24,10 @@ const BizConfigContext = createContext<ConfigContextPropsType>({
 const ConfigProviderContainer: React.FC<BizConfigProviderProps> = (props) => {
   const { children, dark, token: propsToken, prefixCls } = props;
 
-  const { locale, getPrefixCls, ...restConfig } = useContext(
-    AntdConfigProvider.ConfigContext,
-  );
+  const { locale, getPrefixCls, ...restConfig } = useContext(AntdConfigProvider.ConfigContext);
   const tokenContext = bizTheme.useToken?.();
   const bizProvide = useContext(BizConfigContext);
-  const bizComponentsCls = prefixCls
-    ? `.${prefixCls}`
-    : `.${getPrefixCls()}-biz`;
+  const bizComponentsCls = prefixCls ? `.${prefixCls}` : `.${getPrefixCls()}-biz`;
   const antCls = `.${getPrefixCls()}`;
   const salt = `${bizComponentsCls}`;
 
@@ -127,11 +122,7 @@ const ConfigProviderContainer: React.FC<BizConfigProviderProps> = (props) => {
   }, [proProvideValue, token, tokenContext.theme, hashed, hashId]);
 
   const configProviderDom = useMemo(() => {
-    return (
-      <BizConfigContext.Provider value={bizConfigContextValue}>
-        {children}
-      </BizConfigContext.Provider>
-    );
+    return <BizConfigContext.Provider value={bizConfigContextValue}>{children}</BizConfigContext.Provider>;
   }, [restConfig, children]);
 
   return <>{configProviderDom}</>;
@@ -159,9 +150,7 @@ export type BizConfigProviderProps = {
   dark?: boolean;
   prefixCls?: string;
 };
-export type DeepPartial<T> = T extends object
-  ? { [P in keyof T]?: DeepPartial<T[P]> }
-  : T;
+export type DeepPartial<T> = T extends object ? { [P in keyof T]?: DeepPartial<T[P]> } : T;
 BizConfigProvider.displayName = 'BizProvider';
 export const BizProvider = BizConfigContext;
 export default BizConfigContext;
