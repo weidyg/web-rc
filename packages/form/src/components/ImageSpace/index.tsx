@@ -139,11 +139,9 @@ const ImageSpace: React.FC<ImageSpaceProps> = (props) => {
               treeData={items}
               onClick={(e) => console.log(e)}
               onSelect={(e) => console.log(e)}
-              checkStrictly
-              titleRender={(node) => {
-                return node.title;
-              }}
-            />
+            >
+              1223
+            </Tree>
             {/* <Menu
               style={{ borderRadius: token.borderRadius }}
               items={items}
