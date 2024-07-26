@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import classNames from 'classnames';
 import { CheckCircleFilled, CloseCircleFilled, LoadingOutlined, UploadOutlined } from '@ant-design/icons';
 import { Alert, Button, Cascader, Checkbox, Form, Image, InputNumber, Radio, Select, Upload, UploadFile, UploadProps } from 'antd';
@@ -20,7 +20,6 @@ const PicUploader: React.FC<PicUploaderProps> = (props) => {
     const [uploading, setUploading] = useState(false);
     const [fileList, setFileList] = useState<UploadFile[]>([]);
 
-
     const uploadProps: UploadProps = {
         name: 'file',
         multiple: true,
@@ -28,13 +27,8 @@ const PicUploader: React.FC<PicUploaderProps> = (props) => {
         action: "https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload",
         accept: 'image/jpeg,image/bmp,image/gif,.heic,image/png,.webp',
         fileList: fileList,
-        onChange: ({ file, event }) => {
-            console.log('upload Change', file, fileList, event);
-            if (file.status === 'done') {
-                // setUploading(false);
-            }
-            setFileList(updateFileList(file, fileList));
-            setUploading(true);
+        onChange: ({ file, fileList, event }) => {
+            setFileList(fileList);
         },
         beforeUpload: (file, fileList) => {
             // return resizeImgSize(file, { width: 100 });
@@ -75,8 +69,6 @@ const PicUploader: React.FC<PicUploaderProps> = (props) => {
     //         });
     // };
 
-
-
     function getOptions(list: any[]): any[] {
         return list.map(m => {
             return {
@@ -90,6 +82,24 @@ const PicUploader: React.FC<PicUploaderProps> = (props) => {
         { ...dataJson.dirs, children: [] },
         ...dataJson.dirs.children,
     ])
+
+    const count = useMemo(() => {
+        let count = { uploading: 0, success: 0, failed: 0, };
+        fileList.forEach(file => {
+            switch (file.status) {
+                case 'uploading':
+                    count.uploading++;
+                    break;
+                case 'done':
+                    count.success++;
+                    break;
+                case 'error':
+                    count.failed++;
+                    break;
+            }
+        });
+        return count;
+    }, fileList)
 
     return wrapSSR(
         <div className={classNames(`${prefixCls}-container`, hashId)}>
@@ -191,18 +201,11 @@ const PicUploader: React.FC<PicUploaderProps> = (props) => {
                             <Alert
                                 banner
                                 showIcon
-                                type={
-                                    fileList.some(f => f.status === 'uploading')
-                                        ? 'info'
-                                        : fileList.some(f => f.status === 'error')
-                                            ? 'error'
-                                            : 'success'
-                                }
-                                icon={fileList.filter(f => f.status === 'uploading').length > 0 ? <LoadingOutlined /> : undefined}
-                                message={
-                                    fileList.filter(f => f.status === 'uploading').length > 0
-                                        ? `上传中，正在上传 ${fileList.length} 个文件`
-                                        : `有 ${fileList.filter(f => f.status === 'error').length} 个上传失败，本次共成功上传 ${fileList.filter(f => f.status === 'done').length} 个文件，请稍后重试。`
+                                type={count.uploading > 0 ? 'info' : count.failed > 0 ? 'error' : 'success'}
+                                icon={count.uploading > 0 ? <LoadingOutlined /> : undefined}
+                                message={count.uploading > 0
+                                    ? `上传中，正在上传 ${fileList.length} 个文件`
+                                    : `有 ${count.failed} 个上传失败，本次共成功上传 ${count.success} 个文件，请稍后重试。`
                                 } />
                             <div className={classNames(`${prefixCls}-list-files`, hashId)}>
                                 {fileList.map((file, index) => (
