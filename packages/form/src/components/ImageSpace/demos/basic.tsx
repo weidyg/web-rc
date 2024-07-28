@@ -1,5 +1,5 @@
 import { ProConfigProvider } from '@ant-design/pro-components';
-import { ImageSpace } from '@web-react/biz-components';
+import { ImageSpace, ImageSpaceLayout } from '@web-react/biz-components';
 import { Button, FloatButton } from 'antd';
 import { ThemeProvider } from 'antd-style';
 import { useState } from 'react';
@@ -15,7 +15,7 @@ export default () => {
         切换主题
       </FloatButton>
       <ThemeProvider themeMode={themeMode}>
-        <ImageSpace />
+        <ImageSpaceLayout />
       </ThemeProvider>
     </>
   );

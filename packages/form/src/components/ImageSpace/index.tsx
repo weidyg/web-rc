@@ -35,13 +35,12 @@ type ImageSpaceProps = {
   className?: string;
   /** 样式 */
   style?: React.CSSProperties;
-
-  children?: React.ReactNode;
+  /** 自定义样式前缀 */
   prefixCls?: string;
 };
 
 const ImageSpace: React.FC<ImageSpaceProps> = (props) => {
-  const { children, style, className } = props;
+  const { style, className } = props;
 
   const { prefixCls, wrapSSR, hashId } = useStyle(props.prefixCls);
 
