@@ -1,12 +1,11 @@
-import { ReactNode, useMemo, useState } from 'react';
-import { Alert, Button, Cascader, Checkbox, Flex, Form, Input, InputNumber, Radio, Select, Space, Table, Tree, Typography, Upload, UploadFile, UploadProps, } from 'antd';
+import { ReactNode, useState } from 'react';
+import { Button, Checkbox, Flex, Input, Select, Space, Table, Tree, Typography } from 'antd';
 import classNames from 'classnames';
 import { useStyle } from './style';
-import { AppstoreOutlined, CheckCircleFilled, CloseCircleFilled, LoadingOutlined, SearchOutlined, UnorderedListOutlined, UploadOutlined } from '@ant-design/icons';
+import { AppstoreOutlined, SearchOutlined, UnorderedListOutlined } from '@ant-design/icons';
 
 import dataJson from './data.json';
 import PicCard from './PicCard';
-import { convertByteUnit } from '@web-react/biz-utils';
 import PicUploader, { DisplayPanelType } from './PicUploader';
 
 type ImageSpaceLayoutProps = {
