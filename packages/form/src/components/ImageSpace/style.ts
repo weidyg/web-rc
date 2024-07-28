@@ -321,7 +321,7 @@ const genBizStyle: GenerateStyle<BizImageSpaceToken> = (token) => {
           flex: '1 1',
         },
         '&-panel': {
-          padding: '4px 21px 0',
+          padding: '8px 21px 0',
           height: '100%',
           display: 'flex',
           flexDirection: 'column',
