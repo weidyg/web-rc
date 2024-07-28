@@ -1,11 +1,13 @@
-import { ReactNode, useState } from 'react';
-import { Button, Cascader, Checkbox, Flex, Form, InputNumber, Radio, Select, Table, Typography, Upload, UploadFile, UploadProps, } from 'antd';
+import { ReactNode, useMemo, useState } from 'react';
+import { Alert, Button, Cascader, Checkbox, Flex, Form, Input, InputNumber, Radio, Select, Space, Table, Tree, Typography, Upload, UploadFile, UploadProps, } from 'antd';
 import classNames from 'classnames';
 import { useStyle } from './style';
-import { AppstoreOutlined, UnorderedListOutlined, UploadOutlined } from '@ant-design/icons';
+import { AppstoreOutlined, CheckCircleFilled, CloseCircleFilled, LoadingOutlined, SearchOutlined, UnorderedListOutlined, UploadOutlined } from '@ant-design/icons';
 
 import dataJson from './data.json';
 import PicCard from './PicCard';
+import { convertByteUnit } from '@web-react/biz-utils';
+import PicUploader, { DisplayPanelType } from './PicUploader';
 
 type ImageSpaceLayoutProps = {
     /** 类名 */
@@ -19,23 +21,11 @@ type ImageSpaceLayoutProps = {
     footer?: ReactNode;
 };
 
-function getOptions(list: any[]): any[] {
-    return list.map((m) => {
-        return {
-            value: m.id,
-            label: m.name,
-            children: m.children && getOptions(m.children),
-        };
-    });
-}
-const cascaderOptions = getOptions([{ ...dataJson.dirs, children: [] }, ...dataJson.dirs.children]);
-
-
 const ImageSpaceLayout: React.FC<ImageSpaceLayoutProps> = (props) => {
     const { style, className } = props;
     const { prefixCls, wrapSSR, hashId, token } = useStyle(props.prefixCls);
     const classString = classNames(prefixCls, className, hashId, {});
-    const [displayPanel, setDisplayPanel] = useState<'uploader' | 'uploadList' | undefined>();
+    const [displayPanel, setDisplayPanel] = useState<DisplayPanelType>('uploader');
     const [cardview, setCardview] = useState(true);
 
     const DataList = () => {
@@ -142,131 +132,98 @@ const ImageSpaceLayout: React.FC<ImageSpaceLayoutProps> = (props) => {
             dataSource={dataJson.files.fileModule}
         />
     }
-    const Uploader = () => {
-        const [fileList, setFileList] = useState<UploadFile[]>([]);
-
-        const uploadProps: UploadProps = {
-            name: 'file',
-            multiple: true,
-            showUploadList: false,
-            action: 'https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload',
-            accept: 'image/jpeg,image/bmp,image/gif,.heic,image/png,.webp',
-            fileList: fileList,
-            onChange: ({ file, fileList, event }) => {
-                setFileList(fileList);
-            },
-        };
-
-        return <Upload.Dragger
-            {...uploadProps}
-            openFileDialogOnClick={false}
-            className={classNames(`${prefixCls}-picUploader-panel-board`, hashId)}
-            style={{ position: 'relative' }}
-        >
-            <Upload {...uploadProps}>
-                <Button
-                    type="primary"
-                    icon={<UploadOutlined />}
-                    className={classNames(`${prefixCls}-picUploader-panel-btn`, hashId)}
-                    style={{ zIndex: 1 }}
-                >
-                    上传
-                </Button>
-            </Upload>
-            <p className={classNames(`${prefixCls}-picUploader-panel-tips`, hashId)}>点击按钮或将图片拖拽至此处上传</p>
-            <p className={classNames(`${prefixCls}-picUploader-panel-format`, hashId)}>
-                图片仅支持3MB以内jpg、bmp、gif、heic、png、jpeg、webp格式。
-            </p>
-        </Upload.Dragger>
-    }
-
-    const ConfigForm = () => {
-        const [form] = Form.useForm();
-        return <Form
-            form={form}
-            layout="inline"
-            onValuesChange={(changedValues, allValues) => {
-                const { picWidth, picWidthOption } = changedValues || {};
-                if (picWidth === false) {
-                    form.setFieldsValue({ picWidthOption: undefined });
-                }
-                if (picWidthOption !== -1) {
-                    form.setFieldsValue({ picWidthValue: 0 });
-                }
-                console.log(changedValues, allValues);
-            }}
-        >
-            <Form.Item
-                label="上传至"
-                name="folderId"
-                className={classNames(`${prefixCls}-panel-config-item`, hashId)}
-            >
-                <Cascader
-                    allowClear={false}
-                    changeOnSelect
-                    style={{ width: '150px' }}
-                    options={cascaderOptions}
-                />
-            </Form.Item>
-            <Form.Item
-                name="picWidth"
-                style={{ marginRight: '3px' }}
-                valuePropName={'checked'}
-                className={classNames(`${prefixCls}-panel-config-item`, hashId)}
-            >
-                <Checkbox>
-                    <span style={{ fontSize: '12px' }}>图片宽度调整</span>
-                </Checkbox>
-            </Form.Item>
-            <Form.Item noStyle dependencies={['picWidth']}>
-                {({ getFieldValue }) =>
-                    getFieldValue('picWidth') && (
-                        <Form.Item name="picWidthOption" className={classNames(`${prefixCls}-panel-config-item`, hashId)}>
-                            <Select
-                                style={{ width: '140px' }}
-                                options={[
-                                    { label: '手机图片(620px)', value: 620 },
-                                    { label: '800px', value: 800 },
-                                    { label: '640px', value: 640 },
-                                    { label: '自定义', value: -1 },
-                                ]}
-                            />
-                        </Form.Item>
-                    )
-                }
-            </Form.Item>
-            <Form.Item noStyle dependencies={['picWidth', 'picWidthOption']}>
-                {({ getFieldValue }) =>
-                    getFieldValue('picWidthOption') === -1 && (
-                        <Form.Item name="picWidthValue" className={classNames(`${prefixCls}-panel-config-item`, hashId)}>
-                            <InputNumber min={0} max={10000} suffix="px" />
-                        </Form.Item>
-                    )
-                }
-            </Form.Item>
-            <Form.Item
-                name="originSize"
-                style={{ marginRight: '3px' }}
-                className={classNames(`${prefixCls}-panel-config-item`, hashId)}
-            >
-                <Radio.Group
+    const SearchForm = () => {
+        return <>
+            <Space.Compact>
+                <Select
+                    style={{ width: '100px' }}
+                    popupMatchSelectWidth={false}
+                    defaultValue={'picture'}
                     options={[
-                        { label: <span style={{ fontSize: '12px' }}>原图上传</span>, value: true },
-                        { label: <span style={{ fontSize: '12px' }}>图片无损压缩上传</span>, value: false },
+                        { label: '图片', value: 'picture' },
+                        { label: '宝贝名称', value: 'name' },
+                        { label: '宝贝ID', value: 'id' },
                     ]}
                 />
-            </Form.Item>
-        </Form>
-
+                <Input style={{ width: '120px' }} suffix={<SearchOutlined />} placeholder={'搜索'} />
+            </Space.Compact>
+            <Select
+                defaultValue={'timeDes'}
+                options={[
+                    { label: '文件名升序', value: 'nameAsc' },
+                    { label: '文件名降序', value: 'nameDes' },
+                    { label: '上传时间升序', value: 'timeAsc' },
+                    { label: '上传时间降序', value: 'timeDes' },
+                ]}
+                style={{
+                    width: '147px',
+                    marginRight: '9px',
+                    marginLeft: '9px',
+                }}
+            />
+        </>
     }
-
+    const FolderTree = () => {
+        const items: any[] = [
+            {
+                key: 'sub1',
+                title: '全部图片',
+            },
+            {
+                key: 'sub2',
+                title: '妙手搬家-勿删',
+                children: [
+                    {
+                        key: 'g1',
+                        title: '202407',
+                        children: [
+                            {
+                                key: 'g11',
+                                title: '20240711',
+                                children: [
+                                    {
+                                        key: 'g1221',
+                                        title: '20240711222',
+                                    },
+                                ],
+                            },
+                        ]
+                    },
+                ],
+            },
+        ];
+        const options = items.flatMap((node: any) => {
+            if (node.children) {
+                const nodes = node.children.flatMap((child: any) => [child, ...flatTreeHelper(child.children)]);
+                return [node, ...nodes];
+            }
+            return node;
+        });
+        function flatTreeHelper(children: any[] | undefined): any[] {
+            if (!children || children.length === 0) { return []; }
+            return children.flatMap(child => [child, ...flatTreeHelper(child.children)]);
+        }
+        return <>
+            <Select style={{ width: '100%', marginBottom: '8px' }}
+                showSearch
+                options={options}
+            />
+            <Tree
+                blockNode
+                showIcon={true}
+                treeData={items}
+                onClick={(e) => console.log(e)}
+                onSelect={(e) => console.log(e)}
+            />
+        </>
+    }
 
     return wrapSSR(
         <div className={classString} style={style}>
             <div className={classNames(`${prefixCls}-body`, hashId)}>
                 <div className={classNames(`${prefixCls}-aside`, hashId)}>
                     <div className={classNames(`${prefixCls}-treeDom`, hashId)} >
-                        {`props?.treeDom`}
+                        <FolderTree />
                     </div>
                 </div>
                 <div className={classNames(`${prefixCls}-dashboard`, hashId)}>
@@ -296,10 +253,9 @@ const ImageSpaceLayout: React.FC<ImageSpaceLayoutProps> = (props) => {
                                 <Button style={{ width: '72px', height: '30px', margin: '0 9px', fontSize: '12px', }}>
                                     刷新
                                 </Button>
-                                {`props?.dashboard?.header?.left`}
+                                <SearchForm />
                             </div>
                             <div className={classNames(`${prefixCls}-dashboard-header-actions-right`, hashId)}>
-                                {`props?.dashboard?.header?.right`}
                                 <Button type="primary" style={{ height: '30px', fontSize: '12px' }}
                                     onClick={() => { setDisplayPanel('uploader') }}>
                                     上传图片
@@ -319,49 +275,10 @@ const ImageSpaceLayout: React.FC<ImageSpaceLayoutProps> = (props) => {
                         </div>
                     )}
                 </div>
-                <div style={{ display: displayPanel == ('uploader' || 'uploadList') ? 'flex' : 'none' }}
-                    className={classNames(`${prefixCls}-picUploader-container`, hashId)}>
-                    <div className={classNames(`${prefixCls}-picUploader-body`, hashId)}>
-                        <div className={classNames(`${prefixCls}-picUploader-panel`, hashId)}>
-
-                            <div
-                                style={{ display: displayPanel == 'uploader' ? 'flex' : 'none' }}
-                                className={classNames(`${prefixCls}-picUploader-panel-form`, hashId)}
-                            >
-                                <div className={classNames(`${prefixCls}-picUploader-panel-config`, hashId)}>
-                                    <ConfigForm />
-                                    <Button style={{ marginLeft: 'auto' }}
-                                        onClick={() => { setDisplayPanel(undefined) }}
-                                    >
-                                        取消上传
-                                    </Button>
-                                </div>
-                                <div style={{ display: 'block !important', width: '100%', height: '100%', margin: 0 }}>
-                                    <div style={{ width: '100%', height: '95%' }}>
-                                        <Uploader />
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div
-                                style={{ display: displayPanel == 'uploadList' ? 'flex' : 'none' }}
-                                className={classNames(`${prefixCls}-picUploader-list-container`, hashId)}
-                            >
-                                <div className={classNames(`${prefixCls}-picUploader-list`, hashId)}>
-                                    {`Alert`}
-                                    <div className={classNames(`${prefixCls}-picUploader-list-files`, hashId)}>
-                                        {`items`}
-                                    </div>
-                                    <div className={classNames(`${prefixCls}-picUploader-list-actions-wrap`, hashId)}>
-                                        <div className={classNames(`${prefixCls}-picUploader-list-actions`, hashId)}>
-                                            <Button type="text">继续上传</Button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <PicUploader
+                    display={displayPanel}
+                    onDisplayChange={(val) => { setDisplayPanel(val) }}
+                />
             </div>
             <div className={classNames(`${prefixCls}-footer`, hashId)}>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -387,7 +304,7 @@ const ImageSpaceLayout: React.FC<ImageSpaceLayoutProps> = (props) => {
                     </Button>
                 </div>
             </div>
-        </div>,
+        </div>
     );
 };
 

@@ -209,8 +209,8 @@ const genBizStyle: GenerateStyle<BizImageSpaceToken> = (token) => {
         '&-checkbox': {
           display: 'none',
           position: 'absolute',
-          top: '13px',
-          right: '10px',
+          top: '8px',
+          right: '8px',
           '&.checked': {
             display: 'flex',
           },
@@ -396,7 +396,7 @@ const genBizStyle: GenerateStyle<BizImageSpaceToken> = (token) => {
             flexDirection: 'column',
             width: '100%',
             height: 'calc(100% - 118px)',
-            // overflowY: 'scroll',
+            overflowY: 'scroll',
             // overflowY: 'overlay'
           },
           '&-item': {
