@@ -266,6 +266,7 @@ const ImageSpace: React.FC<ImageSpaceProps> = (props) => {
                 // internalRefs={ }
                 onScroll={(e) => {
                   const lastElement = (e.target as HTMLDivElement)?.lastElementChild;
+                  console.log('onScroll lastElement', lastElement);
                   if (!lastElement) { return; }
                   const rect = lastElement.getBoundingClientRect();
                   const isVisible = rect.top >= 0 && rect.bottom <= window.innerHeight;
