@@ -1,4 +1,4 @@
-import { ReactNode, useRef, useState } from 'react';
+import { ReactNode, useEffect, useRef, useState } from 'react';
 import classNames from 'classnames';
 import { Image, Button, Checkbox, Input, Segmented, Select, Space, Table, Tree, Typography } from 'antd';
 import { AppstoreOutlined, BarsOutlined, SearchOutlined } from '@ant-design/icons';
@@ -41,8 +41,8 @@ const ImageSpace: React.FC<ImageSpaceProps> = (props) => {
   const { style, className } = props;
   const { prefixCls, wrapSSR, hashId, token } = useStyle(props.prefixCls);
   const classString = classNames(prefixCls, className, hashId, {});
-  const [displayPanel, setDisplayPanel] = useState<DisplayPanelType>('uploader');
-  const [showType, setShowType] = useState<'list' | 'table'>('list');
+  const [displayPanel, setDisplayPanel] = useState<DisplayPanelType>('none');
+  const [showType, setShowType] = useState<'list' | 'table'>('table');
   const [imageFiles, setImageFiles] = useState<ImageFile[]>(files);
   const [selectKeys, setSelectKeys] = useState<(string | number)[]>([]);
 
@@ -175,6 +175,26 @@ const ImageSpace: React.FC<ImageSpaceProps> = (props) => {
     </div>
   }
 
+  const listRef = useRef<HTMLDivElement>(null);
+  const lastElementRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const handleScroll = () => {
+      const lastElement = lastElementRef.current?.lastElementChild;
+      if (!lastElement) { return; }
+      const rect = lastElement.getBoundingClientRect();
+      const isVisible = rect.top >= 0 && rect.bottom <= window.innerHeight;
+      if (isVisible) {
+        console.log('lastElementChild', isVisible);
+      }
+    };
+
+    listRef.current?.addEventListener('scroll', handleScroll);
+    return () => {
+      listRef.current?.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
+
   return wrapSSR(
     <div className={classString} style={style}>
       <div className={classNames(`${prefixCls}-body`, hashId)}>
@@ -211,8 +231,9 @@ const ImageSpace: React.FC<ImageSpaceProps> = (props) => {
           </div>
           {showType == 'list' &&
             <div // style={{ display: showType == 'list' ? 'block' : 'none' }}
-              className={classNames(`${prefixCls}-dashboard-list`, hashId)}>
-              <div className={classNames(`${prefixCls}-dashboard-list-document`, hashId)}>
+              ref={listRef} className={classNames(`${prefixCls}-dashboard-list`, hashId)}>
+              <div ref={lastElementRef}
+                className={classNames(`${prefixCls}-dashboard-list-document`, hashId)}>
                 {imageFiles.map((item, index) => (
                   <PicCard
                     key={index}
@@ -238,13 +259,24 @@ const ImageSpace: React.FC<ImageSpaceProps> = (props) => {
             <div // style={{ display: showType == 'table' ? 'block' : 'none' }}
               className={classNames(`${prefixCls}-dashboard-table`, hashId)}>
               <Table
+                tableLayout='auto'
                 size="middle"
                 scroll={{ y: 'calc(-180px + 100vh)' }}
                 pagination={false}
+                // internalRefs={ }
+                onScroll={(e) => {
+                  const lastElement = (e.target as HTMLDivElement)?.lastElementChild;
+                  if (!lastElement) { return; }
+                  const rect = lastElement.getBoundingClientRect();
+                  const isVisible = rect.top >= 0 && rect.bottom <= window.innerHeight;
+                  if (isVisible) {
+                    console.log('onScroll lastElementChild', isVisible);
+                  }
+                }}
                 columns={[
                   {
                     dataIndex: 'name', title: '文件',
-                    render: (_, record) => (<RenderFileName file={record} />),
+                    render: (_, record) => (<RenderFileName key={record.id} file={record} />),
                   },
                   { dataIndex: 'pixel', title: '尺寸' },
                   {
