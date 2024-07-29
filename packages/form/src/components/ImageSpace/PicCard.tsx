@@ -38,10 +38,10 @@ const PicCard: React.FC<PicCardProps> = (props) => {
     onChange: props?.onChange,
   });
   return wrapSSR(
-    <div className={classNames(`${prefixCls}-pic`, hashId)}>
-      <div className={classNames(`${prefixCls}-pic-background`, hashId)}>
+    <div className={classNames(`${prefixCls}-picCard`, hashId)}>
+      <div className={classNames(`${prefixCls}-picCard-background`, hashId)}>
         <label>
-          <div className={classNames(`${prefixCls}-pic-imgBox`, hashId)}>
+          <div className={classNames(`${prefixCls}-picCard-imgBox`, hashId)}>
             <Image
               src={fullUrl}
               // fallback={errImage}
@@ -59,7 +59,7 @@ const PicCard: React.FC<PicCardProps> = (props) => {
             />
             {fullUrl && onAiEdit && (
               <span
-                className={classNames(`${prefixCls}-pic-ai-entry`, hashId)}
+                className={classNames(`${prefixCls}-picCard-ai-entry`, hashId)}
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
@@ -77,27 +77,27 @@ const PicCard: React.FC<PicCardProps> = (props) => {
                 onChange={() => {
                   setChecked(!checked);
                 }}
-                className={classNames(`${prefixCls}-pic-checkbox`, hashId, {
+                className={classNames(`${prefixCls}-picCard-checkbox`, hashId, {
                   ['checked']: checked,
                 })}
               />
               <div
-                className={classNames(`${prefixCls}-pic-controlWrap`, hashId)}
+                className={classNames(`${prefixCls}-picCard-controlWrap`, hashId)}
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
                 }}
               >
-                {pixel && <span className={classNames(`${prefixCls}-pic-spec`, hashId)}>{pixel}</span>}
+                {pixel && <span className={classNames(`${prefixCls}-picCard-spec`, hashId)}>{pixel}</span>}
                 <TransButton
                   style={{ display: 'none' }}
-                  className={classNames(`${prefixCls}-pic-copy`, hashId)}
+                  className={classNames(`${prefixCls}-picCard-copy`, hashId)}
                   onClick={onCopyClick}
                 >
                   {copied ? <CheckOutlined /> : copyLoading ? <LoadingOutlined /> : <CopyOutlined />}
                 </TransButton>
                 <ExpandOutlined
-                  className={classNames(`${prefixCls}-pic-fullView`, hashId)}
+                  className={classNames(`${prefixCls}-picCard-fullView`, hashId)}
                   onClick={() => {
                     setPreview(true);
                   }}
@@ -106,13 +106,13 @@ const PicCard: React.FC<PicCardProps> = (props) => {
             </>
           )}
         </label>
-        <div className={classNames(`${prefixCls}-pic-title-wrap`, hashId)}>
+        <div className={classNames(`${prefixCls}-picCard-title-wrap`, hashId)}>
           {isRef && (
-            <div className={classNames(`${prefixCls}-pic-title-svg`, hashId)}>
+            <div className={classNames(`${prefixCls}-picCard-title-svg`, hashId)}>
               <img src={refImage} alt="引用图片" style={{ width: '100%', height: '100%' }} />
             </div>
           )}
-          <div className={classNames(`${prefixCls}-pic-title-tip`, hashId)}>
+          <div className={classNames(`${prefixCls}-picCard-title-tip`, hashId)}>
             <span title={name}>{name}</span>
           </div>
         </div>

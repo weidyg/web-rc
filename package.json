@@ -33,7 +33,7 @@
     "antd-style": "^3.6.2",
     "classnames": "^2.5.1",
     "cross-env": "^7.0.3",
-    "dumi": "^2.3.0",
+    "dumi": "^2.4.7",
     "dumi-theme-antd-style": "^0.31.0",
     "execa": "^5.1.1",
     "father": "^4.4.5",

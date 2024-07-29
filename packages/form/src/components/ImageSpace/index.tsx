@@ -1,14 +1,26 @@
-import { ReactNode, useState } from 'react';
+import { ReactNode, useRef, useState } from 'react';
 import classNames from 'classnames';
-import { Button, Checkbox, Flex, Input, Segmented, Select, Space, Table, Tree, Typography } from 'antd';
+import { Image, Button, Checkbox, Input, Segmented, Select, Space, Table, Tree, Typography } from 'antd';
 import { AppstoreOutlined, BarsOutlined, SearchOutlined } from '@ant-design/icons';
 import PicCard from './PicCard';
-import PicUploader, { DisplayPanelType } from './PicUploader';
+import PicUploader, { DisplayPanelType } from './Uploader';
 import { useStyle } from './style';
 import dataJson from './data.json';
+import { convertByteUnit } from '@web-react/biz-utils';
+
+const files = dataJson.files.fileModule.map(m => {
+  return {
+    id: m.pictureId,
+    name: m.name,
+    size: m.sizes,
+    pixel: m.pixel,
+    fullUrl: m.fullUrl,
+    isRef: m.ref,
+  }
+});
 
 type ImageFile = {
-  id?: string | number;
+  id: string | number;
   name?: string;
   size?: number;
   pixel?: string;
@@ -31,11 +43,22 @@ const ImageSpace: React.FC<ImageSpaceProps> = (props) => {
   const classString = classNames(prefixCls, className, hashId, {});
   const [displayPanel, setDisplayPanel] = useState<DisplayPanelType>('uploader');
   const [showType, setShowType] = useState<'list' | 'table'>('list');
-  const [okDisabled, setOkDisabled] = useState(true);
-  const [imageFiles, setImageFiles] = useState<ImageFile[]>([]);
+  const [imageFiles, setImageFiles] = useState<ImageFile[]>(files);
+  const [selectKeys, setSelectKeys] = useState<(string | number)[]>([]);
+
 
   const handleOk = (e: any) => {
 
+  };
+  const isChecked = (id: string | number): boolean => {
+    return selectKeys?.includes(id) ?? false;
+  };
+  const checkChange = (id: string | number, checked: boolean) => {
+    setSelectKeys(keys => {
+      return keys.includes(id)
+        ? (checked ? keys : keys.filter(k => k !== id))
+        : (checked ? [...keys, id] : keys);
+    });
   };
 
   const SearchForm = () => {
@@ -119,6 +142,38 @@ const ImageSpace: React.FC<ImageSpaceProps> = (props) => {
       />
     </>
   }
+  const RenderFileName = ({ file }: { file: ImageFile }) => {
+    const [preview, setPreview] = useState(false);
+    return <div className={classNames(`${prefixCls}-fileName`, hashId)}>
+      <div className={classNames(`${prefixCls}-fileName-checkbox`, hashId)}>
+        <Checkbox
+          checked={isChecked(file.id)}
+          onChange={(e) => {
+            checkChange(file.id, e.target.checked);
+          }}
+        />
+      </div>
+      <div className={classNames(`${prefixCls}-fileName-img`, hashId)}>
+        <Image
+          src={file?.fullUrl}
+          onClick={() => { setPreview(true); }}
+          preview={{
+            visible: preview,
+            maskStyle: { backgroundColor: 'rgba(0, 0, 0, 0.65)' },
+            src: file?.fullUrl,
+            mask: undefined,
+            onVisibleChange: (value: boolean, prevValue: boolean) => {
+              if (value == false && prevValue == true) {
+                setPreview(value);
+              }
+            },
+          }} />
+      </div>
+      <div className={classNames(`${prefixCls}-fileName-title`, hashId)} >
+        <p>{file?.name}</p>
+      </div>
+    </div>
+  }
 
   return wrapSSR(
     <div className={classString} style={style}>
@@ -129,7 +184,6 @@ const ImageSpace: React.FC<ImageSpaceProps> = (props) => {
           </div>
         </div>
         <div className={classNames(`${prefixCls}-dashboard`, hashId)}>
-          {/* <div style={{ display: 'flex', flexGrow: 1, flexBasis: '100%', position: 'absolute', background: 'rgba(255, 255, 255, 0.5)', zIndex: -1, width: '100%', height: '100%' }} /> */}
           <div className={classNames(`${prefixCls}-dashboard-header`, hashId)}>
             <div className={classNames(`${prefixCls}-dashboard-header-actions`, hashId)}>
               <div className={classNames(`${prefixCls}-dashboard-header-actions-left`, hashId)}>
@@ -155,43 +209,55 @@ const ImageSpace: React.FC<ImageSpaceProps> = (props) => {
               </div>
             </div>
           </div>
-          <div style={{ display: showType == 'list' ? 'block' : 'none' }}
-            className={classNames(`${prefixCls}-dashboard-list`, hashId)}>
-            <div className={classNames(`${prefixCls}-dashboard-list-document`, hashId)}>
-              {imageFiles.map((item, index) => (
-                <PicCard
-                  key={index}
-                  id={item.id}
-                  name={item.name}
-                  fullUrl={item.fullUrl}
-                  pixel={item.pixel}
-                  isRef={item.isRef}
-                  onChange={(value: boolean, prevValue: boolean) => {
-                    console.log('PicCard onChange', value, prevValue);
-                  }}
-                />
-              ))}
-              {Array.from({ length: 10 }).map((item, index) => (
-                <i key={index} className={classNames(`${prefixCls}-pic-dom`, hashId)} />
-              ))}
+          {showType == 'list' &&
+            <div // style={{ display: showType == 'list' ? 'block' : 'none' }}
+              className={classNames(`${prefixCls}-dashboard-list`, hashId)}>
+              <div className={classNames(`${prefixCls}-dashboard-list-document`, hashId)}>
+                {imageFiles.map((item, index) => (
+                  <PicCard
+                    key={index}
+                    id={item.id}
+                    name={item.name}
+                    fullUrl={item.fullUrl}
+                    pixel={item.pixel}
+                    isRef={item.isRef}
+                    checked={isChecked(item.id)}
+                    onChange={(value: boolean, prevValue: boolean) => {
+                      console.log('PicCard onChange', value, prevValue);
+                      checkChange(item.id, value);
+                    }}
+                  />
+                ))}
+                {Array.from({ length: 10 }).map((item, index) => (
+                  <i key={index} className={classNames(`${prefixCls}-picCard-dom`, hashId)} />
+                ))}
+              </div>
             </div>
-          </div>
-          <div style={{ display: showType == 'table' ? 'block' : 'none' }}
-            className={classNames(`${prefixCls}-dashboard-table`, hashId)}>
-            <Table
-              size="middle"
-              scroll={{ y: 'calc(-180px + 100vh)' }}
-              pagination={false}
-              columns={[
-                { dataIndex: 'name', title: '名称' },
-                { dataIndex: 'pixel', title: '尺寸' },
-                { dataIndex: 'size', title: '大小' },
-                // { dataIndex: 'status', title: '状态' },
-                // { dataIndex: 'gmtModified', title: '修改时间' },
-              ]}
-              dataSource={imageFiles}
-            />
-          </div>
+          }
+          {showType == 'table' &&
+            <div // style={{ display: showType == 'table' ? 'block' : 'none' }}
+              className={classNames(`${prefixCls}-dashboard-table`, hashId)}>
+              <Table
+                size="middle"
+                scroll={{ y: 'calc(-180px + 100vh)' }}
+                pagination={false}
+                columns={[
+                  {
+                    dataIndex: 'name', title: '文件',
+                    render: (_, record) => (<RenderFileName file={record} />),
+                  },
+                  { dataIndex: 'pixel', title: '尺寸' },
+                  {
+                    dataIndex: 'size', title: '大小',
+                    render: (value) => convertByteUnit(value)
+                  },
+                  // { dataIndex: 'status', title: '状态' },
+                  // { dataIndex: 'gmtModified', title: '修改时间' },
+                ]}
+                dataSource={imageFiles}
+              />
+            </div>
+          }
         </div>
         <PicUploader
           display={displayPanel}
@@ -209,7 +275,7 @@ const ImageSpace: React.FC<ImageSpaceProps> = (props) => {
         <div className={classNames(`${prefixCls}-footer-right`, hashId)}>
           <Button
             type="primary"
-            disabled={okDisabled}
+            disabled={selectKeys?.length == 0}
             onClick={handleOk}
           >
             确定
