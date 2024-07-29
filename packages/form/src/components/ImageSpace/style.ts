@@ -112,7 +112,7 @@ const genBizStyle: GenerateStyle<BizImageSpaceToken> = (token) => {
         backgroundColor: token.ImageSpace.colorBgDashboard,
 
         '&-header': {
-          margin: '5px 0 8px',
+          margin: '4px 12px 8px 0',
           height: '35px',
           display: 'flex',
           '&-actions': {

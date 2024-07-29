@@ -28,6 +28,110 @@ const ImageSpace: React.FC<ImageSpaceProps> = (props) => {
 
   };
 
+  const DataList = () => {
+    return <div className={classNames(`${prefixCls}-dashboard-list-document`, hashId)}>
+      {dataJson.files.fileModule.map((item, index) => (
+        <PicCard
+          key={index}
+          id={item.pictureId}
+          name={item.name}
+          fullUrl={item.fullUrl}
+          pixel={item.pixel}
+          isRef={item.ref}
+          onChange={(value: boolean, prevValue: boolean) => {
+            console.log('PicCard onChange', value, prevValue);
+          }}
+        />
+      ))}
+      {Array.from({ length: 10 }).map((item, index) => (
+        <i key={index} className={classNames(`${prefixCls}-pic-dom`, hashId)} />
+      ))}
+    </div>
+  }
+  const DataTable = () => {
+    return <Table
+      size="middle"
+      scroll={{ y: 'calc(-170px + 100vh)' }}
+      pagination={false}
+      columns={[
+        {
+          dataIndex: 'name',
+          title: '文件',
+          render: (value, record) => (
+            <div style={{ overflow: 'hidden', display: 'flex' }}>
+              <div style={{ margin: '8px 10px 0px 0px', }}>
+                <Checkbox></Checkbox>
+              </div>
+              <div
+                style={{
+                  width: '36px',
+                  height: '36px',
+                  borderRadius: '6px',
+                  objectFit: 'contain',
+                }}
+              >
+                <img
+                  src={record.fullUrl}
+                  style={{
+                    width: '36px',
+                    height: '36px',
+                    borderRadius: '6px',
+                    objectFit: 'contain',
+                  }}
+                />
+              </div>
+              <div
+                style={{
+                  maxWidth: '105px',
+                  fontWeight: '400',
+                  fontFamily: 'PingFangSC',
+                  marginLeft: '10px',
+                  transform: 'translateY(-4px)',
+                  cursor: 'pointer',
+                }}
+              >
+                <p
+                  style={{
+                    fontSize: '12px',
+                    textAlign: 'center',
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                  }}
+                >
+                  {value}
+                </p>
+              </div>
+            </div>
+          ),
+        },
+        { dataIndex: 'pixel', title: '尺寸' },
+        { dataIndex: 'sizes', title: '大小' },
+        { dataIndex: 'status', title: '状态' },
+        {
+          dataIndex: 'ref',
+          title: '是否引用',
+          render: (value, record) => <> {value + ''}</>,
+        },
+        { dataIndex: 'gmtModified', title: '修改时间' },
+        {
+          dataIndex: 'action',
+          title: '操作',
+          render: (_, record) => (
+            <Flex gap={4}>
+              <Button type="link" style={{ padding: 'unset' }}>
+                预览
+              </Button>
+              <Button type="link" style={{ padding: 'unset' }}>
+                AI图片编辑
+              </Button>
+            </Flex>
+          ),
+        },
+      ]}
+      dataSource={dataJson.files.fileModule}
+    />
+  }
   const SearchForm = () => {
     return <Space>
       <Space.Compact>
@@ -145,48 +249,19 @@ const ImageSpace: React.FC<ImageSpaceProps> = (props) => {
               </div>
             </div>
           </div>
-          <div style={{ display: showType == 'list' ? 'block' : 'none' }}
-            className={classNames(`${prefixCls}-dashboard-list`, hashId)}>
-            <div className={classNames(`${prefixCls}-dashboard-list-document`, hashId)}>
-              {dataJson.files.fileModule.map((item, index) => (
-                <PicCard
-                  key={index}
-                  id={item.pictureId}
-                  name={item.name}
-                  fullUrl={item.fullUrl}
-                  pixel={item.pixel}
-                  isRef={item.ref}
-                  onChange={(value: boolean, prevValue: boolean) => {
-                    console.log('PicCard onChange', value, prevValue);
-                  }}
-                />
-              ))}
-              {Array.from({ length: 10 }).map((item, index) => (
-                <i key={index} className={classNames(`${prefixCls}-pic-dom`, hashId)} />
-              ))}
+          {showType == 'list' ? (
+            <div className={classNames(`${prefixCls}-dashboard-list`, hashId)}>
+              <DataList />
             </div>
-          </div>
-          <div style={{ display: showType == 'table' ? 'block' : 'none' }}
-            className={classNames(`${prefixCls}-dashboard-table`, hashId)}>
-            <Table
-              size="middle"
-              scroll={{ y: 'calc(-180px + 100vh)' }}
-              pagination={false}
-              columns={[
-                { dataIndex: 'pixel', title: '尺寸' },
-                { dataIndex: 'sizes', title: '大小' },
-                { dataIndex: 'status', title: '状态' },
-                { dataIndex: 'gmtModified', title: '修改时间' },
-              ]}
-              dataSource={dataJson.files.fileModule}
-            />
-          </div>
+          ) : (
+            <div className={classNames(`${prefixCls}-dashboard-table`, hashId)}>
+              <DataTable />
+            </div>
+          )}
         </div>
         <PicUploader
           display={displayPanel}
-          onDisplayChange={(val) => {
-            setDisplayPanel(val)
-          }}
+          onDisplayChange={(val) => { setDisplayPanel(val) }}
         />
       </div>
       <div className={classNames(`${prefixCls}-footer`, hashId)}>
