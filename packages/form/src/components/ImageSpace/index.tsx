@@ -7,6 +7,15 @@ import PicUploader, { DisplayPanelType } from './PicUploader';
 import { useStyle } from './style';
 import dataJson from './data.json';
 
+type ImageFile = {
+  id?: string | number;
+  name?: string;
+  size?: number;
+  pixel?: string;
+  fullUrl?: string;
+  isRef?: boolean;
+}
+
 type ImageSpaceProps = {
   /** 类名 */
   className?: string;
@@ -22,9 +31,10 @@ const ImageSpace: React.FC<ImageSpaceProps> = (props) => {
   const classString = classNames(prefixCls, className, hashId, {});
   const [displayPanel, setDisplayPanel] = useState<DisplayPanelType>('uploader');
   const [showType, setShowType] = useState<'list' | 'table'>('list');
-
   const [okDisabled, setOkDisabled] = useState(true);
-  const handleOkClick = (e: any) => {
+  const [imageFiles, setImageFiles] = useState<ImageFile[]>([]);
+
+  const handleOk = (e: any) => {
 
   };
 
@@ -148,14 +158,14 @@ const ImageSpace: React.FC<ImageSpaceProps> = (props) => {
           <div style={{ display: showType == 'list' ? 'block' : 'none' }}
             className={classNames(`${prefixCls}-dashboard-list`, hashId)}>
             <div className={classNames(`${prefixCls}-dashboard-list-document`, hashId)}>
-              {dataJson.files.fileModule.map((item, index) => (
+              {imageFiles.map((item, index) => (
                 <PicCard
                   key={index}
-                  id={item.pictureId}
+                  id={item.id}
                   name={item.name}
                   fullUrl={item.fullUrl}
                   pixel={item.pixel}
-                  isRef={item.ref}
+                  isRef={item.isRef}
                   onChange={(value: boolean, prevValue: boolean) => {
                     console.log('PicCard onChange', value, prevValue);
                   }}
@@ -173,12 +183,13 @@ const ImageSpace: React.FC<ImageSpaceProps> = (props) => {
               scroll={{ y: 'calc(-180px + 100vh)' }}
               pagination={false}
               columns={[
+                { dataIndex: 'name', title: '名称' },
                 { dataIndex: 'pixel', title: '尺寸' },
-                { dataIndex: 'sizes', title: '大小' },
-                { dataIndex: 'status', title: '状态' },
-                { dataIndex: 'gmtModified', title: '修改时间' },
+                { dataIndex: 'size', title: '大小' },
+                // { dataIndex: 'status', title: '状态' },
+                // { dataIndex: 'gmtModified', title: '修改时间' },
               ]}
-              dataSource={dataJson.files.fileModule}
+              dataSource={imageFiles}
             />
           </div>
         </div>
@@ -190,21 +201,20 @@ const ImageSpace: React.FC<ImageSpaceProps> = (props) => {
         />
       </div>
       <div className={classNames(`${prefixCls}-footer`, hashId)}>
-        <Flex align='center'>
-          <Typography.Link target="_blank" style={{ marginLeft: '18px' }}>
+        <div className={classNames(`${prefixCls}-footer-left`, hashId)}>
+          <Typography.Link target="_blank">
             进入图片空间
           </Typography.Link>
-        </Flex>
-        <Flex align='center' style={{ flexDirection: 'row-reverse', }}>
+        </div>
+        <div className={classNames(`${prefixCls}-footer-right`, hashId)}>
           <Button
             type="primary"
-            className={classNames(`${prefixCls}-footer-selectOk`, hashId)}
             disabled={okDisabled}
-            onClick={handleOkClick}
+            onClick={handleOk}
           >
             确定
           </Button>
-        </Flex>
+        </div>
       </div>
     </div>
   );

@@ -27,10 +27,16 @@ const genBizStyle: GenerateStyle<BizImageSpaceToken> = (token) => {
         alignItems: 'center',
         justifyContent: 'space-between',
         backgroundColor: token.ImageSpace.colorBgFooter,
-        '&-selectOk': {
-          height: '36px',
-          width: '107px',
-          marginRight: '25px',
+        '&-left': {
+          display: 'flex',
+          alignItems: 'center',
+          margin: '0 24px'
+        },
+        '&-right': {
+          display: 'flex',
+          alignItems: 'center',
+          flexDirection: 'row-reverse',
+          margin: '0 24px'
         },
       },
       '&-aside': {
