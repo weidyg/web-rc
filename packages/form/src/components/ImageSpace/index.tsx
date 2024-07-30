@@ -210,7 +210,6 @@ const ImageSpace: React.FC<ImageSpaceProps> = (props) => {
   }
   return wrapSSR(
     <div className={classString} style={style}>
-      {/* <Spin spinning={loading} style={{}}> */}
       <div className={classNames(`${prefixCls}-body`, hashId)}>
         <div className={classNames(`${prefixCls}-aside`, hashId)}>
           <div className={classNames(`${prefixCls}-treeDom`, hashId)} >
@@ -311,7 +310,6 @@ const ImageSpace: React.FC<ImageSpaceProps> = (props) => {
           }}
         />
       </div>
-      {/* </Spin> */}
       <div className={classNames(`${prefixCls}-footer`, hashId)}>
         <div className={classNames(`${prefixCls}-footer-left`, hashId)}>
           <Typography.Link target="_blank">
