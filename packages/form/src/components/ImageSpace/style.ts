@@ -6,13 +6,13 @@ const genBizStyle: GenerateStyle<BizImageSpaceToken> = (token) => {
     [token.componentCls]: {
       display: 'flex',
       width: '100%',
+      overflowX: 'auto',
       position: 'absolute',
       top: 0,
       right: 0,
       bottom: 0,
       left: 0,
       flexDirection: 'column',
-      overflowX: 'auto',
       backgroundColor: token.ImageSpace.colorBgPage,
       '&-header': {},
       '&-body': {
@@ -105,7 +105,7 @@ const genBizStyle: GenerateStyle<BizImageSpaceToken> = (token) => {
         },
       },
       '&-dashboard': {
-        padding: '6px 0 0 24px',
+        // padding: '6px 0 0 24px',
         boxSizing: 'border-box',
         maxHeight: '100vh',
         height: '100%',
@@ -118,7 +118,7 @@ const genBizStyle: GenerateStyle<BizImageSpaceToken> = (token) => {
         backgroundColor: token.ImageSpace.colorBgDashboard,
 
         '&-header': {
-          margin: '4px 12px 8px 0',
+          margin: '12px 12px 8px 24px',
           height: '35px',
           display: 'flex',
           '&-actions': {
@@ -140,9 +140,9 @@ const genBizStyle: GenerateStyle<BizImageSpaceToken> = (token) => {
           },
         },
         '&-list': {
+          marginLeft: '18px',
           boxSizing: 'border-box',
           height: '100%',
-          overflowY: 'auto',
           '&-document': {
             display: 'flex',
             flexWrap: 'wrap',
@@ -150,22 +150,39 @@ const genBizStyle: GenerateStyle<BizImageSpaceToken> = (token) => {
           },
         },
         '&-table': {
+          marginLeft: '18px',
           boxSizing: 'border-box',
-          padding: '5px 0 0',
-          marginTop: '9px',
           overflow: 'hidden',
           WebkitUserSelect: 'none',
           MozUserSelect: 'none',
           userSelect: 'none',
         },
       },
-
+      '&-mask': {
+        display: 'flex',
+        flexGrow: 1,
+        flexBasis: '100%',
+        position: 'absolute',
+        background: setAlpha(token.colorBgLayout, 0.3),
+        zIndex: 1,
+        width: '100%',
+        height: '100%',
+        justifyItems: 'center',
+        alignItems: 'center',
+        alignContent: 'center',
+        justifyContent: 'center',
+      },
 
       '&-picCard': {
         position: 'relative',
         width: '122px',
         height: '153px',
         margin: '10px 12px 0 0',
+        '&&-empty': {
+          visibility: 'hidden',
+          height: '0px',
+        },
+
         '&:hover': {
           [token.componentCls]: {
             '&-picCard': {
@@ -251,7 +268,7 @@ const genBizStyle: GenerateStyle<BizImageSpaceToken> = (token) => {
           backgroundImage: `linear-gradient(
           180deg, 
           ${setAlpha(token.colorTextBase, 0.05)}, 
-          ${setAlpha(token.colorTextBase, 0.3,)}
+          ${setAlpha(token.colorTextBase, 0.3)}
           )`,
           boxSizing: 'border-box',
           WebkitBoxSizing: 'border-box',
@@ -299,13 +316,6 @@ const genBizStyle: GenerateStyle<BizImageSpaceToken> = (token) => {
             lineHeight: '18px',
             margin: '0 4px',
           },
-        },
-        '&-dom': {
-          visibility: 'hidden',
-          position: 'relative',
-          width: '122px',
-          height: '153px',
-          margin: '10px 12px 0 0',
         },
       },
       '&-uploader': {

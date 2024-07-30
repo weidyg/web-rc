@@ -1,6 +1,6 @@
 import { ReactNode, useEffect, useRef, useState } from 'react';
 import classNames from 'classnames';
-import { Image, Button, Checkbox, Input, Segmented, Select, Space, Table, Tree, Typography } from 'antd';
+import { Image, Button, Checkbox, Input, Segmented, Select, Space, Table, Tree, Typography, Spin } from 'antd';
 import { AppstoreOutlined, BarsOutlined, SearchOutlined } from '@ant-design/icons';
 import PicCard from './PicCard';
 import PicUploader, { DisplayPanelType } from './Uploader';
@@ -45,11 +45,44 @@ const ImageSpace: React.FC<ImageSpaceProps> = (props) => {
   const [showType, setShowType] = useState<'list' | 'table'>('table');
   const [imageFiles, setImageFiles] = useState<ImageFile[]>(files);
   const [selectKeys, setSelectKeys] = useState<(string | number)[]>([]);
-
+  const [loading, setLoading] = useState(false);
+  const [totalPage, setTotalPage] = useState(1);
+  const [current, setCurrent] = useState(0);
 
   const handleOk = (e: any) => {
 
   };
+  const handleScroll = async (event: React.SyntheticEvent<HTMLDivElement>) => {
+    const { scrollTop, clientHeight, scrollHeight } = event.target as HTMLDivElement;
+    if (scrollTop + clientHeight >= scrollHeight) {
+      console.log('滚动到底部');
+      if (!loading) {
+        fetchData(current + 1);
+      }
+    }
+  };
+
+  const fetchData = (current: number) => {
+    if (current > totalPage) { return; }
+    setLoading(true);
+    setTimeout(() => {
+      const newData = files.map((file, index) => {
+        return {
+          ...file,
+          id: file.id + '_' + current,
+        };
+      });
+      const newImageFiles = current > 1
+        ? [...imageFiles, ...newData]
+        : newData;
+      setImageFiles(newImageFiles);
+      setCurrent(current);
+      setTotalPage(current + 1);
+      setLoading(false);
+    }, 1000);
+  };
+
+
   const isChecked = (id: string | number): boolean => {
     return selectKeys?.includes(id) ?? false;
   };
@@ -154,6 +187,7 @@ const ImageSpace: React.FC<ImageSpaceProps> = (props) => {
         />
       </div>
       <div className={classNames(`${prefixCls}-fileName-img`, hashId)}>
+        <img src={file?.fullUrl} />
         <Image
           src={file?.fullUrl}
           onClick={() => { setPreview(true); }}
@@ -174,29 +208,9 @@ const ImageSpace: React.FC<ImageSpaceProps> = (props) => {
       </div>
     </div>
   }
-
-  const listRef = useRef<HTMLDivElement>(null);
-  const lastElementRef = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const handleScroll = () => {
-      const lastElement = lastElementRef.current?.lastElementChild;
-      if (!lastElement) { return; }
-      const rect = lastElement.getBoundingClientRect();
-      const isVisible = rect.top >= 0 && rect.bottom <= window.innerHeight;
-      if (isVisible) {
-        console.log('lastElementChild', isVisible);
-      }
-    };
-
-    listRef.current?.addEventListener('scroll', handleScroll);
-    return () => {
-      listRef.current?.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
-
-
   return wrapSSR(
     <div className={classString} style={style}>
+      {/* <Spin spinning={loading} style={{}}> */}
       <div className={classNames(`${prefixCls}-body`, hashId)}>
         <div className={classNames(`${prefixCls}-aside`, hashId)}>
           <div className={classNames(`${prefixCls}-treeDom`, hashId)} >
@@ -204,6 +218,11 @@ const ImageSpace: React.FC<ImageSpaceProps> = (props) => {
           </div>
         </div>
         <div className={classNames(`${prefixCls}-dashboard`, hashId)}>
+          {loading &&
+            <div className={classNames(`${prefixCls}-mask`, hashId)}>
+              <Spin spinning={true} />
+            </div>
+          }
           <div className={classNames(`${prefixCls}-dashboard-header`, hashId)}>
             <div className={classNames(`${prefixCls}-dashboard-header-actions`, hashId)}>
               <div className={classNames(`${prefixCls}-dashboard-header-actions-left`, hashId)}>
@@ -229,11 +248,13 @@ const ImageSpace: React.FC<ImageSpaceProps> = (props) => {
               </div>
             </div>
           </div>
-          {showType == 'list' &&
-            <div // style={{ display: showType == 'list' ? 'block' : 'none' }}
-              ref={listRef} className={classNames(`${prefixCls}-dashboard-list`, hashId)}>
-              <div ref={lastElementRef}
-                className={classNames(`${prefixCls}-dashboard-list-document`, hashId)}>
+          {showType == 'list' &&// display: showType == 'list' ? 'block' : 'none' 
+            <div
+              onScroll={handleScroll}
+              style={{ overflowY: 'auto', }}
+              className={classNames(`${prefixCls}-dashboard-list`, hashId)}
+            >
+              <div className={classNames(`${prefixCls}-dashboard-list-document`, hashId)}>
                 {imageFiles.map((item, index) => (
                   <PicCard
                     key={index}
@@ -250,7 +271,7 @@ const ImageSpace: React.FC<ImageSpaceProps> = (props) => {
                   />
                 ))}
                 {Array.from({ length: 10 }).map((item, index) => (
-                  <i key={index} className={classNames(`${prefixCls}-picCard-dom`, hashId)} />
+                  <i key={index} className={classNames(`${prefixCls}-picCard`, `${prefixCls}-picCard-empty`, hashId)} />
                 ))}
               </div>
             </div>
@@ -263,21 +284,11 @@ const ImageSpace: React.FC<ImageSpaceProps> = (props) => {
                 size="middle"
                 scroll={{ y: 'calc(-180px + 100vh)' }}
                 pagination={false}
-                // internalRefs={ }
-                onScroll={(e) => {
-                  const lastElement = (e.target as HTMLDivElement)?.lastElementChild;
-                  console.log('onScroll lastElement', lastElement);
-                  if (!lastElement) { return; }
-                  const rect = lastElement.getBoundingClientRect();
-                  const isVisible = rect.top >= 0 && rect.bottom <= window.innerHeight;
-                  if (isVisible) {
-                    console.log('onScroll lastElementChild', isVisible);
-                  }
-                }}
+                onScroll={handleScroll}
                 columns={[
                   {
                     dataIndex: 'name', title: '文件',
-                    render: (_, record) => (<RenderFileName key={record.id} file={record} />),
+                    render: (_, record) => (<RenderFileName file={record} />),
                   },
                   { dataIndex: 'pixel', title: '尺寸' },
                   {
@@ -287,6 +298,7 @@ const ImageSpace: React.FC<ImageSpaceProps> = (props) => {
                   // { dataIndex: 'status', title: '状态' },
                   // { dataIndex: 'gmtModified', title: '修改时间' },
                 ]}
+                rowKey={'id'}
                 dataSource={imageFiles}
               />
             </div>
@@ -299,6 +311,7 @@ const ImageSpace: React.FC<ImageSpaceProps> = (props) => {
           }}
         />
       </div>
+      {/* </Spin> */}
       <div className={classNames(`${prefixCls}-footer`, hashId)}>
         <div className={classNames(`${prefixCls}-footer-left`, hashId)}>
           <Typography.Link target="_blank">
