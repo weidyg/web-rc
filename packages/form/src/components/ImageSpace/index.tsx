@@ -42,7 +42,7 @@ const ImageSpace: React.FC<ImageSpaceProps> = (props) => {
   const { prefixCls, wrapSSR, hashId, token } = useStyle(props.prefixCls);
   const classString = classNames(prefixCls, className, hashId, {});
   const [displayPanel, setDisplayPanel] = useState<DisplayPanelType>('none');
-  const [showType, setShowType] = useState<'list' | 'table'>('table');
+  const [showType, setShowType] = useState<'list' | 'table'>('list');
   const [imageFiles, setImageFiles] = useState<ImageFile[]>(files);
   const [selectKeys, setSelectKeys] = useState<(string | number)[]>([]);
   const [loading, setLoading] = useState(false);

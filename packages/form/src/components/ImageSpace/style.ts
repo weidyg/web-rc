@@ -13,7 +13,7 @@ const genBizStyle: GenerateStyle<BizImageSpaceToken> = (token) => {
       bottom: 0,
       left: 0,
       flexDirection: 'column',
-      backgroundColor: token.ImageSpace.colorBgPage,
+      backgroundColor: token.colorBgPage,
       '&-header': {},
       '&-body': {
         display: 'flex',
@@ -26,7 +26,7 @@ const genBizStyle: GenerateStyle<BizImageSpaceToken> = (token) => {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        backgroundColor: token.ImageSpace.colorBgFooter,
+        backgroundColor: token.colorBgFooter,
         '&-left': {
           display: 'flex',
           alignItems: 'center',
@@ -49,7 +49,7 @@ const genBizStyle: GenerateStyle<BizImageSpaceToken> = (token) => {
         padding: '6px 6px 0',
         height: '100%',
         flexShrink: 0,
-        backgroundColor: token.ImageSpace.colorBgSide,
+        backgroundColor: token.colorBgSide,
       },
       '&-treeDom': {
         flex: '1 1',
@@ -115,7 +115,7 @@ const genBizStyle: GenerateStyle<BizImageSpaceToken> = (token) => {
         overflow: 'hidden',
         minWidth: '685px',
         position: 'relative',
-        backgroundColor: token.ImageSpace.colorBgDashboard,
+        backgroundColor: token.colorBgDashboard,
 
         '&-header': {
           margin: '12px 12px 8px 24px',
@@ -204,7 +204,7 @@ const genBizStyle: GenerateStyle<BizImageSpaceToken> = (token) => {
           borderRadius: '12px',
           position: 'relative',
           display: 'inline-block',
-          backgroundColor: token.ImageSpace.colorBgPicCard,
+          backgroundColor: token.colorBgPicCard,
           backgroundSize: 'contain',
           textAlign: 'center',
         },
@@ -276,21 +276,22 @@ const genBizStyle: GenerateStyle<BizImageSpaceToken> = (token) => {
         '&-spec': {
           height: '14px',
           width: '30px',
+          fontSize: `${token.fontSize}px`,
           fontWeight: '400',
           letterSpacing: '0',
           lineHeight: '14px',
-          color: token.ImageSpace.colorControlText,
+          color: token.colorControlText,
         },
         '&-copy': {
           display: 'none',
           marginRight: '8px',
           cursor: 'pointer',
-          color: token.ImageSpace.colorControlText,
+          color: token.colorControlText,
         },
         '&-fullView': {
           marginLeft: 'auto',
           cursor: 'pointer',
-          color: token.ImageSpace.colorControlText,
+          color: token.colorControlText,
         },
         '&-title': {
           '&-wrap': {
@@ -310,9 +311,10 @@ const genBizStyle: GenerateStyle<BizImageSpaceToken> = (token) => {
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             cursor: 'pointer',
-            height: '18px',
+            fontSize: `${token.fontSizeSM}px`,
             fontWeight: '400',
             color: token.colorText,
+            height: '18px',
             lineHeight: '18px',
             margin: '0 4px',
           },
@@ -511,14 +513,12 @@ const genBizStyle: GenerateStyle<BizImageSpaceToken> = (token) => {
 };
 
 interface BizImageSpaceToken extends BizAliasToken {
-  ImageSpace: {
-    colorBgPage: string;
-    colorBgFooter: string;
-    colorBgDashboard: string;
-    colorBgPicCard: string;
-    colorBgSide: string;
-    colorControlText: string;
-  }
+  colorBgPage: string;
+  colorBgFooter: string;
+  colorBgDashboard: string;
+  colorBgPicCard: string;
+  colorBgSide: string;
+  colorControlText: string;
 }
 export function useStyle(prefixCls?: string) {
   return useAntdStyle(
@@ -526,14 +526,12 @@ export function useStyle(prefixCls?: string) {
     (token) => {
       const bizToken: BizImageSpaceToken = {
         ...token,
-        ImageSpace: {
-          colorBgPage: token.colorBgElevated,
-          colorBgFooter: token.colorBgElevated,
-          colorBgDashboard: token.colorBgContainer,
-          colorBgPicCard: token.colorBgLayout,
-          colorBgSide: token.colorBgLayout,
-          colorControlText: token.colorWhite,
-        }
+        colorBgPage: token.colorBgElevated,
+        colorBgFooter: token.colorBgElevated,
+        colorBgDashboard: token.colorBgContainer,
+        colorBgPicCard: token.colorBgLayout,
+        colorBgSide: token.colorBgLayout,
+        colorControlText: token.colorWhite,
       };
       return [genBizStyle(bizToken)];
     },
