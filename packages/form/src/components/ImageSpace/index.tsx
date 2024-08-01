@@ -1,6 +1,6 @@
-import { ReactNode, useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import classNames from 'classnames';
-import { Image, Button, Checkbox, Input, Segmented, Select, Space, Table, Tree, Typography, Spin } from 'antd';
+import { Image, Button, Checkbox, Input, Segmented, Select, Space, Table, Tree, Typography, Spin, List } from 'antd';
 import { AppstoreOutlined, BarsOutlined, SearchOutlined } from '@ant-design/icons';
 import PicCard from './PicCard';
 import PicUploader, { DisplayPanelType } from './Uploader';
@@ -226,6 +226,7 @@ const ImageSpace: React.FC<ImageSpaceProps> = (props) => {
             <div className={classNames(`${prefixCls}-dashboard-header-actions`, hashId)}>
               <div className={classNames(`${prefixCls}-dashboard-header-actions-left`, hashId)}>
                 <Space>
+                  {imageFiles.length}
                   <Segmented
                     defaultValue={showType}
                     options={[
@@ -323,6 +324,7 @@ const ImageSpace: React.FC<ImageSpaceProps> = (props) => {
             onClick={handleOk}
           >
             确定
+            {selectKeys?.length > 0 && `（${selectKeys?.length}）`}
           </Button>
         </div>
       </div>
