@@ -35,12 +35,7 @@ const ImageSpace: React.FC<ImageSpaceProps> = (props) => {
   const { prefixCls, wrapSSR, hashId, token } = useStyle(props.prefixCls);
   const classString = classNames(prefixCls, className, hashId, {});
   const [displayPanel, setDisplayPanel] = useState<DisplayPanelType>('none');
-  const [showType, setShowType] = useState<'list' | 'table'>('list');
-  const [imageFiles, setImageFiles] = useState<ImageFile[]>(files);
   const [selectKeys, setSelectKeys] = useState<(string | number)[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [totalPage, setTotalPage] = useState(1);
-  const [current, setCurrent] = useState(0);
 
   const handleOk = (e: any) => {
 
@@ -56,7 +51,7 @@ const ImageSpace: React.FC<ImageSpaceProps> = (props) => {
             .map((file, index) => {
               return {
                 ...file,
-                id: file.id + '_' + current,
+                id: file.id + '_' + page,
               };
             });
           const data = { items: newData, total: files.length, };

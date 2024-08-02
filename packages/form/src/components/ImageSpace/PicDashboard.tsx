@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react';
-import classNames from 'classnames';
 import { Image, Button, Checkbox, Segmented, Space, Spin, Table, message } from 'antd';
-import { convertByteUnit } from '@web-react/biz-utils';
-import { useStyle } from './style';
 import { AppstoreOutlined, BarsOutlined } from '@ant-design/icons';
+import { classNames, convertByteUnit, useMergedState } from '@web-react/biz-utils';
+import { useStyle } from './style';
 import PicCard from './PicCard';
 
 type ImageFile = {
@@ -25,6 +24,9 @@ type PicDashboardProps = {
         items: ImageFile[];
         total: number;
     }>;
+    defaultSelectKeys?: ImageFile['id'][],
+    selectKeys?: ImageFile['id'][],
+    onSelect?: (selectKeys: ImageFile['id'][]) => void,
 };
 const PicDashboard: React.FC<PicDashboardProps> = (props) => {
     const { actions, loadData, pageSize = 20 } = props;
@@ -34,7 +36,12 @@ const PicDashboard: React.FC<PicDashboardProps> = (props) => {
     const [current, setCurrent] = useState(0);
     const [totalPage, setTotalPage] = useState(1);
     const [imageFiles, setImageFiles] = useState<ImageFile[]>([]);
-    const [selectKeys, setSelectKeys] = useState<(string | number)[]>([]);
+    const [selectKeys, setSelectKeys] = useMergedState<(string | number)[]>(props?.defaultSelectKeys || [], {
+        value: props?.selectKeys,
+        onChange: props?.onSelect,
+    });
+
+
 
     useEffect(() => {
         fetchData(current + 1);

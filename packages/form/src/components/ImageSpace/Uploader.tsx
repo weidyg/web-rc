@@ -1,9 +1,7 @@
 import React, { useMemo, useState } from 'react';
-import classNames from 'classnames';
 import { CheckCircleFilled, CloseCircleFilled, LoadingOutlined, UploadOutlined } from '@ant-design/icons';
 import { Alert, Button, Cascader, Checkbox, Form, InputNumber, Radio, Select, Upload, UploadFile, UploadProps, } from 'antd';
-import { convertByteUnit } from '@web-react/biz-utils';
-import useMergedState from 'rc-util/es/hooks/useMergedState';
+import { classNames, convertByteUnit, useMergedState } from '@web-react/biz-utils';
 import { useStyle } from './style';
 import dataJson from './data.json';
 
