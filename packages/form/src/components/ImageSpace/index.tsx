@@ -151,6 +151,10 @@ const ImageSpace: React.FC<ImageSpaceProps> = (props) => {
           </div>
         </div>
         <PicDashboard
+          selectKeys={selectKeys}
+          onSelect={(keys) => {
+            setSelectKeys(keys);
+          }}
           actions={{
             left: <SearchForm />,
             right: <Button
@@ -162,7 +166,7 @@ const ImageSpace: React.FC<ImageSpaceProps> = (props) => {
               上传图片
             </Button>,
           }}
-          pageSize={10}
+          pageSize={5}
           loadData={fetchData}
         />
         <PicUploader

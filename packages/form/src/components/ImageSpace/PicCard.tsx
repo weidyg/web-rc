@@ -115,7 +115,7 @@ const PicCard: React.FC<PicCardProps> = (props) => {
           </div>
         </div>
       </div>
-    </div>,
+    </div>
   );
 };
 

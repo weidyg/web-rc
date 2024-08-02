@@ -172,6 +172,16 @@ const genBizStyle: GenerateStyle<BizImageSpaceToken> = (token) => {
         alignContent: 'center',
         justifyContent: 'center',
       },
+      // '&-loadMore': {
+      //   width: '100%',
+      //   display: 'flex',
+      //   flexWrap: 'nowrap',
+      //   alignContent: 'center',
+      //   justifyContent: 'center',
+      //   alignItems: 'center',
+      //   cursor: 'pointer',
+      //   fontSize: token.fontSize,
+      // },
 
       '&-picCard': {
         position: 'relative',

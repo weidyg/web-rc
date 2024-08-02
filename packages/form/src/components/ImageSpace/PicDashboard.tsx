@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react';
-import { Image, Button, Checkbox, Segmented, Space, Spin, Table, message } from 'antd';
+import { useEffect, useRef, useState } from 'react';
+import { Image, Button, Checkbox, Segmented, Space, Spin, Table, message, Divider } from 'antd';
 import { AppstoreOutlined, BarsOutlined } from '@ant-design/icons';
 import { classNames, convertByteUnit, useMergedState } from '@web-react/biz-utils';
 import { useStyle } from './style';
 import PicCard from './PicCard';
+import { ColumnsType } from 'antd/es/table';
 
 type ImageFile = {
     id: string | number;
@@ -33,8 +34,8 @@ const PicDashboard: React.FC<PicDashboardProps> = (props) => {
     const { prefixCls, wrapSSR, hashId, token } = useStyle(props?.prefixCls);
     const [showType, setShowType] = useState<'list' | 'table'>('list');
     const [loading, setLoading] = useState(false);
-    const [current, setCurrent] = useState(0);
-    const [totalPage, setTotalPage] = useState(1);
+    const [curPage, setCurPage] = useState(0);
+    const [totalCount, setTotalCount] = useState(0);
     const [imageFiles, setImageFiles] = useState<ImageFile[]>([]);
     const [selectKeys, setSelectKeys] = useMergedState<(string | number)[]>(props?.defaultSelectKeys || [], {
         value: props?.selectKeys,
@@ -44,7 +45,7 @@ const PicDashboard: React.FC<PicDashboardProps> = (props) => {
 
 
     useEffect(() => {
-        fetchData(current + 1);
+        fetchData(curPage + 1, true);
     }, [])
 
     const handleScroll = async (event: React.SyntheticEvent<HTMLDivElement>) => {
@@ -52,23 +53,23 @@ const PicDashboard: React.FC<PicDashboardProps> = (props) => {
         if (scrollTop + clientHeight >= scrollHeight) {
             console.log('滚动到底部');
             if (!loading) {
-                fetchData(current + 1);
+                fetchData(curPage + 1);
             }
         }
     };
 
-    const fetchData = async (current: number) => {
-        if (current > totalPage) { return; }
+    const fetchData = async (page: number, fist?: boolean) => {
+        const totalPage = fist ? 1 : Math.ceil(totalCount / pageSize);
+        if (page > totalPage) { return; }
         setLoading(true);
         try {
-            const data = await loadData(current, pageSize);
+            const data = await loadData(page, pageSize);
             const newData = data?.items || [];
-            const newImageFiles = current > 1
+            const newImageFiles = page > 1
                 ? [...imageFiles, ...newData]
                 : newData;
-            const newtalPage = Math.ceil((data.total || 0) / pageSize);
-            setCurrent(current);
-            setTotalPage(newtalPage);
+            setCurPage(page);
+            setTotalCount(data.total || 0);
             setImageFiles(newImageFiles);
         } catch (error: any) {
             message.error(error?.message || '加载失败');
@@ -87,6 +88,25 @@ const PicDashboard: React.FC<PicDashboardProps> = (props) => {
                 : (checked ? [...keys, id] : keys);
         });
     };
+
+    const LoadMore = (props: { wrapper?: (node: React.ReactNode) => React.ReactNode }) => {
+        const { wrapper } = props;
+        if (loading || (curPage * pageSize >= totalCount)) { return <></> }
+        const node = <Divider dashed={true}>
+            <span
+                style={{
+                    cursor: 'pointer',
+                    fontSize: token.fontSize,
+                }}
+                onClick={() => {
+                    fetchData(curPage + 1);
+                }}>
+                加载更多...
+            </span>
+        </Divider>
+        return wrapper?.(node) || node;
+    }
+
 
     const RenderFileName = ({ file }: { file: ImageFile }) => {
         const [preview, setPreview] = useState(false);
@@ -121,8 +141,38 @@ const PicDashboard: React.FC<PicDashboardProps> = (props) => {
             </div>
         </div>
     }
+
+    const columns: ColumnsType<ImageFile> = [
+        {
+            dataIndex: 'name', title: '文件',
+            render: (_, record) => (<RenderFileName file={record} />),
+        },
+        { dataIndex: 'pixel', title: '尺寸' },
+        {
+            dataIndex: 'size', title: '大小',
+            render: (value) => convertByteUnit(value)
+        },
+        // { dataIndex: 'status', title: '状态' },
+        // { dataIndex: 'gmtModified', title: '修改时间' },
+    ]
+
+    const BodyWrapper = (props: any) => {
+        const { children, ...restProps } = props;
+        return <tbody   {...restProps}>
+            <>
+                {children}
+                <LoadMore wrapper={(node) => (<tr>
+                    <td colSpan={columns?.length || 1}>
+                        {node}
+                    </td>
+                </tr>)} />
+            </>
+        </tbody>;
+    };
+    const dashboardRef = useRef<HTMLDivElement>(null);
     return wrapSSR(
-        <div className={classNames(`${prefixCls}-dashboard`, hashId)}>
+        <div ref={dashboardRef}
+            className={classNames(`${prefixCls}-dashboard`, hashId)}>
             {loading &&
                 <div className={classNames(`${prefixCls}-mask`, hashId)}>
                     <Spin size='large' spinning={true} />
@@ -176,6 +226,7 @@ const PicDashboard: React.FC<PicDashboardProps> = (props) => {
                         {Array.from({ length: 10 }).map((item, index) => (
                             <i key={index} className={classNames(`${prefixCls}-picCard`, `${prefixCls}-picCard-empty`, hashId)} />
                         ))}
+                        <LoadMore />
                     </div>
                 </div>
             }
@@ -183,30 +234,22 @@ const PicDashboard: React.FC<PicDashboardProps> = (props) => {
                 <div // style={{ display: showType == 'table' ? 'block' : 'none' }}
                     className={classNames(`${prefixCls}-dashboard-table`, hashId)}>
                     <Table
-                        tableLayout='auto'
+                        rowKey={'id'}
                         size="middle"
                         scroll={{ y: 'calc(-180px + 100vh)' }}
                         pagination={false}
                         onScroll={handleScroll}
-                        columns={[
-                            {
-                                dataIndex: 'name', title: '文件',
-                                render: (_, record) => (<RenderFileName file={record} />),
-                            },
-                            { dataIndex: 'pixel', title: '尺寸' },
-                            {
-                                dataIndex: 'size', title: '大小',
-                                render: (value) => convertByteUnit(value)
-                            },
-                            // { dataIndex: 'status', title: '状态' },
-                            // { dataIndex: 'gmtModified', title: '修改时间' },
-                        ]}
-                        rowKey={'id'}
+                        columns={columns}
                         dataSource={imageFiles}
+                        components={{
+                            body: {
+                                wrapper: BodyWrapper,
+                            },
+                        }}
                     />
                 </div>
             }
-        </div>
+        </div >
     )
 };
 export type { PicDashboardProps, ImageFile };
