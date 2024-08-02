@@ -1,22 +1,10 @@
 import { useEffect, useState } from 'react';
 import classNames from 'classnames';
-import { Image, Button, Checkbox, Segmented, Space, Spin, Table } from 'antd';
+import { Image, Button, Checkbox, Segmented, Space, Spin, Table, message } from 'antd';
 import { convertByteUnit } from '@web-react/biz-utils';
 import { useStyle } from './style';
 import { AppstoreOutlined, BarsOutlined } from '@ant-design/icons';
 import PicCard from './PicCard';
-
-import dataJson from './data.json';
-const files = dataJson.files.fileModule.map(m => {
-    return {
-        id: m.pictureId,
-        name: m.name,
-        size: m.sizes,
-        pixel: m.pixel,
-        fullUrl: m.fullUrl,
-        isRef: m.ref,
-    }
-});
 
 type ImageFile = {
     id: string | number;
@@ -31,10 +19,15 @@ type PicDashboardProps = {
     actions?: {
         left?: React.ReactNode;
         right?: React.ReactNode;
-    }
+    },
+    pageSize?: number;
+    loadData: (page: number, size: number) => Promise<{
+        items: ImageFile[];
+        total: number;
+    }>;
 };
 const PicDashboard: React.FC<PicDashboardProps> = (props) => {
-    const { actions } = props;
+    const { actions, loadData, pageSize = 20 } = props;
     const { prefixCls, wrapSSR, hashId, token } = useStyle(props?.prefixCls);
     const [showType, setShowType] = useState<'list' | 'table'>('list');
     const [loading, setLoading] = useState(false);
@@ -52,29 +45,29 @@ const PicDashboard: React.FC<PicDashboardProps> = (props) => {
         if (scrollTop + clientHeight >= scrollHeight) {
             console.log('滚动到底部');
             if (!loading) {
-                // fetchData(current + 1);
+                fetchData(current + 1);
             }
         }
     };
 
-    const fetchData = (current: number) => {
+    const fetchData = async (current: number) => {
         if (current > totalPage) { return; }
         setLoading(true);
-        setTimeout(() => {
-            const newData = files.map((file, index) => {
-                return {
-                    ...file,
-                    id: file.id + '_' + current,
-                };
-            });
+        try {
+            const data = await loadData(current, pageSize);
+            const newData = data?.items || [];
             const newImageFiles = current > 1
                 ? [...imageFiles, ...newData]
                 : newData;
-            setImageFiles(newImageFiles);
+            const newtalPage = Math.ceil((data.total || 0) / pageSize);
             setCurrent(current);
-            setTotalPage(current + 1);
+            setTotalPage(newtalPage);
+            setImageFiles(newImageFiles);
+        } catch (error: any) {
+            message.error(error?.message || '加载失败');
+        } finally {
             setLoading(false);
-        }, 1000);
+        }
     };
 
     const isChecked = (id: string | number): boolean => {
@@ -125,7 +118,7 @@ const PicDashboard: React.FC<PicDashboardProps> = (props) => {
         <div className={classNames(`${prefixCls}-dashboard`, hashId)}>
             {loading &&
                 <div className={classNames(`${prefixCls}-mask`, hashId)}>
-                    <Spin spinning={true} />
+                    <Spin size='large' spinning={true} />
                 </div>
             }
             <div className={classNames(`${prefixCls}-dashboard-header`, hashId)}>

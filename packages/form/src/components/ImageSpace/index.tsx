@@ -7,7 +7,7 @@ import PicUploader, { DisplayPanelType } from './Uploader';
 import { useStyle } from './style';
 import dataJson from './data.json';
 import { convertByteUnit } from '@web-react/biz-utils';
-import PicDashboard from './PicDashboard';
+import PicDashboard, { ImageFile } from './PicDashboard';
 
 const files = dataJson.files.fileModule.map(m => {
   return {
@@ -20,14 +20,6 @@ const files = dataJson.files.fileModule.map(m => {
   }
 });
 
-type ImageFile = {
-  id: string | number;
-  name?: string;
-  size?: number;
-  pixel?: string;
-  fullUrl?: string;
-  isRef?: boolean;
-}
 
 type ImageSpaceProps = {
   /** 类名 */
@@ -55,26 +47,22 @@ const ImageSpace: React.FC<ImageSpaceProps> = (props) => {
   };
 
 
-  const fetchData = (current: number) => {
-    if (current > totalPage) { return; }
-    setLoading(true);
-    setTimeout(() => {
-
-      const newData = files.map((file, index) => {
-        return {
-          ...file,
-          id: file.id + '_' + current,
-        };
-      });
-
-      const newImageFiles = current > 1
-        ? [...imageFiles, ...newData]
-        : newData;
-      setImageFiles(newImageFiles);
-      setCurrent(current);
-      setTotalPage(current + 1);
-      setLoading(false);
-    }, 1000);
+  const fetchData = (page: number, size: number) => {
+    return new Promise<{ items: ImageFile[], total: number, }>(
+      (resolve, reject) => {
+        setTimeout(() => {
+          const newData: ImageFile[] = files
+            .slice((page - 1) * size, page * size)
+            .map((file, index) => {
+              return {
+                ...file,
+                id: file.id + '_' + current,
+              };
+            });
+          const data = { items: newData, total: files.length, };
+          resolve(data);
+        }, 1000);
+      })
   };
 
   const SearchForm = () => {
@@ -179,6 +167,8 @@ const ImageSpace: React.FC<ImageSpaceProps> = (props) => {
               上传图片
             </Button>,
           }}
+          pageSize={10}
+          loadData={fetchData}
         />
         <PicUploader
           display={displayPanel}

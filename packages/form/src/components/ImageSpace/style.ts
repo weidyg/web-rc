@@ -163,7 +163,7 @@ const genBizStyle: GenerateStyle<BizImageSpaceToken> = (token) => {
         flexGrow: 1,
         flexBasis: '100%',
         position: 'absolute',
-        background: setAlpha(token.colorBgLayout, 0.3),
+        background: setAlpha(token.colorBgLayout, 0.5),
         zIndex: 1,
         width: '100%',
         height: '100%',
