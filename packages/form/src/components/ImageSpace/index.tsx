@@ -1,13 +1,11 @@
-import { useState } from 'react';
-import classNames from 'classnames';
-import { Image, Button, Checkbox, Input, Segmented, Select, Space, Table, Tree, Typography, Spin, List } from 'antd';
-import { AppstoreOutlined, BarsOutlined, SearchOutlined } from '@ant-design/icons';
-import PicCard from './PicCard';
+import { useMemo, useState } from 'react';
+import { Button, Input, Select, Space, Tree, Typography } from 'antd';
+import { SearchOutlined } from '@ant-design/icons';
+import { classNames } from '@web-react/biz-utils';
 import PicUploader, { DisplayPanelType } from './Uploader';
+import PicDashboard, { ImageFile } from './PicDashboard';
 import { useStyle } from './style';
 import dataJson from './data.json';
-import { convertByteUnit } from '@web-react/biz-utils';
-import PicDashboard, { ImageFile } from './PicDashboard';
 
 const files = dataJson.files.fileModule.map(m => {
   return {
@@ -41,7 +39,6 @@ const ImageSpace: React.FC<ImageSpaceProps> = (props) => {
 
   };
 
-
   const fetchData = (page: number, size: number) => {
     return new Promise<{ items: ImageFile[], total: number, }>(
       (resolve, reject) => {
@@ -59,6 +56,7 @@ const ImageSpace: React.FC<ImageSpaceProps> = (props) => {
         }, 1000);
       })
   };
+
 
   const SearchForm = () => {
     return <Space>
@@ -142,6 +140,10 @@ const ImageSpace: React.FC<ImageSpaceProps> = (props) => {
     </>
   }
 
+  const selectCount = useMemo(() => {
+    return selectKeys?.length || 0;
+  }, [selectKeys])
+
   return wrapSSR(
     <div className={classString} style={style}>
       <div className={classNames(`${prefixCls}-body`, hashId)}>
@@ -188,8 +190,7 @@ const ImageSpace: React.FC<ImageSpaceProps> = (props) => {
             disabled={selectKeys?.length == 0}
             onClick={handleOk}
           >
-            确定
-            {selectKeys?.length > 0 && `（${selectKeys?.length}）`}
+            确定{selectCount > 0 && `（${selectCount}）`}
           </Button>
         </div>
       </div>
