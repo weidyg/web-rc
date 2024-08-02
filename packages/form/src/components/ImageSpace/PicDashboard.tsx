@@ -97,6 +97,7 @@ const PicDashboard: React.FC<PicDashboardProps> = (props) => {
                 style={{
                     cursor: 'pointer',
                     fontSize: token.fontSize,
+                    color: token.colorTextTertiary,
                 }}
                 onClick={() => {
                     fetchData(curPage + 1);
