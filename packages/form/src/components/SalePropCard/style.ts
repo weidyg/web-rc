@@ -4,9 +4,26 @@ import { setAlpha, useStyle as useAntdStyle } from '@web-react/biz-components';
 const genBizStyle: GenerateStyle<SalePropCardToken> = (token) => {
   return {
     [token.componentCls]: {
+      height: 'calc(100% - 1px)',
+      display: 'flex',
+      flexDirection: 'column',
+      '&-header': {
+        padding: '8px 16px',
+        minHeight: 'unset'
+      },
+      '&-body': {
+        overflow: 'hidden',
+        padding: '0 !important',
+        flex: 1
+      },
       '&-group': {
         '&-wrapper': {
           width: '120px',
+        },
+        '&-menu': {
+          width: '100%',
+          height: '100%',
+          overflow: 'auto',
         },
         '&-item': {
           padding: '0px 4px',
@@ -21,11 +38,7 @@ const genBizStyle: GenerateStyle<SalePropCardToken> = (token) => {
         borderRadius: token.borderRadius,
         backgroundColor: token.colorFillContent,
         '&-wrapper': {
-          // width: '480px',
-          // height: '320px',
-          overflow: 'auto',
           padding: '8px',
-          overlay: 'auto'
         },
         '&-text': {
           width: '56px',

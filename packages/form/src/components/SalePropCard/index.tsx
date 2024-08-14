@@ -1,13 +1,32 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Alert, Button, Card, Checkbox, Flex, Input, Menu, Select, Space, Switch, Tree, Typography } from 'antd';
+import { Alert, Button, Card, Checkbox, Flex, Input, Menu, Modal, Select, Space, Switch, Tree, Typography } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
-import { classNames } from '@web-react/biz-utils';
+import { classNames, useMergedState } from '@web-react/biz-utils';
 import { useStyle } from './style';
+
+
+const getValues = (
+  value?: string[] | GroupValueType,
+  isGroup?: boolean,
+  groupValue?: string
+): string[] => {
+  let values: string[] = [];
+  if (isGroup && groupValue && typeof value == 'object') {
+    values = (value as GroupValueType)?.[groupValue] || [];
+  } else if (Array.isArray(value)) {
+    values = value;
+  }
+  return values;
+}
+const getChildren = (item: any): BaseOptionType[] => {
+  return item?.children || []
+}
+
 
 export type GroupValueType = { [key: string]: string[] };
 export type BaseOptionType = { label: string; value: string; }
 export type GroupOptionType = BaseOptionType & { children: BaseOptionType[] }
-export type SalePropCardProps = {
+export type SalePropCardProps<ValueType extends string[] | GroupValueType = any> = {
   /** 类名 */
   className?: string;
   /** 样式 */
@@ -16,30 +35,31 @@ export type SalePropCardProps = {
   prefixCls?: string;
   uniqueGroup?: boolean;
   options: BaseOptionType[] | GroupOptionType[];
-  value: string[] | GroupValueType;
-  onChange: (value: string[] | GroupValueType) => void;
+  current?: string;
+  value?: ValueType;
+  onOk?: (value?: ValueType) => Promise<void> | void,
   onCancel?: () => void,
 };
 
-function getChildren(item: any): BaseOptionType[] {
-  return item?.children || []
-}
-
-const SalePropCard: React.FC<SalePropCardProps> = (props) => {
-  const { style, className, options, uniqueGroup } = props;
+const SalePropCard = <
+  ValueType extends (string[] | GroupValueType) = any
+>(
+  props: SalePropCardProps<ValueType>
+) => {
+  const { style, className, options, uniqueGroup,
+    current, value: propValue, onOk, onCancel
+  } = props;
   const { prefixCls, wrapSSR, hashId, token } = useStyle(props.prefixCls);
 
   const [loading, setLoading] = useState(false);
   const [showChecked, setShowChecked] = useState(false);
   const [showKeyword, setShowKeyword] = useState<string>();
-
-  const [isGroup, setIsGroup] = useState(false);
+  const [initGroupValue, setInitGroupValue] = useState<string>();
   const [groupValue, setGroupValue] = useState<string>();
-  const [value, setValue] = useState<string[] | GroupValueType>();
+  const [value, setValue] = useState(propValue);
 
-  useEffect(() => {
-    const isGroup = options.some((item) => getChildren(item)?.length > 0);
-    setIsGroup(isGroup);
+  const isGroup = useMemo(() => {
+    return options?.some((item) => getChildren(item)?.length > 0);
   }, [options])
 
   const [itemOpts, itemValues] = useMemo(() => {
@@ -58,17 +78,59 @@ const SalePropCard: React.FC<SalePropCardProps> = (props) => {
     } else if (typeof value == 'object') {
       return uniqueGroup
         ? (groupValue && value[groupValue]?.length) || 0
-        : Object.values(value).reduce((pre, cur) => pre + cur.length, 0);
+        : Object.values(value).reduce((pre, cur) => pre + (cur as any).length, 0);
     }
     return 0;
   }, [value, groupValue, uniqueGroup]);
 
+  useEffect(() => {
+    let _groupValue: string | undefined = undefined;
+    if (isGroup && typeof value == 'object') {
+      const keys = Object.keys(value);
+      if (keys.length > 0) {
+        _groupValue = keys[0];
+      }
+    }
+    if (isGroup) {
+      setInitGroupValue(_groupValue);
+      setGroupValue(_groupValue || options[0].value);
+    }
+  }, [isGroup])
 
-  function handleOk(): void {
-
+  function handleOk() {
+    setLoading(true);
+    setTimeout(async () => {
+      let _value: ValueType;
+      if (uniqueGroup && isGroup && groupValue) {
+        let values = getValues(value, isGroup, groupValue);
+        _value = { [groupValue]: values } as ValueType;
+      } else {
+        _value = value as ValueType;
+      }
+      if (uniqueGroup && groupValue != initGroupValue && initGroupValue) {
+        const oldGroup = options?.find(f => f.value == initGroupValue)?.label || initGroupValue;
+        const newGroup = options?.find(f => f.value == groupValue)?.label || groupValue;
+        Modal.confirm({
+          title: '操作确认',
+          content: `“${oldGroup}”将更换成“${newGroup}”，${oldGroup}及sku数据将被清空，确认更换？`,
+          onOk: async () => {
+            await onOk?.(_value);
+            setValue(_value);
+            setLoading(false);
+          },
+          onCancel: () => {
+            setLoading(false);
+          }
+        });
+      } else {
+        await onOk?.(_value);
+        setValue(_value);
+        setLoading(false);
+      }
+    }, 10);
   }
   function handleCancel(): void {
-    props?.onCancel?.();
+    onCancel?.();
   }
   function handleGroupChange(key: string): void {
     setGroupValue(key);
@@ -80,27 +142,24 @@ const SalePropCard: React.FC<SalePropCardProps> = (props) => {
         [groupValue!]: checkedValues
       }
       : checkedValues;
-    setValue(newValue);
+    setValue(newValue as ValueType);
   }
-
   function vaildDisabled(val: any) {
-    return false;
+    let values = getValues(propValue, isGroup, groupValue);
+    return val != current && values?.includes(val);
   }
-
   function vaildChecked(val: string) {
-    const values = isGroup
-      ? (value as GroupValueType)?.[groupValue!]
-      : value as string[];
+    let values = getValues(value, isGroup, groupValue);
     return values?.includes(val);
   }
 
   return wrapSSR(
-    <Card className={className}
-      style={{ overflow: 'hidden', height: '100%', ...style }}
-      styles={{
-        header: { padding: '8px 16px', minHeight: 'unset' },
-        body: { overflow: 'hidden', padding: '0', }
+    <Card className={classNames(prefixCls, className, hashId)}
+      classNames={{
+        header: classNames(`${prefixCls}-header`, hashId),
+        body: classNames(`${prefixCls}-body`, hashId)
       }}
+      style={{ ...style }}
       title={<Flex justify='space-between'>
         <Space >
           <span>已选 {selectedNum} 个</span>
@@ -135,29 +194,22 @@ const SalePropCard: React.FC<SalePropCardProps> = (props) => {
         </Space>
       </Flex>}
     >
-      <Flex style={{ marginTop: 1 }}>
+      <Flex style={{ marginTop: 1, height: 'calc(100% - 2px)' }}>
         {isGroup && (
           <div className={classNames(`${prefixCls}-group-wrapper`, hashId)}>
-            <Menu
-              style={{ width: '100%', height: '100%' }}
+            <Menu className={classNames(`${prefixCls}-group-menu`, hashId)}
               selectedKeys={[groupValue || '']}
               onClick={(info) => handleGroupChange(info.key)}
-            >
-              {options?.map((item, _i) => {
-                const { value: val, label: text } = item;
-                return <Menu.Item
-                  key={val}
-                  title={text}
-                  className={classNames(`${prefixCls}-group-item`, hashId)} >
-                  {text}
-                </Menu.Item>
-              })}
-            </Menu>
+              items={options?.map((item, _i) => ({
+                key: item.value, label: item.label,
+                className: classNames(`${prefixCls}-group-item`, hashId),
+              }))}
+            />
           </div>
         )}
-        <div>
+        <div style={{ overflow: 'auto' }}>
           {isGroup && uniqueGroup && (
-            <Alert banner message='切换分组会清空您已勾选尺码与SKU数据，请谨慎操作' />
+            <Alert banner type='info' message='切换分组会清空您已勾选尺码与SKU数据，请谨慎操作' />
           )}
           <div className={classNames(`${prefixCls}-checkbox-wrapper`, hashId)}>
             <Checkbox.Group
@@ -196,7 +248,6 @@ const SalePropCard: React.FC<SalePropCardProps> = (props) => {
           </div>
         </div>
       </Flex>
-      {JSON.stringify(value)}
     </Card>
   );
 };
