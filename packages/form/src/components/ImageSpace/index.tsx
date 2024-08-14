@@ -1,22 +1,10 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Button, Input, Select, Space, Tree, Typography } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import { classNames } from '@web-react/biz-utils';
-import PicUploader, { DisplayPanelType } from './Uploader';
+import PicUploader, { DisplayPanelType, FolderType } from './Uploader';
 import PicDashboard, { ImageFile } from './PicDashboard';
 import { useStyle } from './style';
-import dataJson from './data.json';
-
-const files = dataJson.files.fileModule.map(m => {
-  return {
-    id: m.pictureId,
-    name: m.name,
-    size: m.sizes,
-    pixel: m.pixel,
-    fullUrl: m.fullUrl,
-    isRef: m.ref,
-  }
-});
 
 
 type ImageSpaceProps = {
@@ -26,37 +14,38 @@ type ImageSpaceProps = {
   style?: React.CSSProperties;
   /** 自定义样式前缀 */
   prefixCls?: string;
+
+  pageSize?: number;
+  fetchFolders?: () => Promise<FolderType[]>;
+  fetchData: (page: number, size: number) => Promise<{ items: ImageFile[], total: number, }>;
 };
 
-const ImageSpace: React.FC<ImageSpaceProps> = (props) => {
-  const { style, className } = props;
+const ImageSpace = (props: ImageSpaceProps) => {
+  const { style, className, pageSize = 20, fetchData, fetchFolders } = props;
   const { prefixCls, wrapSSR, hashId, token } = useStyle(props.prefixCls);
   const classString = classNames(prefixCls, className, hashId, {});
   const [displayPanel, setDisplayPanel] = useState<DisplayPanelType>('none');
   const [selectKeys, setSelectKeys] = useState<(string | number)[]>([]);
 
+  const [folders, setFolders] = useState<FolderType[]>([]);
+
+  useEffect(() => {
+    loadDirs();
+  }, [])
+
+
+
   const handleOk = (e: any) => {
 
   };
 
-  const fetchData = (page: number, size: number) => {
-    return new Promise<{ items: ImageFile[], total: number, }>(
-      (resolve, reject) => {
-        setTimeout(() => {
-          const newData: ImageFile[] = files
-            .slice((page - 1) * size, page * size)
-            .map((file, index) => {
-              return {
-                ...file,
-                id: file.id + '_' + page,
-              };
-            });
-          const data = { items: newData, total: files.length, };
-          resolve(data);
-        }, 1000);
-      })
+  const loadDirs = async () => {
+    const data = await fetchFolders?.() || [];
+    setFolders(data);
   };
-
+  const loadData = async (page: number, size: number) => {
+    return await fetchData?.(page, size);
+  };
 
   const SearchForm = () => {
     return <Space>
@@ -85,38 +74,24 @@ const ImageSpace: React.FC<ImageSpaceProps> = (props) => {
       />
     </Space>
   }
+
+  function geTreeData(list: FolderType[]): any[] {
+    return list.map((m) => {
+      return {
+        key: m.value,
+        title: m.label,
+        children: m.children && geTreeData(m.children),
+      };
+    });
+  }
+
   const FolderTree = () => {
-    const items: any[] = [
-      {
-        key: 'sub1',
-        title: '全部图片',
-      },
-      {
-        key: 'sub2',
-        title: '妙手搬家-勿删',
-        children: [
-          {
-            key: 'g1',
-            title: '202407',
-            children: [
-              {
-                key: 'g11',
-                title: '20240711',
-                children: [
-                  {
-                    key: 'g1221',
-                    title: '20240711222',
-                  },
-                ],
-              },
-            ]
-          },
-        ],
-      },
-    ];
-    const options = items.flatMap((node: any) => {
+    const defaultValue = folders?.length > 0 ? folders[0].value : '';
+    const [folderId, setFolderId] = useState<string | number>(defaultValue);
+
+    const options = folders.flatMap((node) => {
       if (node.children) {
-        const nodes = node.children.flatMap((child: any) => [child, ...flatTreeHelper(child.children)]);
+        const nodes = node.children.flatMap((child) => [child, ...flatTreeHelper(child.children)]);
         return [node, ...nodes];
       }
       return node;
@@ -125,17 +100,25 @@ const ImageSpace: React.FC<ImageSpaceProps> = (props) => {
       if (!children || children.length === 0) { return []; }
       return children.flatMap(child => [child, ...flatTreeHelper(child.children)]);
     }
+    const treeData = geTreeData(folders);
     return <>
       <Select style={{ width: '100%', marginBottom: '8px' }}
         showSearch
         options={options}
+        value={folderId}
+        onChange={(value) => {
+          setFolderId(value);
+        }}
       />
       <Tree
         blockNode
         showIcon={true}
-        treeData={items}
-        onClick={(e) => console.log(e)}
-        onSelect={(e) => console.log(e)}
+        treeData={treeData}
+        selectedKeys={[folderId]}
+        onSelect={(value) => {
+          const val = value[0] as string | number;
+          setFolderId(val);
+        }}
       />
     </>
   }
@@ -168,10 +151,11 @@ const ImageSpace: React.FC<ImageSpaceProps> = (props) => {
               上传图片
             </Button>,
           }}
-          pageSize={5}
-          loadData={fetchData}
+          pageSize={pageSize}
+          loadData={loadData}
         />
         <PicUploader
+          folders={folders}
           display={displayPanel}
           onDisplayChange={(val) => {
             setDisplayPanel(val)
@@ -198,5 +182,5 @@ const ImageSpace: React.FC<ImageSpaceProps> = (props) => {
   );
 };
 
-export type { ImageSpaceProps };
+export type { ImageSpaceProps, ImageFile, FolderType };
 export default ImageSpace;

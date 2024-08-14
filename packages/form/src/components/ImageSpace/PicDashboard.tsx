@@ -42,8 +42,6 @@ const PicDashboard: React.FC<PicDashboardProps> = (props) => {
         onChange: props?.onSelect,
     });
 
-
-
     useEffect(() => {
         fetchData(curPage + 1, true);
     }, [])

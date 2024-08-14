@@ -3,27 +3,22 @@ import { CheckCircleFilled, CloseCircleFilled, LoadingOutlined, UploadOutlined }
 import { Alert, Button, Cascader, Checkbox, Form, InputNumber, Radio, Select, Upload, UploadFile, UploadProps, } from 'antd';
 import { classNames, convertByteUnit, useMergedState } from '@web-react/biz-utils';
 import { useStyle } from './style';
-import dataJson from './data.json';
 
-function getOptions(list: any[]): any[] {
-    return list.map((m) => {
-        return {
-            value: m.id,
-            label: m.name,
-            children: m.children && getOptions(m.children),
-        };
-    });
-}
-const cascaderOptions = getOptions([{ ...dataJson.dirs, children: [] }, ...dataJson.dirs.children]);
-
+type FolderType = {
+    value: string | number;
+    label: React.ReactNode;
+    children?: FolderType[],
+};
 type DisplayPanelType = 'none' | 'uploader' | 'uploadList';
 type UploaderProps = {
     prefixCls?: string;
+    folders?: FolderType[];
     display?: DisplayPanelType;
     onDisplayChange?: (display: DisplayPanelType) => void;
+
 };
 const Uploader: React.FC<UploaderProps> = (props) => {
-    const { } = props;
+    const { folders } = props;
     const { prefixCls, wrapSSR, hashId, token } = useStyle(props?.prefixCls);
     const [displayPanel, setDisplayPanel] = useMergedState<DisplayPanelType>('none', {
         value: props?.display,
@@ -91,7 +86,7 @@ const Uploader: React.FC<UploaderProps> = (props) => {
                     allowClear={false}
                     changeOnSelect
                     style={{ width: '150px' }}
-                    options={cascaderOptions}
+                    options={folders}
                 />
             </Form.Item>
             <Form.Item
@@ -250,5 +245,5 @@ const Uploader: React.FC<UploaderProps> = (props) => {
         </div>
     )
 };
-export type { DisplayPanelType, UploaderProps };
+export type { FolderType, DisplayPanelType, UploaderProps };
 export default Uploader;
