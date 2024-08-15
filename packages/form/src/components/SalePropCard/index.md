@@ -10,7 +10,7 @@ atomId: SalePropCard
 
 ## 代码演示
 
-<code iframe="650"  title="基本使用" description="基本的销售属性卡片" src="./demos/basic.tsx" ></code>
+<code  title="基本使用" description="基本的销售属性卡片" src="./_demos/basic.tsx" ></code>
 
 ## API
 

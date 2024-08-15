@@ -3,8 +3,8 @@ import { Image, Button, Checkbox, Segmented, Space, Spin, Table, message, Divide
 import { AppstoreOutlined, BarsOutlined } from '@ant-design/icons';
 import { classNames, convertByteUnit, useMergedState } from '@web-react/biz-utils';
 import { useStyle } from './style';
-import PicCard from './PicCard';
 import { ColumnsType } from 'antd/es/table';
+import PicCard from '../picCard';
 
 type ImageFile = {
     id: string | number;
@@ -14,7 +14,7 @@ type ImageFile = {
     fullUrl?: string;
     isRef?: boolean;
 }
-type PicDashboardProps = {
+type PicPanelProps = {
     prefixCls?: string;
     actions?: {
         left?: React.ReactNode;
@@ -29,32 +29,22 @@ type PicDashboardProps = {
     selectKeys?: ImageFile['id'][],
     onSelect?: (selectKeys: ImageFile['id'][]) => void,
 };
-const PicDashboard: React.FC<PicDashboardProps> = (props) => {
+const PicPanel: React.FC<PicPanelProps> = (props) => {
     const { actions, loadData, pageSize = 20 } = props;
     const { prefixCls, wrapSSR, hashId, token } = useStyle(props?.prefixCls);
     const [showType, setShowType] = useState<'list' | 'table'>('list');
-    const [loading, setLoading] = useState(false);
-    const [curPage, setCurPage] = useState(0);
-    const [totalCount, setTotalCount] = useState(0);
-    const [imageFiles, setImageFiles] = useState<ImageFile[]>([]);
     const [selectKeys, setSelectKeys] = useMergedState<(string | number)[]>(props?.defaultSelectKeys || [], {
         value: props?.selectKeys,
         onChange: props?.onSelect,
     });
 
+    const [loading, setLoading] = useState(false);
+    const [curPage, setCurPage] = useState(0);
+    const [totalCount, setTotalCount] = useState(0);
+    const [imageFiles, setImageFiles] = useState<ImageFile[]>([]);
     useEffect(() => {
         fetchData(curPage + 1, true);
     }, [])
-
-    const handleScroll = async (event: React.SyntheticEvent<HTMLDivElement>) => {
-        const { scrollTop, clientHeight, scrollHeight } = event.target as HTMLDivElement;
-        if (scrollTop + clientHeight >= scrollHeight) {
-            console.log('滚动到底部');
-            if (!loading) {
-                fetchData(curPage + 1);
-            }
-        }
-    };
 
     const fetchData = async (page: number, fist?: boolean) => {
         const totalPage = fist ? 1 : Math.ceil(totalCount / pageSize);
@@ -75,6 +65,16 @@ const PicDashboard: React.FC<PicDashboardProps> = (props) => {
             setLoading(false);
         }
     };
+
+    const handleScroll = async (event: React.SyntheticEvent<HTMLDivElement>) => {
+        const { scrollTop, clientHeight, scrollHeight } = event.target as HTMLDivElement;
+        if (scrollTop + clientHeight >= scrollHeight) {
+            if (!loading) { fetchData(curPage + 1); }
+        }
+    };
+    const handleRefresh = () => {
+        fetchData(1);
+    }
 
     const isChecked = (id: string | number): boolean => {
         return selectKeys?.includes(id) ?? false;
@@ -105,8 +105,6 @@ const PicDashboard: React.FC<PicDashboardProps> = (props) => {
         </Divider>
         return wrapper?.(node) || node;
     }
-
-
     const RenderFileName = ({ file }: { file: ImageFile }) => {
         const [preview, setPreview] = useState(false);
         return <div className={classNames(`${prefixCls}-fileName`, hashId)}>
@@ -168,18 +166,19 @@ const PicDashboard: React.FC<PicDashboardProps> = (props) => {
             </>
         </tbody>;
     };
+
     const dashboardRef = useRef<HTMLDivElement>(null);
     return wrapSSR(
         <div ref={dashboardRef}
-            className={classNames(`${prefixCls}-dashboard`, hashId)}>
+            className={classNames(`${prefixCls}`, hashId)}>
             {loading &&
                 <div className={classNames(`${prefixCls}-mask`, hashId)}>
                     <Spin size='large' spinning={true} />
                 </div>
             }
-            <div className={classNames(`${prefixCls}-dashboard-header`, hashId)}>
-                <div className={classNames(`${prefixCls}-dashboard-header-actions`, hashId)}>
-                    <div className={classNames(`${prefixCls}-dashboard-header-actions-left`, hashId)}>
+            <div className={classNames(`${prefixCls}-header`, hashId)}>
+                <div className={classNames(`${prefixCls}-header-actions`, hashId)}>
+                    <div className={classNames(`${prefixCls}-header-actions-left`, hashId)}>
                         <Space>
                             <Segmented
                                 defaultValue={showType}
@@ -191,11 +190,14 @@ const PicDashboard: React.FC<PicDashboardProps> = (props) => {
                                     setShowType(value)
                                 }}
                             />
-                            <Button>刷新</Button>
+                            <Button disabled={loading}
+                                onClick={handleRefresh}>
+                                刷新
+                            </Button>
                             {actions?.left}
                         </Space>
                     </div>
-                    <div className={classNames(`${prefixCls}-dashboard-header-actions-right`, hashId)}>
+                    <div className={classNames(`${prefixCls}-header-actions-right`, hashId)}>
                         {actions?.right}
                     </div>
                 </div>
@@ -204,9 +206,9 @@ const PicDashboard: React.FC<PicDashboardProps> = (props) => {
                 <div
                     onScroll={handleScroll}
                     style={{ overflowY: 'auto', }}
-                    className={classNames(`${prefixCls}-dashboard-list`, hashId)}
+                    className={classNames(`${prefixCls}-list`, hashId)}
                 >
-                    <div className={classNames(`${prefixCls}-dashboard-list-document`, hashId)}>
+                    <div className={classNames(`${prefixCls}-list-document`, hashId)}>
                         {imageFiles.map((item, index) => (
                             <PicCard
                                 key={index}
@@ -216,22 +218,20 @@ const PicDashboard: React.FC<PicDashboardProps> = (props) => {
                                 pixel={item.pixel}
                                 isRef={item.isRef}
                                 checked={isChecked(item.id)}
+                                onAiEdit={() => { }}
                                 onChange={(value: boolean, prevValue: boolean) => {
-                                    console.log('PicCard onChange', value, prevValue);
                                     checkChange(item.id, value);
                                 }}
                             />
                         ))}
-                        {Array.from({ length: 10 }).map((item, index) => (
-                            <i key={index} className={classNames(`${prefixCls}-picCard`, `${prefixCls}-picCard-empty`, hashId)} />
-                        ))}
+                        {Array.from({ length: 10 }).map((_, index) => (<PicCard.Empty key={index} />))}
                         <LoadMore />
                     </div>
                 </div>
             }
             {showType == 'table' &&
                 <div // style={{ display: showType == 'table' ? 'block' : 'none' }}
-                    className={classNames(`${prefixCls}-dashboard-table`, hashId)}>
+                    className={classNames(`${prefixCls}-table`, hashId)}>
                     <Table
                         rowKey={'id'}
                         size="middle"
@@ -251,5 +251,5 @@ const PicDashboard: React.FC<PicDashboardProps> = (props) => {
         </div >
     )
 };
-export type { PicDashboardProps, ImageFile };
-export default PicDashboard;
+export type { PicPanelProps, ImageFile };
+export default PicPanel;

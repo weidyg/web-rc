@@ -1,13 +1,18 @@
-import { useEffect, useMemo, useState } from 'react';
-import { Button, Input, Select, Space, Tree, Typography } from 'antd';
+import { Key, useEffect, useMemo, useState } from 'react';
+import { Button, Input, Select, Space, Typography } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import { classNames } from '@web-react/biz-utils';
 import PicUploader, { DisplayPanelType, FolderType } from './Uploader';
-import PicDashboard, { ImageFile } from './PicDashboard';
+import FolderTree, { FolderTreeType } from './folderTree';
+import PicPanel, { ImageFile } from './picPanel';
 import { useStyle } from './style';
 
-
-type ImageSpaceProps = {
+type BaseRequestParam = {
+  page: number,
+  size: number,
+  folderId?: Key
+}
+type ImageSpaceProps<RequestParamType extends BaseRequestParam> = {
   /** 类名 */
   className?: string;
   /** 样式 */
@@ -16,112 +21,71 @@ type ImageSpaceProps = {
   prefixCls?: string;
 
   pageSize?: number;
-  fetchFolders?: () => Promise<FolderType[]>;
-  fetchData: (page: number, size: number) => Promise<{ items: ImageFile[], total: number, }>;
+  fetchFolders?: () => Promise<FolderTreeType[]>;
+  fetchData: (param: RequestParamType) => Promise<{ items: ImageFile[], total: number, }>;
 };
-
-const ImageSpace = (props: ImageSpaceProps) => {
+const ImageSpace = <
+  RequestParamType extends BaseRequestParam = BaseRequestParam
+>(
+  props: ImageSpaceProps<RequestParamType>
+) => {
   const { style, className, pageSize = 20, fetchData, fetchFolders } = props;
   const { prefixCls, wrapSSR, hashId, token } = useStyle(props.prefixCls);
   const classString = classNames(prefixCls, className, hashId, {});
   const [displayPanel, setDisplayPanel] = useState<DisplayPanelType>('none');
   const [selectKeys, setSelectKeys] = useState<(string | number)[]>([]);
 
-  const [folders, setFolders] = useState<FolderType[]>([]);
+  const [folders, setFolders] = useState<FolderTreeType[]>([]);
+  const [folderId, setFolderId] = useState<Key>();
+
+
+  // const [loading, setLoading] = useState(false);
+  // const [curPage, setCurPage] = useState(0);
+  // const [totalCount, setTotalCount] = useState(0);
+  // const [imageFiles, setImageFiles] = useState<ImageFile[]>([]);
+  // useEffect(() => {
+  //     fetchData(curPage + 1, true);
+  // }, [])
+
+  // const fetchData = async (page: number, fist?: boolean) => {
+  //     const totalPage = fist ? 1 : Math.ceil(totalCount / pageSize);
+  //     if (page > totalPage) { return; }
+  //     setLoading(true);
+  //     try {
+  //         const data = await loadData(page, pageSize);
+  //         const newData = data?.items || [];
+  //         const newImageFiles = page > 1
+  //             ? [...imageFiles, ...newData]
+  //             : newData;
+  //         setCurPage(page);
+  //         setTotalCount(data.total || 0);
+  //         setImageFiles(newImageFiles);
+  //     } catch (error: any) {
+  //         message.error(error?.message || '加载失败');
+  //     } finally {
+  //         setLoading(false);
+  //     }
+  // };
+
+
 
   useEffect(() => {
     loadDirs();
   }, [])
-
-
-
-  const handleOk = (e: any) => {
-
-  };
-
   const loadDirs = async () => {
     const data = await fetchFolders?.() || [];
     setFolders(data);
   };
+
   const loadData = async (page: number, size: number) => {
-    return await fetchData?.(page, size);
+    const param: RequestParamType = { page, size, folderId } as any;
+    const data = await fetchData?.(param) || { items: [], total: 0 };
+    return data;
   };
 
-  const SearchForm = () => {
-    return <Space>
-      <Space.Compact>
-        <Select
-          style={{ width: '100px' }}
-          popupMatchSelectWidth={false}
-          defaultValue={'picture'}
-          options={[
-            { label: '图片', value: 'picture' },
-            { label: '宝贝名称', value: 'name' },
-            { label: '宝贝ID', value: 'id' },
-          ]}
-        />
-        <Input style={{ width: '120px' }} suffix={<SearchOutlined />} placeholder={'搜索'} />
-      </Space.Compact>
-      <Select
-        defaultValue={'timeDes'}
-        options={[
-          { label: '文件名升序', value: 'nameAsc' },
-          { label: '文件名降序', value: 'nameDes' },
-          { label: '上传时间升序', value: 'timeAsc' },
-          { label: '上传时间降序', value: 'timeDes' },
-        ]}
-        style={{ width: '147px', }}
-      />
-    </Space>
-  }
+  const handleOk = (e: any) => {
 
-  function geTreeData(list: FolderType[]): any[] {
-    return list.map((m) => {
-      return {
-        key: m.value,
-        title: m.label,
-        children: m.children && geTreeData(m.children),
-      };
-    });
-  }
-
-  const FolderTree = () => {
-    const defaultValue = folders?.length > 0 ? folders[0].value : '';
-    const [folderId, setFolderId] = useState<string | number>(defaultValue);
-
-    const options = folders.flatMap((node) => {
-      if (node.children) {
-        const nodes = node.children.flatMap((child) => [child, ...flatTreeHelper(child.children)]);
-        return [node, ...nodes];
-      }
-      return node;
-    });
-    function flatTreeHelper(children: any[] | undefined): any[] {
-      if (!children || children.length === 0) { return []; }
-      return children.flatMap(child => [child, ...flatTreeHelper(child.children)]);
-    }
-    const treeData = geTreeData(folders);
-    return <>
-      <Select style={{ width: '100%', marginBottom: '8px' }}
-        showSearch
-        options={options}
-        value={folderId}
-        onChange={(value) => {
-          setFolderId(value);
-        }}
-      />
-      <Tree
-        blockNode
-        showIcon={true}
-        treeData={treeData}
-        selectedKeys={[folderId]}
-        onSelect={(value) => {
-          const val = value[0] as string | number;
-          setFolderId(val);
-        }}
-      />
-    </>
-  }
+  };
 
   const selectCount = useMemo(() => {
     return selectKeys?.length || 0;
@@ -132,16 +96,22 @@ const ImageSpace = (props: ImageSpaceProps) => {
       <div className={classNames(`${prefixCls}-body`, hashId)}>
         <div className={classNames(`${prefixCls}-aside`, hashId)}>
           <div className={classNames(`${prefixCls}-treeDom`, hashId)} >
-            <FolderTree />
+            <FolderTree
+              defaultActiveFirstOption
+              data={folders}
+              value={folderId}
+              onChange={(val) => {
+                setFolderId(val);
+              }} />
           </div>
         </div>
-        <PicDashboard
+        <PicPanel
           selectKeys={selectKeys}
           onSelect={(keys) => {
             setSelectKeys(keys);
           }}
           actions={{
-            left: <SearchForm />,
+            // left: <SearchForm />,
             right: <Button
               type="primary"
               onClick={() => {
@@ -155,7 +125,7 @@ const ImageSpace = (props: ImageSpaceProps) => {
           loadData={loadData}
         />
         <PicUploader
-          folders={folders}
+          // folders={folders}
           display={displayPanel}
           onDisplayChange={(val) => {
             setDisplayPanel(val)
