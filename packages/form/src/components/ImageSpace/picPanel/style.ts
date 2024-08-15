@@ -70,6 +70,34 @@ const genBizStyle: GenerateStyle<PicPanelToken> = (token) => {
         alignContent: 'center',
         justifyContent: 'center',
       },
+      '&-fileName': {
+        overflow: 'hidden',
+        display: 'flex',
+        alignItems: 'center',
+        alignContent: 'center',
+        '&-checkbox': {
+          marginRight: '10px',
+        },
+        '&-img, &-img img': {
+          cursor: 'pointer',
+          width: '36px !important',
+          height: '36px !important',
+          objectFit: 'contain',
+          borderRadius: '6px',
+        },
+        '&-title': {
+          maxWidth: '105px',
+          marginLeft: '10px',
+          'p': {
+            display: 'inline',
+            textAlign: 'center',
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+          }
+        }
+
+      },
     },
   };
 };

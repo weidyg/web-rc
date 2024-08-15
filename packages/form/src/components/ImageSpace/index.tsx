@@ -1,6 +1,5 @@
 import { Key, useEffect, useMemo, useState } from 'react';
-import { Button, Input, Select, Space, Typography } from 'antd';
-import { SearchOutlined } from '@ant-design/icons';
+import { Button, message, Typography } from 'antd';
 import { classNames } from '@web-react/biz-utils';
 import PicUploader, { DisplayPanelType, FolderType } from './Uploader';
 import FolderTree, { FolderTreeType } from './folderTree';
@@ -21,70 +20,69 @@ type ImageSpaceProps<RequestParamType extends BaseRequestParam> = {
   prefixCls?: string;
 
   pageSize?: number;
+  defaultFolder?: FolderTreeType;
   fetchFolders?: () => Promise<FolderTreeType[]>;
   fetchData: (param: RequestParamType) => Promise<{ items: ImageFile[], total: number, }>;
+  onOk?: (ids: Key[], files: ImageFile[]) => void | Promise<void>;
 };
 const ImageSpace = <
   RequestParamType extends BaseRequestParam = BaseRequestParam
 >(
   props: ImageSpaceProps<RequestParamType>
 ) => {
-  const { style, className, pageSize = 20, fetchData, fetchFolders } = props;
+  const { style, className, defaultFolder, pageSize = 20, fetchData, fetchFolders, onOk } = props;
   const { prefixCls, wrapSSR, hashId, token } = useStyle(props.prefixCls);
   const classString = classNames(prefixCls, className, hashId, {});
   const [displayPanel, setDisplayPanel] = useState<DisplayPanelType>('none');
-  const [selectKeys, setSelectKeys] = useState<(string | number)[]>([]);
+  const [selectKeys, setSelectKeys] = useState<Key[]>([]);
 
-  const [folders, setFolders] = useState<FolderTreeType[]>([]);
-  const [folderId, setFolderId] = useState<Key>();
+  const [folderId, setFolderId] = useState<Key>(defaultFolder?.value || '');
+  const [folders, setFolders] = useState<FolderTreeType[]>(defaultFolder ? [defaultFolder] : []);
 
-
-  // const [loading, setLoading] = useState(false);
-  // const [curPage, setCurPage] = useState(0);
-  // const [totalCount, setTotalCount] = useState(0);
-  // const [imageFiles, setImageFiles] = useState<ImageFile[]>([]);
-  // useEffect(() => {
-  //     fetchData(curPage + 1, true);
-  // }, [])
-
-  // const fetchData = async (page: number, fist?: boolean) => {
-  //     const totalPage = fist ? 1 : Math.ceil(totalCount / pageSize);
-  //     if (page > totalPage) { return; }
-  //     setLoading(true);
-  //     try {
-  //         const data = await loadData(page, pageSize);
-  //         const newData = data?.items || [];
-  //         const newImageFiles = page > 1
-  //             ? [...imageFiles, ...newData]
-  //             : newData;
-  //         setCurPage(page);
-  //         setTotalCount(data.total || 0);
-  //         setImageFiles(newImageFiles);
-  //     } catch (error: any) {
-  //         message.error(error?.message || '加载失败');
-  //     } finally {
-  //         setLoading(false);
-  //     }
-  // };
-
-
+  const [loading, setLoading] = useState(false);
+  const [curPage, setCurPage] = useState(0);
+  const [totalCount, setTotalCount] = useState(0);
+  const [imageFiles, setImageFiles] = useState<ImageFile[]>([]);
 
   useEffect(() => {
     loadDirs();
-  }, [])
+    loadData(curPage + 1, true);
+  }, []);
+
+  useEffect(() => {
+    if (folderId) { loadData(1); }
+  }, [folderId]);
+
   const loadDirs = async () => {
     const data = await fetchFolders?.() || [];
-    setFolders(data);
+    const folders = defaultFolder ? [defaultFolder, ...data] : data;
+    setFolders(folders);
+  };
+  const loadData = async (page: number, fist?: boolean) => {
+    const totalPage = fist ? 1 : Math.ceil(totalCount / pageSize);
+    if (page > totalPage) { return; }
+    setLoading(true);
+    try {
+      const param: RequestParamType = { page, size: pageSize, folderId } as any;
+      const data = await fetchData?.(param) || { items: [], total: 0 };
+      const newData = data?.items || [];
+      const newImageFiles = page > 1
+        ? [...imageFiles, ...newData]
+        : newData;
+      setCurPage(page);
+      setTotalCount(data.total || 0);
+      setImageFiles(newImageFiles);
+    } catch (error: any) {
+      message.error(error?.message || '加载失败');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const loadData = async (page: number, size: number) => {
-    const param: RequestParamType = { page, size, folderId } as any;
-    const data = await fetchData?.(param) || { items: [], total: 0 };
-    return data;
-  };
-
-  const handleOk = (e: any) => {
-
+  const handleOk = async (e: any) => {
+    const selectFiles = imageFiles.filter((item) => selectKeys.includes(item.id));
+    await onOk?.(selectKeys, selectFiles);
+    setSelectKeys([]);
   };
 
   const selectCount = useMemo(() => {
@@ -97,7 +95,6 @@ const ImageSpace = <
         <div className={classNames(`${prefixCls}-aside`, hashId)}>
           <div className={classNames(`${prefixCls}-treeDom`, hashId)} >
             <FolderTree
-              defaultActiveFirstOption
               data={folders}
               value={folderId}
               onChange={(val) => {
@@ -121,8 +118,11 @@ const ImageSpace = <
               上传图片
             </Button>,
           }}
-          pageSize={pageSize}
-          loadData={loadData}
+          data={imageFiles}
+          loading={loading}
+          hasMore={curPage * pageSize >= totalCount}
+          onLoadMore={() => loadData(curPage + 1)}
+          onRefresh={() => loadData(1)}
         />
         <PicUploader
           // folders={folders}

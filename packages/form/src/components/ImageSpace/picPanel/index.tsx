@@ -1,13 +1,13 @@
-import { useEffect, useRef, useState } from 'react';
-import { Image, Button, Checkbox, Segmented, Space, Spin, Table, message, Divider } from 'antd';
+import { Key, useRef, useState } from 'react';
+import { Image, Button, Checkbox, Segmented, Space, Spin, Table, Divider } from 'antd';
 import { AppstoreOutlined, BarsOutlined } from '@ant-design/icons';
 import { classNames, convertByteUnit, useMergedState } from '@web-react/biz-utils';
-import { useStyle } from './style';
 import { ColumnsType } from 'antd/es/table';
 import PicCard from '../picCard';
+import { useStyle } from './style';
 
 type ImageFile = {
-    id: string | number;
+    id: Key;
     name?: string;
     size?: number;
     pixel?: string;
@@ -20,66 +20,38 @@ type PicPanelProps = {
         left?: React.ReactNode;
         right?: React.ReactNode;
     },
-    pageSize?: number;
-    loadData: (page: number, size: number) => Promise<{
-        items: ImageFile[];
-        total: number;
-    }>;
-    defaultSelectKeys?: ImageFile['id'][],
-    selectKeys?: ImageFile['id'][],
-    onSelect?: (selectKeys: ImageFile['id'][]) => void,
+    defaultSelectKeys?: Key[],
+    selectKeys?: Key[],
+    onSelect?: (selectKeys: Key[]) => void,
+    onLoadMore?: () => void | Promise<void>,
+    onRefresh?: () => void | Promise<void>,
+    loading?: boolean,
+    hasMore?: boolean,
+    data: ImageFile[],
 };
 const PicPanel: React.FC<PicPanelProps> = (props) => {
-    const { actions, loadData, pageSize = 20 } = props;
+    const { loading, data = [], actions, hasMore, onLoadMore, onRefresh } = props;
     const { prefixCls, wrapSSR, hashId, token } = useStyle(props?.prefixCls);
     const [showType, setShowType] = useState<'list' | 'table'>('list');
-    const [selectKeys, setSelectKeys] = useMergedState<(string | number)[]>(props?.defaultSelectKeys || [], {
+    const [selectKeys, setSelectKeys] = useMergedState<Key[]>(props?.defaultSelectKeys || [], {
         value: props?.selectKeys,
         onChange: props?.onSelect,
     });
 
-    const [loading, setLoading] = useState(false);
-    const [curPage, setCurPage] = useState(0);
-    const [totalCount, setTotalCount] = useState(0);
-    const [imageFiles, setImageFiles] = useState<ImageFile[]>([]);
-    useEffect(() => {
-        fetchData(curPage + 1, true);
-    }, [])
-
-    const fetchData = async (page: number, fist?: boolean) => {
-        const totalPage = fist ? 1 : Math.ceil(totalCount / pageSize);
-        if (page > totalPage) { return; }
-        setLoading(true);
-        try {
-            const data = await loadData(page, pageSize);
-            const newData = data?.items || [];
-            const newImageFiles = page > 1
-                ? [...imageFiles, ...newData]
-                : newData;
-            setCurPage(page);
-            setTotalCount(data.total || 0);
-            setImageFiles(newImageFiles);
-        } catch (error: any) {
-            message.error(error?.message || '加载失败');
-        } finally {
-            setLoading(false);
-        }
-    };
-
     const handleScroll = async (event: React.SyntheticEvent<HTMLDivElement>) => {
         const { scrollTop, clientHeight, scrollHeight } = event.target as HTMLDivElement;
         if (scrollTop + clientHeight >= scrollHeight) {
-            if (!loading) { fetchData(curPage + 1); }
+            if (!loading) { await onLoadMore?.(); }
         }
     };
-    const handleRefresh = () => {
-        fetchData(1);
+    const handleRefresh = async () => {
+        await onRefresh?.();
     }
 
-    const isChecked = (id: string | number): boolean => {
+    const isChecked = (id: Key): boolean => {
         return selectKeys?.includes(id) ?? false;
     };
-    const checkChange = (id: string | number, checked: boolean) => {
+    const checkChange = (id: Key, checked: boolean) => {
         setSelectKeys(keys => {
             return keys.includes(id)
                 ? (checked ? keys : keys.filter(k => k !== id))
@@ -88,8 +60,7 @@ const PicPanel: React.FC<PicPanelProps> = (props) => {
     };
 
     const LoadMore = (props: { wrapper?: (node: React.ReactNode) => React.ReactNode }) => {
-        const { wrapper } = props;
-        if (loading || (curPage * pageSize >= totalCount)) { return <></> }
+        if (loading || hasMore || !onLoadMore) { return <></> }
         const node = <Divider dashed={true}>
             <span
                 style={{
@@ -98,12 +69,12 @@ const PicPanel: React.FC<PicPanelProps> = (props) => {
                     color: token.colorTextTertiary,
                 }}
                 onClick={() => {
-                    fetchData(curPage + 1);
+                    onLoadMore?.();
                 }}>
                 加载更多...
             </span>
         </Divider>
-        return wrapper?.(node) || node;
+        return props?.wrapper?.(node) || node;
     }
     const RenderFileName = ({ file }: { file: ImageFile }) => {
         const [preview, setPreview] = useState(false);
@@ -209,7 +180,7 @@ const PicPanel: React.FC<PicPanelProps> = (props) => {
                     className={classNames(`${prefixCls}-list`, hashId)}
                 >
                     <div className={classNames(`${prefixCls}-list-document`, hashId)}>
-                        {imageFiles.map((item, index) => (
+                        {data.map((item, index) => (
                             <PicCard
                                 key={index}
                                 id={item.id}
@@ -239,7 +210,7 @@ const PicPanel: React.FC<PicPanelProps> = (props) => {
                         pagination={false}
                         onScroll={handleScroll}
                         columns={columns}
-                        dataSource={imageFiles}
+                        dataSource={data}
                         components={{
                             body: {
                                 wrapper: BodyWrapper,

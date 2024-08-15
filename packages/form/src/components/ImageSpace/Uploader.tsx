@@ -138,7 +138,6 @@ const Uploader: React.FC<UploaderProps> = (props) => {
                 />
             </Form.Item>
         </Form>
-
     }
 
     return wrapSSR(

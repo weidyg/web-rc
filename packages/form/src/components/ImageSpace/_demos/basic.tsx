@@ -60,10 +60,11 @@ export default () => {
   return (
     <>
       <ImageSpace
+        defaultFolder={{ value: '0', label: '全部图片', }}
         fetchFolders={() => {
           return new Promise<FolderTreeType[]>((resolve, reject) => {
             setTimeout(() => {
-              const cascaderOptions = getOptions([{ ...dataJson.dirs, children: [] }, ...dataJson.dirs.children]);
+              const cascaderOptions = getOptions(dataJson.dirs.children);
               resolve(cascaderOptions);
             }, 1000);
           })

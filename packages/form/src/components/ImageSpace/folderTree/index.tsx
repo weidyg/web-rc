@@ -34,7 +34,6 @@ export type FolderTreeType = {
     children?: FolderTreeType[],
 };
 export type FolderTreeProps = {
-    defaultActiveFirstOption?: boolean;
     data?: FolderTreeType[];
     defaultValue?: Key;
     value?: Key;
@@ -42,7 +41,7 @@ export type FolderTreeProps = {
 }
 
 const FolderTree = (props: FolderTreeProps) => {
-    const { data = [], defaultActiveFirstOption } = props;
+    const { data = [] } = props;
     const [value, setValue] = useMergedState<Key>('', {
         defaultValue: props?.defaultValue,
         value: props?.value,
@@ -56,10 +55,6 @@ const FolderTree = (props: FolderTreeProps) => {
     useEffect(() => {
         setOptions(flatTreeHelper(data));
         setTreeData(geTreeData(data));
-        if (!value && defaultActiveFirstOption) {
-            const defaultValue = data?.length > 0 ? data[0].value : '';
-            setValue(defaultValue);
-        }
     }, [data]);
 
     useEffect(() => {
@@ -81,6 +76,9 @@ const FolderTree = (props: FolderTreeProps) => {
             }}
         />
         <Tree
+            rootStyle={{
+                height: 'calc(100% - 40px)',
+            }}
             blockNode
             showIcon={true}
             treeData={treeData}

@@ -104,16 +104,6 @@ const genBizStyle: GenerateStyle<BizImageSpaceToken> = (token) => {
           },
         },
       },
-      // '&-loadMore': {
-      //   width: '100%',
-      //   display: 'flex',
-      //   flexWrap: 'nowrap',
-      //   alignContent: 'center',
-      //   justifyContent: 'center',
-      //   alignItems: 'center',
-      //   cursor: 'pointer',
-      //   fontSize: token.fontSize,
-      // },
       '&-uploader': {
         '&-container': {
           position: 'absolute',
@@ -273,34 +263,6 @@ const genBizStyle: GenerateStyle<BizImageSpaceToken> = (token) => {
             alignItems: 'center',
           },
         },
-      },
-      '&-fileName': {
-        overflow: 'hidden',
-        display: 'flex',
-        alignItems: 'center',
-        alignContent: 'center',
-        '&-checkbox': {
-          marginRight: '10px',
-        },
-        '&-img, &-img img': {
-          cursor: 'pointer',
-          width: '36px !important',
-          height: '36px !important',
-          objectFit: 'contain',
-          borderRadius: '6px',
-        },
-        '&-title': {
-          maxWidth: '105px',
-          marginLeft: '10px',
-          'p': {
-            display: 'inline',
-            textAlign: 'center',
-            whiteSpace: 'nowrap',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-          }
-        }
-
       },
     },
   };
