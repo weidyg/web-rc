@@ -4,6 +4,32 @@ import { Alert, Button, Cascader, Checkbox, Form, InputNumber, Radio, Select, Up
 import { classNames, convertByteUnit, useMergedState } from '@web-react/biz-utils';
 import { useStyle } from './style';
 
+const FolderSelect = (props: {
+    value?: Key,
+    defaultValue?: Key,
+    onChange?: (value: Key) => void,
+    options?: FolderType[],
+}) => {
+    const { value, defaultValue, onChange, options } = props;
+    const [folderId, setFolderId] = useMergedState<Key>('', {
+        value: value,
+        defaultValue: defaultValue,
+        onChange: onChange,
+    });
+    const [selectKeys, setSelectKeys] = useState<Key[]>([]);
+    return <Cascader
+        allowClear={false}
+        style={{ width: '150px' }}
+        changeOnSelect
+        options={options}
+        value={selectKeys}
+        onChange={(value: Key[]) => {
+            setSelectKeys(value);
+        }}
+    />;
+}
+
+
 type Key = string | number;
 type FolderType = {
     value: Key;
@@ -29,8 +55,8 @@ const PicUploader: React.FC<PicUploaderProps> = (props) => {
         onChange: props?.onDisplayChange,
     });
 
-    const [folderId, setFolderId] = useState<Key>(defaultFolderValue);
     const [fileList, setFileList] = useState<UploadFile[]>([]);
+    const [form] = Form.useForm();
 
     const count = useMemo(() => {
         let count = { uploading: 0, success: 0, failed: 0 };
@@ -57,99 +83,16 @@ const PicUploader: React.FC<PicUploaderProps> = (props) => {
         action: 'https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload',
         accept: 'image/jpeg,image/bmp,image/gif,.heic,image/png,.webp',
         fileList: fileList,
+        data: (file) => {
+            return form.getFieldsValue();
+        },
         onChange: ({ file, fileList, event }) => {
-            console.log('onChange', file, fileList);
             setFileList(fileList);
         },
         beforeUpload(file, fileList) {
-            console.log('beforeUpload', file, fileList);
             setDisplayPanel('uploadList');
         },
     };
-
-    const ConfigForm = () => {
-        const [form] = Form.useForm();
-        return <Form
-            form={form}
-            layout="inline"
-            onValuesChange={(changedValues, allValues) => {
-                const { picWidth, picWidthOption } = changedValues || {};
-                if (picWidth === false) {
-                    form.setFieldsValue({ picWidthOption: undefined });
-                }
-                if (picWidthOption !== -1) {
-                    form.setFieldsValue({ picWidthValue: 0 });
-                }
-                console.log(changedValues, allValues);
-            }}
-        >
-            <Form.Item
-                label="上传至"
-                name="folderId"
-                className={classNames(`${prefixCls}-panel-config-item`, hashId)}
-            >
-                <Cascader
-                    allowClear={false}
-                    style={{ width: '150px' }}
-                    changeOnSelect
-                    options={folders}
-                    defaultValue={[defaultFolderValue]}
-                    onChange={(value: Key[], selectedOptions: FolderType[]) => {
-                        setFolderId(value?.pop() || '');
-                    }}
-                />
-            </Form.Item>
-            <Form.Item
-                name="picWidth"
-                style={{ marginRight: '3px' }}
-                valuePropName={'checked'}
-                className={classNames(`${prefixCls}-panel-config-item`, hashId)}
-            >
-                <Checkbox>
-                    <span style={{ fontSize: '12px' }}>图片宽度调整</span>
-                </Checkbox>
-            </Form.Item>
-            <Form.Item noStyle dependencies={['picWidth']}>
-                {({ getFieldValue }) =>
-                    getFieldValue('picWidth') && (
-                        <Form.Item name="picWidthOption" className={classNames(`${prefixCls}-panel-config-item`, hashId)}>
-                            <Select
-                                style={{ width: '140px' }}
-                                options={[
-                                    { label: '手机图片(620px)', value: 620 },
-                                    { label: '800px', value: 800 },
-                                    { label: '640px', value: 640 },
-                                    { label: '自定义', value: -1 },
-                                ]}
-                            />
-                        </Form.Item>
-                    )
-                }
-            </Form.Item>
-            <Form.Item noStyle dependencies={['picWidth', 'picWidthOption']}>
-                {({ getFieldValue }) =>
-                    getFieldValue('picWidthOption') === -1 && (
-                        <Form.Item name="picWidthValue" className={classNames(`${prefixCls}-panel-config-item`, hashId)}>
-                            <InputNumber min={0} max={10000} suffix="px" />
-                        </Form.Item>
-                    )
-                }
-            </Form.Item>
-            <Form.Item
-                name="originSize"
-                style={{ marginRight: '3px' }}
-                className={classNames(`${prefixCls}-panel-config-item`, hashId)}
-            >
-                <Radio.Group
-                    options={[
-                        { label: <span style={{ fontSize: '12px' }}>原图上传</span>, value: true },
-                        { label: <span style={{ fontSize: '12px' }}>图片无损压缩上传</span>, value: false },
-                    ]}
-                />
-            </Form.Item>
-        </Form>
-    }
-
     return wrapSSR(
         <div style={{ display: (displayPanel == 'uploader' || displayPanel == 'uploadList') ? 'flex' : 'none' }}
             className={classNames(`${prefixCls}-container`, hashId)}>
@@ -158,7 +101,77 @@ const PicUploader: React.FC<PicUploaderProps> = (props) => {
                     <div style={{ display: displayPanel == 'uploader' ? 'flex' : 'none' }}
                         className={classNames(`${prefixCls}-panel-form`, hashId)}>
                         <div className={classNames(`${prefixCls}-panel-config`, hashId)}>
-                            <ConfigForm />
+                            <Form
+                                form={form}
+                                layout="inline"
+                                initialValues={{
+                                    folderId: defaultFolderValue,
+                                }}
+                                onValuesChange={(changedValues, allValues) => {
+                                    const { picWidth, picWidthOption } = changedValues || {};
+                                    if (picWidth === false) {
+                                        form.setFieldsValue({ picWidthOption: undefined });
+                                    }
+                                    if (picWidthOption !== -1) {
+                                        form.setFieldsValue({ picWidthValue: 0 });
+                                    }
+                                }}
+                            >
+                                <Form.Item
+                                    label="上传至"
+                                    name="folderId"
+                                    className={classNames(`${prefixCls}-panel-config-item`, hashId)}
+                                >
+                                    <FolderSelect options={folders} />
+                                </Form.Item>
+                                <Form.Item
+                                    name="picWidth"
+                                    style={{ marginRight: '3px' }}
+                                    valuePropName={'checked'}
+                                    className={classNames(`${prefixCls}-panel-config-item`, hashId)}
+                                >
+                                    <Checkbox>
+                                        <span style={{ fontSize: '12px' }}>图片宽度调整</span>
+                                    </Checkbox>
+                                </Form.Item>
+                                <Form.Item noStyle dependencies={['picWidth']}>
+                                    {({ getFieldValue }) => getFieldValue('picWidth') && (
+                                        <Form.Item name="picWidthOption"
+                                            className={classNames(`${prefixCls}-panel-config-item`, hashId)}>
+                                            <Select
+                                                style={{ width: '140px' }}
+                                                options={[
+                                                    { label: '手机图片(620px)', value: 620 },
+                                                    { label: '800px', value: 800 },
+                                                    { label: '640px', value: 640 },
+                                                    { label: '自定义', value: -1 },
+                                                ]}
+                                            />
+                                        </Form.Item>
+                                    )}
+                                </Form.Item>
+                                <Form.Item noStyle dependencies={['picWidth', 'picWidthOption']}>
+                                    {({ getFieldValue }) =>
+                                        getFieldValue('picWidthOption') === -1 && (
+                                            <Form.Item name="picWidthValue" className={classNames(`${prefixCls}-panel-config-item`, hashId)}>
+                                                <InputNumber min={0} max={10000} suffix="px" />
+                                            </Form.Item>
+                                        )
+                                    }
+                                </Form.Item>
+                                <Form.Item
+                                    name="originSize"
+                                    style={{ marginRight: '3px' }}
+                                    className={classNames(`${prefixCls}-panel-config-item`, hashId)}
+                                >
+                                    <Radio.Group
+                                        options={[
+                                            { label: <span style={{ fontSize: '12px' }}>原图上传</span>, value: true },
+                                            { label: <span style={{ fontSize: '12px' }}>图片无损压缩上传</span>, value: false },
+                                        ]}
+                                    />
+                                </Form.Item>
+                            </Form>
                             {config?.right}
                         </div>
                         <div style={{ display: 'block !important', width: '100%', height: '100%', margin: 0 }}>
