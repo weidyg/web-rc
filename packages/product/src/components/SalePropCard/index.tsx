@@ -161,8 +161,10 @@ const SalePropCard = <
       }}
       style={{ ...style }}
       title={<Flex justify='space-between'>
-        <Space >
-          <span>已选 {selectedNum} 个</span>
+        <Space>
+          <span className={classNames(`${prefixCls}-header-selected`, hashId)}>
+            已选 {selectedNum} 个
+          </span>
           <Button type='primary' shape='round' size='small'
             loading={loading}
             onClick={handleOk}

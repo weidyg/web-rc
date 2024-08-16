@@ -1,7 +1,7 @@
 {
-  "name": "@web-react/biz-form",
-  "version": "1.0.0-beta.5",
-  "description": "@web-react/biz-form",
+  "name": "@web-react/biz-product",
+  "version": "1.0.0-beta.1",
+  "description": "@web-react/biz-product",
   "keywords": [],
   "repository": {
     "type": "git",

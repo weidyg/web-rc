@@ -1,4 +1,4 @@
-import type { ImageSpaceProps, FolderType, ImageFile } from './components/ImageSpace';
+import type { ImageSpaceProps, FolderTreeType, ImageFile, ImageSpaceRef } from './components/ImageSpace';
 import ImageSpace from './components/ImageSpace';
 
 import type { SalePropCardProps } from './components/SalePropCard';
@@ -6,8 +6,9 @@ import SalePropCard from './components/SalePropCard';
 
 export type {
     ImageSpaceProps,
-    FolderType,
+    FolderTreeType,
     ImageFile,
+    ImageSpaceRef,
     SalePropCardProps
 };
 export {

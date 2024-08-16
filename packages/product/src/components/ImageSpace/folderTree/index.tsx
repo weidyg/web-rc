@@ -1,6 +1,6 @@
-import { useMergedState } from "@web-react/biz-utils";
+import React, { Key, ReactNode, useEffect, useState } from "react";
 import { Select, Tree } from "antd";
-import React, { Key, ReactNode, useEffect, useMemo, useState } from "react";
+import { useMergedState } from "@web-react/biz-utils";
 
 type FlatDataType = {
     value: Key;
@@ -26,7 +26,6 @@ function geTreeData(list: FolderTreeType[]): TreeDataType[] {
         return { key: value, title: label, children: geTreeData(children) };
     });
 }
-
 
 export type FolderTreeType = {
     value: Key;
@@ -84,7 +83,7 @@ const FolderTree = (props: FolderTreeProps) => {
             treeData={treeData}
             expandedKeys={expandedKeys}
             onExpand={(keys) => {
-                setExpandedKeys(keys);
+                setExpandedKeys(keys as Key[]);
             }}
             selectedKeys={[value]}
             onSelect={(value) => {

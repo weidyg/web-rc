@@ -61,7 +61,7 @@ const config: IDumiConfig = {
       match: ['/api', '/components'],
     },
     prefersColor: {
-      default: 'light',
+      default: 'auto',
       switch: true,
     },
   },

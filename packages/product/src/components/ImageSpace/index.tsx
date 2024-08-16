@@ -1,17 +1,21 @@
-import { Key, useEffect, useMemo, useState } from 'react';
+import { Key, useEffect, useImperativeHandle, useMemo, useState } from 'react';
 import { Button, message, Typography } from 'antd';
 import { classNames } from '@web-react/biz-utils';
 import PicUploader, { DisplayPanelType, FolderType } from './Uploader';
 import FolderTree, { FolderTreeType } from './folderTree';
 import PicPanel, { ImageFile } from './picPanel';
 import { useStyle } from './style';
+import React from 'react';
 
 type BaseRequestParam = {
   page: number,
   size: number,
   folderId?: Key
 }
-type ImageSpaceProps<RequestParamType extends BaseRequestParam> = {
+
+export type ImageSpaceProps<
+  RequestParamType extends BaseRequestParam = BaseRequestParam,
+> = {
   /** 类名 */
   className?: string;
   /** 样式 */
@@ -24,13 +28,20 @@ type ImageSpaceProps<RequestParamType extends BaseRequestParam> = {
   fetchFolders?: () => Promise<FolderTreeType[]>;
   fetchData: (param: RequestParamType) => Promise<{ items: ImageFile[], total: number, }>;
   onOk?: (ids: Key[], files: ImageFile[]) => void | Promise<void>;
+  actions?: { left?: React.ReactNode },
 };
-const ImageSpace = <
-  RequestParamType extends BaseRequestParam = BaseRequestParam
+
+export interface ImageSpaceRef {
+  onRefresh: () => void | Promise<void>;
+}
+
+const InternalImageSpace = <
+  RequestParamType extends BaseRequestParam = BaseRequestParam,
 >(
-  props: ImageSpaceProps<RequestParamType>
+  props: ImageSpaceProps<RequestParamType>,
+  ref: React.Ref<ImageSpaceRef>
 ) => {
-  const { style, className, defaultFolder, pageSize = 20, fetchData, fetchFolders, onOk } = props;
+  const { style, className, defaultFolder, pageSize = 20, fetchData, fetchFolders, onOk, actions } = props;
   const { prefixCls, wrapSSR, hashId, token } = useStyle(props.prefixCls);
   const classString = classNames(prefixCls, className, hashId, {});
   const [displayPanel, setDisplayPanel] = useState<DisplayPanelType>('none');
@@ -46,24 +57,31 @@ const ImageSpace = <
 
   useEffect(() => {
     loadDirs();
-    loadData(curPage + 1, true);
+    loadData({ page: curPage + 1, fist: true });
   }, []);
 
   useEffect(() => {
-    if (folderId) { loadData(1); }
+    if (folderId) { loadData({ page: 1 }); }
   }, [folderId]);
+
+  useImperativeHandle(ref, () => ({
+    onRefresh: () => {
+      return loadData({ page: 1 });
+    }
+  }))
 
   const loadDirs = async () => {
     const data = await fetchFolders?.() || [];
     const folders = defaultFolder ? [defaultFolder, ...data] : data;
     setFolders(folders);
   };
-  const loadData = async (page: number, fist?: boolean) => {
+  const loadData = async (param: { page: number, fist?: boolean, [key: string]: any }) => {
+    const { page, fist, ...rest } = param;
     const totalPage = fist ? 1 : Math.ceil(totalCount / pageSize);
     if (page > totalPage) { return; }
     setLoading(true);
     try {
-      const param: RequestParamType = { page, size: pageSize, folderId } as any;
+      const param: RequestParamType = { ...rest, page, size: pageSize, folderId } as any;
       const data = await fetchData?.(param) || { items: [], total: 0 };
       const newData = data?.items || [];
       const newImageFiles = page > 1
@@ -108,7 +126,7 @@ const ImageSpace = <
             setSelectKeys(keys);
           }}
           actions={{
-            // left: <SearchForm />,
+            left: actions?.left,
             right: <Button
               type="primary"
               onClick={() => {
@@ -121,11 +139,12 @@ const ImageSpace = <
           data={imageFiles}
           loading={loading}
           hasMore={curPage * pageSize >= totalCount}
-          onLoadMore={() => loadData(curPage + 1)}
-          onRefresh={() => loadData(1)}
+          onLoadMore={() => loadData({ page: curPage + 1 })}
+          onRefresh={() => loadData({ page: 1 })}
         />
         <PicUploader
-          // folders={folders}
+          defaultFolderValue={folderId as any}
+          folders={folders as FolderType[]}
           display={displayPanel}
           onDisplayChange={(val) => {
             setDisplayPanel(val)
@@ -150,7 +169,9 @@ const ImageSpace = <
       </div>
     </div>
   );
-};
+}
 
-export type { ImageSpaceProps, ImageFile, FolderType };
+const ImageSpace = React.forwardRef<ImageSpaceRef, ImageSpaceProps<any>>(InternalImageSpace);
+export type { ImageFile, FolderTreeType, };
 export default ImageSpace;
+

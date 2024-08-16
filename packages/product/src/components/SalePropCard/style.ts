@@ -8,8 +8,13 @@ const genBizStyle: GenerateStyle<SalePropCardToken> = (token) => {
       display: 'flex',
       flexDirection: 'column',
       '&-header': {
-        padding: '8px 16px',
-        minHeight: 'unset'
+        padding: '8px 16px !important',
+        minHeight: 'unset !important',
+        fontWeight: '500 !important',
+        '&-selected': {
+          display: 'inline-flex',
+          width: '80px',
+        }
       },
       '&-body': {
         overflow: 'hidden',

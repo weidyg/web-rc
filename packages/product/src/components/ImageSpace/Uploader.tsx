@@ -1,31 +1,35 @@
-import React, { useMemo, useState } from 'react';
+import React, { ReactNode, useMemo, useState } from 'react';
 import { CheckCircleFilled, CloseCircleFilled, LoadingOutlined, UploadOutlined } from '@ant-design/icons';
 import { Alert, Button, Cascader, Checkbox, Form, InputNumber, Radio, Select, Upload, UploadFile, UploadProps, } from 'antd';
 import { classNames, convertByteUnit, useMergedState } from '@web-react/biz-utils';
 import { useStyle } from './style';
 
+type Key = string | number;
 type FolderType = {
-    value: string | number;
-    label: React.ReactNode;
+    value: Key;
+    label: ReactNode;
     children?: FolderType[],
 };
 type DisplayPanelType = 'none' | 'uploader' | 'uploadList';
 type UploaderProps = {
     prefixCls?: string;
+    defaultFolderValue: Key;
     folders?: FolderType[];
     display?: DisplayPanelType;
     onDisplayChange?: (display: DisplayPanelType) => void;
 
 };
 const Uploader: React.FC<UploaderProps> = (props) => {
-    const { folders } = props;
+    const { defaultFolderValue, folders } = props;
     const { prefixCls, wrapSSR, hashId, token } = useStyle(props?.prefixCls);
     const [displayPanel, setDisplayPanel] = useMergedState<DisplayPanelType>('none', {
         value: props?.display,
         onChange: props?.onDisplayChange,
     });
 
+    const [folderId, setFolderId] = useState<Key>(defaultFolderValue);
     const [fileList, setFileList] = useState<UploadFile[]>([]);
+
     const count = useMemo(() => {
         let count = { uploading: 0, success: 0, failed: 0 };
         fileList.forEach((file) => {
@@ -84,9 +88,13 @@ const Uploader: React.FC<UploaderProps> = (props) => {
             >
                 <Cascader
                     allowClear={false}
-                    changeOnSelect
                     style={{ width: '150px' }}
+                    changeOnSelect
                     options={folders}
+                    defaultValue={[defaultFolderValue]}
+                    onChange={(value: Key[], selectedOptions: FolderType[]) => {
+                        setFolderId(value?.pop() || '');
+                    }}
                 />
             </Form.Item>
             <Form.Item
