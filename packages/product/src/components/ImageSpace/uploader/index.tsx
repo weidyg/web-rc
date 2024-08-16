@@ -109,9 +109,7 @@ const PicUploader: React.FC<PicUploaderProps> = (props) => {
         action: 'https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload',
         accept: 'image/jpeg,image/bmp,image/gif,.heic,image/png,.webp',
         fileList: fileList,
-        data: (file) => {
-            return form.getFieldsValue();
-        },
+        data: (file) => { return form.getFieldsValue(); },
         onChange: ({ file, fileList, event }) => {
             setFileList(fileList);
         },
@@ -125,7 +123,7 @@ const PicUploader: React.FC<PicUploaderProps> = (props) => {
             <div className={classNames(`${prefixCls}-body`, hashId)}>
                 <div className={classNames(`${prefixCls}-panel`, hashId)}>
                     <div style={{ display: displayPanel == 'uploader' ? 'flex' : 'none' }}
-                        className={classNames(`${prefixCls}-panel-form`, hashId)}>
+                        className={classNames(`${prefixCls}-panel-header`, hashId)}>
                         <div className={classNames(`${prefixCls}-panel-config`, hashId)}>
                             <Form
                                 form={form}
@@ -137,33 +135,30 @@ const PicUploader: React.FC<PicUploaderProps> = (props) => {
                                     const { picWidth, picWidthOption } = changedValues || {};
                                     if (picWidth === false) {
                                         form.setFieldsValue({ picWidthOption: undefined });
+                                    } else if (!picWidthOption) {
+                                        form.setFieldsValue({ picWidthOption: 620 });
                                     }
                                     if (picWidthOption !== -1) {
                                         form.setFieldsValue({ picWidthValue: 0 });
                                     }
                                 }}
                             >
-                                <Form.Item
-                                    label="上传至"
-                                    name="folderId"
-                                    className={classNames(`${prefixCls}-panel-config-item`, hashId)}
-                                >
+                                <Form.Item label="上传至" name="folderId" >
                                     <FolderSelect options={folders} />
                                 </Form.Item>
-                                <Form.Item
-                                    name="picWidth"
-                                    style={{ marginRight: '3px' }}
-                                    valuePropName={'checked'}
-                                    className={classNames(`${prefixCls}-panel-config-item`, hashId)}
-                                >
-                                    <Checkbox>
-                                        <span style={{ fontSize: '12px' }}>图片宽度调整</span>
-                                    </Checkbox>
+                                <Form.Item noStyle dependencies={['picWidth']}>
+                                    {({ getFieldValue }) => (
+                                        <Form.Item name="picWidth" valuePropName={'checked'}
+                                            style={{ marginRight: getFieldValue('picWidth') ? 0 : undefined }}>
+                                            <Checkbox>
+                                                <span style={{ fontSize: '12px' }}>图片宽度调整</span>
+                                            </Checkbox>
+                                        </Form.Item>
+                                    )}
                                 </Form.Item>
                                 <Form.Item noStyle dependencies={['picWidth']}>
                                     {({ getFieldValue }) => getFieldValue('picWidth') && (
-                                        <Form.Item name="picWidthOption"
-                                            className={classNames(`${prefixCls}-panel-config-item`, hashId)}>
+                                        <Form.Item name="picWidthOption">
                                             <Select
                                                 style={{ width: '140px' }}
                                                 options={[
@@ -177,19 +172,13 @@ const PicUploader: React.FC<PicUploaderProps> = (props) => {
                                     )}
                                 </Form.Item>
                                 <Form.Item noStyle dependencies={['picWidth', 'picWidthOption']}>
-                                    {({ getFieldValue }) =>
-                                        getFieldValue('picWidthOption') === -1 && (
-                                            <Form.Item name="picWidthValue" className={classNames(`${prefixCls}-panel-config-item`, hashId)}>
-                                                <InputNumber min={0} max={10000} suffix="px" />
-                                            </Form.Item>
-                                        )
-                                    }
+                                    {({ getFieldValue }) => getFieldValue('picWidthOption') === -1 && (
+                                        <Form.Item name="picWidthValue">
+                                            <InputNumber min={0} max={10000} suffix="px" />
+                                        </Form.Item>
+                                    )}
                                 </Form.Item>
-                                <Form.Item
-                                    name="originSize"
-                                    style={{ marginRight: '3px' }}
-                                    className={classNames(`${prefixCls}-panel-config-item`, hashId)}
-                                >
+                                <Form.Item name="originSize">
                                     <Radio.Group
                                         options={[
                                             { label: <span style={{ fontSize: '12px' }}>原图上传</span>, value: true },
@@ -221,6 +210,7 @@ const PicUploader: React.FC<PicUploaderProps> = (props) => {
                                     <p className={classNames(`${prefixCls}-panel-tips`, hashId)}>点击按钮或将图片拖拽至此处上传</p>
                                     <p className={classNames(`${prefixCls}-panel-format`, hashId)}>
                                         图片仅支持3MB以内jpg、bmp、gif、heic、png、jpeg、webp格式。
+                                        {/* accept: 'image/jpeg,image/bmp,image/gif,.heic,image/png,.webp', */}
                                     </p>
                                 </Upload.Dragger>
                             </div>

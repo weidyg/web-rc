@@ -26,7 +26,7 @@ const genBizStyle: GenerateStyle<PicUploaderToken> = (token) => {
         height: '100%',
         display: 'flex',
         flexDirection: 'column',
-        '&-form': {
+        '&-header': {
           height: '100%',
           display: 'flex',
           flexDirection: 'column',
@@ -36,8 +36,7 @@ const genBizStyle: GenerateStyle<PicUploaderToken> = (token) => {
           display: 'flex',
           alignItems: 'center',
           flexWrap: 'wrap',
-          '&-item': {
-            margin: 0,
+          [`${token.antCls}-form-item`]: {
             padding: '4px 0',
             display: 'flex',
             flexWrap: 'nowrap',
