@@ -1,8 +1,28 @@
-import React, { ReactNode, useMemo, useState } from 'react';
+import React, { ReactNode, useEffect, useMemo, useState } from 'react';
 import { CheckCircleFilled, CloseCircleFilled, LoadingOutlined, UploadOutlined } from '@ant-design/icons';
 import { Alert, Button, Cascader, Checkbox, Form, InputNumber, Radio, Select, Upload, UploadFile, UploadProps, } from 'antd';
 import { classNames, convertByteUnit, useMergedState } from '@web-react/biz-utils';
 import { useStyle } from './style';
+
+function findPath(tree?: FolderType[], targetId?: Key) {
+    let path: Key[] = [];
+    if (!tree || !targetId) { return path; }
+    function traverse(node: FolderType, currentPath: Key[]) {
+        currentPath.push(node.value);
+        if (node.value === targetId) {
+            path = [...currentPath];
+        } else if (node.children) {
+            for (let child of node.children) {
+                traverse(child, currentPath);
+            }
+        }
+    }
+    for (let child of tree) {
+        if (path?.length) break;
+        traverse(child, []);
+    }
+    return path;
+}
 
 const FolderSelect = (props: {
     value?: Key,
@@ -17,6 +37,12 @@ const FolderSelect = (props: {
         onChange: onChange,
     });
     const [selectKeys, setSelectKeys] = useState<Key[]>([]);
+    useEffect(() => {
+        const keys = findPath(options, folderId);
+        console.log('keys', keys, folderId);
+        setSelectKeys(keys);
+    }, [folderId])
+
     return <Cascader
         allowClear={false}
         style={{ width: '150px' }}
@@ -24,7 +50,7 @@ const FolderSelect = (props: {
         options={options}
         value={selectKeys}
         onChange={(value: Key[]) => {
-            setSelectKeys(value);
+            setFolderId(value?.pop() || '');
         }}
     />;
 }
