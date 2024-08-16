@@ -1,8 +1,8 @@
 import { ImageSpace, ImageFile, FolderTreeType, ImageSpaceRef } from '@web-react/biz-components';
-import { Input, Select, Space } from 'antd';
+import { Button, Input, Select, Space, Typography } from 'antd';
 import dataJson from './data.json';
 import { SearchOutlined } from '@ant-design/icons';
-import { useEffect, useRef, useState } from 'react';
+import { Key, useEffect, useMemo, useRef, useState } from 'react';
 const files = dataJson.files.fileModule.map(m => {
   return {
     id: m.pictureId,
@@ -25,6 +25,7 @@ function getOptions(list: any[]): FolderTreeType[] {
 
 export default () => {
   const _ref = useRef<ImageSpaceRef>(null);
+  const [selectKeys, setSelectKeys] = useState<Key[]>([]);
   const [searchParam, setSearchParam] = useState({ type: 'picture', value: '', order: 'timeDes', });
 
   useEffect(() => {
@@ -34,6 +35,14 @@ export default () => {
   const handleRefresh = () => {
     _ref?.current?.onRefresh();
   }
+
+  const handleOk = async (e: any) => {
+    setSelectKeys([]);
+  };
+
+  const selectCount = useMemo(() => {
+    return selectKeys?.length || 0;
+  }, [selectKeys]);
 
   return (
     <>
@@ -57,7 +66,7 @@ export default () => {
               />
               <Input
                 allowClear
-                style={{ width: '120px' }}
+                style={{ width: '180px' }}
                 suffix={<SearchOutlined />}
                 placeholder={'搜索'}
                 value={searchParam.value}
@@ -86,6 +95,18 @@ export default () => {
             />
           </Space>
         }}
+        footer={{
+          left: <Typography.Link target="_blank">
+            进入图片空间
+          </Typography.Link>,
+          right: <Button
+            type="primary"
+            disabled={selectKeys?.length == 0}
+            onClick={handleOk}
+          >
+            确定{selectCount > 0 && `（${selectCount}）`}
+          </Button>
+        }}
         defaultFolder={{ value: '0', label: '全部图片', }}
         fetchFolders={() => {
           return new Promise<FolderTreeType[]>((resolve, reject) => {
@@ -113,6 +134,10 @@ export default () => {
               resolve(data);
             }, 1000);
           })
+        }}
+        value={selectKeys}
+        onChange={(data) => {
+          setSelectKeys(data);
         }}
       />
     </>

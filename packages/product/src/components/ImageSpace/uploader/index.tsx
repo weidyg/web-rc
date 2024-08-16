@@ -11,16 +11,18 @@ type FolderType = {
     children?: FolderType[],
 };
 type DisplayPanelType = 'none' | 'uploader' | 'uploadList';
-type UploaderProps = {
+type PicUploaderProps = {
     prefixCls?: string;
     defaultFolderValue: Key;
     folders?: FolderType[];
     display?: DisplayPanelType;
     onDisplayChange?: (display: DisplayPanelType) => void;
-
+    config?: {
+        right?: React.ReactNode;
+    }
 };
-const Uploader: React.FC<UploaderProps> = (props) => {
-    const { defaultFolderValue, folders } = props;
+const PicUploader: React.FC<PicUploaderProps> = (props) => {
+    const { defaultFolderValue, folders, config } = props;
     const { prefixCls, wrapSSR, hashId, token } = useStyle(props?.prefixCls);
     const [displayPanel, setDisplayPanel] = useMergedState<DisplayPanelType>('none', {
         value: props?.display,
@@ -150,41 +152,35 @@ const Uploader: React.FC<UploaderProps> = (props) => {
 
     return wrapSSR(
         <div style={{ display: (displayPanel == 'uploader' || displayPanel == 'uploadList') ? 'flex' : 'none' }}
-            className={classNames(`${prefixCls}-uploader-container`, hashId)}>
-            <div className={classNames(`${prefixCls}-uploader-body`, hashId)}>
-                <div className={classNames(`${prefixCls}-uploader-panel`, hashId)}>
-                    <div
-                        style={{ display: displayPanel == 'uploader' ? 'flex' : 'none' }}
-                        className={classNames(`${prefixCls}-uploader-panel-form`, hashId)}
-                    >
-                        <div className={classNames(`${prefixCls}-uploader-panel-config`, hashId)}>
+            className={classNames(`${prefixCls}-container`, hashId)}>
+            <div className={classNames(`${prefixCls}-body`, hashId)}>
+                <div className={classNames(`${prefixCls}-panel`, hashId)}>
+                    <div style={{ display: displayPanel == 'uploader' ? 'flex' : 'none' }}
+                        className={classNames(`${prefixCls}-panel-form`, hashId)}>
+                        <div className={classNames(`${prefixCls}-panel-config`, hashId)}>
                             <ConfigForm />
-                            <Button style={{ marginLeft: 'auto' }}
-                                onClick={() => { setDisplayPanel('none') }}
-                            >
-                                取消上传
-                            </Button>
+                            {config?.right}
                         </div>
                         <div style={{ display: 'block !important', width: '100%', height: '100%', margin: 0 }}>
                             <div style={{ width: '100%', height: '95%' }}>
                                 <Upload.Dragger
                                     {...uploadProps}
                                     openFileDialogOnClick={false}
-                                    className={classNames(`${prefixCls}-uploader-panel-board`, hashId)}
+                                    className={classNames(`${prefixCls}-panel-board`, hashId)}
                                     style={{ position: 'relative' }}
                                 >
                                     <Upload {...uploadProps}>
                                         <Button
                                             type="primary"
                                             icon={<UploadOutlined />}
-                                            className={classNames(`${prefixCls}-uploader-panel-btn`, hashId)}
+                                            className={classNames(`${prefixCls}-panel-btn`, hashId)}
                                             style={{ zIndex: 1 }}
                                         >
                                             上传
                                         </Button>
                                     </Upload>
-                                    <p className={classNames(`${prefixCls}-uploader-panel-tips`, hashId)}>点击按钮或将图片拖拽至此处上传</p>
-                                    <p className={classNames(`${prefixCls}-uploader-panel-format`, hashId)}>
+                                    <p className={classNames(`${prefixCls}-panel-tips`, hashId)}>点击按钮或将图片拖拽至此处上传</p>
+                                    <p className={classNames(`${prefixCls}-panel-format`, hashId)}>
                                         图片仅支持3MB以内jpg、bmp、gif、heic、png、jpeg、webp格式。
                                     </p>
                                 </Upload.Dragger>
@@ -193,9 +189,9 @@ const Uploader: React.FC<UploaderProps> = (props) => {
                     </div>
                     <div
                         style={{ display: displayPanel == 'uploadList' ? 'flex' : 'none' }}
-                        className={classNames(`${prefixCls}-uploader-list-container`, hashId)}
+                        className={classNames(`${prefixCls}-list-container`, hashId)}
                     >
-                        <div className={classNames(`${prefixCls}-uploader-list`, hashId)}>
+                        <div className={classNames(`${prefixCls}-list`, hashId)}>
                             <Alert
                                 banner
                                 showIcon
@@ -207,19 +203,19 @@ const Uploader: React.FC<UploaderProps> = (props) => {
                                         : `有 ${count.failed} 个上传失败，本次共成功上传 ${count.success} 个文件，请稍后重试。`
                                 }
                             />
-                            <div className={classNames(`${prefixCls}-uploader-list-files`, hashId)}>
+                            <div className={classNames(`${prefixCls}-list-files`, hashId)}>
                                 {fileList.map((file, index) => (
-                                    <div key={index} className={classNames(`${prefixCls}-uploader-list-item`, hashId)}>
-                                        <div className={classNames(`${prefixCls}-uploader-list-item-img`, hashId)}>
+                                    <div key={index} className={classNames(`${prefixCls}-list-item`, hashId)}>
+                                        <div className={classNames(`${prefixCls}-list-item-img`, hashId)}>
                                             <img src={file.thumbUrl || file.url} />
                                         </div>
-                                        <div className={classNames(`${prefixCls}-uploader-list-item-content`, hashId)}>
-                                            <div className={classNames(`${prefixCls}-uploader-list-item-name`, hashId)}>{file.name}</div>
-                                            <div className={classNames(`${prefixCls}-uploader-list-item-desc`, hashId)}>
+                                        <div className={classNames(`${prefixCls}-list-item-content`, hashId)}>
+                                            <div className={classNames(`${prefixCls}-list-item-name`, hashId)}>{file.name}</div>
+                                            <div className={classNames(`${prefixCls}-list-item-desc`, hashId)}>
                                                 {convertByteUnit(file.size || 0)}
                                             </div>
                                         </div>
-                                        <div className={classNames(`${prefixCls}-uploader-list-item-state`, hashId)}>
+                                        <div className={classNames(`${prefixCls}-list-item-state`, hashId)}>
                                             <div style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>
                                                 {file.status === 'uploading' ? (<>
                                                     <LoadingOutlined style={{ color: token.colorPrimary, marginRight: '10px' }} />
@@ -238,8 +234,8 @@ const Uploader: React.FC<UploaderProps> = (props) => {
                                     </div>
                                 ))}
                             </div>
-                            <div className={classNames(`${prefixCls}-uploader-list-actions-wrap`, hashId)}>
-                                <div className={classNames(`${prefixCls}-uploader-list-actions`, hashId)}>
+                            <div className={classNames(`${prefixCls}-list-actions-wrap`, hashId)}>
+                                <div className={classNames(`${prefixCls}-list-actions`, hashId)}>
                                     <Button type="text" onClick={() => { setDisplayPanel('uploader') }}>
                                         继续上传
                                     </Button>
@@ -252,5 +248,5 @@ const Uploader: React.FC<UploaderProps> = (props) => {
         </div>
     )
 };
-export type { FolderType, DisplayPanelType, UploaderProps };
-export default Uploader;
+export type { FolderType, DisplayPanelType, PicUploaderProps };
+export default PicUploader;

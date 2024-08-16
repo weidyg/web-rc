@@ -1,7 +1,7 @@
-import { Key, useEffect, useImperativeHandle, useMemo, useState } from 'react';
+import { CSSProperties, Key, ReactNode, Ref, useEffect, useImperativeHandle, useMemo, useState } from 'react';
 import { Button, message, Typography } from 'antd';
-import { classNames } from '@web-react/biz-utils';
-import PicUploader, { DisplayPanelType, FolderType } from './Uploader';
+import { classNames, useMergedState } from '@web-react/biz-utils';
+import PicUploader, { DisplayPanelType, FolderType } from './uploader';
 import FolderTree, { FolderTreeType } from './folderTree';
 import PicPanel, { ImageFile } from './picPanel';
 import { useStyle } from './style';
@@ -19,7 +19,7 @@ export type ImageSpaceProps<
   /** 类名 */
   className?: string;
   /** 样式 */
-  style?: React.CSSProperties;
+  style?: CSSProperties;
   /** 自定义样式前缀 */
   prefixCls?: string;
 
@@ -27,8 +27,14 @@ export type ImageSpaceProps<
   defaultFolder?: FolderTreeType;
   fetchFolders?: () => Promise<FolderTreeType[]>;
   fetchData: (param: RequestParamType) => Promise<{ items: ImageFile[], total: number, }>;
-  onOk?: (ids: Key[], files: ImageFile[]) => void | Promise<void>;
-  actions?: { left?: React.ReactNode },
+  defaultValue?: Key[];
+  value?: Key[];
+  onChange?: (ids: Key[], files: ImageFile[]) => void | Promise<void>;
+  actions?: { left?: ReactNode },
+  footer?: {
+    left?: ReactNode,
+    right?: ReactNode,
+  },
 };
 
 export interface ImageSpaceRef {
@@ -39,13 +45,24 @@ const InternalImageSpace = <
   RequestParamType extends BaseRequestParam = BaseRequestParam,
 >(
   props: ImageSpaceProps<RequestParamType>,
-  ref: React.Ref<ImageSpaceRef>
+  ref: Ref<ImageSpaceRef>
 ) => {
-  const { style, className, defaultFolder, pageSize = 20, fetchData, fetchFolders, onOk, actions } = props;
+  const { style, className, defaultFolder, pageSize = 20,
+    fetchData, fetchFolders, onChange,
+    actions, footer
+  } = props;
   const { prefixCls, wrapSSR, hashId, token } = useStyle(props.prefixCls);
   const classString = classNames(prefixCls, className, hashId, {});
   const [displayPanel, setDisplayPanel] = useState<DisplayPanelType>('none');
-  const [selectKeys, setSelectKeys] = useState<Key[]>([]);
+
+  const [selectKeys, setSelectKeys] = useMergedState<Key[]>([], {
+    defaultValue: props.defaultValue,
+    value: props.value,
+    onChange: async (value) => {
+      const selectFiles = imageFiles.filter((item) => value.includes(item.id));
+      await onChange?.(value, selectFiles);
+    }
+  });
 
   const [folderId, setFolderId] = useState<Key>(defaultFolder?.value || '');
   const [folders, setFolders] = useState<FolderTreeType[]>(defaultFolder ? [defaultFolder] : []);
@@ -75,6 +92,7 @@ const InternalImageSpace = <
     const folders = defaultFolder ? [defaultFolder, ...data] : data;
     setFolders(folders);
   };
+
   const loadData = async (param: { page: number, fist?: boolean, [key: string]: any }) => {
     const { page, fist, ...rest } = param;
     const totalPage = fist ? 1 : Math.ceil(totalCount / pageSize);
@@ -96,16 +114,6 @@ const InternalImageSpace = <
       setLoading(false);
     }
   };
-
-  const handleOk = async (e: any) => {
-    const selectFiles = imageFiles.filter((item) => selectKeys.includes(item.id));
-    await onOk?.(selectKeys, selectFiles);
-    setSelectKeys([]);
-  };
-
-  const selectCount = useMemo(() => {
-    return selectKeys?.length || 0;
-  }, [selectKeys])
 
   return wrapSSR(
     <div className={classString} style={style}>
@@ -149,22 +157,21 @@ const InternalImageSpace = <
           onDisplayChange={(val) => {
             setDisplayPanel(val)
           }}
+          config={{
+            right: <Button style={{ marginLeft: 'auto' }}
+              onClick={() => { setDisplayPanel('none') }}
+            >
+              取消上传
+            </Button>
+          }}
         />
       </div>
       <div className={classNames(`${prefixCls}-footer`, hashId)}>
         <div className={classNames(`${prefixCls}-footer-left`, hashId)}>
-          <Typography.Link target="_blank">
-            进入图片空间
-          </Typography.Link>
+          {footer?.left}
         </div>
         <div className={classNames(`${prefixCls}-footer-right`, hashId)}>
-          <Button
-            type="primary"
-            disabled={selectKeys?.length == 0}
-            onClick={handleOk}
-          >
-            确定{selectCount > 0 && `（${selectCount}）`}
-          </Button>
+          {footer?.right}
         </div>
       </div>
     </div>
