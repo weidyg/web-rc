@@ -1,6 +1,6 @@
 import React, { ReactNode, useEffect, useMemo, useState } from 'react';
 import { CheckCircleFilled, CloseCircleFilled, LoadingOutlined, UploadOutlined } from '@ant-design/icons';
-import { Alert, Button, Cascader, Checkbox, Form, InputNumber, Radio, Select, Upload, UploadFile, UploadProps, } from 'antd';
+import { Alert, Button, ButtonProps, Cascader, Checkbox, Form, InputNumber, Radio, Select, Upload, UploadFile, UploadProps, } from 'antd';
 import { classNames, convertByteUnit, useMergedState } from '@web-react/biz-utils';
 import { useStyle } from './style';
 
@@ -54,7 +54,24 @@ const FolderSelect = (props: {
         }}
     />;
 }
-
+const UploadButton = (props: {
+    uploadProps: UploadProps,
+    buttonProps?: ButtonProps
+}) => {
+    const { uploadProps, buttonProps = {} } = props;
+    const { style, ...rest } = buttonProps;
+    return <Upload {...uploadProps}>
+        <Button
+            type="primary"
+            shape='round'
+            icon={<UploadOutlined />}
+            style={{ height: '48px', padding: '0 18px', zIndex: 1, ...style }}
+            {...rest}
+        >
+            点击上传
+        </Button>
+    </Upload>
+}
 
 type Key = string | number;
 type FolderType = {
@@ -72,11 +89,12 @@ type PicUploaderProps = {
     config?: {
         right?: React.ReactNode;
     }
+    uploadButtonProps?: ButtonProps
 };
 const PicUploader: React.FC<PicUploaderProps> = (props) => {
-    const { defaultFolderValue, folders, config } = props;
+    const { defaultFolderValue, folders, config, uploadButtonProps } = props;
     const { prefixCls, wrapSSR, hashId, token } = useStyle(props?.prefixCls);
-    const [displayPanel, setDisplayPanel] = useMergedState<DisplayPanelType>('none', {
+    const [displayPanel, setDisplayPanel] = useMergedState<DisplayPanelType>('uploader', {
         value: props?.display,
         onChange: props?.onDisplayChange,
     });
@@ -104,10 +122,10 @@ const PicUploader: React.FC<PicUploaderProps> = (props) => {
 
     const uploadProps: UploadProps = {
         name: 'file',
-        multiple: true,
-        showUploadList: false,
         action: 'https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload',
         accept: 'image/jpeg,image/bmp,image/gif,.heic,image/png,.webp',
+        multiple: true,
+        showUploadList: false,
         fileList: fileList,
         data: (file) => { return form.getFieldsValue(); },
         onChange: ({ file, fileList, event }) => {
@@ -197,16 +215,7 @@ const PicUploader: React.FC<PicUploaderProps> = (props) => {
                                     className={classNames(`${prefixCls}-panel-board`, hashId)}
                                     style={{ position: 'relative' }}
                                 >
-                                    <Upload {...uploadProps}>
-                                        <Button
-                                            type="primary"
-                                            icon={<UploadOutlined />}
-                                            className={classNames(`${prefixCls}-panel-btn`, hashId)}
-                                            style={{ zIndex: 1 }}
-                                        >
-                                            上传
-                                        </Button>
-                                    </Upload>
+                                    <UploadButton uploadProps={uploadProps} buttonProps={uploadButtonProps} />
                                     <p className={classNames(`${prefixCls}-panel-tips`, hashId)}>点击按钮或将图片拖拽至此处上传</p>
                                     <p className={classNames(`${prefixCls}-panel-format`, hashId)}>
                                         图片仅支持3MB以内jpg、bmp、gif、heic、png、jpeg、webp格式。

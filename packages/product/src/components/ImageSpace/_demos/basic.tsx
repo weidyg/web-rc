@@ -1,8 +1,9 @@
-import { ImageSpace, ImageFile, FolderTreeType, ImageSpaceRef } from '@web-react/biz-components';
-import { Button, Input, Select, Space, Typography } from 'antd';
-import dataJson from './data.json';
-import { SearchOutlined } from '@ant-design/icons';
 import { Key, useEffect, useMemo, useRef, useState } from 'react';
+import { Button, Input, Select, Space, Typography } from 'antd';
+import { SearchOutlined } from '@ant-design/icons';
+import { ImageSpace, ImageFile, FolderTreeType, ImageSpaceRef } from '@web-react/biz-components';
+
+import dataJson from './_data.json';
 const files = dataJson.files.fileModule.map(m => {
   return {
     id: m.pictureId,
@@ -28,9 +29,23 @@ export default () => {
   const [selectKeys, setSelectKeys] = useState<Key[]>([]);
   const [searchParam, setSearchParam] = useState({ type: 'picture', value: '', order: 'timeDes', });
 
+  // useEffect(() => {
+  //   fetchFolders();
+  // }, []);
+
   useEffect(() => {
     handleRefresh();
   }, [searchParam.order]);
+
+  const fetchFolders = () => {
+    return new Promise<FolderTreeType[]>((resolve, reject) => {
+      setTimeout(() => {
+        const folders = getOptions([{ ...dataJson.dirs, children: [] }, ...dataJson.dirs.children]);
+        resolve(folders);
+      }, 1000);
+    })
+  }
+
 
   const handleRefresh = () => {
     _ref?.current?.onRefresh();
@@ -107,15 +122,10 @@ export default () => {
             确定{selectCount > 0 && `（${selectCount}）`}
           </Button>
         }}
+
         defaultFolder={{ value: '0', label: '全部图片', }}
-        fetchFolders={() => {
-          return new Promise<FolderTreeType[]>((resolve, reject) => {
-            setTimeout(() => {
-              const cascaderOptions = getOptions(dataJson.dirs.children);
-              resolve(cascaderOptions);
-            }, 1000);
-          })
-        }}
+        fetchFolders={fetchFolders}
+
         fetchData={(param) => {
           const queryParam = { ...param, ...searchParam }
           console.log('queryParam', queryParam);

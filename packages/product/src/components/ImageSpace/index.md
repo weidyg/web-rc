@@ -1,7 +1,7 @@
 ---
 title: ImageSpace - 图片空间
-order: 0
 atomId: ImageSpace
+order: 0
 ---
 
 # ImageSpace 图片空间组件
@@ -11,6 +11,8 @@ atomId: ImageSpace
 ## 代码演示
 
 <code iframe="650"  title="基本使用" description="基本的图片空间展示" src="./_demos/basic.tsx" ></code>
+
+<code iframe="650"  title="图片上传器" description="图片上传器" src="./_demos/uploader.tsx" ></code>
 
 ## API
 

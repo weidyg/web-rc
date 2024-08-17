@@ -53,10 +53,6 @@ const genBizStyle: GenerateStyle<PicUploaderToken> = (token) => {
           flexDirection: 'column',
           cursor: 'pointer',
         },
-        '&-btn': {
-          height: '48px',
-          padding: '0 18px',
-        },
         '&-tips': {
           marginTop: '18px',
           marginRight: '0',
