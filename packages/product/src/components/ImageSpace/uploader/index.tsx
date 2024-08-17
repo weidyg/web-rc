@@ -93,7 +93,7 @@ type PicUploaderProps<TResponse = any> = {
         right?: React.ReactNode;
     }
     upload?: {
-        // normalize?: (response: TResponse) => UploadFile;
+        normalize?: (file: UploadFile<TResponse>) => UploadFile;
         buttonProps?: ButtonProps;
     } & Pick<UploadProps<TResponse>, 'accept' | 'data'
         | 'headers' | 'method' | 'action' | 'customRequest'
@@ -103,7 +103,7 @@ type PicUploaderProps<TResponse = any> = {
 const InternalPicUploader = (props: PicUploaderProps) => {
     const { defaultFolderValue, folders, config, upload = {} } = props;
     const {
-        data: uploadData,
+        data: uploadData, normalize,
         accept = 'image/jpeg,image/bmp,image/gif,.heic,image/png,.webp',
         buttonProps, ...restUpload
     } = upload;
@@ -157,13 +157,9 @@ const InternalPicUploader = (props: PicUploaderProps) => {
         fileList: fileList,
         onChange: ({ file, fileList, event }) => {
             console.log("onChange", { file, fileList, event });
-            // fileList = fileList.map((file) => {
-            //     if (file.response) {
-            //         file.url = file.response.url;
-            //         file.thumbUrl = file.response.thumbUrl;
-            //     }
-            //     return file;
-            // });
+            fileList = fileList.map((file) => {
+                return normalize?.(file) || file;
+            });
             setFileList(fileList);
         },
         beforeUpload(file, fileList) {
@@ -328,7 +324,7 @@ const InternalPicUploader = (props: PicUploaderProps) => {
                                                     上传成功
                                                 </>) : file.status === 'error' ? (<>
                                                     <CloseCircleFilled style={{ color: token.colorError, marginRight: '10px' }} />
-                                                    {file.error?.message ? file.error.message : '上传失败'}
+                                                    {file?.error?.message || '上传失败'}
                                                     {/* 上传失败&nbsp;&nbsp;网络错误，请尝试禁止浏览器插件或者换浏览器或者换电脑重试 */}
                                                 </>) : (
                                                     <></>
