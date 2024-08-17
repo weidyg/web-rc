@@ -1,7 +1,7 @@
 import React, { ReactNode, useEffect, useMemo, useState } from 'react';
 import { CheckCircleFilled, CloseCircleFilled, LoadingOutlined, UploadOutlined } from '@ant-design/icons';
-import { Alert, Button, ButtonProps, Cascader, Checkbox, Form, InputNumber, Radio, Select, Upload, UploadFile, UploadProps, } from 'antd';
-import { classNames, convertByteUnit, useMergedState } from '@web-react/biz-utils';
+import { Alert, Button, ButtonProps, Cascader, Checkbox, Form, InputNumber, message, Radio, Select, Upload, UploadFile, UploadProps, } from 'antd';
+import { classNames, convertByteUnit, drawImage, useMergedState } from '@web-react/biz-utils';
 import { useStyle } from './style';
 
 function findPath(tree?: FolderType[], targetId?: Key) {
@@ -80,7 +80,10 @@ type FolderType = {
     children?: FolderType[],
 };
 type DisplayPanelType = 'none' | 'uploader' | 'uploadList';
-type PicUploaderProps = {
+type ConfigFormValueType = { folderId: string, picWidth: boolean, picWidthOption: number, picWidthValue: number, originSize: boolean };
+
+
+type PicUploaderProps<TResponse = any> = {
     prefixCls?: string;
     defaultFolderValue: Key;
     folders?: FolderType[];
@@ -89,18 +92,28 @@ type PicUploaderProps = {
     config?: {
         right?: React.ReactNode;
     }
-    uploadButtonProps?: ButtonProps
+    upload?: {
+        // normalize?: (response: TResponse) => UploadFile;
+        buttonProps?: ButtonProps;
+    } & Pick<UploadProps<TResponse>, 'accept' | 'data'
+        | 'headers' | 'method' | 'action' | 'customRequest'
+    >;
 };
-const PicUploader: React.FC<PicUploaderProps> = (props) => {
-    const { defaultFolderValue, folders, config, uploadButtonProps } = props;
+
+const InternalPicUploader = (props: PicUploaderProps) => {
+    const { defaultFolderValue, folders, config, upload = {} } = props;
+    const {
+        data: uploadData,
+        accept = 'image/jpeg,image/bmp,image/gif,.heic,image/png,.webp',
+        buttonProps, ...restUpload
+    } = upload;
     const { prefixCls, wrapSSR, hashId, token } = useStyle(props?.prefixCls);
     const [displayPanel, setDisplayPanel] = useMergedState<DisplayPanelType>('uploader', {
         value: props?.display,
         onChange: props?.onDisplayChange,
     });
-
+    const [form] = Form.useForm<ConfigFormValueType>();
     const [fileList, setFileList] = useState<UploadFile[]>([]);
-    const [form] = Form.useForm();
 
     const count = useMemo(() => {
         let count = { uploading: 0, success: 0, failed: 0 };
@@ -120,21 +133,72 @@ const PicUploader: React.FC<PicUploaderProps> = (props) => {
         return count;
     }, [fileList]);
 
+    const imageFormat = useMemo(() => {
+        return accept?.replace(/[A-Za-z]*\/|[A-Za-z]*\./g, '');
+    }, [accept]);
+
+    const checkFile = (file: UploadFile, accept: string) => {
+        const types = accept.split(',') || [];
+        return types.includes(file.type!) || types.some(type => file?.name?.lastIndexOf(type) > -1);
+    }
+
     const uploadProps: UploadProps = {
-        name: 'file',
-        action: 'https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload',
-        accept: 'image/jpeg,image/bmp,image/gif,.heic,image/png,.webp',
+        ...restUpload,
+        accept: accept,
+        data: async (file) => {
+            const data = typeof uploadData == "function"
+                ? await uploadData(file)
+                : uploadData;
+            const folderId = form.getFieldValue('folderId');
+            return { folderId, ...data, }
+        },
         multiple: true,
         showUploadList: false,
         fileList: fileList,
-        data: (file) => { return form.getFieldsValue(); },
         onChange: ({ file, fileList, event }) => {
+            console.log("onChange", { file, fileList, event });
+            // fileList = fileList.map((file) => {
+            //     if (file.response) {
+            //         file.url = file.response.url;
+            //         file.thumbUrl = file.response.thumbUrl;
+            //     }
+            //     return file;
+            // });
             setFileList(fileList);
         },
         beforeUpload(file, fileList) {
+            console.log("beforeUpload", { file, fileList });
+            if (!checkFile(file, accept)) {
+                message.error(`亲, 请选择 ${imageFormat} 格式文件`);
+                return Upload.LIST_IGNORE;
+            }
+
             setDisplayPanel('uploadList');
+            const config = form.getFieldsValue();
+            if (config.picWidth) {
+                const width = config.picWidthOption == -1 ? config.picWidthValue : config.picWidthOption;
+                if (width > 0) {
+                    return drawImage(file, { width: 100 }, true);
+                }
+            }
+            return file;
         },
     };
+
+    useEffect(() => {
+        if (count.success > 0 && count.failed == 0 && count.uploading == 0) {
+            setTimeout(() => {
+                setDisplayPanel('uploader');
+                setFileList([]);
+            }, 1000);
+        }
+    }, [count])
+
+    function handleUpload(): void {
+        setDisplayPanel('uploader');
+        setFileList(fileList => fileList.filter(file => file.status == 'uploading'));
+    }
+
     return wrapSSR(
         <div style={{ display: (displayPanel == 'uploader' || displayPanel == 'uploadList') ? 'flex' : 'none' }}
             className={classNames(`${prefixCls}-container`, hashId)}>
@@ -143,7 +207,7 @@ const PicUploader: React.FC<PicUploaderProps> = (props) => {
                     <div style={{ display: displayPanel == 'uploader' ? 'flex' : 'none' }}
                         className={classNames(`${prefixCls}-panel-header`, hashId)}>
                         <div className={classNames(`${prefixCls}-panel-config`, hashId)}>
-                            <Form
+                            <Form<ConfigFormValueType>
                                 form={form}
                                 layout="inline"
                                 initialValues={{
@@ -161,12 +225,12 @@ const PicUploader: React.FC<PicUploaderProps> = (props) => {
                                     }
                                 }}
                             >
-                                <Form.Item label="上传至" name="folderId" >
+                                <Form.Item<ConfigFormValueType> label="上传至" name="folderId"  >
                                     <FolderSelect options={folders} />
                                 </Form.Item>
                                 <Form.Item noStyle dependencies={['picWidth']}>
                                     {({ getFieldValue }) => (
-                                        <Form.Item name="picWidth" valuePropName={'checked'}
+                                        <Form.Item<ConfigFormValueType> name="picWidth" valuePropName={'checked'}
                                             style={{ marginRight: getFieldValue('picWidth') ? 0 : undefined }}>
                                             <Checkbox>
                                                 <span style={{ fontSize: '12px' }}>图片宽度调整</span>
@@ -176,7 +240,7 @@ const PicUploader: React.FC<PicUploaderProps> = (props) => {
                                 </Form.Item>
                                 <Form.Item noStyle dependencies={['picWidth']}>
                                     {({ getFieldValue }) => getFieldValue('picWidth') && (
-                                        <Form.Item name="picWidthOption">
+                                        <Form.Item<ConfigFormValueType> name="picWidthOption">
                                             <Select
                                                 style={{ width: '140px' }}
                                                 options={[
@@ -191,12 +255,12 @@ const PicUploader: React.FC<PicUploaderProps> = (props) => {
                                 </Form.Item>
                                 <Form.Item noStyle dependencies={['picWidth', 'picWidthOption']}>
                                     {({ getFieldValue }) => getFieldValue('picWidthOption') === -1 && (
-                                        <Form.Item name="picWidthValue">
+                                        <Form.Item<ConfigFormValueType> name="picWidthValue">
                                             <InputNumber min={0} max={10000} suffix="px" />
                                         </Form.Item>
                                     )}
                                 </Form.Item>
-                                <Form.Item name="originSize">
+                                <Form.Item<ConfigFormValueType> name="originSize">
                                     <Radio.Group
                                         options={[
                                             { label: <span style={{ fontSize: '12px' }}>原图上传</span>, value: true },
@@ -215,11 +279,10 @@ const PicUploader: React.FC<PicUploaderProps> = (props) => {
                                     className={classNames(`${prefixCls}-panel-board`, hashId)}
                                     style={{ position: 'relative' }}
                                 >
-                                    <UploadButton uploadProps={uploadProps} buttonProps={uploadButtonProps} />
+                                    <UploadButton uploadProps={uploadProps} buttonProps={buttonProps} />
                                     <p className={classNames(`${prefixCls}-panel-tips`, hashId)}>点击按钮或将图片拖拽至此处上传</p>
                                     <p className={classNames(`${prefixCls}-panel-format`, hashId)}>
-                                        图片仅支持3MB以内jpg、bmp、gif、heic、png、jpeg、webp格式。
-                                        {/* accept: 'image/jpeg,image/bmp,image/gif,.heic,image/png,.webp', */}
+                                        图片仅支持3MB以内{imageFormat}格式。
                                     </p>
                                 </Upload.Dragger>
                             </div>
@@ -242,10 +305,12 @@ const PicUploader: React.FC<PicUploaderProps> = (props) => {
                                 }
                             />
                             <div className={classNames(`${prefixCls}-list-files`, hashId)}>
-                                {fileList.map((file, index) => (
-                                    <div key={index} className={classNames(`${prefixCls}-list-item`, hashId)}>
+                                {fileList.map((file, index) => {
+                                    // const windowURL = window.URL || window.webkitURL;
+                                    return (<div key={index} className={classNames(`${prefixCls}-list-item`, hashId)}>
                                         <div className={classNames(`${prefixCls}-list-item-img`, hashId)}>
                                             <img src={file.thumbUrl || file.url} />
+                                            {/* <img src={windowURL.createObjectURL(file.originFileObj!)} /> */}
                                         </div>
                                         <div className={classNames(`${prefixCls}-list-item-content`, hashId)}>
                                             <div className={classNames(`${prefixCls}-list-item-name`, hashId)}>{file.name}</div>
@@ -263,18 +328,19 @@ const PicUploader: React.FC<PicUploaderProps> = (props) => {
                                                     上传成功
                                                 </>) : file.status === 'error' ? (<>
                                                     <CloseCircleFilled style={{ color: token.colorError, marginRight: '10px' }} />
-                                                    上传失败&nbsp;&nbsp;网络错误，请尝试禁止浏览器插件或者换浏览器或者换电脑重试
+                                                    {file.error?.message ? file.error.message : '上传失败'}
+                                                    {/* 上传失败&nbsp;&nbsp;网络错误，请尝试禁止浏览器插件或者换浏览器或者换电脑重试 */}
                                                 </>) : (
                                                     <></>
                                                 )}
                                             </div>
                                         </div>
-                                    </div>
-                                ))}
+                                    </div>)
+                                })}
                             </div>
                             <div className={classNames(`${prefixCls}-list-actions-wrap`, hashId)}>
                                 <div className={classNames(`${prefixCls}-list-actions`, hashId)}>
-                                    <Button type="text" onClick={() => { setDisplayPanel('uploader') }}>
+                                    <Button type="text" onClick={handleUpload}>
                                         继续上传
                                     </Button>
                                 </div>
@@ -286,5 +352,11 @@ const PicUploader: React.FC<PicUploaderProps> = (props) => {
         </div>
     )
 };
+
+type InternalPicUploaderType = typeof InternalPicUploader;
+type CompoundedComponent<T = any> = InternalPicUploaderType & {
+    <U extends T>(props: UploadProps<U>,): React.ReactElement;
+};
+const PicUploader = InternalPicUploader as CompoundedComponent;
 export type { FolderType, DisplayPanelType, PicUploaderProps };
 export default PicUploader;

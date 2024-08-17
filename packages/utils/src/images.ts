@@ -1,4 +1,4 @@
-const crop = (
+export const cropImage = (
   file: Blob,
   pixelCrop: {
     width: number;
@@ -29,12 +29,12 @@ const crop = (
         }
         ctx.drawImage(img, imageSize / 2 - img.width / 2, imageSize / 2 - img.height / 2);
         const data = ctx.getImageData(0, 0, imageSize, imageSize);
-        canvas.width = pixelCrop.width;
-        canvas.height = pixelCrop.height;
+        canvas.width = pixelCrop.width || img.width;
+        canvas.height = pixelCrop.height || img.height;
         ctx.putImageData(
           data,
-          Math.round(0 - imageSize / 2 + img.width * 0.5 - pixelCrop.x),
-          Math.round(0 - imageSize / 2 + img.height * 0.5 - pixelCrop.y),
+          Math.round(0 - imageSize / 2 + img.width * 0.5 - (pixelCrop.x || 0)),
+          Math.round(0 - imageSize / 2 + img.height * 0.5 - (pixelCrop.y || 0)),
         );
         canvas.toBlob((blob) => resolve(blob as any));
       };
@@ -97,3 +97,12 @@ export const drawImage = async (
     canvas.toBlob((blob) => resolve(new File([blob!], fileName, { type: fileType })), fileType, quality);
   });
 };
+
+export const getBase64Image = (file: File): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = (error) => reject(error);
+  });
+}

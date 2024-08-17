@@ -16,5 +16,8 @@ export default () => {
     return <PicUploader
         defaultFolderValue={'0'}
         folders={folders as FolderType[]}
+        upload={{
+            action: 'https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload',
+        }}
     />
 }

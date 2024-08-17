@@ -100,11 +100,11 @@ const genBizStyle: GenerateStyle<PicUploaderToken> = (token) => {
             marginBottom: 0,
           },
           '&-img': {
-            backgroundColor: '#f7f8fa',
-            borderRadius: '12px',
-            flexShrink: 0,
             height: '48px',
             width: '48px',
+            flexShrink: 0,
+            backgroundColor: '#f7f8fa',
+            borderRadius: token.borderRadius,
             img: {
               width: '100%',
               height: '100%',
@@ -134,7 +134,8 @@ const genBizStyle: GenerateStyle<PicUploaderToken> = (token) => {
           },
           '&-desc': {
             flexShrink: 0,
-            color: '#999',
+            color: token.colorTextSecondary,
+            fontSize: token.fontSizeSM,
           },
           '&-state': {
             flex: '1 1',
