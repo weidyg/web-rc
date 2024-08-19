@@ -84,7 +84,7 @@ type DisplayPanelType = 'none' | 'uploader' | 'uploadList';
 type ConfigFormValueType = { folderId: string, picWidth: boolean, picWidthOption: number, picWidthValue: number, originSize: boolean };
 
 
-type PicUploaderProps<TResponse extends UploadResponseBody = UploadResponseBody> = {
+type PicUploaderProps<T extends UploadResponseBody = UploadResponseBody> = {
     prefixCls?: string;
     defaultFolderValue: Key;
     folders?: FolderType[];
@@ -95,10 +95,11 @@ type PicUploaderProps<TResponse extends UploadResponseBody = UploadResponseBody>
     }
     upload?: {
         buttonProps?: ButtonProps;
-        normalize?: { responseBody: (response: any) => TResponse; }
-        customRequest?: (options: UploadRequestOption<TResponse>) => void;
-    } & Pick<UploadProps<TResponse>, 'accept' | 'data' | 'headers' | 'method' | 'action'
-    >;
+        normalize?: { responseBody: (response: any) => T; }
+        customRequest?: (options: UploadRequestOption<T>) => void;
+    } & Pick<UploadProps<T>, 'accept' | 'data' | 'headers' | 'method' | 'action'>;
+    fileList?: UploadFile<T>[];
+    onChange?: (fileList: UploadFile<T>[]) => void;
 };
 
 const InternalPicUploader = (props: PicUploaderProps) => {
@@ -114,7 +115,10 @@ const InternalPicUploader = (props: PicUploaderProps) => {
         onChange: props?.onDisplayChange,
     });
     const [form] = Form.useForm<ConfigFormValueType>();
-    const [fileList, setFileList] = useState<UploadFile[]>([]);
+    const [fileList, setFileList] = useMergedState<UploadFile[]>([], {
+        value: props?.fileList,
+        onChange: props?.onChange,
+    });
 
     const count = useMemo(() => {
         let count = { uploading: 0, success: 0, failed: 0 };
@@ -181,12 +185,12 @@ const InternalPicUploader = (props: PicUploaderProps) => {
     };
 
     useEffect(() => {
-        if (count.success > 0 && count.failed == 0 && count.uploading == 0) {
-            setTimeout(() => {
-                setDisplayPanel('uploader');
-                setFileList([]);
-            }, 1000);
-        }
+        // if (count.success > 0 && count.failed == 0 && count.uploading == 0) {
+        //     setTimeout(() => {
+        //         setDisplayPanel('uploader');
+        //         setFileList([]);
+        //     }, 1000);
+        // }
     }, [count])
 
     function handleUpload(): void {
