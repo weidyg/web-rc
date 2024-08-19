@@ -91,12 +91,12 @@ export default function uploadRequest<T extends UploadResponseBody>(
     }
 
     xhr.onerror = function error(e) {
-        console.log('error', xhr, e);
+        // console.log('error', xhr, e);
         option.onError?.(e);
     };
 
     xhr.onload = function onload() {
-        console.log('onload', xhr);
+        // console.log('onload', xhr);
         // allow success when 2xx status
         // see https://github.com/react-component/upload/issues/34
         const body = getBody(option, xhr);

@@ -95,9 +95,7 @@ type PicUploaderProps<TResponse extends UploadResponseBody = UploadResponseBody>
     }
     upload?: {
         buttonProps?: ButtonProps;
-        normalize?: {
-            responseBody: (response: any) => TResponse;
-        }
+        normalize?: { responseBody: (response: any) => TResponse; }
         customRequest?: (options: UploadRequestOption<TResponse>) => void;
     } & Pick<UploadProps<TResponse>, 'accept' | 'data' | 'headers' | 'method' | 'action'
     >;
@@ -159,13 +157,7 @@ const InternalPicUploader = (props: PicUploaderProps) => {
         showUploadList: false,
         fileList: fileList,
         onChange: ({ file, fileList, event }) => {
-            // console.log("onChange", { file, fileList, event });
-            fileList = fileList.map((file) => {
-                if (file.response) {
-                    file.response = normalize?.responseBody?.(file.response)
-                }
-                return file;
-            });
+            console.log("onChange", { file, fileList, event });
             setFileList(fileList);
         },
         customRequest: (option) => {
@@ -182,9 +174,7 @@ const InternalPicUploader = (props: PicUploaderProps) => {
             const config = form.getFieldsValue();
             if (config.picWidth) {
                 const width = config.picWidthOption == -1 ? config.picWidthValue : config.picWidthOption;
-                if (width > 0) {
-                    return drawImage(file, { width }, true);
-                }
+                if (width > 0) { return drawImage(file, { width }, true); }
             }
             return file;
         },
@@ -217,6 +207,7 @@ const InternalPicUploader = (props: PicUploaderProps) => {
                                 layout="inline"
                                 initialValues={{
                                     folderId: defaultFolderValue,
+                                    originSize: true,
                                 }}
                                 onValuesChange={(changedValues, allValues) => {
                                     const { picWidth, picWidthOption } = changedValues || {};
