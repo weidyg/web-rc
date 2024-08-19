@@ -3,6 +3,7 @@ import { CheckCircleFilled, CloseCircleFilled, LoadingOutlined, UploadOutlined }
 import { Alert, Button, ButtonProps, Cascader, Checkbox, Form, InputNumber, message, Radio, Select, Upload, UploadFile, UploadProps, } from 'antd';
 import { classNames, convertByteUnit, drawImage, useMergedState } from '@web-react/biz-utils';
 import { useStyle } from './style';
+import uploadRequest, { UploadRequestOption, UploadResponseBody } from './request';
 
 function findPath(tree?: FolderType[], targetId?: Key) {
     let path: Key[] = [];
@@ -39,7 +40,7 @@ const FolderSelect = (props: {
     const [selectKeys, setSelectKeys] = useState<Key[]>([]);
     useEffect(() => {
         const keys = findPath(options, folderId);
-        console.log('keys', keys, folderId);
+        // console.log('keys', keys, folderId);
         setSelectKeys(keys);
     }, [folderId])
 
@@ -83,7 +84,7 @@ type DisplayPanelType = 'none' | 'uploader' | 'uploadList';
 type ConfigFormValueType = { folderId: string, picWidth: boolean, picWidthOption: number, picWidthValue: number, originSize: boolean };
 
 
-type PicUploaderProps<TResponse = any> = {
+type PicUploaderProps<TResponse extends UploadResponseBody = UploadResponseBody> = {
     prefixCls?: string;
     defaultFolderValue: Key;
     folders?: FolderType[];
@@ -93,17 +94,19 @@ type PicUploaderProps<TResponse = any> = {
         right?: React.ReactNode;
     }
     upload?: {
-        normalize?: (file: UploadFile<TResponse>) => UploadFile;
         buttonProps?: ButtonProps;
-    } & Pick<UploadProps<TResponse>, 'accept' | 'data'
-        | 'headers' | 'method' | 'action' | 'customRequest'
+        normalize?: {
+            responseBody: (response: any) => TResponse;
+        }
+        customRequest?: (options: UploadRequestOption<TResponse>) => void;
+    } & Pick<UploadProps<TResponse>, 'accept' | 'data' | 'headers' | 'method' | 'action'
     >;
 };
 
 const InternalPicUploader = (props: PicUploaderProps) => {
     const { defaultFolderValue, folders, config, upload = {} } = props;
     const {
-        data: uploadData, normalize,
+        data: uploadData, normalize, customRequest,
         accept = 'image/jpeg,image/bmp,image/gif,.heic,image/png,.webp',
         buttonProps, ...restUpload
     } = upload;
@@ -142,7 +145,7 @@ const InternalPicUploader = (props: PicUploaderProps) => {
         return types.includes(file.type!) || types.some(type => file?.name?.lastIndexOf(type) > -1);
     }
 
-    const uploadProps: UploadProps = {
+    const uploadProps: UploadProps<UploadResponseBody> = {
         ...restUpload,
         accept: accept,
         data: async (file) => {
@@ -156,25 +159,31 @@ const InternalPicUploader = (props: PicUploaderProps) => {
         showUploadList: false,
         fileList: fileList,
         onChange: ({ file, fileList, event }) => {
-            console.log("onChange", { file, fileList, event });
+            // console.log("onChange", { file, fileList, event });
             fileList = fileList.map((file) => {
-                return normalize?.(file) || file;
+                if (file.response) {
+                    file.response = normalize?.responseBody?.(file.response)
+                }
+                return file;
             });
             setFileList(fileList);
         },
+        customRequest: (option) => {
+            const _option = { ...option, normalize }
+            return customRequest?.(_option) || uploadRequest(_option);
+        },
         beforeUpload(file, fileList) {
-            console.log("beforeUpload", { file, fileList });
+            // console.log("beforeUpload", { file, fileList });
             if (!checkFile(file, accept)) {
                 message.error(`亲, 请选择 ${imageFormat} 格式文件`);
                 return Upload.LIST_IGNORE;
             }
-
             setDisplayPanel('uploadList');
             const config = form.getFieldsValue();
             if (config.picWidth) {
                 const width = config.picWidthOption == -1 ? config.picWidthValue : config.picWidthOption;
                 if (width > 0) {
-                    return drawImage(file, { width: 100 }, true);
+                    return drawImage(file, { width }, true);
                 }
             }
             return file;

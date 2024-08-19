@@ -128,7 +128,7 @@ export default () => {
 
         fetchData={(param) => {
           const queryParam = { ...param, ...searchParam }
-          console.log('queryParam', queryParam);
+          // console.log('queryParam', queryParam);
           const { page, size } = queryParam;
           return new Promise<{ items: ImageFile[], total: number, }>((resolve, reject) => {
             setTimeout(() => {

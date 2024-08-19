@@ -18,6 +18,18 @@ export default () => {
         folders={folders as FolderType[]}
         upload={{
             action: 'https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload',
+            normalize: {
+                responseBody: (res) => {
+                    return {
+                        code: 200,
+                        data: res.data,
+                        message: res.message,
+                        error: {
+                            message:'',
+                        }
+                    }
+                }
+            }
         }}
     />
 }
