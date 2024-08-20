@@ -1,7 +1,7 @@
 import { CSSProperties, Key, ReactNode, Ref, useEffect, useImperativeHandle, useMemo, useState } from 'react';
-import { Button, message, Typography } from 'antd';
+import { Button, message, Typography, UploadFile } from 'antd';
 import { classNames, useMergedState } from '@web-react/biz-utils';
-import PicUploader, { DisplayPanelType, FolderType } from './uploader';
+import PicUploader, { DisplayPanelType, FolderType, PicUploaderProps, UploadResponseBody } from './uploader';
 import FolderTree, { FolderTreeType } from './folderTree';
 import PicPanel, { ImageFile } from './picPanel';
 import { useStyle } from './style';
@@ -13,8 +13,11 @@ type BaseRequestParam = {
   folderId?: Key
 }
 
-export type ImageSpaceProps<
+// <T extends UploadResponseBody = UploadResponseBody>
+
+type ImageSpaceProps<
   RequestParamType extends BaseRequestParam = BaseRequestParam,
+  UploadResponseBodyType extends UploadResponseBody = UploadResponseBody,
 > = {
   /** 类名 */
   className?: string;
@@ -35,21 +38,23 @@ export type ImageSpaceProps<
     left?: ReactNode,
     right?: ReactNode,
   },
+  upload?: PicUploaderProps<UploadResponseBodyType>['upload'],
 };
 
-export interface ImageSpaceRef {
+interface ImageSpaceRef {
   onRefresh: () => void | Promise<void>;
 }
 
 const InternalImageSpace = <
+  UploadResponseBodyType extends UploadResponseBody = UploadResponseBody,
   RequestParamType extends BaseRequestParam = BaseRequestParam,
 >(
-  props: ImageSpaceProps<RequestParamType>,
+  props: ImageSpaceProps<RequestParamType, UploadResponseBodyType>,
   ref: Ref<ImageSpaceRef>
 ) => {
   const { style, className, defaultFolder, pageSize = 20,
     fetchData, fetchFolders, onChange,
-    actions, footer
+    actions, footer, upload
   } = props;
   const { prefixCls, wrapSSR, hashId, token } = useStyle(props.prefixCls);
   const classString = classNames(prefixCls, className, hashId, {});
@@ -115,6 +120,7 @@ const InternalImageSpace = <
     }
   };
 
+  const [fileList, setFileList] = useState<UploadFile[]>([]);
   return wrapSSR(
     <div className={classString} style={style}>
       <div className={classNames(`${prefixCls}-body`, hashId)}>
@@ -150,13 +156,24 @@ const InternalImageSpace = <
           onLoadMore={() => loadData({ page: curPage + 1 })}
           onRefresh={() => loadData({ page: 1 })}
         />
-        <PicUploader
-          defaultFolderValue={folderId as any}
-          folders={folders as FolderType[]}
+        <PicUploader<UploadResponseBodyType>
           display={displayPanel}
           onDisplayChange={(val) => {
             setDisplayPanel(val)
           }}
+          defaultFolderValue={folderId as any}
+          folders={folders as FolderType[]}
+          fileList={fileList}
+          onChange={(values) => {
+            if (values.every((m) => m.status === 'done')) {
+              loadData({ page: 1 });
+              setDisplayPanel('none');
+              setFileList([]);
+            } else {
+              setFileList(values);
+            }
+          }}
+          upload={upload}
           config={{
             right: <Button style={{ marginLeft: 'auto' }}
               onClick={() => { setDisplayPanel('none') }}
@@ -164,6 +181,7 @@ const InternalImageSpace = <
               取消上传
             </Button>
           }}
+
         />
       </div>
       <div className={classNames(`${prefixCls}-footer`, hashId)}>
@@ -178,7 +196,7 @@ const InternalImageSpace = <
   );
 }
 
-const ImageSpace = React.forwardRef<ImageSpaceRef, ImageSpaceProps<any>>(InternalImageSpace);
-export type { ImageFile, FolderTreeType, };
+const ImageSpace = React.forwardRef<ImageSpaceRef, ImageSpaceProps<BaseRequestParam, UploadResponseBody>>(InternalImageSpace);
+export type { ImageFile, FolderTreeType, ImageSpaceRef, BaseRequestParam };
 export default ImageSpace;
 

@@ -102,7 +102,11 @@ type PicUploaderProps<T extends UploadResponseBody = UploadResponseBody> = {
     onChange?: (fileList: UploadFile<T>[]) => void;
 };
 
-const InternalPicUploader = (props: PicUploaderProps) => {
+const InternalPicUploader = <
+    UploadResponseBodyType extends UploadResponseBody = UploadResponseBody,
+>(
+    props: PicUploaderProps<UploadResponseBodyType>,
+) => {
     const { defaultFolderValue, folders, config, upload = {} } = props;
     const {
         data: uploadData, normalize, customRequest,
@@ -115,9 +119,9 @@ const InternalPicUploader = (props: PicUploaderProps) => {
         onChange: props?.onDisplayChange,
     });
     const [form] = Form.useForm<ConfigFormValueType>();
-    const [fileList, setFileList] = useMergedState<UploadFile[]>([], {
+    const [fileList, setFileList] = useMergedState<UploadFile<UploadResponseBodyType>[]>([], {
         value: props?.fileList,
-        onChange: props?.onChange,
+        onChange: (value) => props?.onChange?.(value),
     });
 
     const count = useMemo(() => {
@@ -147,7 +151,7 @@ const InternalPicUploader = (props: PicUploaderProps) => {
         return types.includes(file.type!) || types.some(type => file?.name?.lastIndexOf(type) > -1);
     }
 
-    const uploadProps: UploadProps<UploadResponseBody> = {
+    const uploadProps: UploadProps<UploadResponseBodyType> = {
         ...restUpload,
         accept: accept,
         data: async (file) => {
@@ -354,9 +358,9 @@ const InternalPicUploader = (props: PicUploaderProps) => {
 };
 
 type InternalPicUploaderType = typeof InternalPicUploader;
-type CompoundedComponent<T = any> = InternalPicUploaderType & {
+type CompoundedComponent<T = UploadResponseBody> = InternalPicUploaderType & {
     <U extends T>(props: UploadProps<U>,): React.ReactElement;
 };
 const PicUploader = InternalPicUploader as CompoundedComponent;
-export type { FolderType, DisplayPanelType, PicUploaderProps };
+export type { UploadResponseBody, FolderType, DisplayPanelType, PicUploaderProps };
 export default PicUploader;

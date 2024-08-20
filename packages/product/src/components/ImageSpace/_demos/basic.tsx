@@ -1,7 +1,7 @@
 import { Key, useEffect, useMemo, useRef, useState } from 'react';
 import { Button, Input, Select, Space, Typography } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
-import { ImageSpace, ImageFile, FolderTreeType, ImageSpaceRef } from '@web-react/biz-components';
+import { ImageSpace, ImageFile, FolderTreeType, ImageSpaceRef, BaseRequestParam } from '@web-react/biz-components';
 
 import dataJson from './_data.json';
 const files = dataJson.files.fileModule.map(m => {
@@ -29,13 +29,6 @@ export default () => {
   const [selectKeys, setSelectKeys] = useState<Key[]>([]);
   const [searchParam, setSearchParam] = useState({ type: 'picture', value: '', order: 'timeDes', });
 
-  // useEffect(() => {
-  //   fetchFolders();
-  // }, []);
-
-  useEffect(() => {
-    handleRefresh();
-  }, [searchParam.order]);
 
   const fetchFolders = () => {
     return new Promise<FolderTreeType[]>((resolve, reject) => {
@@ -46,6 +39,34 @@ export default () => {
     })
   }
 
+  const fetchData = (param: BaseRequestParam) => {
+    const queryParam = { ...param, ...searchParam }
+    // console.log('queryParam', queryParam);
+    const { page, size } = queryParam;
+    return new Promise<{ items: ImageFile[], total: number, }>((resolve, reject) => {
+      setTimeout(() => {
+        const newData: ImageFile[] = files
+          .slice((page - 1) * size, page * size)
+          .map((file, index) => {
+            return {
+              ...file,
+              id: file.id + '_' + page,
+            };
+          });
+        const data = { items: newData, total: files.length, };
+        resolve(data);
+      }, 1000);
+    })
+  }
+
+
+  // useEffect(() => {
+  //   fetchFolders();
+  // }, []);
+
+  useEffect(() => {
+    handleRefresh();
+  }, [searchParam.order]);
 
   const handleRefresh = () => {
     _ref?.current?.onRefresh();
@@ -125,26 +146,8 @@ export default () => {
 
         defaultFolder={{ value: '0', label: '全部图片', }}
         fetchFolders={fetchFolders}
-
-        fetchData={(param) => {
-          const queryParam = { ...param, ...searchParam }
-          // console.log('queryParam', queryParam);
-          const { page, size } = queryParam;
-          return new Promise<{ items: ImageFile[], total: number, }>((resolve, reject) => {
-            setTimeout(() => {
-              const newData: ImageFile[] = files
-                .slice((page - 1) * size, page * size)
-                .map((file, index) => {
-                  return {
-                    ...file,
-                    id: file.id + '_' + page,
-                  };
-                });
-              const data = { items: newData, total: files.length, };
-              resolve(data);
-            }, 1000);
-          })
-        }}
+        
+        fetchData={fetchData}
         value={selectKeys}
         onChange={(data) => {
           setSelectKeys(data);
