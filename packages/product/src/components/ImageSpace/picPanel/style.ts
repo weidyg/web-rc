@@ -84,6 +84,7 @@ const genBizStyle: GenerateStyle<PicPanelToken> = (token) => {
           height: '36px !important',
           objectFit: 'contain',
           borderRadius: '6px',
+          background: token.colorBgLayout,
         },
         '&-title': {
           maxWidth: '105px',

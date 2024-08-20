@@ -3,7 +3,7 @@ import { Image, Button, Checkbox, Segmented, Space, Spin, Table, Divider } from 
 import { AppstoreOutlined, BarsOutlined } from '@ant-design/icons';
 import { classNames, convertByteUnit, useMergedState } from '@web-react/biz-utils';
 import { ColumnsType } from 'antd/es/table';
-import PicCard from '../picCard';
+import PicCard from '../PicCard';
 import { useStyle } from './style';
 
 type ImageFile = {
@@ -29,7 +29,7 @@ type PicPanelProps = {
     hasMore?: boolean,
     data: ImageFile[],
 };
-const PicPanel: React.FC<PicPanelProps> = (props) => {
+const PicPanel = (props: PicPanelProps) => {
     const { loading, data = [], actions, hasMore, onLoadMore, onRefresh } = props;
     const { prefixCls, wrapSSR, hashId, token } = useStyle(props?.prefixCls);
     const [showType, setShowType] = useState<'list' | 'table'>('list');
@@ -88,7 +88,6 @@ const PicPanel: React.FC<PicPanelProps> = (props) => {
                 />
             </div>
             <div className={classNames(`${prefixCls}-fileName-img`, hashId)}>
-                <img src={file?.fullUrl} />
                 <Image
                     src={file?.fullUrl}
                     onClick={() => { setPreview(true); }}
@@ -189,7 +188,7 @@ const PicPanel: React.FC<PicPanelProps> = (props) => {
                                 pixel={item.pixel}
                                 isRef={item.isRef}
                                 checked={isChecked(item.id)}
-                                onAiEdit={() => { }}
+                                // onAiEdit={() => { }}
                                 onChange={(value: boolean, prevValue: boolean) => {
                                     checkChange(item.id, value);
                                 }}

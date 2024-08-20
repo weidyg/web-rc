@@ -27,6 +27,7 @@ function getOptions(list: any[]): FolderTreeType[] {
 export default () => {
   const _ref = useRef<ImageSpaceRef>(null);
   const [selectKeys, setSelectKeys] = useState<Key[]>([]);
+  const [selectFiles, setSelectFiles] = useState<ImageFile[]>([]);
   const [searchParam, setSearchParam] = useState({ type: 'picture', value: '', order: 'timeDes', });
 
 
@@ -74,6 +75,7 @@ export default () => {
 
   const handleOk = async (e: any) => {
     setSelectKeys([]);
+    setSelectFiles([]);
   };
 
   const selectCount = useMemo(() => {
@@ -137,7 +139,7 @@ export default () => {
           </Typography.Link>,
           right: <Button
             type="primary"
-            disabled={selectKeys?.length == 0}
+            disabled={selectCount == 0}
             onClick={handleOk}
           >
             确定{selectCount > 0 && `（${selectCount}）`}
@@ -146,11 +148,11 @@ export default () => {
 
         defaultFolder={{ value: '0', label: '全部图片', }}
         fetchFolders={fetchFolders}
-        
         fetchData={fetchData}
         value={selectKeys}
-        onChange={(data) => {
+        onChange={(data, files) => {
           setSelectKeys(data);
+          setSelectFiles(files);
         }}
       />
     </>

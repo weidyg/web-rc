@@ -1,9 +1,9 @@
 import { CSSProperties, Key, ReactNode, Ref, useEffect, useImperativeHandle, useMemo, useState } from 'react';
 import { Button, message, Typography, UploadFile } from 'antd';
 import { classNames, useMergedState } from '@web-react/biz-utils';
-import PicUploader, { DisplayPanelType, FolderType, PicUploaderProps, UploadResponseBody } from './uploader';
-import FolderTree, { FolderTreeType } from './folderTree';
-import PicPanel, { ImageFile } from './picPanel';
+import PicUploader, { DisplayPanelType, FolderType, PicUploaderProps, UploadResponseBody } from './Uploader';
+import FolderTree, { FolderTreeType } from './FolderTree';
+import PicPanel, { ImageFile } from './PicPanel';
 import { useStyle } from './style';
 import React from 'react';
 
@@ -12,8 +12,6 @@ type BaseRequestParam = {
   size: number,
   folderId?: Key
 }
-
-// <T extends UploadResponseBody = UploadResponseBody>
 
 type ImageSpaceProps<
   RequestParamType extends BaseRequestParam = BaseRequestParam,
@@ -69,13 +67,13 @@ const InternalImageSpace = <
     }
   });
 
-  const [folderId, setFolderId] = useState<Key>(defaultFolder?.value || '');
-  const [folders, setFolders] = useState<FolderTreeType[]>(defaultFolder ? [defaultFolder] : []);
-
   const [loading, setLoading] = useState(false);
   const [curPage, setCurPage] = useState(0);
   const [totalCount, setTotalCount] = useState(0);
   const [imageFiles, setImageFiles] = useState<ImageFile[]>([]);
+  const [fileList, setFileList] = useState<UploadFile[]>([]);
+  const [folderId, setFolderId] = useState<Key>(defaultFolder?.value || '');
+  const [folders, setFolders] = useState<FolderTreeType[]>(defaultFolder ? [defaultFolder] : []);
 
   useEffect(() => {
     loadDirs();
@@ -94,7 +92,9 @@ const InternalImageSpace = <
 
   const loadDirs = async () => {
     const data = await fetchFolders?.() || [];
-    const folders = defaultFolder ? [defaultFolder, ...data] : data;
+    const folders = defaultFolder && !data.some(s => s.value === defaultFolder.value)
+      ? [defaultFolder, ...data]
+      : data;
     setFolders(folders);
   };
 
@@ -120,7 +120,6 @@ const InternalImageSpace = <
     }
   };
 
-  const [fileList, setFileList] = useState<UploadFile[]>([]);
   return wrapSSR(
     <div className={classString} style={style}>
       <div className={classNames(`${prefixCls}-body`, hashId)}>
@@ -165,7 +164,9 @@ const InternalImageSpace = <
           folders={folders as FolderType[]}
           fileList={fileList}
           onChange={(values) => {
-            if (values.every((m) => m.status === 'done')) {
+            if (values?.length > 0 &&
+              values.every((m) => m.status === 'done')
+            ) {
               loadData({ page: 1 });
               setDisplayPanel('none');
               setFileList([]);

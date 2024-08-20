@@ -1,8 +1,8 @@
 import { useState } from "react";
-import PicUploader, { DisplayPanelType, FolderType } from "../uploader"
+import PicUploader, { DisplayPanelType, FolderType } from "../Uploader"
 import dataJson from './_data.json';
 import { UploadFile } from "antd";
-import { UploadResponseBody } from "../uploader/request";
+import { UploadResponseBody } from "../Uploader/request";
 
 function getOptions(list: any[]): FolderType[] {
     return list.map((m) => {

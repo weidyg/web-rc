@@ -187,16 +187,7 @@ const InternalPicUploader = <
             return file;
         },
     };
-
-    useEffect(() => {
-        // if (count.success > 0 && count.failed == 0 && count.uploading == 0) {
-        //     setTimeout(() => {
-        //         setDisplayPanel('uploader');
-        //         setFileList([]);
-        //     }, 1000);
-        // }
-    }, [count])
-
+    
     function handleUpload(): void {
         setDisplayPanel('uploader');
         setFileList(fileList => fileList.filter(file => file.status == 'uploading'));
