@@ -129,8 +129,7 @@ const DescImgEditor = (props: DescImgEditorProps) => {
 
           // color: token.colorWhite,
           // background: "rgba(0, 0, 0, 0.5)",
-
-          color: token.colorHighlight,
+          color: token.colorTextLightSolid,
           backgroundColor: token.colorBgMask,
           borderRadius: `0 0 ${token.borderRadius}px ${token.borderRadius}px`,
         }}>
