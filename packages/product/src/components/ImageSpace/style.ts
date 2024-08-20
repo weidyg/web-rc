@@ -4,15 +4,18 @@ import { setAlpha, useStyle as useAntdStyle } from '@web-react/biz-components';
 const genBizStyle: GenerateStyle<BizImageSpaceToken> = (token) => {
   return {
     [token.componentCls]: {
-      display: 'flex',
+      // position: 'absolute',
+      // top: 0,
+      // right: 0,
+      // bottom: 0,
+      // left: 0,
       width: '100%',
+      height: '100%',
+      display: 'flex',
       overflowX: 'auto',
-      position: 'absolute',
-      top: 0,
-      right: 0,
-      bottom: 0,
-      left: 0,
       flexDirection: 'column',
+      border: `1px solid ${token.colorBorderSecondary}`,
+      borderRadius: token.borderRadius,
       backgroundColor: token.colorBgPage,
       '&-header': {},
       '&-body': {
@@ -47,7 +50,7 @@ const genBizStyle: GenerateStyle<BizImageSpaceToken> = (token) => {
         position: 'relative',
         overflow: 'hidden',
         padding: '6px 6px 0',
-        height: '100%',
+        // height: '100%',
         flexShrink: 0,
         backgroundColor: token.colorBgSide,
       },
@@ -186,7 +189,7 @@ const genBizStyle: GenerateStyle<BizImageSpaceToken> = (token) => {
           '&-container': {
             display: 'none',
             flex: '1 1',
-            height: 'calc(100vh - 65px)',
+            height: 'calc(100% - 65px)',
             flexDirection: 'column',
           },
           '&-files': {

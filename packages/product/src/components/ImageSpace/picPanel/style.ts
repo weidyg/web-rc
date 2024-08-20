@@ -6,7 +6,6 @@ const genBizStyle: GenerateStyle<PicPanelToken> = (token) => {
     [token.componentCls]: {
       // padding: '6px 0 0 24px',
       boxSizing: 'border-box',
-      maxHeight: '100vh',
       height: '100%',
       flex: '1 1 auto',
       display: 'flex',
