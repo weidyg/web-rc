@@ -11,6 +11,8 @@ order: 0
 ## 代码演示
 
 <code  title="基本使用" description="基本的图片空间展示" src="./_demos/basic.tsx" ></code>
+<code  title="基本使用" description="基本的图片空间展示" src="./_demos/modal.tsx" ></code>
+<code  title="基本使用" description="基本的图片空间展示" src="./_demos/popover.tsx" ></code>
 
 <code iframe="650"  title="图片上传器" description="图片上传器" src="./_demos/uploader.tsx" ></code>
 

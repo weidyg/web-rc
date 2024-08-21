@@ -1,7 +1,6 @@
-
-import { SalePropCard, } from '@web-react/biz-components';
-import { message } from 'antd';
 import { useState } from 'react';
+import { message } from 'antd';
+import { SalePropCard, } from '@web-react/biz-components';
 import dataJson from './data.json';
 export default () => {
   const [value, setValue] = useState<any>();

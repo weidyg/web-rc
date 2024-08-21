@@ -1,8 +1,9 @@
-import React, { DragEvent, useState, useMemo, useEffect, useRef } from 'react';
-import { DeleteOutlined, EditOutlined, FileImageOutlined } from '@ant-design/icons';
+import { useState } from 'react';
+import { Button, Flex } from 'antd';
+import { FileImageOutlined } from '@ant-design/icons';
 import { classNames, useMergedState } from '@web-react/biz-utils';
 import { useStyle } from './style';
-import { Button, Flex, Image, Space } from 'antd';
+import ImageItem from './ImageItem';
 
 export const thumbnail = (url?: string, width?: number, height?: number) => {
   if (!url || (!width && !height)) { return url; }
@@ -28,6 +29,19 @@ const DescImgEditor = (props: DescImgEditorProps) => {
   });
 
 
+  function dropImg(index: number, droppedIndex: number) {
+    const newImageList = [...value];
+    const imageToMove = newImageList.splice(droppedIndex, 1)[0];
+    newImageList.splice(index, 0, imageToMove);
+    setValue(newImageList);
+  }
+
+  function removeImg(index: number): void | Promise<void> {
+    const newImgList = [...value];
+    newImgList.splice(index, 1);
+    setValue(newImgList);
+  }
+
   // function handleAddImgs(files: ImageInfo[]) {
   //   if (files.length) {
   //     const newImageList: string[] = files?.map((m) => m.url).filter((f) => !!f) as string[];
@@ -44,103 +58,6 @@ const DescImgEditor = (props: DescImgEditorProps) => {
   //   newImgList.splice(index, 1);
   //   setImgList(newImgList);
   // }
-
-  const handleDragStart = (e: DragEvent<HTMLSpanElement>, index: number) => {
-    e.dataTransfer.setData('index', `${index}`);
-  };
-  const handleDragOver = (e: DragEvent<HTMLSpanElement>, index: number) => {
-    e.preventDefault();
-    e.stopPropagation();
-    e.dataTransfer.dropEffect = 'move';
-  };
-  const handleDrop = (e: DragEvent<HTMLSpanElement>, index: number) => {
-    const droppedIndex = e.dataTransfer.getData('index') as any;
-    if (droppedIndex !== undefined) {
-      const newImageList = [...value];
-      const imageToMove = newImageList.splice(droppedIndex, 1)[0];
-      newImageList.splice(index, 0, imageToMove);
-      setValue(newImageList);
-    }
-  };
-
-  const ImageItem = (props: any) => {
-    const { index, url: imgurl } = props;
-    const { prefixCls, wrapSSR, hashId, token } = useStyle(props.prefixCls);
-    const animateWrap = useRef<HTMLSpanElement>(null);
-    return (
-      <span
-        ref={animateWrap}
-        key={index}
-        draggable={true}
-        onDragStart={(e) => handleDragStart(e, index)}
-        onDragOver={(e) => handleDragOver(e, index)}
-        onDrop={(e) => handleDrop(e, index)}
-        style={{
-          width: 88,
-          height: 88,
-          cursor: 'move',
-          position: "relative",
-          border: `1px solid ${token.colorBorderSecondary}`,
-        }}
-      >
-        <div style={{
-          left: "0",
-          position: "absolute",
-          zIndex: "3",
-          width: "24px",
-          height: "24px",
-          textAlign: "center",
-          fontSize: token.fontSize,
-          lineHeight: token.lineHeight,
-          color: token.colorPrimary,
-          backdropFilter: "blur(6px)",
-          backgroundColor: token.colorBgBlur,
-          borderRadius: `${token.borderRadius}px 0 ${token.borderRadius}px 0`,
-        }}>
-          {index + 1}
-        </div>
-
-        <img
-          src={imgurl}
-          style={{
-            width: 'inherit',
-            height: 'inherit',
-            objectFit: 'scale-down',
-            borderRadius: token.borderRadius,
-            backgroundColor: token.colorFillContent
-          }}
-        />
-
-        <div style={{
-          left: "0",
-          right: "0",
-          bottom: "0",
-          position: "absolute",
-
-          display: "flex",
-          alignContent: "center",
-          justifyContent: "center",
-          alignItems: "center",
-          textAlign: "center",
-
-          // transition: "opacity 0.1s cubic-bezier(0, 0, 1, 1)",
-          // fontSize: "16px",
-          opacity: "1",
-
-          // color: token.colorWhite,
-          // background: "rgba(0, 0, 0, 0.5)",
-          color: token.colorTextLightSolid,
-          backgroundColor: token.colorBgMask,
-          borderRadius: `0 0 ${token.borderRadius}px ${token.borderRadius}px`,
-        }}>
-          <Flex justify="space-evenly" style={{ width: "100%", padding: "4px 2px" }}>
-            <EditOutlined style={{ cursor: 'pointer' }} />
-            <DeleteOutlined style={{ cursor: 'pointer' }} />
-          </Flex>
-        </div>
-      </span>
-    );
-  }
 
   return wrapSSR(<>
     <div className={classNames(prefixCls, hashId)}>
@@ -182,7 +99,14 @@ const DescImgEditor = (props: DescImgEditorProps) => {
         <div className={classNames(`${prefixCls}-operate-imgs`, hashId)}>
           <Flex wrap gap="small">
             {value?.map((imgurl, index) => (
-              <ImageItem index={index} key={index} url={imgurl} />
+              <ImageItem
+                showNo
+                draggable
+                key={index}
+                index={index}
+                imgUrl={imgurl}
+                onDragEnd={(droppedIndex) => dropImg(index, droppedIndex)}
+                onRemove={() => removeImg(index)} />
             ))}
           </Flex>
         </div>

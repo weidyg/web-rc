@@ -1,17 +1,6 @@
-import { Keyframes } from '@ant-design/cssinjs';
 import type { GenerateStyle, BizAliasToken } from '@web-react/biz-components';
-import { setAlpha, useStyle as useAntdStyle } from '@web-react/biz-components';
+import { useStyle as useAntdStyle } from '@web-react/biz-components';
 
-const downOut = new Keyframes('card-loading', {
-  'from': {
-    transform: 'translate(0, 0)',
-    opacity: 1
-  },
-  'to': {
-    transform: 'translate(0, 100%)',
-    opacity: 0
-  },
-});
 
 const genBizStyle: GenerateStyle<DescImgEditorToken> = (token) => {
   return {
@@ -67,7 +56,6 @@ const genBizStyle: GenerateStyle<DescImgEditorToken> = (token) => {
         boxSizing: 'border-box',
         img: { width: '210px', height: '38px' },
       },
-
       '&-header': {
         display: 'flex',
         justifyContent: 'space-between',
@@ -87,10 +75,6 @@ const genBizStyle: GenerateStyle<DescImgEditorToken> = (token) => {
             marginLeft: '7px',
           },
         },
-
-      },
-      '.down-out': {
-        animation: `${downOut} 0.3s both`
       }
     }
   };

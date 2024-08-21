@@ -1,5 +1,5 @@
-import { CSSProperties, Key, ReactNode, Ref, useEffect, useImperativeHandle, useMemo, useState } from 'react';
-import { Button, message, Typography, UploadFile } from 'antd';
+import { CSSProperties, forwardRef, Key, ReactNode, Ref, useEffect, useImperativeHandle, useMemo, useState } from 'react';
+import { Button, message, Modal, ModalProps, Popover, PopoverProps, Typography, UploadFile } from 'antd';
 import { classNames, useMergedState } from '@web-react/biz-utils';
 import PicUploader, { DisplayPanelType, FolderType, PicUploaderProps, UploadResponseBody } from './Uploader';
 import FolderTree, { FolderTreeType } from './FolderTree';
@@ -37,15 +37,17 @@ type ImageSpaceProps<
     right?: ReactNode,
   },
   upload?: PicUploaderProps<UploadResponseBodyType>['upload'],
+  display?: DisplayPanelType;
+  onDisplayChange?: (display: DisplayPanelType) => void;
 };
 
 interface ImageSpaceRef {
   onRefresh: () => void | Promise<void>;
 }
 
-const InternalImageSpace = <
+const InternalImageSpace = forwardRef<ImageSpaceRef, ImageSpaceProps<BaseRequestParam, UploadResponseBody>>(<
   UploadResponseBodyType extends UploadResponseBody = UploadResponseBody,
-  RequestParamType extends BaseRequestParam = BaseRequestParam,
+  RequestParamType extends BaseRequestParam = BaseRequestParam
 >(
   props: ImageSpaceProps<RequestParamType, UploadResponseBodyType>,
   ref: Ref<ImageSpaceRef>
@@ -56,7 +58,10 @@ const InternalImageSpace = <
   } = props;
   const { prefixCls, wrapSSR, hashId, token } = useStyle(props.prefixCls);
   const classString = classNames(prefixCls, className, hashId, {});
-  const [displayPanel, setDisplayPanel] = useState<DisplayPanelType>('none');
+  const [displayPanel, setDisplayPanel] = useMergedState<DisplayPanelType>('none', {
+    value: props.display,
+    onChange: props.onDisplayChange
+  });
 
   const [selectKeys, setSelectKeys] = useMergedState<Key[]>([], {
     defaultValue: props.defaultValue,
@@ -122,82 +127,190 @@ const InternalImageSpace = <
 
   return wrapSSR(
     <div className={classString} style={style}>
-      <div className={classNames(`${prefixCls}-body`, hashId)}>
-        <div className={classNames(`${prefixCls}-aside`, hashId)}>
-          <div className={classNames(`${prefixCls}-treeDom`, hashId)} >
-            <FolderTree
-              data={folders}
-              value={folderId}
-              onChange={(val) => {
-                setFolderId(val);
-              }} />
+      <div style={{ display: displayPanel === 'uploader' ? 'none' : '' }}
+        className={classNames(`${prefixCls}-body`, hashId)}>
+        <div className={classNames(`${prefixCls}-content`, hashId)}>
+          <div className={classNames(`${prefixCls}-aside`, hashId)}>
+            <div className={classNames(`${prefixCls}-treeDom`, hashId)} >
+              <FolderTree
+                data={folders}
+                value={folderId}
+                onChange={(val) => {
+                  setFolderId(val);
+                }} />
+            </div>
+          </div>
+          <PicPanel
+            selectKeys={selectKeys}
+            onSelect={(keys) => {
+              setSelectKeys(keys);
+            }}
+            actions={{
+              left: actions?.left,
+              right: <Button
+                type="primary"
+                onClick={() => {
+                  setDisplayPanel('uploader')
+                }}
+              >
+                上传图片
+              </Button>,
+            }}
+            data={imageFiles}
+            loading={loading}
+            hasMore={curPage * pageSize >= totalCount}
+            onLoadMore={() => loadData({ page: curPage + 1 })}
+            onRefresh={() => loadData({ page: 1 })}
+          />
+        </div>
+        <div className={classNames(`${prefixCls}-footer`, hashId)}>
+          <div className={classNames(`${prefixCls}-footer-left`, hashId)}>
+            {footer?.left}
+          </div>
+          <div className={classNames(`${prefixCls}-footer-right`, hashId)}>
+            {footer?.right}
           </div>
         </div>
-        <PicPanel
-          selectKeys={selectKeys}
-          onSelect={(keys) => {
-            setSelectKeys(keys);
-          }}
-          actions={{
-            left: actions?.left,
-            right: <Button
-              type="primary"
-              onClick={() => {
-                setDisplayPanel('uploader')
-              }}
-            >
-              上传图片
-            </Button>,
-          }}
-          data={imageFiles}
-          loading={loading}
-          hasMore={curPage * pageSize >= totalCount}
-          onLoadMore={() => loadData({ page: curPage + 1 })}
-          onRefresh={() => loadData({ page: 1 })}
-        />
-        <PicUploader<UploadResponseBodyType>
-          display={displayPanel}
-          onDisplayChange={(val) => {
-            setDisplayPanel(val)
-          }}
-          defaultFolderValue={folderId as any}
-          folders={folders as FolderType[]}
-          fileList={fileList}
-          onChange={(values) => {
-            if (values?.length > 0 &&
-              values.every((m) => m.status === 'done')
-            ) {
-              loadData({ page: 1 });
-              setDisplayPanel('none');
-              setFileList([]);
-            } else {
-              setFileList(values);
-            }
-          }}
-          upload={upload}
-          config={{
-            right: <Button style={{ marginLeft: 'auto' }}
-              onClick={() => { setDisplayPanel('none') }}
-            >
-              取消上传
-            </Button>
-          }}
-
-        />
       </div>
-      <div className={classNames(`${prefixCls}-footer`, hashId)}>
-        <div className={classNames(`${prefixCls}-footer-left`, hashId)}>
-          {footer?.left}
-        </div>
-        <div className={classNames(`${prefixCls}-footer-right`, hashId)}>
-          {footer?.right}
-        </div>
-      </div>
+      <PicUploader<UploadResponseBodyType>
+        display={displayPanel}
+        onDisplayChange={(val) => {
+          setDisplayPanel(val)
+        }}
+        defaultFolderValue={folderId as any}
+        folders={folders as FolderType[]}
+        fileList={fileList}
+        onChange={(values) => {
+          if (values?.length > 0 &&
+            values.every((m) => m.status === 'done')
+          ) {
+            loadData({ page: 1 });
+            setDisplayPanel('none');
+            setFileList([]);
+          } else {
+            setFileList(values);
+          }
+        }}
+        upload={upload}
+        config={{
+          right: <Button style={{ marginLeft: 'auto' }}
+            onClick={() => { setDisplayPanel('none') }}
+          >
+            取消上传
+          </Button>
+        }}
+      />
     </div>
   );
 }
+);
 
-const ImageSpace = React.forwardRef<ImageSpaceRef, ImageSpaceProps<BaseRequestParam, UploadResponseBody>>(InternalImageSpace);
+type ImageSpacePopoverProps<
+  RequestParamType extends BaseRequestParam = BaseRequestParam,
+  UploadResponseBodyType extends UploadResponseBody = UploadResponseBody,
+> = ImageSpaceProps<BaseRequestParam, UploadResponseBody> & {
+  popoverProps?: Omit<PopoverProps, 'content' | 'children'>;
+  children?: React.ReactNode;
+}
+
+const ImageSpacePopover = forwardRef<ImageSpaceRef, ImageSpacePopoverProps<BaseRequestParam, UploadResponseBody>>(<
+  UploadResponseBodyType extends UploadResponseBody = UploadResponseBody,
+  RequestParamType extends BaseRequestParam = BaseRequestParam
+>(
+  props: ImageSpacePopoverProps<RequestParamType, UploadResponseBodyType>,
+  ref: Ref<ImageSpaceRef>
+) => {
+  const { popoverProps, children, style, ...rest } = props;
+  const { onOpenChange, ...restPopoverProps } = popoverProps || {};
+  const [displayPanel, setDisplayPanel] = useMergedState<DisplayPanelType>('none', {
+    value: props.display,
+    onChange: props.onDisplayChange
+  });
+
+  const content = (
+    <InternalImageSpace
+      ref={ref}
+      display={displayPanel}
+      onDisplayChange={(val) => {
+        setDisplayPanel(val);
+      }}
+      {...rest}
+      style={{
+        width: '880px',
+        height: '600px',
+        ...style
+      }} />
+  );
+  return (
+    <Popover
+      trigger={'click'}
+      {...restPopoverProps}
+      content={content}
+      onOpenChange={(open, e) => {
+        if (open) { setDisplayPanel('none'); }
+        onOpenChange?.(open, e);
+      }}>
+      {children}
+    </Popover>
+  )
+});
+
+type ImageSpaceModalProps<
+  RequestParamType extends BaseRequestParam = BaseRequestParam,
+  UploadResponseBodyType extends UploadResponseBody = UploadResponseBody,
+> = ImageSpaceProps<BaseRequestParam, UploadResponseBody> & {
+  modalProps?: Omit<ModalProps, 'children' | 'footer'>;
+  children?: React.ReactNode;
+}
+
+const ImageSpaceModal = forwardRef<ImageSpaceRef, ImageSpaceModalProps<BaseRequestParam, UploadResponseBody>>(<
+  UploadResponseBodyType extends UploadResponseBody = UploadResponseBody,
+  RequestParamType extends BaseRequestParam = BaseRequestParam
+>(
+  props: ImageSpaceModalProps<RequestParamType, UploadResponseBodyType>,
+  ref: Ref<ImageSpaceRef>
+) => {
+  const { modalProps, children, style, ...rest } = props;
+  const { title, onClose, ...restModalProps } = modalProps || {};
+  const [displayPanel, setDisplayPanel] = useMergedState<DisplayPanelType>('none', {
+    value: props.display,
+    onChange: props.onDisplayChange
+  });
+  return (
+    <Modal
+      width={'fit-content'}
+      footer={null}
+      onClose={(e) => {
+        setDisplayPanel('none');
+        onClose?.(e);
+      }}
+      title={title}
+      closable={!!title}
+      {...restModalProps}
+    >
+      <InternalImageSpace
+        ref={ref}
+        display={displayPanel}
+        onDisplayChange={(val) => {
+          setDisplayPanel(val);
+        }}
+        {...rest}
+        style={{
+          width: '880px',
+          height: '600px',
+          ...style
+        }}
+      />
+    </Modal>
+  )
+});
+type CompoundedComponent = typeof InternalImageSpace & {
+  Popover: typeof ImageSpacePopover;
+  Modal: typeof ImageSpaceModal;
+};
+const ImageSpace = InternalImageSpace as CompoundedComponent;
+ImageSpace.Popover = ImageSpacePopover;
+ImageSpace.Modal = ImageSpaceModal;
+
 export type { ImageFile, FolderTreeType, ImageSpaceRef, BaseRequestParam };
 export default ImageSpace;
-

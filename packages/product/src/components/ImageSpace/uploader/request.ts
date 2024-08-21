@@ -20,7 +20,6 @@ export type UploadResponseBody = {
     [key: string]: any
 }
 
-
 export interface UploadRequestOption<T extends UploadResponseBody = any> {
     onProgress?: (event: UploadProgressEvent) => void;
     onError?: (event: UploadRequestError | ProgressEvent, body?: T) => void;

@@ -145,7 +145,6 @@ export default () => {
             确定{selectCount > 0 && `（${selectCount}）`}
           </Button>
         }}
-
         defaultFolder={{ value: '0', label: '全部图片', }}
         fetchFolders={fetchFolders}
         fetchData={fetchData}

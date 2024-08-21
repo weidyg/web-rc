@@ -1,5 +1,5 @@
 import { Key, useEffect, useState } from 'react';
-import { Checkbox, Image, Input, message } from 'antd';
+import { Checkbox, Image, message } from 'antd';
 import { CheckOutlined, CopyOutlined, ExpandOutlined, LoadingOutlined } from '@ant-design/icons';
 import { classNames, TransButton, useCopyClick, useMergedState } from '@web-react/biz-utils';
 import { useStyle } from './style';
