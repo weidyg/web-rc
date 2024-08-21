@@ -1,14 +1,9 @@
 ﻿import type { GenerateStyle, BizAliasToken } from '@web-react/biz-components';
-import { setAlpha, useStyle as useAntdStyle } from '@web-react/biz-components';
+import { useStyle as useAntdStyle } from '@web-react/biz-components';
 
 const genBizStyle: GenerateStyle<BizImageSpaceToken> = (token) => {
   return {
     [token.componentCls]: {
-      // position: 'absolute',
-      // top: 0,
-      // right: 0,
-      // bottom: 0,
-      // left: 0,
       '&-header': {},
       '&-body': {
         width: '100%',

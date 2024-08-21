@@ -4,66 +4,11 @@ import { SearchOutlined } from '@ant-design/icons';
 import { ImageSpace, ImageFile, FolderTreeType, ImageSpaceRef, BaseRequestParam } from '@web-react/biz-components';
 
 import dataJson from './_data.json';
-const files = dataJson.files.fileModule.map(m => {
-    return {
-        id: m.pictureId,
-        name: m.name,
-        size: m.sizes,
-        pixel: m.pixel,
-        fullUrl: m.fullUrl,
-        isRef: m.ref,
-    }
-});
-function getOptions(list: any[]): FolderTreeType[] {
-    return list.map((m) => {
-        return {
-            value: m.id,
-            label: m.name,
-            children: m.children && getOptions(m.children),
-        };
-    });
-}
-
 export default () => {
     const _ref = useRef<ImageSpaceRef>(null);
     const [selectKeys, setSelectKeys] = useState<Key[]>([]);
     const [selectFiles, setSelectFiles] = useState<ImageFile[]>([]);
     const [searchParam, setSearchParam] = useState({ type: 'picture', value: '', order: 'timeDes', });
-
-
-    const fetchFolders = () => {
-        return new Promise<FolderTreeType[]>((resolve, reject) => {
-            setTimeout(() => {
-                const folders = getOptions([{ ...dataJson.dirs, children: [] }, ...dataJson.dirs.children]);
-                resolve(folders);
-            }, 1000);
-        })
-    }
-
-    const fetchData = (param: BaseRequestParam) => {
-        const queryParam = { ...param, ...searchParam }
-        // console.log('queryParam', queryParam);
-        const { page, size } = queryParam;
-        return new Promise<{ items: ImageFile[], total: number, }>((resolve, reject) => {
-            setTimeout(() => {
-                const newData: ImageFile[] = files
-                    .slice((page - 1) * size, page * size)
-                    .map((file, index) => {
-                        return {
-                            ...file,
-                            id: file.id + '_' + page,
-                        };
-                    });
-                const data = { items: newData, total: files.length, };
-                resolve(data);
-            }, 1000);
-        })
-    }
-
-
-    // useEffect(() => {
-    //   fetchFolders();
-    // }, []);
 
     useEffect(() => {
         handleRefresh();
@@ -72,11 +17,6 @@ export default () => {
     const handleRefresh = () => {
         _ref?.current?.onRefresh();
     }
-
-    const handleOk = async (e: any) => {
-        setSelectKeys([]);
-        setSelectFiles([]);
-    };
 
     const selectCount = useMemo(() => {
         return selectKeys?.length || 0;
@@ -134,27 +74,51 @@ export default () => {
                     </Space>
                 }}
                 footer={{
-                    left: <Typography.Link target="_blank">
-                        进入图片空间
-                    </Typography.Link>,
-                    right: <Button
-                        type="primary"
-                        disabled={selectCount == 0}
-                        onClick={handleOk}
-                    >
-                        确定{selectCount > 0 && `（${selectCount}）`}
-                    </Button>
+                    left: (
+                        <Typography.Link target="_blank">
+                            进入图片空间
+                        </Typography.Link>
+                    ),
+                    right: (
+                        <Button
+                            type="primary"
+                            disabled={selectCount == 0}
+                            onClick={() => {
+                                setSelectKeys([]);
+                                setSelectFiles([]);
+                            }}
+                        >
+                            确定{selectCount > 0 && `（${selectCount}）`}
+                        </Button>
+                    )
                 }}
                 defaultFolder={{ value: '0', label: '全部图片', }}
-                fetchFolders={fetchFolders}
-                fetchData={fetchData}
+                fetchFolders={() => {
+                    return new Promise<FolderTreeType[]>((resolve, reject) => {
+                        setTimeout(() => {
+                            resolve(dataJson.dirs);
+                        }, 1000);
+                    })
+                }}
+                fetchData={(param) => {
+                    const queryParam = { ...param, ...searchParam }
+                    const { page, size } = queryParam;
+                    return new Promise<{ items: ImageFile[], total: number, }>((resolve, reject) => {
+                        setTimeout(() => {
+                            const newData: ImageFile[] = dataJson.files
+                                .slice((page - 1) * size, page * size)
+                                .map((file) => ({ ...file, id: file.id + '_' + page, }));
+                            resolve({ items: newData, total: dataJson.files.length, });
+                        }, 1000);
+                    })
+                }}
                 value={selectKeys}
                 onChange={(data, files) => {
                     setSelectKeys(data);
                     setSelectFiles(files);
                 }}
             >
-                <Button type="primary">Hover me</Button>
+                <Button type="primary">Click me</Button>
             </ImageSpace.Popover>
         </>
     );

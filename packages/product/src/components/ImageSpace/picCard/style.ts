@@ -102,11 +102,10 @@ const genBizStyle: GenerateStyle<PicCardToken> = (token) => {
       },
       '&-spec': {
         height: '14px',
-        width: '30px',
-        fontSize: token.fontSize,
-        fontWeight: '400',
-        letterSpacing: '0',
         lineHeight: '14px',
+        letterSpacing: '0',
+        fontWeight: '400',
+        fontSize: token.fontSize,
         color: token.colorControlText,
       },
       '&-copy': {

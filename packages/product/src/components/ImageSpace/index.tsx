@@ -211,6 +211,9 @@ type ImageSpacePopoverProps<
 > = ImageSpaceProps<BaseRequestParam, UploadResponseBody> & {
   popoverProps?: Omit<PopoverProps, 'content' | 'children'>;
   children?: React.ReactNode;
+  defaultOpen?: boolean;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
 const ImageSpacePopover = forwardRef<ImageSpaceRef, ImageSpacePopoverProps<BaseRequestParam, UploadResponseBody>>(<
@@ -220,11 +223,83 @@ const ImageSpacePopover = forwardRef<ImageSpaceRef, ImageSpacePopoverProps<BaseR
   props: ImageSpacePopoverProps<RequestParamType, UploadResponseBodyType>,
   ref: Ref<ImageSpaceRef>
 ) => {
-  const { popoverProps, children, style, ...rest } = props;
-  const { onOpenChange, ...restPopoverProps } = popoverProps || {};
+  const {
+    defaultOpen = false, open: isOpen, onOpenChange,
+    popoverProps, children, style, ...rest
+  } = props;
+  const { ...restPopoverProps } = popoverProps || {};
   const [displayPanel, setDisplayPanel] = useMergedState<DisplayPanelType>('none', {
     value: props.display,
     onChange: props.onDisplayChange
+  });
+  const [open, setOpen] = useMergedState<boolean>(defaultOpen, {
+    value: isOpen,
+    onChange: onOpenChange
+  });
+
+  const content = (
+    <InternalImageSpace
+      ref={ref}
+      {...rest}
+
+      display={displayPanel}
+      onDisplayChange={(val) => {
+        setDisplayPanel(val);
+      }}
+      style={{
+        width: '880px',
+        height: '600px',
+        ...style
+      }}
+    />
+  );
+
+  return (
+    <Popover
+      trigger={'click'}
+      arrow={false}
+      {...restPopoverProps}
+      content={content}
+      open={open}
+      onOpenChange={(open, e) => {
+        if (open) { setDisplayPanel('none'); }
+        setOpen?.(open);
+      }}>
+      {children}
+    </Popover>
+  )
+});
+
+type ImageSpaceModalProps<
+  RequestParamType extends BaseRequestParam = BaseRequestParam,
+  UploadResponseBodyType extends UploadResponseBody = UploadResponseBody,
+> = ImageSpaceProps<BaseRequestParam, UploadResponseBody> & {
+  modalProps?: Omit<ModalProps, 'children' | 'footer' | 'open'>;
+  children?: React.ReactNode;
+  defaultOpen?: boolean;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+}
+
+const ImageSpaceModal = forwardRef<ImageSpaceRef, ImageSpaceModalProps<BaseRequestParam, UploadResponseBody>>(<
+  UploadResponseBodyType extends UploadResponseBody = UploadResponseBody,
+  RequestParamType extends BaseRequestParam = BaseRequestParam
+>(
+  props: ImageSpaceModalProps<RequestParamType, UploadResponseBodyType>,
+  ref: Ref<ImageSpaceRef>
+) => {
+  const {
+    defaultOpen = false, open: isModalOpen, onOpenChange,
+    modalProps, children, style, ...rest
+  } = props;
+  const { onCancel, styles, title, ...restModalProps } = modalProps || {};
+  const [displayPanel, setDisplayPanel] = useMergedState<DisplayPanelType>('none', {
+    value: props.display,
+    onChange: props.onDisplayChange
+  });
+  const [open, setOpen] = useMergedState<boolean>(defaultOpen, {
+    value: isModalOpen,
+    onChange: onOpenChange
   });
 
   const content = (
@@ -241,66 +316,29 @@ const ImageSpacePopover = forwardRef<ImageSpaceRef, ImageSpacePopoverProps<BaseR
         ...style
       }} />
   );
-  return (
-    <Popover
-      trigger={'click'}
-      {...restPopoverProps}
-      content={content}
-      onOpenChange={(open, e) => {
-        if (open) { setDisplayPanel('none'); }
-        onOpenChange?.(open, e);
-      }}>
-      {children}
-    </Popover>
-  )
-});
 
-type ImageSpaceModalProps<
-  RequestParamType extends BaseRequestParam = BaseRequestParam,
-  UploadResponseBodyType extends UploadResponseBody = UploadResponseBody,
-> = ImageSpaceProps<BaseRequestParam, UploadResponseBody> & {
-  modalProps?: Omit<ModalProps, 'children' | 'footer'>;
-  children?: React.ReactNode;
-}
-
-const ImageSpaceModal = forwardRef<ImageSpaceRef, ImageSpaceModalProps<BaseRequestParam, UploadResponseBody>>(<
-  UploadResponseBodyType extends UploadResponseBody = UploadResponseBody,
-  RequestParamType extends BaseRequestParam = BaseRequestParam
->(
-  props: ImageSpaceModalProps<RequestParamType, UploadResponseBodyType>,
-  ref: Ref<ImageSpaceRef>
-) => {
-  const { modalProps, children, style, ...rest } = props;
-  const { title, onClose, ...restModalProps } = modalProps || {};
-  const [displayPanel, setDisplayPanel] = useMergedState<DisplayPanelType>('none', {
-    value: props.display,
-    onChange: props.onDisplayChange
-  });
   return (
     <Modal
-      width={'fit-content'}
-      footer={null}
-      onClose={(e) => {
-        setDisplayPanel('none');
-        onClose?.(e);
-      }}
       title={title}
+      width={'fit-content'}
       closable={!!title}
       {...restModalProps}
+      styles={{
+        ...styles,
+        content: {
+          width: 'fit-content',
+          ...styles?.content,
+        }
+      }}
+      footer={null}
+      open={open}
+      onCancel={(e) => {
+        setDisplayPanel('none');
+        onCancel?.(e);
+        setOpen(false);
+      }}
     >
-      <InternalImageSpace
-        ref={ref}
-        display={displayPanel}
-        onDisplayChange={(val) => {
-          setDisplayPanel(val);
-        }}
-        {...rest}
-        style={{
-          width: '880px',
-          height: '600px',
-          ...style
-        }}
-      />
+      {content}
     </Modal>
   )
 });

@@ -40,7 +40,10 @@ const ImageItem = (props: ImageItemProps) => {
     };
 
     function handleRemove() {
-        return onRemove?.();
+        if (onRemove) {
+            animateWrap?.current?.classList?.add(`down-out`);
+            setTimeout(() => { onRemove?.(); }, 200);
+        }
     }
 
     const actions = {
