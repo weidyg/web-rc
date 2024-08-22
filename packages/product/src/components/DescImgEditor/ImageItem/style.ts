@@ -18,6 +18,7 @@ const genBizStyle: GenerateStyle<ImageItemToken> = (token) => {
       width: 88,
       height: 88,
       position: "relative",
+      borderRadius: token.borderRadius,
       border: `1px solid ${token.colorBorderSecondary}`,
       '&:hover': {
         [token.componentCls]: {

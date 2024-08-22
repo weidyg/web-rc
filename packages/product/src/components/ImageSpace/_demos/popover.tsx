@@ -24,7 +24,7 @@ export default () => {
 
     return (
         <>
-            <ImageSpace.Popover
+            {/* <ImageSpace.Popover
                 ref={_ref}
                 actions={{
                     left: <Space>
@@ -119,7 +119,7 @@ export default () => {
                 }}
             >
                 <Button type="primary">Click me</Button>
-            </ImageSpace.Popover>
+            </ImageSpace.Popover> */}
         </>
     );
 };

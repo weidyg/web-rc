@@ -8,9 +8,9 @@ const genBizStyle: GenerateStyle<DescImgEditorToken> = (token) => {
       width: '796px',
       padding: '18px 12px 12px',
       display: 'flex',
-      borderRadius: '12px',
       justifyContent: 'space-between',
-      backgroundColor: token.colorFillContent,
+      borderRadius: token.borderRadiusLG,
+      backgroundColor: token.colorBgLayout,
       '&-preview': {
         width: '420px',
         padding: '12px 8px',
@@ -48,9 +48,9 @@ const genBizStyle: GenerateStyle<DescImgEditorToken> = (token) => {
       '&-content': {
         width: '380px',
         height: '672px',
-        backgroundColor: token.colorBgContainer,
-        borderRadius: '18px',
         textAlign: 'center',
+        borderRadius: token.borderRadiusLG,
+        backgroundColor: token.colorBgContainer,
       },
       '&-banner': {
         boxSizing: 'border-box',
@@ -65,14 +65,14 @@ const genBizStyle: GenerateStyle<DescImgEditorToken> = (token) => {
           justifyContent: 'flex-start',
           alignItems: 'center',
           '&-title': {
-            color: token.colorTextSecondary,
-            fontSize: '14px',
             lineHeight: '20px',
+            fontSize: '14px',
+            color: token.colorTextSecondary,
           },
           '&-desc': {
-            color: token.colorTextDescription,
-            fontSize: '12px',
             marginLeft: '7px',
+            fontSize: '12px',
+            color: token.colorTextDescription,
           },
         },
       }
