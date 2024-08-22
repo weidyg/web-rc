@@ -1,6 +1,6 @@
-import { MouseEventHandler, useState } from 'react';
+import { MouseEventHandler, ReactNode, useState } from 'react';
 import { Button, Flex } from 'antd';
-import { FileImageOutlined } from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined, FileImageOutlined } from '@ant-design/icons';
 import { classNames, useMergedState } from '@web-react/biz-utils';
 import { useStyle } from './style';
 import ImageItem from './ImageItem';
@@ -15,12 +15,16 @@ type DescImgEditorProps = {
   value?: string[];
   defaultValue?: string[];
   onChange?: (value: string[]) => void;
-  onAdd?: MouseEventHandler<HTMLElement>;
-  onEdit?: MouseEventHandler<HTMLElement>;
+  renderActions?: {
+    add: ReactNode;
+    edit: (index: number) => ReactNode;
+    remove: (index: number) => ReactNode;
+  };
 }
 
 const DescImgEditor = (props: DescImgEditorProps) => {
-  const { onAdd } = props;
+  const { renderActions } = props;
+  const { add, edit, remove } = renderActions || {};
   const { prefixCls, wrapSSR, hashId, token } = useStyle(props.prefixCls);
 
   const [value, setValue] = useMergedState<string[]>([], {
@@ -35,16 +39,6 @@ const DescImgEditor = (props: DescImgEditorProps) => {
     const imageToMove = newImageList.splice(droppedIndex, 1)[0];
     newImageList.splice(index, 0, imageToMove);
     setValue(newImageList);
-  }
-
-  function removeImg(index: number): void | Promise<void> {
-    const newImgList = [...value];
-    newImgList.splice(index, 1);
-    setValue(newImgList);
-  }
-
-  function editImg(index: number): void | Promise<void> {
-    throw new Error('Function not implemented.');
   }
 
   return wrapSSR(<>
@@ -73,14 +67,7 @@ const DescImgEditor = (props: DescImgEditorProps) => {
             <div className={classNames(`${prefixCls}-header-left-title`, hashId)}>操作</div>
             <div className={classNames(`${prefixCls}-header-left-desc`, hashId)}>拖动图片可以调整顺序。</div>
           </div>
-          {onAdd && <Button
-            icon={<FileImageOutlined />}
-            shape="round"
-            type="primary"
-            onClick={onAdd}
-          >
-            添加图片
-          </Button>}
+          {add}
         </div>
         <div className={classNames(`${prefixCls}-operate-imgs`, hashId)}>
           <Flex wrap gap="small">
@@ -90,10 +77,13 @@ const DescImgEditor = (props: DescImgEditorProps) => {
                 draggable
                 key={index}
                 index={index}
-                imgUrl={imgurl}
+                imgUrl={thumbnail(imgurl, 88, 88)!}
                 onDragEnd={(droppedIndex) => dropImg(index, droppedIndex)}
-                onEdit={() => editImg(index)}
-                onRemove={() => removeImg(index)} />
+                renderActions={(edit || remove) && {
+                  edit: edit?.(index),
+                  remove: remove?.(index)
+                }}
+              />
             ))}
           </Flex>
         </div>
