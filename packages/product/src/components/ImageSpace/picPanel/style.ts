@@ -4,21 +4,22 @@ import { setAlpha, useStyle as useAntdStyle } from '@web-react/biz-components';
 const genBizStyle: GenerateStyle<PicPanelToken> = (token) => {
   return {
     [token.componentCls]: {
-      // padding: '6px 0 0 24px',
-      boxSizing: 'border-box',
-      height: '100%',
-      flex: '1 1 auto',
       display: 'flex',
+      flex: '1 1 auto',
       flexDirection: 'column',
       overflow: 'hidden',
-      minWidth: '685px',
-      position: 'relative',
+      minWidth: 'min-content',
+      // height: '100%',
+      // position: 'relative',
+      // boxSizing: 'border-box',
+      // padding: '6px 0 0 24px',
       backgroundColor: token.colorBgPicPanel,
 
       '&-header': {
         margin: '12px 12px 8px 24px',
         height: '35px',
         display: 'flex',
+        zIndex: 1,
         '&-actions': {
           display: 'flex',
           flexShrink: 0,
@@ -56,18 +57,18 @@ const genBizStyle: GenerateStyle<PicPanelToken> = (token) => {
         userSelect: 'none',
       },
       '&-mask': {
-        display: 'flex',
         flexGrow: 1,
         flexBasis: '100%',
         position: 'absolute',
-        background: setAlpha(token.colorBgLayout, 0.5),
-        zIndex: 1,
-        width: '100%',
-        height: '100%',
-        justifyItems: 'center',
+        width: '-webkit-fill-available',
+        height: '-webkit-fill-available',
+        display: 'flex',
         alignItems: 'center',
+        justifyItems: 'center',
         alignContent: 'center',
         justifyContent: 'center',
+        zIndex: 100,
+        background: setAlpha(token.colorBgLayout, 0.5),
       },
       '&-fileName': {
         overflow: 'hidden',

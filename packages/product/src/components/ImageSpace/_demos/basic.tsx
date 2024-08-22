@@ -22,7 +22,11 @@ export default () => {
     return selectKeys?.length || 0;
   }, [selectKeys]);
 
-  return (<>
+  return (<div style={{
+    width: '100vw',
+    height: '100vh',
+    overflow: 'hidden',
+  }}>
     <ImageSpace
       ref={_ref}
       actions={{
@@ -117,5 +121,5 @@ export default () => {
         setSelectFiles(files);
       }}
     />
-  </>);
+  </div>);
 };

@@ -1,9 +1,11 @@
 ﻿import type { GenerateStyle, BizAliasToken } from '@web-react/biz-components';
-import { useStyle as useAntdStyle } from '@web-react/biz-components';
+import { setAlpha, useStyle as useAntdStyle } from '@web-react/biz-components';
 
 const genBizStyle: GenerateStyle<BizImageSpaceToken> = (token) => {
   return {
     [token.componentCls]: {
+      width: '100%',
+      height: '100%',
       '&-header': {},
       '&-body': {
         width: '100%',
@@ -263,6 +265,20 @@ const genBizStyle: GenerateStyle<BizImageSpaceToken> = (token) => {
             alignItems: 'center',
           },
         },
+      },
+      '&-mask': {
+        flexGrow: 1,
+        flexBasis: '100%',
+        position: 'absolute',
+        width: '-webkit-fill-available',
+        height: '-webkit-fill-available',
+        display: 'flex',
+        alignItems: 'center',
+        justifyItems: 'center',
+        alignContent: 'center',
+        justifyContent: 'center',
+        zIndex: 100,
+        background: setAlpha(token.colorBgLayout, 0.5),
       },
     },
   };

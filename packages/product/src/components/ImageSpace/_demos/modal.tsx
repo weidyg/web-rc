@@ -29,13 +29,6 @@ export default () => {
         setIsModalOpen(open);
         if (open) { setDisplayPanel("none") }
     };
-
-    const [isPopoverOpen, setIsPopoverOpen] = useState(false);
-    const handlePopoverOpenChange = (open: boolean) => {
-        setIsPopoverOpen(open);
-        if (open) { setDisplayPanel("none") }
-    };
-
     const [displayPanel, setDisplayPanel] = useState<DisplayPanelType>('none');
     const children = <ImageSpace
         ref={_ref}
@@ -153,14 +146,6 @@ export default () => {
             >
                 {children}
             </ImageSpace.Modal>
-
-            <ImageSpace.Popover
-                content={children}
-                open={isPopoverOpen}
-                onOpenChange={handlePopoverOpenChange}
-            >
-                <Button type="primary">Click me</Button>
-            </ImageSpace.Popover>
         </>
     );
 };

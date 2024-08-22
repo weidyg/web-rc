@@ -1,5 +1,5 @@
 import { CSSProperties, forwardRef, Key, ReactNode, Ref, useEffect, useImperativeHandle, useMemo, useState } from 'react';
-import { Button, message, Modal, ModalProps, Popover, PopoverProps, Typography, UploadFile } from 'antd';
+import { Button, message, Modal, ModalProps, Popover, PopoverProps, Spin, Typography, UploadFile } from 'antd';
 import { classNames, useMergedState } from '@web-react/biz-utils';
 import PicUploader, { DisplayPanelType, FolderType, PicUploaderProps, UploadResponseBody } from './Uploader';
 import FolderTree, { FolderTreeType } from './FolderTree';
@@ -73,6 +73,7 @@ const InternalImageSpace = forwardRef<ImageSpaceRef, ImageSpaceProps<BaseRequest
   });
 
   const [loading, setLoading] = useState(false);
+  const [dirloading, setDirLoading] = useState(false);
   const [curPage, setCurPage] = useState(0);
   const [totalCount, setTotalCount] = useState(0);
   const [imageFiles, setImageFiles] = useState<ImageFile[]>([]);
@@ -96,11 +97,18 @@ const InternalImageSpace = forwardRef<ImageSpaceRef, ImageSpaceProps<BaseRequest
   }))
 
   const loadDirs = async () => {
-    const data = await fetchFolders?.() || [];
-    const folders = defaultFolder && !data.some(s => s.value === defaultFolder.value)
-      ? [defaultFolder, ...data]
-      : data;
-    setFolders(folders);
+    setDirLoading(true);
+    try {
+      const data = await fetchFolders?.() || [];
+      const folders = defaultFolder && !data.some(s => s.value === defaultFolder.value)
+        ? [defaultFolder, ...data]
+        : data;
+      setFolders(folders);
+    } catch (error: any) {
+      message.error(error?.message || '加载失败');
+    } finally {
+      setDirLoading(false);
+    }
   };
 
   const loadData = async (param: { page: number, fist?: boolean, [key: string]: any }) => {
@@ -132,6 +140,11 @@ const InternalImageSpace = forwardRef<ImageSpaceRef, ImageSpaceProps<BaseRequest
         <div className={classNames(`${prefixCls}-content`, hashId)}>
           <div className={classNames(`${prefixCls}-aside`, hashId)}>
             <div className={classNames(`${prefixCls}-treeDom`, hashId)} >
+              {dirloading &&
+                <div className={classNames(`${prefixCls}-mask`, hashId)}>
+                  <Spin spinning={true} />
+                </div>
+              }
               <FolderTree
                 data={folders}
                 value={folderId}
