@@ -153,6 +153,7 @@ const Add = (props: { onOk?: (url: string[]) => void | Promise<void>; }) => {
     <ImageSpace.Modal
       open={isOpen}
       onOpenChange={setIsOpen}
+      // destroyOnClose
     >
       <ImageSelect
         ref={_ref}
@@ -188,6 +189,7 @@ const Edit = (props: { onOk?: (url: string) => void | Promise<void>; }) => {
   }, [isOpen]);
   return (<>
     <ImageSpace.Popover
+      destroyTooltipOnHide
       open={isOpen}
       onOpenChange={setIsOpen}
       content={
