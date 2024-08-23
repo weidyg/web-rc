@@ -86,11 +86,6 @@ export default () => {
             </Space>
         }}
         footer={{
-            left: (
-                <Typography.Link target="_blank">
-                    进入图片空间
-                </Typography.Link>
-            ),
             right: mutiple && (
                 <Button
                     type="primary"

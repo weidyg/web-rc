@@ -178,14 +178,16 @@ const InternalImageSpace = forwardRef<ImageSpaceRef, ImageSpaceProps<BaseRequest
             onRefresh={() => loadData({ page: 1 })}
           />
         </div>
-        <div className={classNames(`${prefixCls}-footer`, hashId)}>
-          <div className={classNames(`${prefixCls}-footer-left`, hashId)}>
-            {footer?.left}
+        {(footer?.left || footer?.right) &&
+          <div className={classNames(`${prefixCls}-footer`, hashId)}>
+            <div className={classNames(`${prefixCls}-footer-left`, hashId)}>
+              {footer?.left}
+            </div>
+            <div className={classNames(`${prefixCls}-footer-right`, hashId)}>
+              {footer?.right}
+            </div>
           </div>
-          <div className={classNames(`${prefixCls}-footer-right`, hashId)}>
-            {footer?.right}
-          </div>
-        </div>
+        }
       </div>
       <PicUploader<UploadResponseBodyType>
         display={displayPanel}
