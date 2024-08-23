@@ -11,9 +11,6 @@ order: 0
 ## 代码演示
 
 <code iframe="450" title="基本使用" description="基本的图片空间展示" src="./_demos/basic.tsx" ></code>
-<code title="对话框" description="对话框" src="./_demos/modal.tsx" ></code>
-<code title="气泡卡片" description="气泡卡片" src="./_demos/popover.tsx" ></code>
-
 <code iframe="650"  title="图片上传器" description="图片上传器" src="./_demos/uploader.tsx" ></code>
 
 ## API

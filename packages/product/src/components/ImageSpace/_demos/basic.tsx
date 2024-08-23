@@ -1,32 +1,34 @@
-import { Key, useEffect, useMemo, useRef, useState } from 'react';
-import { Button, Input, Select, Space, Typography } from 'antd';
+import { Key, useEffect, useRef, useState } from 'react';
+import { Button, Input, Select, Space } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
-import { ImageSpace, ImageFile, FolderTreeType, ImageSpaceRef, BaseRequestParam } from '@web-react/biz-components';
+import { ImageSpace, ImageFile, FolderTreeType, ImageSpaceRef, DisplayPanelType } from '@web-react/biz-components';
 
 import dataJson from './_data.json';
 export default () => {
   const _ref = useRef<ImageSpaceRef>(null);
+  const [searchParam, setSearchParam] = useState({ type: 'picture', value: '', order: 'timeDes', });
   const [selectKeys, setSelectKeys] = useState<Key[]>([]);
   const [selectFiles, setSelectFiles] = useState<ImageFile[]>([]);
-  const [searchParam, setSearchParam] = useState({ type: 'picture', value: '', order: 'timeDes', });
+  const [displayPanel, setDisplayPanel] = useState<DisplayPanelType>('none');
+
+  const changeSelect = (keys: Key[], files: ImageFile[]) => {
+    setSelectKeys(keys);
+    setSelectFiles(files);
+  }
 
   useEffect(() => {
     handleRefresh();
   }, [searchParam.order]);
 
   const handleRefresh = () => {
-    _ref?.current?.onRefresh();
+    _ref?.current?.refresh();
   }
 
-  const selectCount = useMemo(() => {
-    return selectKeys?.length || 0;
-  }, [selectKeys]);
+  const handleSelect = async (files: ImageFile[]) => {
+    console.log(files);
+  }
 
-  return (<div style={{
-    width: '100vw',
-    height: '100vh',
-    overflow: 'hidden',
-  }}>
+  return (<>
     <ImageSpace
       ref={_ref}
       actions={{
@@ -77,21 +79,13 @@ export default () => {
         </Space>
       }}
       footer={{
-        left: (
-          <Typography.Link target="_blank">
-            进入图片空间
-          </Typography.Link>
-        ),
         right: (
-          <Button
+          (count) => <Button
             type="primary"
-            disabled={selectCount == 0}
-            onClick={() => {
-              setSelectKeys([]);
-              setSelectFiles([]);
-            }}
+            disabled={count == 0}
+            onClick={() => handleSelect(selectFiles)}
           >
-            确定{selectCount > 0 && `（${selectCount}）`}
+            确定{count > 0 && `（${count}）`}
           </Button>
         )
       }}
@@ -116,10 +110,15 @@ export default () => {
         })
       }}
       value={selectKeys}
-      onChange={(data, files) => {
-        setSelectKeys(data);
-        setSelectFiles(files);
+      onChange={async (keys, files) => {
+        changeSelect(keys, files);
+      }}
+      display={displayPanel}
+      onDisplayChange={setDisplayPanel}
+      style={{
+        width: '880px',
+        height: '600px',
       }}
     />
-  </div>);
+  </>);
 };

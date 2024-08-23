@@ -44,7 +44,9 @@ type ImageSpaceProps<
 };
 
 interface ImageSpaceRef {
-  onRefresh: () => void | Promise<void>;
+  refresh: () => void | Promise<void>;
+  clearSelected: () => void,
+  setDisplay: (display: DisplayPanelType) => void
 }
 
 const InternalImageSpace = forwardRef<ImageSpaceRef, ImageSpaceProps<BaseRequestParam, UploadResponseBody>>(<
@@ -94,8 +96,14 @@ const InternalImageSpace = forwardRef<ImageSpaceRef, ImageSpaceProps<BaseRequest
   }, [folderId]);
 
   useImperativeHandle(ref, () => ({
-    onRefresh: () => {
+    refresh: () => {
       return loadData({ page: 1 });
+    },
+    clearSelected: () => {
+      setSelectKeys([]);
+    },
+    setDisplay: (display: DisplayPanelType) => {
+      setDisplayPanel(display);
     }
   }))
 
@@ -169,7 +177,7 @@ const InternalImageSpace = forwardRef<ImageSpaceRef, ImageSpaceProps<BaseRequest
             actions={{
               left: actions?.left,
               right: <Button
-                type="primary"
+                // type="primary"
                 onClick={() => {
                   setDisplayPanel('uploader')
                 }}
@@ -310,5 +318,5 @@ const ImageSpace = InternalImageSpace as CompoundedComponent;
 ImageSpace.Popover = ImageSpacePopover;
 ImageSpace.Modal = ImageSpaceModal;
 
-export type { ImageFile, FolderTreeType, ImageSpaceRef, BaseRequestParam };
+export type { DisplayPanelType, ImageFile, FolderTreeType, ImageSpaceRef, BaseRequestParam };
 export default ImageSpace;

@@ -61,7 +61,8 @@ const ImageItem = (props: ImageItemProps) => {
             {renderActions && (
                 <div className={classNames(`${prefixCls}-mask`, hashId)}>
                     <Flex justify="space-evenly" style={{ width: "100%", padding: "4px 2px" }}>
-                        {[renderActions.edit, renderActions.remove]}
+                        {renderActions.edit}
+                        {renderActions.remove}
                     </Flex>
                 </div>
             )}

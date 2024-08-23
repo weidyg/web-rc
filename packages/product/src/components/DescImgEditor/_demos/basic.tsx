@@ -1,70 +1,41 @@
 import { forwardRef, Key, Ref, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { Button, Input, Select, Space } from 'antd';
 import { DeleteOutlined, EditOutlined, FileImageOutlined, SearchOutlined } from '@ant-design/icons';
-import { DescImgEditor, FolderTreeType, ImageFile, ImageSpace, ImageSpaceRef, } from '@web-react/biz-components';
-
-const imgList = [
-  'https://pics.17qcc.com/imgextra/product/202408/20/15656633466472.jpg',
-  'https://pics.17qcc.com/imgextra/product/202408/20/10453139457026.jpg',
-  'https://pics.17qcc.com/imgextra/product/202408/20/10453141053334.jpg',
-  'https://pics.17qcc.com/imgextra/product/202408/20/15656633466472.jpg',
-  'https://pics.17qcc.com/imgextra/product/202408/20/10453139457026.jpg',
-  'https://pics.17qcc.com/imgextra/product/202408/20/10453141053334.jpg',
-  'https://pics.17qcc.com/imgextra/product/202408/20/15656633466472.jpg',
-  'https://pics.17qcc.com/imgextra/product/202408/20/10453139457026.jpg',
-  'https://pics.17qcc.com/imgextra/product/202408/20/10453141053334.jpg',
-  'https://pics.17qcc.com/imgextra/product/202408/20/15656633466472.jpg',
-  'https://pics.17qcc.com/imgextra/product/202408/20/10453139457026.jpg',
-  'https://pics.17qcc.com/imgextra/product/202408/20/10453141053334.jpg',
-  'https://pics.17qcc.com/imgextra/product/202408/20/15656633466472.jpg',
-  'https://pics.17qcc.com/imgextra/product/202408/20/10453139457026.jpg',
-  'https://pics.17qcc.com/imgextra/product/202408/20/10453141053334.jpg',
-]
+import { DescImgEditor, DisplayPanelType, FolderTreeType, ImageFile, ImageSpace, ImageSpaceRef, } from '@web-react/biz-components';
 
 import dataJson from './_data.json';
-import { DisplayPanelType } from '../../ImageSpace/Uploader';
-
-
 type ImageSelectProps = {
   mutiple?: boolean;
   onOk?: (files: ImageFile[]) => void | Promise<void>;
 }
 type ImageSelectRef = {
-  clearSelect: () => void,
-  setDisplay: (display: DisplayPanelType) => void,
+  clearSelected: () => void,
+  setDisplay: (display: DisplayPanelType) => void
 }
 const ImageSelect = forwardRef<ImageSelectRef, ImageSelectProps>((
   props: ImageSelectProps,
   ref: Ref<ImageSelectRef>
 ) => {
-  const { mutiple, onOk } = props;
+  const { mutiple = true, onOk } = props;
   const _ref = useRef<ImageSpaceRef>(null);
   const [searchParam, setSearchParam] = useState({ type: 'picture', value: '', order: 'timeDes', });
 
   const [selectKeys, setSelectKeys] = useState<Key[]>([]);
   const [selectFiles, setSelectFiles] = useState<ImageFile[]>([]);
-  const [displayPanel, setDisplayPanel] = useState<DisplayPanelType>('none');
 
   const changeSelect = (keys: Key[], files: ImageFile[]) => {
     setSelectKeys(keys);
     setSelectFiles(files);
   }
 
-  useImperativeHandle(ref, () => ({
-    clearSelect: () => {
-      changeSelect([], []);
-    },
-    setDisplay: (display: DisplayPanelType) => {
-      setDisplayPanel(display);
-    }
-  }))
+  useImperativeHandle(ref, () => _ref.current!)
 
   useEffect(() => {
     handleRefresh();
   }, [searchParam.order]);
 
   const handleRefresh = () => {
-    _ref?.current?.onRefresh();
+    _ref?.current?.refresh();
   }
 
   const handleSelect = async (files: ImageFile[]) => {
@@ -152,7 +123,6 @@ const ImageSelect = forwardRef<ImageSelectRef, ImageSelectProps>((
           }, 1000);
         })
       }}
-      // defaultValue={defaultValue}
       value={selectKeys}
       onChange={async (keys, files) => {
         changeSelect(keys, files);
@@ -160,8 +130,6 @@ const ImageSelect = forwardRef<ImageSelectRef, ImageSelectProps>((
           await handleSelect(files);
         }
       }}
-      display={displayPanel}
-      onDisplayChange={setDisplayPanel}
       style={{
         width: '880px',
         height: '600px',
@@ -177,7 +145,7 @@ const Add = (props: { onOk?: (url: string[]) => void | Promise<void>; }) => {
   const [isOpen, setIsOpen] = useState(false);
   useEffect(() => {
     if (!isOpen) {
-      _ref?.current?.clearSelect();
+      _ref?.current?.clearSelected();
       _ref?.current?.setDisplay('none');
     }
   }, [isOpen]);
@@ -214,7 +182,7 @@ const Edit = (props: { onOk?: (url: string) => void | Promise<void>; }) => {
   const [isOpen, setIsOpen] = useState(false);
   useEffect(() => {
     if (!isOpen) {
-      _ref?.current?.clearSelect();
+      _ref?.current?.clearSelected();
       _ref?.current?.setDisplay('none');
     }
   }, [isOpen]);
@@ -241,6 +209,24 @@ const Edit = (props: { onOk?: (url: string) => void | Promise<void>; }) => {
   </>
   )
 };
+
+const imgList = [
+  'https://pics.17qcc.com/imgextra/product/202408/20/15656633466472.jpg',
+  'https://pics.17qcc.com/imgextra/product/202408/20/10453139457026.jpg',
+  'https://pics.17qcc.com/imgextra/product/202408/20/10453141053334.jpg',
+  'https://pics.17qcc.com/imgextra/product/202408/20/15656633466472.jpg',
+  'https://pics.17qcc.com/imgextra/product/202408/20/10453139457026.jpg',
+  'https://pics.17qcc.com/imgextra/product/202408/20/10453141053334.jpg',
+  'https://pics.17qcc.com/imgextra/product/202408/20/15656633466472.jpg',
+  'https://pics.17qcc.com/imgextra/product/202408/20/10453139457026.jpg',
+  'https://pics.17qcc.com/imgextra/product/202408/20/10453141053334.jpg',
+  'https://pics.17qcc.com/imgextra/product/202408/20/15656633466472.jpg',
+  'https://pics.17qcc.com/imgextra/product/202408/20/10453139457026.jpg',
+  'https://pics.17qcc.com/imgextra/product/202408/20/10453141053334.jpg',
+  'https://pics.17qcc.com/imgextra/product/202408/20/15656633466472.jpg',
+  'https://pics.17qcc.com/imgextra/product/202408/20/10453139457026.jpg',
+  'https://pics.17qcc.com/imgextra/product/202408/20/10453141053334.jpg',
+]
 
 export default () => {
   const [value, setValue] = useState<string[]>(imgList);
