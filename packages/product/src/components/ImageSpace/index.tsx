@@ -24,6 +24,7 @@ type ImageSpaceProps<
   /** 自定义样式前缀 */
   prefixCls?: string;
 
+  mutiple?: boolean,
   pageSize?: number;
   defaultFolder?: FolderTreeType;
   fetchFolders?: () => Promise<FolderTreeType[]>;
@@ -52,7 +53,7 @@ const InternalImageSpace = forwardRef<ImageSpaceRef, ImageSpaceProps<BaseRequest
   props: ImageSpaceProps<RequestParamType, UploadResponseBodyType>,
   ref: Ref<ImageSpaceRef>
 ) => {
-  const { style, className, defaultFolder, pageSize = 20,
+  const { style, className, defaultFolder, pageSize = 20, mutiple,
     fetchData, fetchFolders, onChange,
     actions, footer, upload
   } = props;
@@ -64,12 +65,12 @@ const InternalImageSpace = forwardRef<ImageSpaceRef, ImageSpaceProps<BaseRequest
   });
 
   const [selectKeys, setSelectKeys] = useMergedState<Key[]>([], {
-    defaultValue: props.defaultValue,
-    value: props.value,
-    onChange: async (value) => {
+    defaultValue: props?.defaultValue,
+    value: props?.value,
+    onChange: (value, prevValue) => {
       const selectFiles = imageFiles.filter((item) => value.includes(item.id));
-      await onChange?.(value, selectFiles);
-    }
+      onChange?.(value, selectFiles);
+    },
   });
 
   const [loading, setLoading] = useState(false);
@@ -154,6 +155,7 @@ const InternalImageSpace = forwardRef<ImageSpaceRef, ImageSpaceProps<BaseRequest
             </div>
           </div>
           <PicPanel
+            mutiple={mutiple}
             selectKeys={selectKeys}
             onSelect={(keys) => {
               setSelectKeys(keys);

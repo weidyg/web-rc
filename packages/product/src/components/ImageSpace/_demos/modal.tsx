@@ -5,6 +5,7 @@ import { Key, useEffect, useMemo, useRef, useState } from "react";
 
 import dataJson from './_data.json';
 import { DisplayPanelType } from "../Uploader";
+import { fstat } from "fs";
 export default () => {
     const _ref = useRef<ImageSpaceRef>(null);
     const [selectKeys, setSelectKeys] = useState<Key[]>([]);
@@ -27,8 +28,13 @@ export default () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const handleModalOpenChange = (open: boolean) => {
         setIsModalOpen(open);
-        if (open) { setDisplayPanel("none") }
+        if (open) {
+            setSelectKeys([]);
+            setSelectFiles([]);
+            setDisplayPanel("none");
+        }
     };
+    const mutiple = false;
     const [displayPanel, setDisplayPanel] = useState<DisplayPanelType>('none');
     const children = <ImageSpace
         ref={_ref}
@@ -85,13 +91,14 @@ export default () => {
                     进入图片空间
                 </Typography.Link>
             ),
-            right: (
+            right: mutiple && (
                 <Button
                     type="primary"
                     disabled={selectCount == 0}
                     onClick={() => {
-                        setSelectKeys([]);
-                        setSelectFiles([]);
+                        // setSelectKeys([]);
+                        // setSelectFiles([]);
+                        handleModalOpenChange(false);
                     }}
                 >
                     确定{selectCount > 0 && `（${selectCount}）`}
@@ -119,9 +126,12 @@ export default () => {
             })
         }}
         value={selectKeys}
-        onChange={(data, files) => {
-            setSelectKeys(data);
+        onChange={(keys, files) => {
+            setSelectKeys(keys);
             setSelectFiles(files);
+            // if (!mutiple) {
+            //     handleModalOpenChange(false);
+            // }
         }}
 
         display={displayPanel}
@@ -132,6 +142,7 @@ export default () => {
             width: '880px',
             height: '600px',
         }}
+        mutiple={mutiple}
     />
     return (
         <>

@@ -1,5 +1,5 @@
-import { Key, useRef, useState } from 'react';
-import { Image, Button, Checkbox, Segmented, Space, Spin, Table, Divider } from 'antd';
+import { Key, useEffect, useRef, useState } from 'react';
+import { Image, Button, Checkbox, Segmented, Space, Spin, Table, Divider, Radio } from 'antd';
 import { AppstoreOutlined, BarsOutlined } from '@ant-design/icons';
 import { classNames, convertByteUnit, useMergedState } from '@web-react/biz-utils';
 import { ColumnsType } from 'antd/es/table';
@@ -28,14 +28,18 @@ type PicPanelProps = {
     loading?: boolean,
     hasMore?: boolean,
     data: ImageFile[],
+    mutiple?: boolean;
 };
 const PicPanel = (props: PicPanelProps) => {
-    const { loading, data = [], actions, hasMore, onLoadMore, onRefresh } = props;
+    const { loading, mutiple = true, data = [], actions, hasMore, onLoadMore, onRefresh } = props;
     const { prefixCls, wrapSSR, hashId, token } = useStyle(props?.prefixCls);
     const [showType, setShowType] = useState<'list' | 'table'>('list');
-    const [selectKeys, setSelectKeys] = useMergedState<Key[]>(props?.defaultSelectKeys || [], {
+    const [selectKeys, setSelectKeys] = useMergedState<Key[]>([], {
+        defaultValue: props?.defaultSelectKeys,
         value: props?.selectKeys,
-        onChange: props?.onSelect,
+        onChange: (value, prevValue) => {
+            props?.onSelect?.(value);
+        },
     });
 
     const handleScroll = async (event: React.SyntheticEvent<HTMLDivElement>) => {
@@ -52,11 +56,13 @@ const PicPanel = (props: PicPanelProps) => {
         return selectKeys?.includes(id) ?? false;
     };
     const checkChange = (id: Key, checked: boolean) => {
-        setSelectKeys(keys => {
-            return keys.includes(id)
-                ? (checked ? keys : keys.filter(k => k !== id))
-                : (checked ? [...keys, id] : keys);
-        });
+        console.log('checkChange', id, checked);
+        const keys = !mutiple
+            ? (checked ? [id] : [])
+            : (selectKeys.includes(id)
+                ? (checked ? selectKeys : selectKeys.filter(k => k !== id))
+                : (checked ? [...selectKeys, id] : selectKeys));
+        setSelectKeys(keys);
     };
 
     const LoadMore = (props: { wrapper?: (node: React.ReactNode) => React.ReactNode }) => {
@@ -76,12 +82,17 @@ const PicPanel = (props: PicPanelProps) => {
         </Divider>
         return props?.wrapper?.(node) || node;
     }
-    const RenderFileName = ({ file }: { file: ImageFile }) => {
+
+    const RenderFileName = (props: {
+        file: ImageFile
+    }) => {
+        const { file } = props;
         const [preview, setPreview] = useState(false);
+        const checked = isChecked(file.id);
         return <div className={classNames(`${prefixCls}-fileName`, hashId)}>
             <div className={classNames(`${prefixCls}-fileName-checkbox`, hashId)}>
                 <Checkbox
-                    checked={isChecked(file.id)}
+                    checked={checked}
                     onChange={(e) => {
                         checkChange(file.id, e.target.checked);
                     }}
@@ -112,7 +123,7 @@ const PicPanel = (props: PicPanelProps) => {
     const columns: ColumnsType<ImageFile> = [
         {
             dataIndex: 'name', title: '文件',
-            render: (_, record) => (<RenderFileName file={record} />),
+            render: (_, record) => (<RenderFileName file={record}/>),
         },
         { dataIndex: 'pixel', title: '尺寸' },
         {
@@ -139,8 +150,7 @@ const PicPanel = (props: PicPanelProps) => {
 
     const dashboardRef = useRef<HTMLDivElement>(null);
     return wrapSSR(
-        <div ref={dashboardRef}
-            className={classNames(`${prefixCls}`, hashId)}>
+        <div ref={dashboardRef} className={classNames(`${prefixCls}`, hashId)}>
             {loading &&
                 <div className={classNames(`${prefixCls}-mask`, hashId)}>
                     <Spin size='large' spinning={true} />
@@ -188,8 +198,7 @@ const PicPanel = (props: PicPanelProps) => {
                                 pixel={item.pixel}
                                 isRef={item.isRef}
                                 checked={isChecked(item.id)}
-                                // onAiEdit={() => { }}
-                                onChange={(value: boolean, prevValue: boolean) => {
+                                onChange={(value: boolean) => {
                                     checkChange(item.id, value);
                                 }}
                             />
