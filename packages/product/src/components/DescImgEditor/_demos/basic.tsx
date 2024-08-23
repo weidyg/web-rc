@@ -1,8 +1,7 @@
-
+import { forwardRef, Key, Ref, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import { Button, Input, Select, Space } from 'antd';
 import { DeleteOutlined, EditOutlined, FileImageOutlined, SearchOutlined } from '@ant-design/icons';
-import { DescImgEditor, FolderTreeType, ImageFile, ImageSpace, ImageSpaceRef, useMergedState, } from '@web-react/biz-components';
-import { Button, Input, Select, Space, Typography } from 'antd';
-import { forwardRef, Key, Ref, SetStateAction, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
+import { DescImgEditor, FolderTreeType, ImageFile, ImageSpace, ImageSpaceRef, } from '@web-react/biz-components';
 
 const imgList = [
   'https://pics.17qcc.com/imgextra/product/202408/20/15656633466472.jpg',
@@ -24,6 +23,7 @@ const imgList = [
 
 import dataJson from './_data.json';
 import { DisplayPanelType } from '../../ImageSpace/Uploader';
+
 
 type ImageSelectProps = {
   mutiple?: boolean;
@@ -67,9 +67,8 @@ const ImageSelect = forwardRef<ImageSelectRef, ImageSelectProps>((
     _ref?.current?.onRefresh();
   }
 
-  const handleSelect = async () => {
-    await onOk?.(selectFiles);
-    changeSelect([], []);
+  const handleSelect = async (files: ImageFile[]) => {
+    await onOk?.(files);
   }
 
   return (<>
@@ -127,7 +126,7 @@ const ImageSelect = forwardRef<ImageSelectRef, ImageSelectProps>((
           (count) => <Button
             type="primary"
             disabled={count == 0}
-            onClick={handleSelect}
+            onClick={() => handleSelect(selectFiles)}
           >
             确定{count > 0 && `（${count}）`}
           </Button>
@@ -158,7 +157,7 @@ const ImageSelect = forwardRef<ImageSelectRef, ImageSelectProps>((
       onChange={async (keys, files) => {
         changeSelect(keys, files);
         if (!mutiple) {
-          await handleSelect();
+          await handleSelect(files);
         }
       }}
       display={displayPanel}
@@ -172,6 +171,76 @@ const ImageSelect = forwardRef<ImageSelectRef, ImageSelectProps>((
   </>);
 });
 
+const Add = (props: { onOk?: (url: string[]) => void | Promise<void>; }) => {
+  const { onOk } = props;
+  const _ref = useRef<ImageSelectRef>(null);
+  const [isOpen, setIsOpen] = useState(false);
+  useEffect(() => {
+    if (!isOpen) {
+      _ref?.current?.clearSelect();
+      _ref?.current?.setDisplay('none');
+    }
+  }, [isOpen]);
+  return (<>
+    <ImageSpace.Modal
+      open={isOpen}
+      onOpenChange={setIsOpen}
+    >
+      <ImageSelect
+        ref={_ref}
+        mutiple={true}
+        onOk={(files) => {
+          const urls = files.map((file) => file.fullUrl!);
+          onOk?.(urls);
+          setIsOpen(false);
+        }}
+      />
+    </ImageSpace.Modal>
+
+    <Button icon={<FileImageOutlined />}
+      shape="round" type="primary"
+      onClick={() => {
+        setIsOpen(true);
+      }}>
+      添加图片
+    </Button>
+  </>
+  )
+};
+
+const Edit = (props: { onOk?: (url: string) => void | Promise<void>; }) => {
+  const { onOk } = props;
+  const _ref = useRef<ImageSelectRef>(null);
+  const [isOpen, setIsOpen] = useState(false);
+  useEffect(() => {
+    if (!isOpen) {
+      _ref?.current?.clearSelect();
+      _ref?.current?.setDisplay('none');
+    }
+  }, [isOpen]);
+  return (<>
+    <ImageSpace.Popover
+      open={isOpen}
+      onOpenChange={setIsOpen}
+      content={
+        <ImageSelect
+          ref={_ref}
+          mutiple={false}
+          onOk={(files) => {
+            const urls = files.map((file) => file.fullUrl!);
+            if (urls?.length > 0) {
+              onOk?.(urls[0]);
+              setIsOpen(false);
+            }
+          }}
+        />
+      }
+    >
+      <EditOutlined style={{ cursor: 'pointer' }} />
+    </ImageSpace.Popover>
+  </>
+  )
+};
 
 export default () => {
   const [value, setValue] = useState<string[]>(imgList);
@@ -182,55 +251,25 @@ export default () => {
     setValue(newImgList);
   }
 
-  function handleEdit(index: number) {
-
+  function handleEdit(index: number, url: string) {
+    const newImgList = [...value];
+    newImgList[index] = url;
+    setValue(newImgList);
   }
 
-  function handleAdd() {
-    setMutiple(true);
-    handleModalOpenChange(true);
+  function handleAdd(url: string[]) {
+    setValue([...value, ...url]);
   }
-
-
-  const _ref = useRef<ImageSelectRef>(null);
-  const [mutiple, setMutiple] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const handleModalOpenChange = (open: boolean) => {
-    setIsModalOpen(open);
-    if (open) {
-      _ref?.current?.setDisplay('none');
-      _ref?.current?.clearSelect();
-    }
-  };
-
-  const children = <ImageSelect
-    ref={_ref}
-    mutiple={mutiple}
-    onOk={(files) => {
-      console.log('onOk', files);
-      const urls = files.map((file) => file.fullUrl!);
-      setValue([...value, ...urls]);
-      handleModalOpenChange(false);
-    }}
-  />;
 
   return (<>
-    <ImageSpace.Modal
-      open={isModalOpen}
-      onOpenChange={handleModalOpenChange}
-    >
-      {children}
-    </ImageSpace.Modal>
-
     <DescImgEditor
       value={value}
       onChange={(v) => {
         setValue(v);
       }}
       renderActions={{
-        add: <Button icon={<FileImageOutlined />} shape="round" type="primary" onClick={handleAdd}>添加图片</Button>,
-        edit: (index) => <EditOutlined style={{ cursor: 'pointer' }} onClick={() => handleEdit(index)} />,
+        add: <Add onOk={handleAdd} />,
+        edit: (index) => <Edit onOk={(url) => handleEdit(index, url)} />,
         remove: (index) => <DeleteOutlined style={{ cursor: 'pointer' }} onClick={() => handleRemove(index)} />,
       }}
     />

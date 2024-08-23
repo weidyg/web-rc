@@ -56,7 +56,6 @@ const PicPanel = (props: PicPanelProps) => {
         return selectKeys?.includes(id) ?? false;
     };
     const checkChange = (id: Key, checked: boolean) => {
-        console.log('checkChange', id, checked);
         const keys = !mutiple
             ? (checked ? [id] : [])
             : (selectKeys.includes(id)
