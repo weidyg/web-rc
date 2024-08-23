@@ -1,14 +1,16 @@
 import { useState } from "react";
 import { UploadFile } from "antd";
-import PicUploader, { DisplayPanelType, FolderType } from "../Uploader"
-import { UploadResponseBody } from "../Uploader/request";
 import dataJson from './_data.json';
+import {
+    DisplayPanelType, FolderType,
+    ImageSpace, UploadResponseBody
+} from "@web-react/biz-components";
 
 
 export default () => {
     const [displayPanel, setDisplayPanel] = useState<DisplayPanelType>('uploader');
     const [fileList, setFileList] = useState<UploadFile<UploadResponseBody>[]>([]);
-    return <PicUploader
+    return <ImageSpace.Uploader
         defaultFolderValue={'0'}
         folders={dataJson.dirs as FolderType[]}
         upload={{

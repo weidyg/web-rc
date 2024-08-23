@@ -313,10 +313,15 @@ const ImageSpaceModal = (props: ImageSpaceModalProps) => {
 type CompoundedComponent = typeof InternalImageSpace & {
   Popover: typeof ImageSpacePopover;
   Modal: typeof ImageSpaceModal;
+  Uploader: typeof PicUploader;
 };
 const ImageSpace = InternalImageSpace as CompoundedComponent;
 ImageSpace.Popover = ImageSpacePopover;
 ImageSpace.Modal = ImageSpaceModal;
+ImageSpace.Uploader = PicUploader;
 
-export type { DisplayPanelType, ImageFile, FolderTreeType, ImageSpaceRef, BaseRequestParam };
+export type {
+  ImageFile, FolderTreeType, ImageSpaceRef, BaseRequestParam,
+  DisplayPanelType, FolderType, UploadResponseBody
+};
 export default ImageSpace;
