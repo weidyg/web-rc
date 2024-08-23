@@ -5,7 +5,6 @@ import { Key, useEffect, useMemo, useRef, useState } from "react";
 
 import dataJson from './_data.json';
 import { DisplayPanelType } from "../Uploader";
-import { fstat } from "fs";
 export default () => {
     const _ref = useRef<ImageSpaceRef>(null);
     const [selectKeys, setSelectKeys] = useState<Key[]>([]);

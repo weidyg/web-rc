@@ -34,10 +34,11 @@ type ImageSpaceProps<
   onChange?: (ids: Key[], files: ImageFile[]) => void | Promise<void>;
   actions?: { left?: ReactNode },
   footer?: {
-    left?: ReactNode,
-    right?: ReactNode,
+    left?: ReactNode | ((count: number) => ReactNode),
+    right?: ReactNode | ((count: number) => ReactNode),
   },
   upload?: PicUploaderProps<UploadResponseBodyType>['upload'],
+  defaultDisplay?: DisplayPanelType;
   display?: DisplayPanelType;
   onDisplayChange?: (display: DisplayPanelType) => void;
 };
@@ -60,6 +61,7 @@ const InternalImageSpace = forwardRef<ImageSpaceRef, ImageSpaceProps<BaseRequest
   const { prefixCls, wrapSSR, hashId, token } = useStyle(props.prefixCls);
   const classString = classNames(prefixCls, className, hashId, {});
   const [displayPanel, setDisplayPanel] = useMergedState<DisplayPanelType>('none', {
+    defaultValue: props.defaultDisplay,
     value: props.display,
     onChange: props.onDisplayChange
   });
@@ -67,7 +69,7 @@ const InternalImageSpace = forwardRef<ImageSpaceRef, ImageSpaceProps<BaseRequest
   const [selectKeys, setSelectKeys] = useMergedState<Key[]>([], {
     defaultValue: props?.defaultValue,
     value: props?.value,
-    onChange: (value, prevValue) => {
+    onChange: (value) => {
       const selectFiles = imageFiles.filter((item) => value.includes(item.id));
       onChange?.(value, selectFiles);
     },
@@ -134,6 +136,10 @@ const InternalImageSpace = forwardRef<ImageSpaceRef, ImageSpaceProps<BaseRequest
     }
   };
 
+  const selectCount = useMemo(() => {
+    return selectKeys?.length || 0;
+  }, [selectKeys]);
+
   return wrapSSR(
     <div className={classString} style={style}>
       <div style={{ display: displayPanel === 'uploader' ? 'none' : '' }}
@@ -181,10 +187,10 @@ const InternalImageSpace = forwardRef<ImageSpaceRef, ImageSpaceProps<BaseRequest
         {(footer?.left || footer?.right) &&
           <div className={classNames(`${prefixCls}-footer`, hashId)}>
             <div className={classNames(`${prefixCls}-footer-left`, hashId)}>
-              {footer?.left}
+              {typeof footer?.left == 'function' ? footer?.left(selectCount) : footer?.left}
             </div>
             <div className={classNames(`${prefixCls}-footer-right`, hashId)}>
-              {footer?.right}
+              {typeof footer?.right == 'function' ? footer?.right(selectCount) : footer?.right}
             </div>
           </div>
         }

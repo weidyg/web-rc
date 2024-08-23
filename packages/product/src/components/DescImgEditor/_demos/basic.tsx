@@ -1,8 +1,8 @@
 
 import { DeleteOutlined, EditOutlined, FileImageOutlined, SearchOutlined } from '@ant-design/icons';
-import { DescImgEditor, FolderTreeType, ImageFile, ImageSpace, ImageSpaceRef, } from '@web-react/biz-components';
+import { DescImgEditor, FolderTreeType, ImageFile, ImageSpace, ImageSpaceRef, useMergedState, } from '@web-react/biz-components';
 import { Button, Input, Select, Space, Typography } from 'antd';
-import { Key, useEffect, useMemo, useRef, useState } from 'react';
+import { forwardRef, Key, Ref, SetStateAction, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 
 const imgList = [
   'https://pics.17qcc.com/imgextra/product/202408/20/15656633466472.jpg',
@@ -23,11 +23,41 @@ const imgList = [
 ]
 
 import dataJson from './_data.json';
-const ImageSelect = () => {
+import { DisplayPanelType } from '../../ImageSpace/Uploader';
+
+type ImageSelectProps = {
+  mutiple?: boolean;
+  onOk?: (files: ImageFile[]) => void | Promise<void>;
+}
+type ImageSelectRef = {
+  clearSelect: () => void,
+  setDisplay: (display: DisplayPanelType) => void,
+}
+const ImageSelect = forwardRef<ImageSelectRef, ImageSelectProps>((
+  props: ImageSelectProps,
+  ref: Ref<ImageSelectRef>
+) => {
+  const { mutiple, onOk } = props;
   const _ref = useRef<ImageSpaceRef>(null);
+  const [searchParam, setSearchParam] = useState({ type: 'picture', value: '', order: 'timeDes', });
+
   const [selectKeys, setSelectKeys] = useState<Key[]>([]);
   const [selectFiles, setSelectFiles] = useState<ImageFile[]>([]);
-  const [searchParam, setSearchParam] = useState({ type: 'picture', value: '', order: 'timeDes', });
+  const [displayPanel, setDisplayPanel] = useState<DisplayPanelType>('none');
+
+  const changeSelect = (keys: Key[], files: ImageFile[]) => {
+    setSelectKeys(keys);
+    setSelectFiles(files);
+  }
+
+  useImperativeHandle(ref, () => ({
+    clearSelect: () => {
+      changeSelect([], []);
+    },
+    setDisplay: (display: DisplayPanelType) => {
+      setDisplayPanel(display);
+    }
+  }))
 
   useEffect(() => {
     handleRefresh();
@@ -37,9 +67,10 @@ const ImageSelect = () => {
     _ref?.current?.onRefresh();
   }
 
-  const selectCount = useMemo(() => {
-    return selectKeys?.length || 0;
-  }, [selectKeys]);
+  const handleSelect = async () => {
+    await onOk?.(selectFiles);
+    changeSelect([], []);
+  }
 
   return (<>
     <ImageSpace
@@ -92,21 +123,13 @@ const ImageSelect = () => {
         </Space>
       }}
       footer={{
-        left: (
-          <Typography.Link target="_blank">
-            进入图片空间
-          </Typography.Link>
-        ),
-        right: (
-          <Button
+        right: mutiple && (
+          (count) => <Button
             type="primary"
-            disabled={selectCount == 0}
-            onClick={() => {
-              setSelectKeys([]);
-              setSelectFiles([]);
-            }}
+            disabled={count == 0}
+            onClick={handleSelect}
           >
-            确定{selectCount > 0 && `（${selectCount}）`}
+            确定{count > 0 && `（${count}）`}
           </Button>
         )
       }}
@@ -130,14 +153,24 @@ const ImageSelect = () => {
           }, 1000);
         })
       }}
+      // defaultValue={defaultValue}
       value={selectKeys}
-      onChange={(data, files) => {
-        setSelectKeys(data);
-        setSelectFiles(files);
+      onChange={async (keys, files) => {
+        changeSelect(keys, files);
+        if (!mutiple) {
+          await handleSelect();
+        }
       }}
+      display={displayPanel}
+      onDisplayChange={setDisplayPanel}
+      style={{
+        width: '880px',
+        height: '600px',
+      }}
+      mutiple={mutiple}
     />
   </>);
-};
+});
 
 
 export default () => {
@@ -152,14 +185,44 @@ export default () => {
   function handleEdit(index: number) {
 
   }
+
   function handleAdd() {
-    const v = 'https://pics.17qcc.com/imgextra/product/202408/20/10453141053334.jpg';
-    setValue([...value, v]);
+    setMutiple(true);
+    handleModalOpenChange(true);
   }
 
 
+  const _ref = useRef<ImageSelectRef>(null);
+  const [mutiple, setMutiple] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleModalOpenChange = (open: boolean) => {
+    setIsModalOpen(open);
+    if (open) {
+      _ref?.current?.setDisplay('none');
+      _ref?.current?.clearSelect();
+    }
+  };
+
+  const children = <ImageSelect
+    ref={_ref}
+    mutiple={mutiple}
+    onOk={(files) => {
+      console.log('onOk', files);
+      const urls = files.map((file) => file.fullUrl!);
+      setValue([...value, ...urls]);
+      handleModalOpenChange(false);
+    }}
+  />;
 
   return (<>
+    <ImageSpace.Modal
+      open={isModalOpen}
+      onOpenChange={handleModalOpenChange}
+    >
+      {children}
+    </ImageSpace.Modal>
+
     <DescImgEditor
       value={value}
       onChange={(v) => {

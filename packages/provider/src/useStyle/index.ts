@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import { ConfigProvider as AntdConfigProvider, theme } from 'antd';
-import type { GlobalToken } from 'antd/lib/theme/interface';
 import { CSSInterpolation, useStyleRegister } from '@ant-design/cssinjs';
+import type { GlobalToken } from 'antd/lib/theme/interface';
 import { TinyColor } from '@ctrl/tinycolor';
 import * as batToken from './token';
 import { BizProvider } from '../index';
@@ -60,7 +60,7 @@ export function useStyle(
   // if (!token.layout) { token = { ...antdToken } as any; }
   token = { ...antdToken } as any;
   token.antCls = `.${getPrefixCls()}`;
-  token.bizComponentsCls = `.${token.bizComponentsCls?.replace(/^\./, '') ?? getPrefixCls('biz')}`;
+  token.bizComponentsCls = `.${token.bizComponentsCls?.replace(/^\./, '') ?? 'biz'}`;
   token.componentCls = `.${(prefixCls ?? token.bizComponentsCls)?.replace(/^\./, '')}-${suffixCls}`;
   return {
     wrapSSR: useStyleRegister(
