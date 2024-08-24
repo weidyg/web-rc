@@ -10,7 +10,7 @@ order: 0
 
 ## 代码演示
 
-<code  title="基本使用" description="基本的描述图编辑器" src="./_demos/basic.tsx" ></code>
+<code  title="基本使用" description="基本的描述图编辑器" src="./demos/basic.tsx" ></code>
 
 ## API
 

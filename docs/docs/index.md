@@ -16,8 +16,8 @@ $ npm i @web-react/biz-components --save
 ## 在项目中使用
 
 每一个包都是一个独立的组件包，使用示例如下 ：
-
-```jsx 
+<!-- | pure -->
+```jsx   
 import React from 'react';
 import { Foo } from '@web-react/biz-components';
 

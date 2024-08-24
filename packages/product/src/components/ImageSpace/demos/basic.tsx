@@ -1,3 +1,10 @@
+/**
+ * iframe: true
+ * compact: true
+ * title: 图片上传器
+ * description: 基本的图片空间展示
+ */
+// https://d.umijs.org/config/demo
 import { Key, useEffect, useRef, useState } from 'react';
 import { Button, Input, Select, Space } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
