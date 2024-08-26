@@ -78,14 +78,10 @@ interface ImageItemToken extends BizAliasToken {
 
 }
 export function useStyle(prefixCls?: string) {
-  return useAntdStyle(
-    'ImageItem',
-    (token) => {
-      const bizToken: ImageItemToken = {
-        ...token,
-      };
-      return [genBizStyle(bizToken)];
-    },
-    prefixCls,
-  );
+  return useAntdStyle('ImageItem', (token) => {
+    const bizToken: ImageItemToken = {
+      ...token,
+    };
+    return [genBizStyle(bizToken)];
+  }, prefixCls,);
 }

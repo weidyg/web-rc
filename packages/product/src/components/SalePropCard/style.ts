@@ -66,14 +66,10 @@ interface SalePropCardToken extends BizAliasToken {
 
 }
 export function useStyle(prefixCls?: string) {
-  return useAntdStyle(
-    'BizSalePropCard',
-    (token) => {
-      const bizToken: SalePropCardToken = {
-        ...token,
-      };
-      return [genBizStyle(bizToken)];
-    },
-    prefixCls,
-  );
+  return useAntdStyle('SalePropCard', (token) => {
+    const bizToken: SalePropCardToken = {
+      ...token,
+    };
+    return [genBizStyle(bizToken)];
+  }, prefixCls);
 }

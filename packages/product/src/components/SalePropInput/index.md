@@ -1,7 +1,7 @@
 ---
 order: 0
-atomId: DescImgEditor
-title: DescImgEditor - 描述图编辑器
+atomId: SalePropInput
+title: SalePropInput - 销售属性输入组件
 ---
 
 ## 代码演示

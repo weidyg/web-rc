@@ -1,3 +1,8 @@
+/**
+ * title: 基本使用
+ * description: 基本的描述图编辑器
+ */
+
 import { forwardRef, Key, Ref, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { Button, Input, Select, Space } from 'antd';
 import { DeleteOutlined, EditOutlined, FileImageOutlined, SearchOutlined } from '@ant-design/icons';
@@ -153,7 +158,7 @@ const Add = (props: { onOk?: (url: string[]) => void | Promise<void>; }) => {
     <ImageSpace.Modal
       open={isOpen}
       onOpenChange={setIsOpen}
-      // destroyOnClose
+    // destroyOnClose
     >
       <ImageSelect
         ref={_ref}

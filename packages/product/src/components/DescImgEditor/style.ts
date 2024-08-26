@@ -84,14 +84,10 @@ interface DescImgEditorToken extends BizAliasToken {
 
 }
 export function useStyle(prefixCls?: string) {
-  return useAntdStyle(
-    'DescImgEditor',
-    (token) => {
-      const bizToken: DescImgEditorToken = {
-        ...token,
-      };
-      return [genBizStyle(bizToken)];
-    },
-    prefixCls,
-  );
+  return useAntdStyle('DescImgEditor', (token) => {
+    const bizToken: DescImgEditorToken = {
+      ...token,
+    };
+    return [genBizStyle(bizToken)];
+  }, prefixCls,);
 }

@@ -161,7 +161,5 @@ export function useStyle(prefixCls?: string) {
       colorControlText: token.colorWhite,
     };
     return [genBizStyle(bizToken)];
-  },
-    prefixCls,
-  );
+  }, prefixCls);
 }

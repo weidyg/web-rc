@@ -113,7 +113,5 @@ export function useStyle(prefixCls?: string) {
       colorBgPicPanel: token.colorBgContainer,
     };
     return [genBizStyle(bizToken)];
-  },
-    prefixCls,
-  );
+  }, prefixCls);
 }

@@ -1,7 +1,7 @@
 ﻿import type { GenerateStyle, BizAliasToken } from '@web-react/biz-components';
 import { setAlpha, useStyle as useAntdStyle } from '@web-react/biz-components';
 
-const genBizStyle: GenerateStyle<BizImageSpaceToken> = (token) => {
+const genBizStyle: GenerateStyle<ImageSpaceToken> = (token) => {
   return {
     [token.componentCls]: {
       width: '100%',
@@ -284,7 +284,7 @@ const genBizStyle: GenerateStyle<BizImageSpaceToken> = (token) => {
   };
 };
 
-interface BizImageSpaceToken extends BizAliasToken {
+interface ImageSpaceToken extends BizAliasToken {
   colorBgPage: string;
   colorBgFooter: string;
   colorBgDashboard: string;
@@ -293,20 +293,16 @@ interface BizImageSpaceToken extends BizAliasToken {
   colorControlText: string;
 }
 export function useStyle(prefixCls?: string) {
-  return useAntdStyle(
-    'BizImageSpace',
-    (token) => {
-      const bizToken: BizImageSpaceToken = {
-        ...token,
-        colorBgPage: token.colorBgElevated,
-        colorBgFooter: token.colorBgElevated,
-        colorBgDashboard: token.colorBgContainer,
-        colorBgPicCard: token.colorBgLayout,
-        colorBgSide: token.colorBgLayout,
-        colorControlText: token.colorWhite,
-      };
-      return [genBizStyle(bizToken)];
-    },
-    prefixCls,
-  );
+  return useAntdStyle('ImageSpace', (token) => {
+    const bizToken: ImageSpaceToken = {
+      ...token,
+      colorBgPage: token.colorBgElevated,
+      colorBgFooter: token.colorBgElevated,
+      colorBgDashboard: token.colorBgContainer,
+      colorBgPicCard: token.colorBgLayout,
+      colorBgSide: token.colorBgLayout,
+      colorControlText: token.colorWhite,
+    };
+    return [genBizStyle(bizToken)];
+  }, prefixCls);
 }
