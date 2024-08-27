@@ -72,8 +72,7 @@ const SalePropInput = (
 
         ) : (
           <PictureOutlined className={classNames(`${prefixCls}-img-placeholder`, hashId)} />
-        )
-        }
+        )}
       </div>
       <Space.Compact>
         <Input allowClear

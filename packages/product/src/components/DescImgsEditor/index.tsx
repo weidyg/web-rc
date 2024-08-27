@@ -10,7 +10,7 @@ export const thumbnail = (url?: string, width?: number, height?: number) => {
   return `${url}?x-oss-process=image/resize,m_lfit${height ? `,h_${height}` : ''}${width ? `,w_${width}` : ''}`
 }
 
-type DescImgEditorProps = {
+type DescImgsEditorProps = {
   prefixCls?: string;
   value?: string[];
   defaultValue?: string[];
@@ -22,7 +22,7 @@ type DescImgEditorProps = {
   };
 }
 
-const DescImgEditor = (props: DescImgEditorProps) => {
+const DescImgsEditor = (props: DescImgsEditorProps) => {
   const { renderActions } = props;
   const { add, edit, remove } = renderActions || {};
   const { prefixCls, wrapSSR, hashId, token } = useStyle(props.prefixCls);
@@ -91,5 +91,5 @@ const DescImgEditor = (props: DescImgEditorProps) => {
     </div>
   </>);
 }
-export type { DescImgEditorProps }
-export default DescImgEditor
+export type { DescImgsEditorProps }
+export default DescImgsEditor

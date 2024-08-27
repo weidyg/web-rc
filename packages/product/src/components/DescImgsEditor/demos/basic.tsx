@@ -6,7 +6,7 @@
 import { forwardRef, Key, Ref, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { Button, Input, Select, Space } from 'antd';
 import { DeleteOutlined, EditOutlined, FileImageOutlined, SearchOutlined } from '@ant-design/icons';
-import { DescImgEditor, DisplayPanelType, FolderTreeType, ImageFile, ImageSpace, ImageSpaceRef, } from '@web-react/biz-components';
+import { DescImgsEditor, DisplayPanelType, FolderTreeType, ImageFile, ImageSpace, ImageSpaceRef, } from '@web-react/biz-components';
 
 import dataJson from './_data.json';
 type ImageSelectProps = {
@@ -239,7 +239,7 @@ export default () => {
   }
 
   return (<>
-    <DescImgEditor
+    <DescImgsEditor
       value={value}
       onChange={(v) => {
         setValue(v);
