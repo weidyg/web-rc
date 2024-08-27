@@ -1,4 +1,4 @@
-import { CSSProperties, forwardRef, Key, ReactNode, Ref, useEffect, useImperativeHandle, useMemo, useState } from 'react';
+import { CSSProperties, forwardRef, Key, ReactNode, Ref, useCallback, useEffect, useImperativeHandle, useMemo, useState } from 'react';
 import { Button, message, Modal, ModalProps, Popover, PopoverProps, Spin, Typography, UploadFile } from 'antd';
 import { classNames, useMergedState } from '@web-react/biz-utils';
 import PicUploader, { DisplayPanelType, FolderType, PicUploaderProps, UploadResponseBody } from './Uploader';
@@ -249,17 +249,32 @@ const ImageSpacePopover = (props: ImageSpacePopoverProps) => {
     content, children, style, ...rest
   } = props;
 
-  const [open, setOpen] = useMergedState<boolean>(defaultOpen, {
+  const [open, setOpen] = useMergedState<boolean>(false, {
+    defaultValue: defaultOpen,
     value: isOpen,
     onChange: onOpenChange
   });
+
+  const getNewImageSpace = useCallback((children: ReactNode | (() => ReactNode)) => {
+    children = typeof children == 'function' ? children() : content;
+    const imageSpace = Array.isArray(children) ? children[0] : children;
+    const { display, value, ...restProps } = imageSpace.props as ImageSpaceProps;
+    return {
+      ...imageSpace,
+      props: {
+        display: open ? display : 'none',
+        value: open ? value : [],
+        ...restProps,
+      },
+    };
+  }, [open]);
 
   return (
     <Popover
       trigger={'click'}
       arrow={false}
       {...rest}
-      content={content}
+      content={getNewImageSpace(content)}
       open={open}
       onOpenChange={(open, e) => {
         setOpen?.(open);
@@ -286,6 +301,20 @@ const ImageSpaceModal = (props: ImageSpaceModalProps) => {
     onChange: onOpenChange
   });
 
+  const getNewImageSpace = useCallback((children: ReactNode | (() => ReactNode)) => {
+    children = typeof children == 'function' ? children() : children;
+    const imageSpace = Array.isArray(children) ? children[0] : children;
+    const { display, value, ...restProps } = imageSpace.props as ImageSpaceProps;
+    return {
+      ...imageSpace,
+      props: {
+        display: open ? display : 'none',
+        value: open ? value : [],
+        ...restProps,
+      },
+    };
+  }, [open]);
+
   return (
     <Modal
       title={title}
@@ -306,10 +335,11 @@ const ImageSpaceModal = (props: ImageSpaceModalProps) => {
         setOpen(false);
       }}
     >
-      {children}
+      {getNewImageSpace(children)}
     </Modal>
   )
 };
+
 type CompoundedComponent = typeof InternalImageSpace & {
   Popover: typeof ImageSpacePopover;
   Modal: typeof ImageSpaceModal;

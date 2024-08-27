@@ -42,7 +42,7 @@ const genBizStyle: GenerateStyle<SalePropInputToken> = (token) => {
     },
   }
 };
-
+// repeating-linear-gradient(-45deg, transparent, transparent 6px, #f0f2f5 0, #f0f2f5 8px) !important;
 interface SalePropInputToken extends BizAliasToken {
 
 }

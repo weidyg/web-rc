@@ -41,9 +41,21 @@ const SalePropInput = (
   });
 
   const items: MenuProps['items'] = [
-    { key: '1', label: '替换', onClick: () => { } },
-    { key: '2', label: '删除', onClick: () => { } },
-    { key: '3', label: '裁剪', onClick: () => { } },
+    {
+      key: '1', label: '替换', onClick: () => {
+
+      }
+    },
+    {
+      key: '2', label: '删除', onClick: () => {
+        setValue({ ...value, img: undefined });
+      }
+    },
+    {
+      key: '3', label: '裁剪', onClick: () => {
+
+      }
+    },
   ];
 
   return wrapSSR(

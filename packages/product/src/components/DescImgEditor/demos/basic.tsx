@@ -146,14 +146,7 @@ const ImageSelect = forwardRef<ImageSelectRef, ImageSelectProps>((
 
 const Add = (props: { onOk?: (url: string[]) => void | Promise<void>; }) => {
   const { onOk } = props;
-  const _ref = useRef<ImageSelectRef>(null);
   const [isOpen, setIsOpen] = useState(false);
-  useEffect(() => {
-    if (!isOpen) {
-      _ref?.current?.clearSelected();
-      _ref?.current?.setDisplay('none');
-    }
-  }, [isOpen]);
   return (<>
     <ImageSpace.Modal
       open={isOpen}
@@ -161,7 +154,6 @@ const Add = (props: { onOk?: (url: string[]) => void | Promise<void>; }) => {
     // destroyOnClose
     >
       <ImageSelect
-        ref={_ref}
         mutiple={true}
         onOk={(files) => {
           const urls = files.map((file) => file.fullUrl!);
@@ -184,14 +176,7 @@ const Add = (props: { onOk?: (url: string[]) => void | Promise<void>; }) => {
 
 const Edit = (props: { onOk?: (url: string) => void | Promise<void>; }) => {
   const { onOk } = props;
-  const _ref = useRef<ImageSelectRef>(null);
   const [isOpen, setIsOpen] = useState(false);
-  useEffect(() => {
-    if (!isOpen) {
-      _ref?.current?.clearSelected();
-      _ref?.current?.setDisplay('none');
-    }
-  }, [isOpen]);
   return (<>
     <ImageSpace.Popover
       destroyTooltipOnHide
@@ -199,7 +184,6 @@ const Edit = (props: { onOk?: (url: string) => void | Promise<void>; }) => {
       onOpenChange={setIsOpen}
       content={
         <ImageSelect
-          ref={_ref}
           mutiple={false}
           onOk={(files) => {
             const urls = files.map((file) => file.fullUrl!);
