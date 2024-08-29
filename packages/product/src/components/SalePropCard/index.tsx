@@ -208,11 +208,10 @@ const SalePropCard = <
           <div className={classNames(`${prefixCls}-group-wrapper`, hashId)}>
             <Menu className={classNames(`${prefixCls}-group-menu`, hashId)}
               selectedKeys={[groupValue || '']}
-              onClick={({ key }) => { uniqueGroup ? setGroupValue(key) : undefined; }}
+              onClick={({ key }) => { setGroupValue(key); }}
               items={options?.map(({ value: key, label }, _i) => ({
-                key, label,
-                className: classNames(`${prefixCls}-group-item`, hashId),
-                onMouseEnter: () => { !uniqueGroup ? setGroupValue(key) : undefined; },
+                key, label, className: classNames(`${prefixCls}-group-item`, hashId),
+                // onMouseEnter: () => { !uniqueGroup ? setGroupValue(key) : undefined; },
               }))}
             />
           </div>
