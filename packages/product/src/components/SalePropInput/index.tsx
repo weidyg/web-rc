@@ -88,13 +88,12 @@ const SalePropInput = (
 
   const [values, setValues] = useState<any>();
   const content = <SalePropCard
-    current={value?.value}
+    current={{ label: value?.text, value: value?.value }}
     uniqueGroup={uniqueGroup}
     options={options}
     value={values}
     onOk={(vals) => {
       const [values, objs] = getValues(vals, options);
-      console.log('uniqueGroup', uniqueGroup, 'vals', vals, 'values', values, 'objs', objs);
       if (objs?.length) {
         const obj = objs.find(f => f.label == value?.text) || objs[0];
         setValue({ ...value, text: obj.label, value: obj.value });
@@ -110,7 +109,8 @@ const SalePropInput = (
   />;
 
   const children = <Input allowClear
-    value={value?.text}
+    placeholder={open ? value?.text : '请输入'}
+    value={open ? undefined : value?.text}
     onChange={(e) => {
       const id = e.target.value;
       const text = e.target.value;

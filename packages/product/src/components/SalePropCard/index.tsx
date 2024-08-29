@@ -36,7 +36,7 @@ export type SalePropCardProps<ValueType extends BaseValueType = any> = {
   prefixCls?: string;
   uniqueGroup?: boolean;
   options?: BaseOptionType[] | GroupOptionType[];
-  current?: string;
+  current?: Partial<BaseOptionType>;
   value?: ValueType;
   onOk?: (value?: ValueType) => Promise<void> | void,
   onCancel?: () => void,
@@ -148,15 +148,17 @@ const SalePropCard = <
         [groupValue!]: checkedValues
       }
       : checkedValues;
+
     setValue(newValue as ValueType);
   }
-  function vaildDisabled(val: any) {
+  function vaildDisabled(opt: BaseOptionType) {
     let values = getGroupValues(propValue, isGroup, groupValue);
-    return val != current && values?.includes(val);
+    return (opt?.value != current?.value && opt?.label != current?.label)
+      && values?.includes(opt?.value);
   }
-  function vaildChecked(val: string) {
+  function vaildChecked(opt: BaseOptionType) {
     let values = getGroupValues(value, isGroup, groupValue);
-    return values?.includes(val);
+    return values?.includes(opt?.value);
   }
 
   return wrapSSR(
@@ -226,8 +228,8 @@ const SalePropCard = <
               <Flex wrap gap="small" justify="space-around">
                 {itemOpts?.map((item, i) => {
                   const { value: val, label: text = '' } = item;
-                  const disabled = vaildDisabled(val);
-                  const checked = vaildChecked(val);
+                  const disabled = vaildDisabled(item);
+                  const checked = vaildChecked(item);
                   const sk = !showKeyword || text.indexOf(showKeyword) != -1;
                   const sc = (showChecked && checked) || !showChecked;
                   return (
