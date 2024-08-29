@@ -139,7 +139,6 @@ const SalePropCard = <
     onCancel?.();
   }
   function handleGroupChange(key: string): void {
-    console.log('handleGroupChange', key);
     setGroupValue(key);
   }
   function handleValueChange(checkedValues: string[]): void {
@@ -208,10 +207,10 @@ const SalePropCard = <
           <div className={classNames(`${prefixCls}-group-wrapper`, hashId)}>
             <Menu className={classNames(`${prefixCls}-group-menu`, hashId)}
               selectedKeys={[groupValue || '']}
-              onClick={({ key }) => { setGroupValue(key); }}
+              onClick={({ key }) => { handleGroupChange(key); }}
               items={options?.map(({ value: key, label }, _i) => ({
                 key, label, className: classNames(`${prefixCls}-group-item`, hashId),
-                // onMouseEnter: () => { !uniqueGroup ? setGroupValue(key) : undefined; },
+                // onMouseEnter: () => { !uniqueGroup ? handleGroupChange(key) : undefined; },
               }))}
             />
           </div>
