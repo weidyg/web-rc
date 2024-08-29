@@ -5,36 +5,41 @@
 
 import { useState } from "react";
 import { ImageInput } from "@web-react/biz-components";
-import { Button } from "antd";
+import { Button, Space } from "antd";
 
 export default () => {
   const [value, setValue] = useState<string>();
   return (
     <div style={{ margin: 20 }}>
-      <Button onClick={() => setValue("https://img.alicdn.com/imgextra/i3/1035339340/O1CN01e6wCqc2IrmErsQuYd_!!1035339340.jpg_320x320q80_.webp")}>重置</Button>
+      <Space>
 
-      <ImageInput
-        value={value}
-        onChange={(value) => {
-          setValue(value);
-        }}
-      />
+        <Button onClick={() => setValue("https://img.alicdn.com/imgextra/i3/1035339340/O1CN01e6wCqc2IrmErsQuYd_!!1035339340.jpg_320x320q80_.webp")}>重置</Button>
 
-      <ImageInput
-        style={{ width: 90, height: 90 }}
-        value={value}
-        onChange={(value) => {
-          setValue(value);
-        }}
-      />
+        <ImageInput
+          value={value}
+          onChange={(value) => {
+            setValue(value);
+          }}
+        />
 
-      <ImageInput
-        style={{ width: 90, height: 120 }}
-        value={value}
-        onChange={(value) => {
-          setValue(value);
-        }}
-      />
+        <ImageInput
+          placeholder='上传图片'
+          style={{ width: 90, height: 90 }}
+          value={value}
+          onChange={(value) => {
+            setValue(value);
+          }}
+        />
+
+        <ImageInput
+          placeholder='上传图片'
+          style={{ width: 90, height: 120 }}
+          value={value}
+          onChange={(value) => {
+            setValue(value);
+          }}
+        />
+      </Space>
     </div>
   );
 };

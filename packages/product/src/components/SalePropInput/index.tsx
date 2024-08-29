@@ -1,7 +1,7 @@
-import { useEffect, useMemo, useState } from 'react';
-import { Alert, Button, Card, Checkbox, Dropdown, Flex, Image, Input, Menu, MenuProps, Modal, Space, Switch, Typography } from 'antd';
-import { PictureOutlined, SearchOutlined } from '@ant-design/icons';
+import { useState } from 'react';
+import { Input, MenuProps, Popover, Space } from 'antd';
 import { classNames, useMergedState } from '@web-react/biz-utils';
+import { BaseOptionType, BaseValueType, GroupOptionType, ImageInput, SalePropCard, SalePropCardProps } from '@web-react/biz-components';
 import { useStyle } from './style';
 
 const StandardIcon: React.FC = () => {
@@ -11,12 +11,12 @@ const StandardIcon: React.FC = () => {
 }
 
 type SalePropValueType = {
-  value?: string | number,
+  value?: string,
   text?: string,
   img?: string,
   remark?: string
 };
-type SalePropInputProps = {
+type SalePropInputProps = Pick<SalePropCardProps, 'options' | 'uniqueGroup'> & {
   /** 类名 */
   className?: string;
   /** 样式 */
@@ -32,7 +32,9 @@ type SalePropInputProps = {
 const SalePropInput = (
   props: SalePropInputProps
 ) => {
+  const { className, style, uniqueGroup, options = [] } = props;
   const { prefixCls, wrapSSR, hashId, token } = useStyle(props.prefixCls);
+  const [open, setOpen] = useState(false);
   const [isStandard, setIsStandard] = useState(true);
   const [value, setValue] = useMergedState({}, {
     defaultValue: props?.defaultValue,
@@ -58,40 +60,95 @@ const SalePropInput = (
     },
   ];
 
-  return wrapSSR(
-    <Space className={classNames(`${prefixCls}`, hashId)}>
-      <div className={classNames(`${prefixCls}-img-wrap`, {
-        [`${prefixCls}-img-empty`]: !!!value?.img
-      }, hashId)}>
-        {value?.img ? (
-          <Dropdown menu={{ items }} arrow={false} placement='bottomCenter'>
-            <Image src={value?.img} preview={{ mask: false }}
-              wrapperClassName={classNames(`${prefixCls}-img-content`, hashId)}
-              className={classNames(`${prefixCls}-img`, hashId)} />
-          </Dropdown>
+  const getValues = (
+    value: BaseValueType,
+    options: SalePropCardProps['options'],
+  ): [string[], BaseOptionType[]] => {
+    let values: string[] = [];
+    let objs: BaseOptionType[] = [];
+    if (Array.isArray(value)) {
+      values = [...value];
+      objs = options?.filter(f => values.includes(f.value)) || [];
+      console.log('Array objs', values, objs);
+    } else if (typeof value == 'object') {
+      const keys = Object.keys(value);
+      if (keys.length) {
+        for (let i = 0; i < keys.length; i++) {
+          const currKey = keys[i];
+          const currValue = value[currKey];
+          values = [...values, ...currValue];
+          const currOptions = (options as GroupOptionType[])?.find(f => f.value == currKey)?.children || [];
+          objs = [...objs, ...currOptions?.filter(f => currValue.includes(f.value)) || []];
+        }
+      }
+      console.log('object objs', keys, values, objs);
+    }
+    return [values, objs];
+  }
 
-        ) : (
-          <PictureOutlined className={classNames(`${prefixCls}-img-placeholder`, hashId)} />
-        )}
-      </div>
+  const [values, setValues] = useState<any>();
+  const content = <SalePropCard
+    current={value?.value}
+    uniqueGroup={uniqueGroup}
+    options={options}
+    value={values}
+    onOk={(vals) => {
+      const [values, objs] = getValues(vals, options);
+      console.log('uniqueGroup', uniqueGroup, 'vals', vals, 'values', values, 'objs', objs);
+      if (objs?.length) {
+        const obj = objs.find(f => f.label == value?.text) || objs[0];
+        setValue({ ...value, text: obj.label, value: obj.value });
+        console.log('obj', obj);
+      }
+      setValues(vals);
+      setOpen(false);
+    }}
+    onCancel={() => {
+      setOpen(false);
+    }}
+    style={{ maxWidth: 580 }}
+  />;
+
+  const children = <Input allowClear
+    value={value?.text}
+    onChange={(e) => {
+      const id = e.target.value;
+      const text = e.target.value;
+      setValue({ ...value, text, value: id });
+    }}
+    style={{ width: '180px' }}
+    suffix={isStandard ? <StandardIcon /> : ''}
+  />;
+  return wrapSSR(
+    <Space style={style}
+      className={classNames(`${prefixCls}`, className, hashId)}
+    >
+      <ImageInput
+        value={value?.img}
+        onChange={(img) => {
+          setValue({ ...value, img });
+        }}
+      />
       <Space.Compact>
-        <Input allowClear
-          value={value?.text}
-          onChange={(e) => {
-            const text = e.target.value;
-            const id = e.target.value;
-            setValue({ ...value, value: id, text });
-          }}
-          style={{ width: '180px' }}
-          suffix={isStandard ? <StandardIcon /> : ''}
-        />
+        {(options?.length > 1) ?
+          <Popover
+            trigger={'click'}
+            content={content}
+            open={open}
+            onOpenChange={setOpen}
+          >
+            {children}
+          </Popover>
+          : children
+        }
         <Input allowClear
           value={value?.remark}
           onChange={(e) => {
             const remark = e.target.value;
             setValue({ ...value, remark });
           }}
-          style={{ width: '98px' }} />
+          style={{ width: '98px' }}
+        />
       </Space.Compact>
     </Space>
   );

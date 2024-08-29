@@ -31,6 +31,7 @@ const genBizStyle: GenerateStyle<ImageInputToken> = (token) => {
           fontSize: token.fontSizeLG,
         },
         '&-text': {
+          overflow: 'hidden',
           marginTop: token.marginXS,
           fontSize: token.fontSizeSM,
         },

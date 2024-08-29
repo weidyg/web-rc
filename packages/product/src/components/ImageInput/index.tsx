@@ -11,7 +11,7 @@ type ImageInputProps = {
   style?: React.CSSProperties;
   /** 自定义样式前缀 */
   prefixCls?: string;
-
+  placeholder?: string;
   defaultValue?: string;
   value?: string;
   onChange?: (value?: string) => void;
@@ -20,7 +20,7 @@ type ImageInputProps = {
 const ImageInput = (
   props: ImageInputProps
 ) => {
-  const { className, style } = props;
+  const { className, style, placeholder } = props;
   const { prefixCls, wrapSSR, hashId, token } = useStyle(props.prefixCls);
   const [imgUrl, setImgUrl] = useMergedState(undefined, {
     defaultValue: props?.defaultValue,
@@ -60,7 +60,9 @@ const ImageInput = (
       ) : (
         <div className={classNames(`${prefixCls}-placeholder`, hashId)}>
           <PictureOutlined className={classNames(`${prefixCls}-placeholder-icon`, hashId)} />
-          <span className={classNames(`${prefixCls}-placeholder-text`, hashId)}>上传图片</span>
+          {placeholder &&
+            <span className={classNames(`${prefixCls}-placeholder-text`, hashId)}>{placeholder}</span>
+          }
         </div>
       )}
     </div>

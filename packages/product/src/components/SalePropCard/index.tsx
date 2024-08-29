@@ -4,29 +4,30 @@ import { SearchOutlined } from '@ant-design/icons';
 import { classNames } from '@web-react/biz-utils';
 import { useStyle } from './style';
 
-
-const getValues = (
-  value?: string[] | GroupValueType,
+const getGroupValues = (
+  value?: BaseValueType,
   isGroup?: boolean,
   groupValue?: string
 ): string[] => {
   let values: string[] = [];
   if (isGroup && groupValue && typeof value == 'object') {
-    values = (value as GroupValueType)?.[groupValue] || [];
+    values = (value as any)?.[groupValue] || [];
   } else if (Array.isArray(value)) {
     values = value;
   }
   return values;
 }
+
+
 const getChildren = (item: any): BaseOptionType[] => {
   return item?.children || []
 }
 
 
-export type GroupValueType = { [key: string]: string[] };
+export type BaseValueType = string[] | { [key: string]: string[] };
 export type BaseOptionType = { label: string; value: string; }
 export type GroupOptionType = BaseOptionType & { children: BaseOptionType[] }
-export type SalePropCardProps<ValueType extends string[] | GroupValueType = any> = {
+export type SalePropCardProps<ValueType extends BaseValueType = any> = {
   /** 类名 */
   className?: string;
   /** 样式 */
@@ -34,7 +35,7 @@ export type SalePropCardProps<ValueType extends string[] | GroupValueType = any>
   /** 自定义样式前缀 */
   prefixCls?: string;
   uniqueGroup?: boolean;
-  options: BaseOptionType[] | GroupOptionType[];
+  options?: BaseOptionType[] | GroupOptionType[];
   current?: string;
   value?: ValueType;
   onOk?: (value?: ValueType) => Promise<void> | void,
@@ -42,11 +43,11 @@ export type SalePropCardProps<ValueType extends string[] | GroupValueType = any>
 };
 
 const SalePropCard = <
-  ValueType extends (string[] | GroupValueType) = any
+  ValueType extends BaseValueType = any
 >(
   props: SalePropCardProps<ValueType>
 ) => {
-  const { style, className, options, uniqueGroup,
+  const { style, className, options = [], uniqueGroup,
     current, value: propValue, onOk, onCancel
   } = props;
   const { prefixCls, wrapSSR, hashId, token } = useStyle(props.prefixCls);
@@ -64,7 +65,7 @@ const SalePropCard = <
 
   const [itemOpts, itemValues] = useMemo(() => {
     const itemOpts: BaseOptionType[] = isGroup
-      ? getChildren(options.find((f) => f.value === groupValue))
+      ? getChildren(options?.find((f) => f.value === groupValue))
       : options;
     const itemValues: string[] = isGroup
       ? typeof value == 'object' && groupValue ? (value as any)?.[groupValue] : []
@@ -97,12 +98,19 @@ const SalePropCard = <
     }
   }, [isGroup])
 
+  async function changeValue(_value: ValueType) {
+    if (onOk) {
+      await onOk?.(_value);
+    } else {
+      setValue(_value);
+    }
+  }
   function handleOk() {
     setLoading(true);
     setTimeout(async () => {
       let _value: ValueType;
       if (uniqueGroup && isGroup && groupValue) {
-        let values = getValues(value, isGroup, groupValue);
+        let values = getGroupValues(value, isGroup, groupValue);
         _value = { [groupValue]: values } as ValueType;
       } else {
         _value = value as ValueType;
@@ -114,8 +122,7 @@ const SalePropCard = <
           title: '操作确认',
           content: `“${oldGroup}”将更换成“${newGroup}”，${oldGroup}及sku数据将被清空，确认更换？`,
           onOk: async () => {
-            await onOk?.(_value);
-            setValue(_value);
+            changeValue(_value);
             setLoading(false);
           },
           onCancel: () => {
@@ -123,8 +130,7 @@ const SalePropCard = <
           }
         });
       } else {
-        await onOk?.(_value);
-        setValue(_value);
+        changeValue(_value);
         setLoading(false);
       }
     }, 10);
@@ -133,6 +139,7 @@ const SalePropCard = <
     onCancel?.();
   }
   function handleGroupChange(key: string): void {
+    console.log('handleGroupChange', key);
     setGroupValue(key);
   }
   function handleValueChange(checkedValues: string[]): void {
@@ -145,11 +152,11 @@ const SalePropCard = <
     setValue(newValue as ValueType);
   }
   function vaildDisabled(val: any) {
-    let values = getValues(propValue, isGroup, groupValue);
+    let values = getGroupValues(propValue, isGroup, groupValue);
     return val != current && values?.includes(val);
   }
   function vaildChecked(val: string) {
-    let values = getValues(value, isGroup, groupValue);
+    let values = getGroupValues(value, isGroup, groupValue);
     return values?.includes(val);
   }
 
@@ -201,10 +208,11 @@ const SalePropCard = <
           <div className={classNames(`${prefixCls}-group-wrapper`, hashId)}>
             <Menu className={classNames(`${prefixCls}-group-menu`, hashId)}
               selectedKeys={[groupValue || '']}
-              onClick={(info) => handleGroupChange(info.key)}
-              items={options?.map((item, _i) => ({
-                key: item.value, label: item.label,
+              onClick={({ key }) => { uniqueGroup ? setGroupValue(key) : undefined; }}
+              items={options?.map(({ value: key, label }, _i) => ({
+                key, label,
                 className: classNames(`${prefixCls}-group-item`, hashId),
+                onMouseEnter: () => { !uniqueGroup ? setGroupValue(key) : undefined; },
               }))}
             />
           </div>
