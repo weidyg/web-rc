@@ -13,7 +13,7 @@ export default () => {
     <>
       <SalePropCard
         uniqueGroup={uniqueGroup}
-        options={dataJson.color}
+        options={dataJson.size}
         value={value}
         onOk={(val) => {
           console.log('onOk', val);

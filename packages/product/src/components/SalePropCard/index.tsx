@@ -1,21 +1,14 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Alert, Button, Card, Checkbox, Flex, Input, Menu, Modal, Space, Switch, Typography } from 'antd';
+import { Alert, Button, Card, Checkbox, Flex, Input, Menu, Modal, Radio, Space, Switch, Typography } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import { classNames, useMergedState } from '@web-react/biz-utils';
 import { useStyle } from './style';
 
-const getValuesByGroup = (
-  value?: BaseValueType,
-  isGroup?: boolean,
-  groupValue?: string
-): string[] => {
-  let values: string[] = [];
-  if (isGroup && groupValue && typeof value == 'object') {
-    values = (value as any)?.[groupValue] || [];
-  } else if (Array.isArray(value)) {
-    values = value;
-  }
-  return values;
+const getValuesByGroup = (value?: BaseValueType, isGroup?: boolean, groupValue?: string): string[] => {
+  const itemValues: string[] = isGroup
+    ? typeof value == 'object' && groupValue ? ((value as any)?.[groupValue] || []) : []
+    : Array.isArray(value) ? value : [];
+  return itemValues;
 }
 
 export type OptionItemType = { label: string; value: string; }
@@ -61,10 +54,8 @@ const SalePropCard = <
   const [itemOpts, itemValues] = useMemo(() => {
     const itemOpts: OptionItemType[] = isGroup
       ? (options as OptionGroupType[]).find((f) => f.value === groupValue)?.children || []
-      : options;
-    const itemValues: string[] = isGroup
-      ? typeof value == 'object' && groupValue ? (value as any)?.[groupValue] : []
-      : Array.isArray(value) ? value : [];
+      : options || [];
+    const itemValues: string[] = getValuesByGroup(value, isGroup, groupValue);
     return [itemOpts, itemValues];
   }, [isGroup, groupValue, value]);
 
@@ -79,13 +70,10 @@ const SalePropCard = <
     return 0;
   }, [value, groupValue, uniqueGroup]);
 
-  const propValuesWithGroup = useMemo(() => {
+  const initialValuesWithGroup = useMemo(() => {
     return getValuesByGroup(propValue, isGroup, groupValue);
   }, [propValue, isGroup, groupValue]);
 
-  const valuesWithGroup = useMemo(() => {
-    return getValuesByGroup(value, isGroup, groupValue);
-  }, [value, isGroup, groupValue]);
 
   useEffect(() => {
     let _groupValue: string | undefined = undefined;
@@ -114,7 +102,7 @@ const SalePropCard = <
     setTimeout(async () => {
       let _value: ValueType;
       if (uniqueGroup && isGroup && groupValue) {
-        _value = { [groupValue]: valuesWithGroup } as ValueType;
+        _value = { [groupValue]: itemValues } as ValueType;
       } else {
         _value = value as ValueType;
       }
@@ -144,7 +132,9 @@ const SalePropCard = <
   function handleGroupChange(key: string): void {
     setGroupValue(key);
   }
+
   function handleValueChange(checkedValues: string[]): void {
+
     const newValue = isGroup
       ? { ...value, [groupValue!]: checkedValues }
       : checkedValues;
@@ -152,10 +142,8 @@ const SalePropCard = <
   }
 
   function vaildDisabled(opt: OptionItemType) {
-    if (opt?.value == current || opt?.label == current) {
-      return false;
-    }
-    return propValuesWithGroup?.includes(opt?.value);
+    if (opt?.value == current || opt?.label == current) { return false; }
+    return initialValuesWithGroup?.includes(opt?.value);
   }
   return wrapSSR(
     <Card className={classNames(prefixCls, className, hashId)}
@@ -205,10 +193,10 @@ const SalePropCard = <
           <div className={classNames(`${prefixCls}-group-wrapper`, hashId)}>
             <Menu className={classNames(`${prefixCls}-group-menu`, hashId)}
               selectedKeys={[groupValue || '']}
-              onClick={({ key }) => { handleGroupChange(key); }}
+              onClick={({ key }) => { uniqueGroup ? handleGroupChange(key) : undefined; }}
               items={options?.map(({ value: key, label }, _i) => ({
                 key, label, className: classNames(`${prefixCls}-group-item`, hashId),
-                // onMouseEnter: () => { !uniqueGroup ? handleGroupChange(key) : undefined; },
+                onMouseEnter: () => { !uniqueGroup ? handleGroupChange(key) : undefined; },
               }))}
             />
           </div>
@@ -217,37 +205,43 @@ const SalePropCard = <
           {isGroup && uniqueGroup && (
             <Alert banner type='info' message='切换分组会清空您已勾选尺码与SKU数据，请谨慎操作' />
           )}
-          <div className={classNames(`${prefixCls}-checkbox-wrapper`, hashId)}>
-            <Checkbox.Group
-              value={itemValues}
-              onChange={handleValueChange}>
-              <Flex wrap gap="small" justify="space-around">
-                {itemOpts?.map((item, i) => {
-                  const { value: val, label: text = '' } = item;
-                  const disabled = vaildDisabled(item);
-                  const hidden = searchKeyword && text.indexOf(searchKeyword) == -1;
-                  return (
-                    <Checkbox key={i}
-                      value={val}
-                      disabled={disabled}
-                      className={classNames(`${prefixCls}-checkbox`, hashId, {
-                        [`${prefixCls}-checkbox-hidden`]: hidden,
-                        [`${prefixCls}-checkbox-only-checked`]: showChecked,
-                      })}
-                    >
-                      <Typography.Text
-                        className={classNames(`${prefixCls}-checkbox-text`, hashId)}
-                        ellipsis={{ tooltip: text }}>
-                        {text}
-                      </Typography.Text>
-                    </Checkbox>
-                  );
-                })}
-                {Array.from({ length: 20 }, (_, i) => (
-                  <div key={i} className={classNames(`${prefixCls}-checkbox-empty`, hashId)} />
-                ))}
-              </Flex>
-            </Checkbox.Group>
+          <div className={classNames(`${prefixCls}-item-wrapper`, hashId)}>
+            <Flex wrap gap="small" justify="space-around">
+              {itemOpts?.map((item, i) => {
+                const { value: val, label: text = '' } = item;
+                const disabled = vaildDisabled(item);
+                const checked = itemValues?.includes(val);
+                const hidden = searchKeyword && text.indexOf(searchKeyword) == -1;
+                return (
+                  <Radio key={i}
+                    disabled={disabled}
+                    checked={checked}
+                    onChange={(e) => {
+                      const _checked = e.target.checked;
+                      if (_checked != checked) {
+                        const newValues = _checked
+                          ? [...itemValues.filter(f => initialValuesWithGroup.includes(f)), val]
+                          : itemValues.filter(f => f != val);
+                        handleValueChange(newValues);
+                      }
+                    }}
+                    className={classNames(`${prefixCls}-item`, hashId, {
+                      [`${prefixCls}-item-hidden`]: hidden || (!checked && showChecked),
+                      [`${prefixCls}-item-action`]: checked && !disabled,
+                    })}
+                  >
+                    <Typography.Text
+                      className={classNames(`${prefixCls}-item-text`, hashId)}
+                      ellipsis={{ tooltip: text }}>
+                      {text}
+                    </Typography.Text>
+                  </Radio>
+                );
+              })}
+              {Array.from({ length: 20 }, (_, i) => (
+                <div key={i} className={classNames(`${prefixCls}-item-empty`, hashId)} />
+              ))}
+            </Flex>
           </div>
         </div>
       </Flex>

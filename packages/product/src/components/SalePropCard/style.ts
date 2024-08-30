@@ -36,17 +36,28 @@ const genBizStyle: GenerateStyle<SalePropCardToken> = (token) => {
           lineHeight: '32px !important',
         },
       },
-      '&-checkbox': {
+      '&-item': {
         width: '100px',
         padding: '4px 4px 4px 8px',
         boxSizing: 'border-box',
+        marginInline: 0,
         borderRadius: token.borderRadius,
         backgroundColor: token.colorFillContent,
-        [`&:has(${token.antCls}-checkbox-checked:not(${token.antCls}-checkbox-disabled))`]: {
+        // [`&:has(${token.antCls}-checkbox-checked:not(${token.antCls}-checkbox-disabled)),
+        //   &:has(${token.antCls}-radio-checked:not(${token.antCls}-radio-disabled))`]: {
+        //   backgroundColor: token.colorPrimaryBg,
+        // },
+        // [`&-only-checked:has(${token.antCls}-checkbox:not(${token.antCls}-checkbox-checked)),
+        //   &-only-checked:has(${token.antCls}-radio:not(${token.antCls}-radio-checked)),
+        //   &-hidden`]: {
+        //   display: 'none',
+        //   width: '0px',
+        //   height: '0px',
+        // },   
+        '&-action': {
           backgroundColor: token.colorPrimaryBg,
         },
-        [`&-only-checked:has(${token.antCls}-checkbox:not(${token.antCls}-checkbox-checked)),
-          &-hidden`]: {
+        '&-hidden': {
           display: 'none',
           width: '0px',
           height: '0px',
