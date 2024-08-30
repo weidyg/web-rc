@@ -37,26 +37,29 @@ const genBizStyle: GenerateStyle<SalePropCardToken> = (token) => {
         },
       },
       '&-checkbox': {
-        padding: '4px 4px 4px 8px',
         width: '100px',
+        padding: '4px 4px 4px 8px',
         boxSizing: 'border-box',
         borderRadius: token.borderRadius,
         backgroundColor: token.colorFillContent,
+        [`&:has(${token.antCls}-checkbox-checked:not(${token.antCls}-checkbox-disabled))`]: {
+          backgroundColor: token.colorPrimaryBg,
+        },
+        [`&-only-checked:has(${token.antCls}-checkbox:not(${token.antCls}-checkbox-checked)),
+          &-hidden`]: {
+          display: 'none',
+          width: '0px',
+          height: '0px',
+        },
+        '&-empty': {
+          width: '100px',
+        },
         '&-wrapper': {
           padding: '8px',
         },
         '&-text': {
           width: '56px',
         },
-        '&-action': {
-          color: token.colorPrimary,
-          backgroundColor: token.colorPrimaryBg,
-        },
-        '&-hidden': {
-          display: 'none',
-          width: '0px',
-          height: '0px',
-        }
       }
     }
   };

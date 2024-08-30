@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Input, MenuProps, Popover, Space } from 'antd';
 import { classNames, useMergedState } from '@web-react/biz-utils';
-import { BaseOptionType, BaseValueType, GroupOptionType, ImageInput, SalePropCard, SalePropCardProps } from '@web-react/biz-components';
+import { BaseValueType, ImageInput, OptionGroupType, OptionItemType, SalePropCard, SalePropCardProps } from '@web-react/biz-components';
 import { useStyle } from './style';
 
 const StandardIcon: React.FC = () => {
@@ -63,9 +63,9 @@ const SalePropInput = (
   const getValues = (
     value: BaseValueType,
     options: SalePropCardProps['options'],
-  ): [string[], BaseOptionType[]] => {
+  ): [string[], OptionItemType[]] => {
     let values: string[] = [];
-    let objs: BaseOptionType[] = [];
+    let objs: OptionItemType[] = [];
     if (Array.isArray(value)) {
       values = [...value];
       objs = options?.filter(f => values.includes(f.value)) || [];
@@ -77,7 +77,7 @@ const SalePropInput = (
           const currKey = keys[i];
           const currValue = value[currKey];
           values = [...values, ...currValue];
-          const currOptions = (options as GroupOptionType[])?.find(f => f.value == currKey)?.children || [];
+          const currOptions = (options as OptionGroupType[])?.find(f => f.value == currKey)?.children || [];
           objs = [...objs, ...currOptions?.filter(f => currValue.includes(f.value)) || []];
         }
       }
@@ -88,7 +88,7 @@ const SalePropInput = (
 
   const [values, setValues] = useState<any>();
   const content = <SalePropCard
-    current={{ label: value?.text, value: value?.value }}
+    current={value?.value || value?.text}
     uniqueGroup={uniqueGroup}
     options={options}
     value={values}

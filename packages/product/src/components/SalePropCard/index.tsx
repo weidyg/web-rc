@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Alert, Button, Card, Checkbox, Flex, Input, Menu, Modal, Space, Switch, Typography } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
-import { classNames } from '@web-react/biz-utils';
+import { classNames, useMergedState } from '@web-react/biz-utils';
 import { useStyle } from './style';
 
-const getGroupValues = (
+const getValuesByGroup = (
   value?: BaseValueType,
   isGroup?: boolean,
   groupValue?: string
@@ -18,16 +18,11 @@ const getGroupValues = (
   return values;
 }
 
-
-const getChildren = (item: any): BaseOptionType[] => {
-  return item?.children || []
-}
-
-
+export type OptionItemType = { label: string; value: string; }
+export type OptionGroupType = OptionItemType & { children: OptionItemType[] }
+export type BaseOptionsType = OptionGroupType[] | OptionItemType[];
 export type BaseValueType = string[] | { [key: string]: string[] };
-export type BaseOptionType = { label: string; value: string; }
-export type GroupOptionType = BaseOptionType & { children: BaseOptionType[] }
-export type SalePropCardProps<ValueType extends BaseValueType = any> = {
+export type SalePropCardProps<ValueType extends BaseValueType = BaseValueType> = {
   /** 类名 */
   className?: string;
   /** 样式 */
@@ -35,15 +30,15 @@ export type SalePropCardProps<ValueType extends BaseValueType = any> = {
   /** 自定义样式前缀 */
   prefixCls?: string;
   uniqueGroup?: boolean;
-  options?: BaseOptionType[] | GroupOptionType[];
-  current?: Partial<BaseOptionType>;
+  options?: BaseOptionsType;
+  current?: string;
   value?: ValueType;
   onOk?: (value?: ValueType) => Promise<void> | void,
   onCancel?: () => void,
 };
 
 const SalePropCard = <
-  ValueType extends BaseValueType = any
+  ValueType extends BaseValueType = BaseValueType
 >(
   props: SalePropCardProps<ValueType>
 ) => {
@@ -51,21 +46,21 @@ const SalePropCard = <
     current, value: propValue, onOk, onCancel
   } = props;
   const { prefixCls, wrapSSR, hashId, token } = useStyle(props.prefixCls);
-
   const [loading, setLoading] = useState(false);
   const [showChecked, setShowChecked] = useState(false);
-  const [showKeyword, setShowKeyword] = useState<string>();
+  const [searchKeyword, setSearchKeyword] = useState<string>();
+
   const [initGroupValue, setInitGroupValue] = useState<string>();
   const [groupValue, setGroupValue] = useState<string>();
-  const [value, setValue] = useState(propValue);
+  const [value, setValue] = useMergedState(propValue);
 
   const isGroup = useMemo(() => {
-    return options?.some((item) => getChildren(item)?.length > 0);
+    return options?.some((item) => (item as OptionGroupType)?.children?.length > 0);
   }, [options])
 
   const [itemOpts, itemValues] = useMemo(() => {
-    const itemOpts: BaseOptionType[] = isGroup
-      ? getChildren(options?.find((f) => f.value === groupValue))
+    const itemOpts: OptionItemType[] = isGroup
+      ? (options as OptionGroupType[]).find((f) => f.value === groupValue)?.children || []
       : options;
     const itemValues: string[] = isGroup
       ? typeof value == 'object' && groupValue ? (value as any)?.[groupValue] : []
@@ -84,6 +79,14 @@ const SalePropCard = <
     return 0;
   }, [value, groupValue, uniqueGroup]);
 
+  const propValuesWithGroup = useMemo(() => {
+    return getValuesByGroup(propValue, isGroup, groupValue);
+  }, [propValue, isGroup, groupValue]);
+
+  const valuesWithGroup = useMemo(() => {
+    return getValuesByGroup(value, isGroup, groupValue);
+  }, [value, isGroup, groupValue]);
+
   useEffect(() => {
     let _groupValue: string | undefined = undefined;
     if (isGroup && typeof value == 'object') {
@@ -99,19 +102,16 @@ const SalePropCard = <
   }, [isGroup])
 
   async function changeValue(_value: ValueType) {
-    if (onOk) {
-      await onOk?.(_value);
-    } else {
-      setValue(_value);
-    }
+    await onOk?.(_value);
+    setValue(_value);
   }
+
   function handleOk() {
     setLoading(true);
     setTimeout(async () => {
       let _value: ValueType;
       if (uniqueGroup && isGroup && groupValue) {
-        let values = getGroupValues(value, isGroup, groupValue);
-        _value = { [groupValue]: values } as ValueType;
+        _value = { [groupValue]: valuesWithGroup } as ValueType;
       } else {
         _value = value as ValueType;
       }
@@ -143,24 +143,17 @@ const SalePropCard = <
   }
   function handleValueChange(checkedValues: string[]): void {
     const newValue = isGroup
-      ? {
-        ...value,
-        [groupValue!]: checkedValues
-      }
+      ? { ...value, [groupValue!]: checkedValues }
       : checkedValues;
-
     setValue(newValue as ValueType);
   }
-  function vaildDisabled(opt: BaseOptionType) {
-    let values = getGroupValues(propValue, isGroup, groupValue);
-    return (opt?.value != current?.value && opt?.label != current?.label)
-      && values?.includes(opt?.value);
-  }
-  function vaildChecked(opt: BaseOptionType) {
-    let values = getGroupValues(value, isGroup, groupValue);
-    return values?.includes(opt?.value);
-  }
 
+  function vaildDisabled(opt: OptionItemType) {
+    if (opt?.value == current || opt?.label == current) {
+      return false;
+    }
+    return propValuesWithGroup?.includes(opt?.value);
+  }
   return wrapSSR(
     <Card className={classNames(prefixCls, className, hashId)}
       classNames={{
@@ -188,9 +181,9 @@ const SalePropCard = <
             placeholder='请输入搜索'
             style={{ width: '160px' }}
             suffix={<SearchOutlined />}
-            value={showKeyword}
+            value={searchKeyword}
             onChange={(event) => {
-              setShowKeyword(event?.target?.value);
+              setSearchKeyword(event?.target?.value);
             }}
           />
         </Space>
@@ -228,19 +221,16 @@ const SalePropCard = <
               <Flex wrap gap="small" justify="space-around">
                 {itemOpts?.map((item, i) => {
                   const { value: val, label: text = '' } = item;
-                  const disabled = vaildDisabled(item);
-                  const checked = vaildChecked(item);
-                  const sk = !showKeyword || text.indexOf(showKeyword) != -1;
-                  const sc = (showChecked && checked) || !showChecked;
+                  const  disabled = vaildDisabled(item);
+                  const hidden = searchKeyword && text.indexOf(searchKeyword) == -1;
                   return (
                     <Checkbox key={i}
                       value={val}
                       disabled={disabled}
                       className={classNames(`${prefixCls}-checkbox`, hashId, {
-                        [`${prefixCls}-checkbox-hidden`]: !(sk && sc),
-                        [`${prefixCls}-checkbox-action`]: !disabled && checked
-                      })
-                      }
+                        [`${prefixCls}-checkbox-hidden`]: hidden,
+                        [`${prefixCls}-checkbox-only-checked`]: showChecked,
+                      })}
                     >
                       <Typography.Text
                         className={classNames(`${prefixCls}-checkbox-text`, hashId)}
@@ -251,7 +241,7 @@ const SalePropCard = <
                   );
                 })}
                 {Array.from({ length: 20 }, (_, i) => (
-                  <div key={i} style={{ width: 100, height: 0 }} />
+                  <div key={i} className={classNames(`${prefixCls}-checkbox-empty`, hashId)} />
                 ))}
               </Flex>
             </Checkbox.Group>
