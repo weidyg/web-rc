@@ -15,6 +15,10 @@ export type OptionItemType = { label: string; value: string; }
 export type OptionGroupType = OptionItemType & { children: OptionItemType[] }
 export type BaseOptionsType = OptionGroupType[] | OptionItemType[];
 export type BaseValueType = string[] | { [key: string]: string[] };
+
+
+
+
 export type SalePropCardProps<ValueType extends BaseValueType = BaseValueType> = {
   /** 类名 */
   className?: string;
@@ -26,6 +30,39 @@ export type SalePropCardProps<ValueType extends BaseValueType = BaseValueType> =
   options?: BaseOptionsType;
   current?: string;
   value?: ValueType;
+
+  dataSource?: BaseOptionsType;
+  currentValue?: { text: "165/80A", value: 7190522 },
+  value1?: {
+    "group": {
+      "text": "中国号型A",
+      "value": "136553091-men_tops"
+    },
+    "value": [
+      {
+        "value": 7190522,
+        "text": "165/80A"
+      },
+      {
+        "text": "S",
+        "value": -20010815
+      }
+    ]
+  },
+  value2?: [
+    {
+      "text": "乳白色",
+      "value": 28321
+    },
+    {
+      "text": "乳色",
+      "value": -24820406
+    },
+    {
+      "text": "米白色",
+      "value": 4266701
+    }
+  ]
   onOk?: (value?: ValueType) => Promise<void> | void,
   onCancel?: () => void,
 };
@@ -65,7 +102,7 @@ const SalePropCard = <
     } else if (typeof value == 'object') {
       return uniqueGroup
         ? (groupValue && value[groupValue]?.length) || 0
-        : Object.values(value).reduce((pre, cur) => pre + (cur as any).length, 0);
+        : Object.values(value).reduce((pre, cur) => pre + cur.length, 0);
     }
     return 0;
   }, [value, groupValue, uniqueGroup]);
@@ -134,7 +171,6 @@ const SalePropCard = <
   }
 
   function handleValueChange(checkedValues: string[]): void {
-
     const newValue = isGroup
       ? { ...value, [groupValue!]: checkedValues }
       : checkedValues;

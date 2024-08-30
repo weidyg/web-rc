@@ -133,6 +133,7 @@ const SalePropInput = (
         {(options?.length > 1) ?
           <Popover
             trigger={'click'}
+            placement={'bottom'}
             content={content}
             open={open}
             onOpenChange={setOpen}
