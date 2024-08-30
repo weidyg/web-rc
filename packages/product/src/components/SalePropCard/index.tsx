@@ -101,9 +101,12 @@ const SalePropCard = <
     }
   }, [isGroup])
 
-  async function changeValue(_value: ValueType) {
-    await onOk?.(_value);
-    setValue(_value);
+  async function changeValue(value: ValueType) {
+    if (onOk) {
+      await onOk?.(value);
+    } else {
+      setValue(value);
+    }
   }
 
   function handleOk() {
@@ -130,7 +133,7 @@ const SalePropCard = <
           }
         });
       } else {
-        changeValue(_value);
+        await changeValue(_value);
         setLoading(false);
       }
     }, 10);
@@ -221,7 +224,7 @@ const SalePropCard = <
               <Flex wrap gap="small" justify="space-around">
                 {itemOpts?.map((item, i) => {
                   const { value: val, label: text = '' } = item;
-                  const  disabled = vaildDisabled(item);
+                  const disabled = vaildDisabled(item);
                   const hidden = searchKeyword && text.indexOf(searchKeyword) == -1;
                   return (
                     <Checkbox key={i}
