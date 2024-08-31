@@ -176,6 +176,9 @@ const SalePropCard = <
     if (opt?.value == currentValue || opt?.label == currentValue) { return false; }
     return initialValuesWithGroup?.includes(opt?.value);
   }
+
+  const isRadio = false;
+  const ItemComponent = isRadio ? Radio : Checkbox;
   return wrapSSR(
     <Card className={classNames(prefixCls, className, hashId)}
       classNames={{
@@ -246,7 +249,7 @@ const SalePropCard = <
                 const checked = itemValues?.includes(val);
                 const hidden = searchKeyword && text.indexOf(searchKeyword) == -1;
                 return (
-                  <Radio key={i}
+                  <ItemComponent key={i}
                     disabled={disabled}
                     checked={checked}
                     onChange={(e) => {
@@ -268,7 +271,7 @@ const SalePropCard = <
                       ellipsis={{ tooltip: text }}>
                       {text}
                     </Typography.Text>
-                  </Radio>
+                  </ItemComponent>
                 );
               })}
               {Array.from({ length: 20 }, (_, i) => (
