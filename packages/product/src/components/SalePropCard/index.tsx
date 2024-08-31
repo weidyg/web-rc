@@ -73,8 +73,8 @@ const SalePropCard = <
   } = props;
   const { prefixCls, wrapSSR, hashId, token } = useStyle(props.prefixCls);
   const [loading, setLoading] = useState(false);
-  const [showChecked, setShowChecked] = useState(false);
   const [searchKeyword, setSearchKeyword] = useState<string>();
+  const [onlyShowChecked, setOnlyShowChecked] = useState(false);
 
   const [initGroupValue, setInitGroupValue] = useState<string>();
   const [value, setValue] = useMergedState(propValue);
@@ -213,8 +213,10 @@ const SalePropCard = <
           <Switch
             checkedChildren='已选'
             unCheckedChildren='全部'
-            checked={showChecked}
-            onChange={(c) => { setShowChecked(c); }}
+            checked={onlyShowChecked}
+            onChange={(checked) => {
+              setOnlyShowChecked(checked);
+            }}
           />
         </Space>
       </Flex>}
@@ -257,7 +259,7 @@ const SalePropCard = <
                       }
                     }}
                     className={classNames(`${prefixCls}-item`, hashId, {
-                      [`${prefixCls}-item-hidden`]: hidden || (!checked && showChecked),
+                      [`${prefixCls}-item-hidden`]: hidden || (!checked && onlyShowChecked),
                       [`${prefixCls}-item-action`]: checked && !disabled,
                     })}
                   >
