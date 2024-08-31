@@ -12,10 +12,10 @@ const getValuesByGroup = (value?: BaseValueType, isGroup?: boolean, groupValue?:
   return itemValues;
 }
 
+export type BaseValueType = string[] | { [key: string]: string[] };
+
 export type OptionItemType = { label: string; value: string; }
 export type OptionGroupType = OptionItemType & { children: OptionItemType[] }
-export type BaseOptionsType = OptionGroupType[] | OptionItemType[];
-export type BaseValueType = string[] | { [key: string]: string[] };
 export type SalePropCardProps<ValueType extends BaseValueType = BaseValueType> = {
   /** 类名 */
   className?: string;
@@ -24,8 +24,8 @@ export type SalePropCardProps<ValueType extends BaseValueType = BaseValueType> =
   /** 自定义样式前缀 */
   prefixCls?: string;
   uniqueGroup?: boolean;
-  options?: BaseOptionsType;
-  current?: string;
+  options?: OptionGroupType[] | OptionItemType[];
+  currentValue?: string;
   value?: ValueType;
   // dataSource?: BaseOptionsType;
   // currentValue?: { text: "165/80A", value: 7190522 },
@@ -69,7 +69,7 @@ const SalePropCard = <
   props: SalePropCardProps<ValueType>
 ) => {
   const { style, className, options = [], uniqueGroup,
-    current, value: propValue, onOk, onCancel
+    currentValue, value: propValue, onOk, onCancel
   } = props;
   const { prefixCls, wrapSSR, hashId, token } = useStyle(props.prefixCls);
   const [loading, setLoading] = useState(false);
@@ -173,7 +173,7 @@ const SalePropCard = <
   }
 
   function vaildDisabled(opt: OptionItemType) {
-    if (opt?.value == current || opt?.label == current) { return false; }
+    if (opt?.value == currentValue || opt?.label == currentValue) { return false; }
     return initialValuesWithGroup?.includes(opt?.value);
   }
   return wrapSSR(

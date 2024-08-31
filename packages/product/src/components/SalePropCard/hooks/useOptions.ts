@@ -1,8 +1,8 @@
 import { useCallback, useMemo } from "react";
-import { BaseOptionsType, OptionGroupType, OptionItemType } from "..";
+import { OptionGroupType, OptionItemType } from "..";
 
 type FlattenOptionType = OptionItemType & { group?: OptionItemType }
-export default function useOptions(options: BaseOptionsType)
+export default function useOptions(options: OptionGroupType[] | OptionItemType[])
     : [boolean, FlattenOptionType[], (groupValue?: string) => OptionItemType[]] {
 
     const [isGroup, flattenOptions] = useMemo(() => {
