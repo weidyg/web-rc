@@ -3,6 +3,7 @@ import { Alert, Button, Card, Checkbox, Flex, Input, Menu, Modal, Radio, Space, 
 import { SearchOutlined } from '@ant-design/icons';
 import { classNames, useMergedState } from '@web-react/biz-utils';
 import { useStyle } from './style';
+import useOptions from './hooks/useOptions';
 
 const getValuesByGroup = (value?: BaseValueType, isGroup?: boolean, groupValue?: string): string[] => {
   const itemValues: string[] = isGroup
@@ -15,10 +16,6 @@ export type OptionItemType = { label: string; value: string; }
 export type OptionGroupType = OptionItemType & { children: OptionItemType[] }
 export type BaseOptionsType = OptionGroupType[] | OptionItemType[];
 export type BaseValueType = string[] | { [key: string]: string[] };
-
-
-
-
 export type SalePropCardProps<ValueType extends BaseValueType = BaseValueType> = {
   /** 类名 */
   className?: string;
@@ -30,39 +27,38 @@ export type SalePropCardProps<ValueType extends BaseValueType = BaseValueType> =
   options?: BaseOptionsType;
   current?: string;
   value?: ValueType;
-
-  dataSource?: BaseOptionsType;
-  currentValue?: { text: "165/80A", value: 7190522 },
-  value1?: {
-    "group": {
-      "text": "中国号型A",
-      "value": "136553091-men_tops"
-    },
-    "value": [
-      {
-        "value": 7190522,
-        "text": "165/80A"
-      },
-      {
-        "text": "S",
-        "value": -20010815
-      }
-    ]
-  },
-  value2?: [
-    {
-      "text": "乳白色",
-      "value": 28321
-    },
-    {
-      "text": "乳色",
-      "value": -24820406
-    },
-    {
-      "text": "米白色",
-      "value": 4266701
-    }
-  ]
+  // dataSource?: BaseOptionsType;
+  // currentValue?: { text: "165/80A", value: 7190522 },
+  // value1?: {
+  //   "group": {
+  //     "text": "中国号型A",
+  //     "value": "136553091-men_tops"
+  //   },
+  //   "value": [
+  //     {
+  //       "value": 7190522,
+  //       "text": "165/80A"
+  //     },
+  //     {
+  //       "text": "S",
+  //       "value": -20010815
+  //     }
+  //   ]
+  // },
+  // value2?: [
+  //   {
+  //     "text": "乳白色",
+  //     "value": 28321
+  //   },
+  //   {
+  //     "text": "乳色",
+  //     "value": -24820406
+  //   },
+  //   {
+  //     "text": "米白色",
+  //     "value": 4266701
+  //   }
+  // ]
   onOk?: (value?: ValueType) => Promise<void> | void,
   onCancel?: () => void,
 };
@@ -81,35 +77,34 @@ const SalePropCard = <
   const [searchKeyword, setSearchKeyword] = useState<string>();
 
   const [initGroupValue, setInitGroupValue] = useState<string>();
-  const [groupValue, setGroupValue] = useState<string>();
   const [value, setValue] = useMergedState(propValue);
 
-  const isGroup = useMemo(() => {
-    return options?.some((item) => (item as OptionGroupType)?.children?.length > 0);
-  }, [options])
 
-  const [itemOpts, itemValues] = useMemo(() => {
-    const itemOpts: OptionItemType[] = isGroup
-      ? (options as OptionGroupType[]).find((f) => f.value === groupValue)?.children || []
-      : options || [];
-    const itemValues: string[] = getValuesByGroup(value, isGroup, groupValue);
-    return [itemOpts, itemValues];
-  }, [isGroup, groupValue, value]);
+  const [currentGroupValue, setCurrentGroupValue] = useState<string>();
+  const [isGroup, flattenOptions, getItemOptions] = useOptions(options);
+
+  const itemOpts = useMemo(() => {
+    return getItemOptions(currentGroupValue);
+  }, [currentGroupValue]);
+
+  const itemValues = useMemo(() => {
+    return getValuesByGroup(value, isGroup, currentGroupValue);
+  }, [currentGroupValue]);
 
   const selectedNum = useMemo(() => {
     if (Array.isArray(value)) {
       return value.length;
     } else if (typeof value == 'object') {
       return uniqueGroup
-        ? (groupValue && value[groupValue]?.length) || 0
+        ? (currentGroupValue && value[currentGroupValue]?.length) || 0
         : Object.values(value).reduce((pre, cur) => pre + cur.length, 0);
     }
     return 0;
-  }, [value, groupValue, uniqueGroup]);
+  }, [value, currentGroupValue, uniqueGroup]);
 
   const initialValuesWithGroup = useMemo(() => {
-    return getValuesByGroup(propValue, isGroup, groupValue);
-  }, [propValue, isGroup, groupValue]);
+    return getValuesByGroup(propValue, isGroup, currentGroupValue);
+  }, [propValue, isGroup, currentGroupValue]);
 
 
   useEffect(() => {
@@ -122,7 +117,7 @@ const SalePropCard = <
     }
     if (isGroup) {
       setInitGroupValue(_groupValue);
-      setGroupValue(_groupValue || options[0].value);
+      setCurrentGroupValue(_groupValue || options[0].value);
     }
   }, [isGroup])
 
@@ -138,14 +133,14 @@ const SalePropCard = <
     setLoading(true);
     setTimeout(async () => {
       let _value: ValueType;
-      if (uniqueGroup && isGroup && groupValue) {
-        _value = { [groupValue]: itemValues } as ValueType;
+      if (uniqueGroup && isGroup && currentGroupValue) {
+        _value = { [currentGroupValue]: itemValues } as ValueType;
       } else {
         _value = value as ValueType;
       }
-      if (uniqueGroup && groupValue != initGroupValue && initGroupValue) {
+      if (uniqueGroup && currentGroupValue != initGroupValue && initGroupValue) {
         const oldGroup = options?.find(f => f.value == initGroupValue)?.label || initGroupValue;
-        const newGroup = options?.find(f => f.value == groupValue)?.label || groupValue;
+        const newGroup = options?.find(f => f.value == currentGroupValue)?.label || currentGroupValue;
         Modal.confirm({
           title: '操作确认',
           content: `“${oldGroup}”将更换成“${newGroup}”，${oldGroup}及sku数据将被清空，确认更换？`,
@@ -167,12 +162,12 @@ const SalePropCard = <
     onCancel?.();
   }
   function handleGroupChange(key: string): void {
-    setGroupValue(key);
+    setCurrentGroupValue(key);
   }
 
   function handleValueChange(checkedValues: string[]): void {
     const newValue = isGroup
-      ? { ...value, [groupValue!]: checkedValues }
+      ? { ...value, [currentGroupValue!]: checkedValues }
       : checkedValues;
     setValue(newValue as ValueType);
   }
@@ -228,7 +223,7 @@ const SalePropCard = <
         {isGroup && (
           <div className={classNames(`${prefixCls}-group-wrapper`, hashId)}>
             <Menu className={classNames(`${prefixCls}-group-menu`, hashId)}
-              selectedKeys={[groupValue || '']}
+              selectedKeys={[currentGroupValue || '']}
               onClick={({ key }) => { uniqueGroup ? handleGroupChange(key) : undefined; }}
               items={options?.map(({ value: key, label }, _i) => ({
                 key, label, className: classNames(`${prefixCls}-group-item`, hashId),
