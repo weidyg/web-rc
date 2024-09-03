@@ -8,7 +8,11 @@ import { SalePropCard, } from '@web-react/biz-components';
 import dataJson from './_data.json';
 export default () => {
   const [uniqueGroup, setUniqueGroup] = useState<boolean>(true);
-  const [value, setValue] = useState<any>();
+  const [currentValue, setCurrentValue] = useState<any>({ "value": "28313", "groupValue": "27013-men_tops" });
+  const [value, setValue] = useState<any>([
+    { "value": "28313", "groupValue": "27013-men_tops" },
+    { "value": "28314", "groupValue": "27013-men_tops" }
+  ]);
   return (
     <>
       <Switch value={uniqueGroup} onChange={(val) => setUniqueGroup(val)} />
@@ -16,6 +20,7 @@ export default () => {
       {JSON.stringify(value)}
       <br />
       <SalePropCard
+        current={currentValue}
         uniqueGroup={uniqueGroup}
         options={dataJson.size}
         value={value}

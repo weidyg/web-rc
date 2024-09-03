@@ -46,10 +46,10 @@ export default function useSalePropValue(
         setCurrentGroupValue,
         setCurrentValues: (value) => {
             if (Array.isArray(value)) {
-                setCurrentValues(unique([...initValues, ...value]))
+                setCurrentValues(unique(value))
             } else if (typeof value == 'function') {
                 setCurrentValues((previous) => {
-                    return unique(value([...initValues, ...previous]));
+                    return unique(value(previous));
                 });
             }
         }

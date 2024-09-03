@@ -2,9 +2,9 @@ import { useMemo, useState } from 'react';
 import { Alert, Button, Card, Checkbox, Flex, Input, Menu, Modal, Radio, Space, Switch, Typography } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import { classNames } from '@web-react/biz-utils';
-import { useStyle } from './style';
 import useSalePropOptions from './hooks/useSalePropOptions';
 import useSalePropValue from './hooks/useSalePropValue';
+import { useStyle } from './style';
 
 export type SalePropValueType = { value: string; groupValue?: string; };
 export type OptionItemType = { label: string; value: string; }
@@ -18,8 +18,7 @@ export type SalePropCardProps = {
   prefixCls?: string;
   uniqueGroup?: boolean;
   options?: OptionGroupType[] | OptionItemType[];
-  currentValue?: string;
-
+  current?: SalePropValueType;
   value?: SalePropValueType[];
   onOk?: (value?: SalePropValueType[]) => Promise<void> | void,
   onCancel?: () => void,
@@ -27,7 +26,7 @@ export type SalePropCardProps = {
 
 const SalePropCard = (props: SalePropCardProps) => {
   const { style, className, options = [], uniqueGroup,
-    currentValue, value: propValue, onOk, onCancel
+    current, value: propValue, onOk, onCancel
   } = props;
   const { prefixCls, wrapSSR, hashId, token } = useStyle(props.prefixCls);
   const [loading, setLoading] = useState(false);
@@ -39,26 +38,6 @@ const SalePropCard = (props: SalePropCardProps) => {
     setCurrentGroupValue, setCurrentValues
   } = useSalePropValue(propValue, uniqueGroup, options);
   const itemOpts = useMemo(() => getItemOptions(currentGroupValue), [currentGroupValue]);
-
-  // const [currentSelectOptions, currentSelectValues] = useMemo(() => {
-  //   const _options = uniqueGroup && isGroup
-  //     ? flattenOptions.filter(f => f?.group?.value == currentGroupValue)
-  //     : flattenOptions;
-
-  //   const _values = currentValues?.filter(f => f.groupValue == currentGroupValue)?.map(m => m?.value) || [];
-
-
-  //   const currentSelectOptions = _options.filter(f => _values?.includes(f?.value));
-  //   const currentSelectValues = currentSelectOptions.map(m => ({ value: m.value, groupValue: m.group?.value }));
-
-  //   console.log('_options', _options);
-  //   console.log('_values', _values);
-  //   console.log('currentSelectOptions', currentSelectOptions);
-  //   console.log('currentSelectValues', currentSelectValues);
-
-  //   return [currentSelectOptions, currentSelectValues]
-  // }, [uniqueGroup, isGroup, currentGroupValue, currentValues])
-
 
   async function changeValue() {
     const _value: SalePropValueType[] = uniqueGroup && currentGroupValue
@@ -75,13 +54,20 @@ const SalePropCard = (props: SalePropCardProps) => {
     const newValues = checked
       ? [...(single ? [] : currentValues), { value, groupValue: currentGroupValue }]
       : [...(single ? [] : currentValues).filter(f => f.groupValue == currentGroupValue && f.value != value)];
-    setCurrentValues(newValues);
+    const newCurrentValues = [...disabledValues, ...newValues];
+    setCurrentValues(newCurrentValues);
   }
 
+  const disabledValues = useMemo(() => {
+    if (!current) { return initValues; }
+    return initValues.filter(f => !(
+      f.groupValue == current?.groupValue
+      && f.value == current?.value
+    ));
+  }, [initValues, current])
+
   function vaildDisabled(opt: OptionItemType) {
-    if (opt?.value == currentValue || opt?.label == currentValue) { return false; }
-    for (let i = 0; i < initValues?.length; i++) {
-      const f = initValues[i];
+    for (const f of disabledValues) {
       if (f.groupValue == currentGroupValue && f.value == opt?.value) {
         return true;
       }
@@ -89,8 +75,7 @@ const SalePropCard = (props: SalePropCardProps) => {
     return false;
   }
   function vaildChecked(item: OptionItemType) {
-    for (let i = 0; i < currentValues?.length; i++) {
-      const f = currentValues[i];
+    for (const f of currentValues) {
       if (f.groupValue == currentGroupValue && f.value == item?.value) {
         return true;
       }
@@ -99,7 +84,7 @@ const SalePropCard = (props: SalePropCardProps) => {
   }
 
 
-  const single = false;
+  const single = !!current?.value;
   const ItemComponent = single ? Radio : Checkbox;
 
   function handleOk() {
