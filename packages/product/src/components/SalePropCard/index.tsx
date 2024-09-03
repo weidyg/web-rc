@@ -20,7 +20,7 @@ export type SalePropCardProps = {
   options?: OptionGroupType[] | OptionItemType[];
   current?: SalePropValueType;
   value?: SalePropValueType[];
-  onOk?: (value?: SalePropValueType[]) => Promise<void> | void,
+  onOk?: (value?: SalePropValueType[], newValue?: SalePropValueType[]) => Promise<void> | void,
   onCancel?: () => void,
 };
 
@@ -34,18 +34,21 @@ const SalePropCard = (props: SalePropCardProps) => {
   const [onlyShowChecked, setOnlyShowChecked] = useState(false);
 
   const { isGroup, flattenOptions, getItemOptions } = useSalePropOptions(options);
-  const { initGroupValue, initValues, currentGroupValue, currentValues,
+
+  const { initGroupValue, initValues,
+    currentGroupValue, currentValues,
     setCurrentGroupValue, setCurrentValues
-  } = useSalePropValue(propValue, uniqueGroup, options);
+  } = useSalePropValue(propValue, uniqueGroup, isGroup, flattenOptions);
+
   const itemOpts = useMemo(() => getItemOptions(currentGroupValue), [currentGroupValue]);
 
   async function changeValue() {
     const _value: SalePropValueType[] = uniqueGroup && currentGroupValue
       ? currentValues.filter(f => f.groupValue = currentGroupValue)
       : currentValues;
-    await onOk?.(_value);
+    const _newValue: SalePropValueType[] = _value.filter(f => !initValues.find(v => v.groupValue == f.groupValue && v.value == f.value)) || [];
+    await onOk?.(_value, _newValue);
   }
-
 
   function handleGroupChange(groupValue: string): void {
     setCurrentGroupValue(groupValue);

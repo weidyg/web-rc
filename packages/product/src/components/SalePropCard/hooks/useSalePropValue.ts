@@ -9,7 +9,8 @@ function unique(list: SalePropValueType[]) {
 export default function useSalePropValue(
     value?: SalePropValueType[],
     uniqueGroup?: boolean,
-    options?: OptionGroupType[] | OptionItemType[],
+    isGroup?: boolean,
+    options?: (OptionItemType & { group?: OptionItemType })[],
 ): {
     initGroupValue?: string,
     currentGroupValue?: string,
@@ -25,20 +26,21 @@ export default function useSalePropValue(
     const [currentGroupValue, setCurrentGroupValue] = useState<string>();
 
     useEffect(() => {
-        const _intValue: SalePropValueType[] = value || [];
-        let isGroup = options?.some((item) => (item as OptionGroupType)?.children?.length > 0);
-
+        let _intValue: SalePropValueType[] = [];
         let _groupValue: string | undefined;
         let _currentGroupValue: string | undefined;
         if (isGroup) {
             _groupValue = _intValue.find(f => f.groupValue)?.groupValue;
-            _currentGroupValue = _groupValue || options?.[0]?.value;
+            _currentGroupValue = _groupValue || options?.find(f => f.group?.value)?.group?.value;
+            _intValue = value?.filter(f => options?.some(s => s.value == f.value && f.groupValue == s.group?.value)) || [];
+        } else {
+            _intValue = value?.filter(f => options?.some(s => s.value == f.value)) || [];
         }
         setInitValues(_intValue);
         setCurrentValues(_intValue);
         setInitGroupValue(_groupValue);
         setCurrentGroupValue(_currentGroupValue);
-    }, [value, uniqueGroup, options]);
+    }, [value, uniqueGroup, isGroup, options]);
 
     return {
         currentGroupValue, currentValues,
