@@ -11,6 +11,10 @@ export default () => {
   const [value, setValue] = useState<any>();
   return (
     <>
+      <Switch value={uniqueGroup} onChange={(val) => setUniqueGroup(val)} />
+      <br />
+      {JSON.stringify(value)}
+      <br />
       <SalePropCard
         uniqueGroup={uniqueGroup}
         options={dataJson.size}

@@ -2,9 +2,12 @@ import { useCallback, useMemo } from "react";
 import { OptionGroupType, OptionItemType } from "..";
 
 type FlattenOptionType = OptionItemType & { group?: OptionItemType }
-export default function useOptions(options: OptionGroupType[] | OptionItemType[])
-    : [boolean, FlattenOptionType[], (groupValue?: string) => OptionItemType[]] {
-
+type UseSalePropOptionType = {
+    isGroup: boolean,
+    flattenOptions: FlattenOptionType[],
+    getItemOptions: (groupValue?: string) => OptionItemType[]
+};
+export default function useSalePropOptions(options: OptionGroupType[] | OptionItemType[]): UseSalePropOptionType {
     const [isGroup, flattenOptions] = useMemo(() => {
         let _flattenOptions: FlattenOptionType[] = [];
         let _isGroup = options?.some((item) => (item as OptionGroupType)?.children?.length > 0);
@@ -29,5 +32,5 @@ export default function useOptions(options: OptionGroupType[] | OptionItemType[]
         return itemOpts;
     }, [isGroup, options]);
 
-    return [isGroup, flattenOptions, getItemOptions];
+    return { isGroup, flattenOptions, getItemOptions };
 }
