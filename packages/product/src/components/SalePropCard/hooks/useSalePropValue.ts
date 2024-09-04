@@ -30,9 +30,9 @@ export default function useSalePropValue(
         let _groupValue: string | undefined;
         let _currentGroupValue: string | undefined;
         if (isGroup) {
-            _groupValue = _intValue.find(f => f.groupValue)?.groupValue;
+            _groupValue = _intValue.find(f => f.group?.value)?.group?.value;
             _currentGroupValue = _groupValue || options?.find(f => f.group?.value)?.group?.value;
-            _intValue = value?.filter(f => options?.some(s => s.value == f.value && f.groupValue == s.group?.value)) || [];
+            _intValue = value?.filter(f => options?.some(s => s.value == f.value && f.group?.value == s.group?.value)) || [];
         } else {
             _intValue = value?.filter(f => options?.some(s => s.value == f.value)) || [];
         }

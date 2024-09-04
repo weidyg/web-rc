@@ -6,7 +6,11 @@ import useSalePropOptions from './hooks/useSalePropOptions';
 import useSalePropValue from './hooks/useSalePropValue';
 import { useStyle } from './style';
 
-export type SalePropValueType = { value: string; groupValue?: string; };
+const compareValue = (v1: SalePropValueType, v2: SalePropValueType) => {
+  return v1.group?.value == v2.group?.value && v1.value == v2.value
+}
+
+export type SalePropValueType = { value: string; text?: string; group?: { value: string; text?: string }; };
 export type OptionItemType = { label: string; value: string; }
 export type OptionGroupType = OptionItemType & { children: OptionItemType[] }
 export type SalePropCardProps = {
@@ -16,6 +20,8 @@ export type SalePropCardProps = {
   style?: React.CSSProperties;
   /** 自定义样式前缀 */
   prefixCls?: string;
+
+  single?: boolean;
   uniqueGroup?: boolean;
   options?: OptionGroupType[] | OptionItemType[];
   current?: SalePropValueType;
@@ -25,8 +31,8 @@ export type SalePropCardProps = {
 };
 
 const SalePropCard = (props: SalePropCardProps) => {
-  const { style, className, options = [], uniqueGroup,
-    current, value: propValue, onOk, onCancel
+  const { style, className, options = [],
+    single, uniqueGroup, current, value, onOk, onCancel
   } = props;
   const { prefixCls, wrapSSR, hashId, token } = useStyle(props.prefixCls);
   const [loading, setLoading] = useState(false);
@@ -38,15 +44,29 @@ const SalePropCard = (props: SalePropCardProps) => {
   const { initGroupValue, initValues,
     currentGroupValue, currentValues,
     setCurrentGroupValue, setCurrentValues
-  } = useSalePropValue(propValue, uniqueGroup, isGroup, flattenOptions);
+  } = useSalePropValue(value, uniqueGroup, isGroup, flattenOptions);
 
   const itemOpts = useMemo(() => getItemOptions(currentGroupValue), [currentGroupValue]);
 
   async function changeValue() {
     const _value: SalePropValueType[] = uniqueGroup && currentGroupValue
-      ? currentValues.filter(f => f.groupValue = currentGroupValue)
+      ? currentValues.filter(f => f.group?.value == currentGroupValue)
       : currentValues;
-    const _newValue: SalePropValueType[] = _value.filter(f => !initValues.find(v => v.groupValue == f.groupValue && v.value == f.value)) || [];
+
+    _value.forEach(f => {
+      const option = flattenOptions.find(fi => compareValue(f, fi));
+      const { label, group } = option || {};
+      f.text = label || f.text;
+      if (group?.value && f.group?.value) {
+        f.group.text = group?.label || f.group?.text;
+      }
+    });
+
+    const _newValue: SalePropValueType[] = _value.filter(f => !disabledValues.find(v => compareValue(f, v))) || [];
+    if (current?.value) {
+      const _current = _value.find(f => compareValue(f, current));
+      if (_current) { _newValue.unshift(current); }
+    }
     await onOk?.(_value, _newValue);
   }
 
@@ -54,9 +74,10 @@ const SalePropCard = (props: SalePropCardProps) => {
     setCurrentGroupValue(groupValue);
   }
   function handleValueChange(checked: boolean, value: string): void {
+    const group = checked && currentGroupValue ? { value: currentGroupValue } : undefined;
     const newValues = checked
-      ? [...(single ? [] : currentValues), { value, groupValue: currentGroupValue }]
-      : [...(single ? [] : currentValues).filter(f => f.groupValue == currentGroupValue && f.value != value)];
+      ? [...(single ? [] : currentValues), { value, group }]
+      : [...(single ? [] : currentValues).filter(f => f.group?.value == currentGroupValue && f.value != value)];
     const newCurrentValues = [...disabledValues, ...newValues];
     setCurrentValues(newCurrentValues);
   }
@@ -64,14 +85,14 @@ const SalePropCard = (props: SalePropCardProps) => {
   const disabledValues = useMemo(() => {
     if (!current) { return initValues; }
     return initValues.filter(f => !(
-      f.groupValue == current?.groupValue
+      f.group?.value == current?.group?.value
       && f.value == current?.value
     ));
   }, [initValues, current])
 
   function vaildDisabled(opt: OptionItemType) {
     for (const f of disabledValues) {
-      if (f.groupValue == currentGroupValue && f.value == opt?.value) {
+      if (f.group?.value == currentGroupValue && f.value == opt?.value) {
         return true;
       }
     }
@@ -79,17 +100,12 @@ const SalePropCard = (props: SalePropCardProps) => {
   }
   function vaildChecked(item: OptionItemType) {
     for (const f of currentValues) {
-      if (f.groupValue == currentGroupValue && f.value == item?.value) {
+      if (f.group?.value == currentGroupValue && f.value == item?.value) {
         return true;
       }
     }
     return false;
   }
-
-
-  const single = !!current?.value;
-  const ItemComponent = single ? Radio : Checkbox;
-
   function handleOk() {
     setLoading(true);
     setTimeout(async () => {
@@ -116,6 +132,7 @@ const SalePropCard = (props: SalePropCardProps) => {
   function handleCancel(): void {
     onCancel?.();
   }
+  const ItemComponent = single ? Radio : Checkbox;
   return wrapSSR(<>
     <Card className={classNames(prefixCls, className, hashId)}
       classNames={{

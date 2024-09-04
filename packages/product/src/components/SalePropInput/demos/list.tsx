@@ -7,7 +7,6 @@ import { Button } from "antd";
 import { SalePropInput } from "@web-react/biz-components";
 import dataJson from './_data.json';
 
-// const single = !!current?.value;
 export default () => {
   const [value, setValue] = useState({});
   return (

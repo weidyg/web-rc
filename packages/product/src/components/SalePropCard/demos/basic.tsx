@@ -8,10 +8,8 @@ import { SalePropCard, } from '@web-react/biz-components';
 import dataJson from './_data.json';
 export default () => {
   const [uniqueGroup, setUniqueGroup] = useState<boolean>(true);
-  const [currentValue, setCurrentValue] = useState<any>({ "value": "28313", "groupValue": "27013-men_tops" });
-  const [value, setValue] = useState<any>([
-    { "value": "28334" }
-  ]);
+  const [currentValue, setCurrentValue] = useState<any>({ "value": "28334" });
+  const [value, setValue] = useState<any>([{ "value": "28334" }]);
   return (
     <>
       <Switch value={uniqueGroup} onChange={(val) => setUniqueGroup(val)} />
@@ -26,7 +24,7 @@ export default () => {
         options={dataJson.color}
         value={value}
         onOk={(val, newVal) => {
-          console.log('onOk', val);
+          console.log('onOk', val, newVal);
           setValue(val);
           if (newVal?.length ?? 0 > 0) {
             setCurrentValue(newVal?.[0]);
