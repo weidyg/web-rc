@@ -6,11 +6,11 @@ import useSalePropOptions from './hooks/useSalePropOptions';
 import useSalePropValue from './hooks/useSalePropValue';
 import { useStyle } from './style';
 
-const compareValue = (v1: SalePropValueType, v2: SalePropValueType) => {
-  return v1.group?.value == v2.group?.value && v1.value == v2.value
+const compareValue = (v1?: ValueType, v2?: ValueType) => {
+  return v1?.group?.value == v2?.group?.value && v1?.value == v2?.value
 }
 
-export type SalePropValueType = { value: string; text?: string; group?: { value: string; text?: string }; };
+export type ValueType = { value: string; text?: string; group?: { value: string; text?: string }; };
 export type OptionItemType = { label: string; value: string; }
 export type OptionGroupType = OptionItemType & { children: OptionItemType[] }
 export type SalePropCardProps = {
@@ -24,9 +24,9 @@ export type SalePropCardProps = {
   single?: boolean;
   uniqueGroup?: boolean;
   options?: OptionGroupType[] | OptionItemType[];
-  current?: SalePropValueType;
-  value?: SalePropValueType[];
-  onOk?: (value?: SalePropValueType[], newValue?: SalePropValueType[]) => Promise<void> | void,
+  current?: ValueType;
+  value?: ValueType[];
+  onOk?: (value: { all: ValueType[], current?: ValueType, adds?: ValueType[] }) => Promise<void> | void,
   onCancel?: () => void,
 };
 
@@ -49,11 +49,11 @@ const SalePropCard = (props: SalePropCardProps) => {
   const itemOpts = useMemo(() => getItemOptions(currentGroupValue), [currentGroupValue]);
 
   async function changeValue() {
-    const _value: SalePropValueType[] = uniqueGroup && currentGroupValue
+    const _all = uniqueGroup && currentGroupValue
       ? currentValues.filter(f => f.group?.value == currentGroupValue)
       : currentValues;
 
-    _value.forEach(f => {
+    _all.forEach(f => {
       const option = flattenOptions.find(fi => compareValue(f, fi));
       const { label, group } = option || {};
       f.text = label || f.text;
@@ -61,13 +61,9 @@ const SalePropCard = (props: SalePropCardProps) => {
         f.group.text = group?.label || f.group?.text;
       }
     });
-
-    const _newValue: SalePropValueType[] = _value.filter(f => !disabledValues.find(v => compareValue(f, v))) || [];
-    if (current?.value) {
-      const _current = _value.find(f => compareValue(f, current));
-      if (_current) { _newValue.unshift(current); }
-    }
-    await onOk?.(_value, _newValue);
+    const _new = _all.filter(f => !disabledValues.find(v => compareValue(f, v)));
+    const _current = _all.find(f => compareValue(f, current)) || _new?.shift();
+    await onOk?.({ current: _current, all: _all, adds: _new });
   }
 
   function handleGroupChange(groupValue: string): void {

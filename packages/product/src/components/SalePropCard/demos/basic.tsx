@@ -27,12 +27,9 @@ export default () => {
           : dataJson.color
         }
         value={value}
-        onOk={(val, newVal) => {
-          console.log('onOk', val, newVal);
-          setValue(val);
-          if (newVal?.length ?? 0 > 0) {
-            setCurrentValue(newVal?.[0]);
-          }
+        onOk={({ all, current, adds }) => {
+          setValue(all);
+          setCurrentValue(current);
         }}
         onCancel={() => {
           message.info('click cancel');
@@ -43,7 +40,7 @@ export default () => {
         {JSON.stringify(currentValue)}
       </Typography.Text>
       <br />
-      <Typography.Text title='所有值'  code >
+      <Typography.Text title='所有值' code >
         {JSON.stringify(value)}
       </Typography.Text>
     </>
