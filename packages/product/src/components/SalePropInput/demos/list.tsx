@@ -76,52 +76,26 @@ export default () => {
         </Form.Item>
         <Form.List name={['saleProp', 'p-20509', 'value']}>
           {(fields, { add, remove }) => (<>
-            {/* <SalePropCard.Provider
+            <SalePropInput.Group
+              uniqueGroup={uniqueGroup}
+              options={uniqueGroup
+                ? dataJson.size
+                : dataJson.color
+              }
               group={form.getFieldValue(['saleProp', 'p-20509', 'group'])}
               values={form.getFieldValue(['saleProp', 'p-20509', 'value'])}
-              onGroupChange={(value) => {
-                const old = form.getFieldValue(['saleProp', 'p-20509', 'group']);
-                if (old?.value && old?.value != value?.value) {
-                  const oldVals = form.getFieldValue(['saleProp', 'p-20509', 'value']);
-                  for (let index = 0; index < oldVals.length; index++) {
-                    remove(index);
-                  }
-                }
-                form.setFieldValue(['saleProp', 'p-20509', 'group'], value);
+              onGroupChange={(group) => {
+                form.setFieldValue(['saleProp', 'p-20509', 'group'], group);
+                for (let index = 0; index < fields.length; index++) { remove(index); }
               }}
-              onAdd={(value) => {
-                value?.forEach((item) => {
-                  add(item);
-                });
+              onAdd={(values) => {
+                values?.forEach((item) => { add(item); });
               }}
-            > */}
+            >
               {fields.map(({ key, name, ...restField }) => (
                 <Space key={key} wrap size={[4, 0]} style={{ marginBottom: "0px" }}>
                   <Form.Item {...restField} name={[name]}>
-                    <SalePropInput
-                      uniqueGroup={uniqueGroup}
-                      options={uniqueGroup
-                        ? dataJson.size
-                        : dataJson.color
-                      }
-                      allValues={form.getFieldValue(['saleProp', 'p-20509', 'value'])}
-                      group={form.getFieldValue(['saleProp', 'p-20509', 'group'])}
-                      onGroupChange={(value) => {
-                        const old = form.getFieldValue(['saleProp', 'p-20509', 'group']);
-                        if (old?.value && old?.value != value?.value) {
-                          const oldVals = form.getFieldValue(['saleProp', 'p-20509', 'value']);
-                          for (let index = 0; index < oldVals.length; index++) {
-                            remove(index);
-                          }
-                        }
-                        form.setFieldValue(['saleProp', 'p-20509', 'group'], value);
-                      }}
-                      onAdd={(value) => {
-                        value?.forEach((item) => {
-                          add(item);
-                        });
-                      }}
-                    />
+                    <SalePropInput />
                   </Form.Item>
                   <Form.Item>
                     <Button danger
@@ -135,7 +109,7 @@ export default () => {
                   </Form.Item>
                 </Space>
               ))}
-            {/* </SalePropCard.Provider> */}
+            </SalePropInput.Group>
             <Form.Item>
               <Button
                 type='text'

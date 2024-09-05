@@ -21,7 +21,7 @@ export type SalePropValueType = {
   img?: string,
   remark?: string
 };
-export type SalePropInputProps = Pick<SalePropCardProps, 'options' | 'uniqueGroup'> & {
+export type SalePropInputProps = Pick<SalePropCardProps, 'options'> & {
   /** 类名 */
   className?: string;
   /** 样式 */
@@ -34,33 +34,32 @@ export type SalePropInputProps = Pick<SalePropCardProps, 'options' | 'uniqueGrou
   defaultValue?: SalePropValueType;
   value?: SalePropValueType;
   onChange?: (value: SalePropValueType) => void;
-  onAdd?: (value: SalePropValueType[]) => void;
+
+  // onAdd?: (value: SalePropValueType[]) => void;
+  values?: SalePropValueType[];
 
   defaultGroup?: SalePropGroupType;
   group?: SalePropGroupType;
   onGroupChange?: (value?: SalePropGroupType) => void;
-
-  allValues?: SalePropValueType[];
 };
 
 const InternalSalePropInput = (
   props: SalePropInputProps
 ) => {
-  const { className, style, allowCustom, onAdd, ...rest } = props;
+  const { className, style, allowCustom, ...rest } = props;
   const { prefixCls, wrapSSR, hashId, token } = useStyle(props.prefixCls);
 
-  const [group, setGroup] = useMergedState(undefined, {
-    defaultValue: props?.defaultGroup,
-    value: props?.group,
-    onChange: props?.onGroupChange
-  });
-
-
+  // const [group, setGroup] = useMergedState(undefined, {
+  //   defaultValue: props?.defaultGroup,
+  //   value: props?.group,
+  //   onChange: props?.onGroupChange
+  // });
 
   // const context = useContext(SalePropCard.Context);
   // const { isGroup, flatOptions, options, uniqueGroup } = context || {};
 
-  const { options = [], uniqueGroup } = rest;
+  const uniqueGroup = false;
+  const { options = [] } = rest;
   const { isGroup, flatOptions } = useSalePropOptions(options);
 
   const [open, setOpen] = useState(false);
@@ -88,12 +87,23 @@ const InternalSalePropInput = (
     },
   ];
 
+  const [group, setGroup] = useMergedState(undefined, {
+    defaultValue: props?.defaultGroup,
+    value: props?.group,
+    onChange: props?.onGroupChange
+  });
+
+  const [values, setValues] = useMergedState([], {
+    value: props?.values,
+  });
+
+
   const current = { ...value, group } as ValueType;
   const allValues = useMemo(() => {
-    const _all = props?.allValues?.filter(f => f?.value)
+    const _all = values?.filter(f => f?.value)
       ?.map(({ text, value }) => ({ text, value, group })) || [];
     return _all as ValueType[];
-  }, [group, props?.allValues]);
+  }, [group, values]);
 
   const content = <SalePropCard
     single={!!value?.value}
@@ -110,10 +120,10 @@ const InternalSalePropInput = (
         setValue({ ...value, text, value: id });
       }
       setOpen(false);
-      if (adds && onAdd) {
-        const _adds = adds.map(({ text, value }) => ({ text, value }));
-        onAdd?.(_adds);
-      }
+      // if (adds && onAdd) {
+      //   const _adds = adds.map(({ text, value }) => ({ text, value }));
+      //   onAdd?.(_adds);
+      // }
     }}
     onCancel={() => {
       setOpen(false);
