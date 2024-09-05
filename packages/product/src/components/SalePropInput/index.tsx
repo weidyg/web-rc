@@ -1,9 +1,10 @@
-import { useCallback, useMemo, useState } from 'react';
-import { Input, MenuProps, message, Popover, Space } from 'antd';
+import { useCallback, useContext, useMemo, useState } from 'react';
+import { Input, MenuProps, Popover, Space } from 'antd';
 import { classNames, useMergedState } from '@web-react/biz-utils';
-import { ImageInput, OptionGroupType, OptionItemType, SalePropCard, SalePropCardProps, ValueType } from '@web-react/biz-components';
+import { ImageInput, SalePropCard, SalePropCardProps, ValueType } from '@web-react/biz-components';
 import { useStyle } from './style';
 import useSalePropOptions from '../SalePropCard/hooks/useSalePropOptions';
+import SalePropInputGroup from './Group';
 
 const StandardIcon: React.FC = () => {
   return <img style={{ width: '14px', }}
@@ -30,34 +31,43 @@ export type SalePropInputProps = Pick<SalePropCardProps, 'options' | 'uniqueGrou
 
   allowCustom?: boolean;
 
-  defaultGroup?: SalePropGroupType;
-  group?: SalePropGroupType;
-  onGroupChange?: (value: SalePropGroupType) => void;
-
   defaultValue?: SalePropValueType;
   value?: SalePropValueType;
-  onValueChange?: (value: SalePropValueType) => void;
+  onChange?: (value: SalePropValueType) => void;
+  onAdd?: (value: SalePropValueType[]) => void;
+
+  defaultGroup?: SalePropGroupType;
+  group?: SalePropGroupType;
+  onGroupChange?: (value?: SalePropGroupType) => void;
+
+  allValues?: SalePropValueType[];
 };
 
-const SalePropInput = (
+const InternalSalePropInput = (
   props: SalePropInputProps
 ) => {
-  const { className, style, options = [], uniqueGroup, allowCustom } = props;
+  const { className, style, allowCustom, onAdd, ...rest } = props;
   const { prefixCls, wrapSSR, hashId, token } = useStyle(props.prefixCls);
-  const { flattenOptions } = useSalePropOptions(options);
-  const [open, setOpen] = useState(false);
-  
-  const [allValues, setAllValues] = useState<ValueType[]>([]);
 
-  const [group, setGroup] = useMergedState({}, {
+  const [group, setGroup] = useMergedState(undefined, {
     defaultValue: props?.defaultGroup,
     value: props?.group,
     onChange: props?.onGroupChange
-  });;
+  });
+
+
+
+  // const context = useContext(SalePropCard.Context);
+  // const { isGroup, flatOptions, options, uniqueGroup } = context || {};
+
+  const { options = [], uniqueGroup } = rest;
+  const { isGroup, flatOptions } = useSalePropOptions(options);
+
+  const [open, setOpen] = useState(false);
   const [value, setValue] = useMergedState({}, {
     defaultValue: props?.defaultValue,
     value: props?.value,
-    onChange: props?.onValueChange
+    onChange: props?.onChange
   });
 
   const items: MenuProps['items'] = [
@@ -78,21 +88,32 @@ const SalePropInput = (
     },
   ];
 
+  const current = { ...value, group } as ValueType;
+  const allValues = useMemo(() => {
+    const _all = props?.allValues?.filter(f => f?.value)
+      ?.map(({ text, value }) => ({ text, value, group })) || [];
+    return _all as ValueType[];
+  }, [group, props?.allValues]);
+
   const content = <SalePropCard
     single={!!value?.value}
-    current={{ ...value, group } as ValueType}
+    current={current}
     uniqueGroup={uniqueGroup}
     options={options}
     value={allValues}
     onOk={({ all, current, adds }) => {
-      setAllValues(all || []);
+      console.log('onOk', all, current, adds);
       if (current) {
         const id = current?.value;
         const text = current?.text;
-        setGroup(current?.group || {});
+        setGroup(current?.group);
         setValue({ ...value, text, value: id });
       }
       setOpen(false);
+      if (adds && onAdd) {
+        const _adds = adds.map(({ text, value }) => ({ text, value }));
+        onAdd?.(_adds);
+      }
     }}
     onCancel={() => {
       setOpen(false);
@@ -106,12 +127,16 @@ const SalePropInput = (
   }
 
   const isStandard = useMemo(() => {
-    return flattenOptions.some(f => f.group?.value === group?.value && f.value === value?.value)
-  }, [flattenOptions, value]);
+    return flatOptions.some(f =>
+      f.group?.value === group?.value &&
+      f.value === value?.value)
+  }, [flatOptions, value]);
 
   const getStandardOption = useCallback((text: string) => {
-    return flattenOptions.find(f => f.group?.value === group?.value && f.label === text);
-  }, [flattenOptions]);
+    return flatOptions.find(f =>
+      f.group?.value === group?.value &&
+      f.label === text);
+  }, [flatOptions]);
 
   const children = <Input allowClear
     placeholder={value?.text || placeholder.text}
@@ -167,4 +192,12 @@ const SalePropInput = (
   );
 };
 
+
+type CompoundedComponent = typeof InternalSalePropInput & {
+  Group: typeof SalePropInputGroup;
+  // Context: typeof SalePropCardContext;
+};
+const SalePropInput = InternalSalePropInput as CompoundedComponent;
+SalePropInput.Group = SalePropInputGroup;
+// SalePropCard.Context = SalePropCardContext;
 export default SalePropInput;

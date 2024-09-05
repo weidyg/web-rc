@@ -10,8 +10,8 @@ import dataJson from './_data.json';
 // const single = !!current?.value;
 export default () => {
   const [value, setValue] = useState<SalePropValueType>();
-
   const [uniqueGroup, setUniqueGroup] = useState<boolean>(true);
+  
   return (
     <div style={{ margin: 20 }}>
       <SalePropInput

@@ -1,12 +1,45 @@
 import { Dispatch, useEffect, useState } from "react";
-import { ValueType, OptionItemType } from "..";
+import { OptionItemType, ValueType } from "../typing";
+
 
 function unique(list: ValueType[]) {
     return list.filter((item, index) => list.indexOf(item) === index);
 }
 
 
-export default function useSalePropValue(
+export function useSalePropGlobalValue(
+    current?: ValueType,
+    value?: ValueType[],
+    isGroup?: boolean,
+    options?: (OptionItemType & { group?: OptionItemType })[],
+): {
+    globalGroupValue?: string,
+    globalValues: ValueType[],
+} {
+
+    const [globalValues, setGlobalValues] = useState<ValueType[]>([]);
+    const [globalGroupValue, setGlobalGroupValue] = useState<string>();
+
+    useEffect(() => {
+        let _values: ValueType[] = [];
+        let _groupValue: string | undefined;
+        if (isGroup) {
+            _groupValue = current?.group?.value || _values.find(f => f.group?.value)?.group?.value;
+            _values = value?.filter(f => options?.some(s => s.value == f.value && f.group?.value == s.group?.value)) || [];
+        } else {
+            _values = value?.filter(f => options?.some(s => s.value == f.value)) || [];
+        }
+        setGlobalValues(_values);
+        setGlobalGroupValue(_groupValue);
+    }, [current, value, isGroup, options]);
+
+    return {
+        globalGroupValue, globalValues,
+    };
+};
+
+
+export function useSalePropValue(
     current?: ValueType,
     value?: ValueType[],
     uniqueGroup?: boolean,
@@ -14,16 +47,17 @@ export default function useSalePropValue(
     options?: (OptionItemType & { group?: OptionItemType })[],
 ): {
     initGroupValue?: string,
-    currentGroupValue?: string,
     initValues: ValueType[],
+
+    currentGroupValue?: string,
     currentValues: ValueType[],
     setCurrentGroupValue: Dispatch<React.SetStateAction<string | undefined>>,
     setCurrentValues: Dispatch<React.SetStateAction<ValueType[]>>,
 } {
 
     const [initValues, setInitValues] = useState<ValueType[]>([]);
-    const [currentValues, setCurrentValues] = useState<ValueType[]>([]);
     const [initGroupValue, setInitGroupValue] = useState<string>();
+    const [currentValues, setCurrentValues] = useState<ValueType[]>([]);
     const [currentGroupValue, setCurrentGroupValue] = useState<string>();
 
     useEffect(() => {

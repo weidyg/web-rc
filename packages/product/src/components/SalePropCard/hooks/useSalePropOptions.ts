@@ -1,15 +1,14 @@
 import { useCallback, useMemo } from "react";
-import { OptionGroupType, OptionItemType } from "..";
+import { OptionFlatType, OptionGroupType, OptionItemType } from "../typing";
 
-type FlattenOptionType = OptionItemType & { group?: OptionItemType }
 type UseSalePropOptionType = {
     isGroup: boolean,
-    flattenOptions: FlattenOptionType[],
+    flatOptions: OptionFlatType[],
     getItemOptions: (groupValue?: string) => OptionItemType[]
 };
 export default function useSalePropOptions(options: OptionGroupType[] | OptionItemType[]): UseSalePropOptionType {
-    const [isGroup, flattenOptions] = useMemo(() => {
-        let _flattenOptions: FlattenOptionType[] = [];
+    const [isGroup, flatOptions] = useMemo(() => {
+        let _flattenOptions: OptionFlatType[] = [];
         let _isGroup = options?.some((item) => (item as OptionGroupType)?.children?.length > 0);
         if (_isGroup) {
             options.forEach((m) => {
@@ -21,7 +20,6 @@ export default function useSalePropOptions(options: OptionGroupType[] | OptionIt
         } else {
             _flattenOptions = options.map((m) => ({ label: m?.label, value: m?.value }));
         }
-
         return [_isGroup, _flattenOptions];
     }, [options]);
 
@@ -32,5 +30,5 @@ export default function useSalePropOptions(options: OptionGroupType[] | OptionIt
         return itemOpts;
     }, [isGroup, options]);
 
-    return { isGroup, flattenOptions, getItemOptions };
+    return { isGroup, flatOptions, getItemOptions };
 }

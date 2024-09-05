@@ -1,18 +1,18 @@
-import { useMemo, useState } from 'react';
+import { useContext, useMemo, useState } from 'react';
 import { Alert, Button, Card, Checkbox, Flex, Input, Menu, Modal, Radio, Space, Switch, Typography } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import { classNames } from '@web-react/biz-utils';
 import useSalePropOptions from './hooks/useSalePropOptions';
-import useSalePropValue from './hooks/useSalePropValue';
+import { useSalePropValue } from './hooks/useSalePropValue';
 import { useStyle } from './style';
+import SalePropCardContext, { SalePropCardProvider } from './context';
+import { OptionGroupType, OptionItemType, ValueType } from './typing';
 
 const compareValue = (v1?: ValueType, v2?: ValueType) => {
   return v1?.group?.value == v2?.group?.value && v1?.value == v2?.value
 }
 
-export type ValueType = { value: string; text?: string; group?: { value: string; text?: string }; };
-export type OptionItemType = { label: string; value: string; }
-export type OptionGroupType = OptionItemType & { children: OptionItemType[] }
+
 export type SalePropCardProps = {
   /** 类名 */
   className?: string;
@@ -30,7 +30,7 @@ export type SalePropCardProps = {
   onCancel?: () => void,
 };
 
-const SalePropCard = (props: SalePropCardProps) => {
+const InternalSalePropCard = (props: SalePropCardProps) => {
   const { style, className, options = [],
     single, uniqueGroup, current, value, onOk, onCancel
   } = props;
@@ -39,12 +39,12 @@ const SalePropCard = (props: SalePropCardProps) => {
   const [searchKeyword, setSearchKeyword] = useState<string>();
   const [onlyShowChecked, setOnlyShowChecked] = useState(false);
 
-  const { isGroup, flattenOptions, getItemOptions } = useSalePropOptions(options);
+  const { isGroup, flatOptions, getItemOptions } = useSalePropOptions(options);
 
   const { initGroupValue, initValues,
     currentGroupValue, currentValues,
     setCurrentGroupValue, setCurrentValues
-  } = useSalePropValue(current,value, uniqueGroup, isGroup, flattenOptions);
+  } = useSalePropValue(current, value, uniqueGroup, isGroup, flatOptions);
 
   const itemOpts = useMemo(() => getItemOptions(currentGroupValue), [currentGroupValue]);
 
@@ -54,7 +54,7 @@ const SalePropCard = (props: SalePropCardProps) => {
       : currentValues;
 
     _all.forEach(f => {
-      const option = flattenOptions.find(fi => compareValue(f, fi));
+      const option = flatOptions.find(fi => compareValue(f, fi));
       const { label, group } = option || {};
       f.text = label || f.text;
       if (group?.value && f.group?.value) {
@@ -235,4 +235,12 @@ const SalePropCard = (props: SalePropCardProps) => {
   </>);
 };
 
+type CompoundedComponent = typeof InternalSalePropCard & {
+  Provider: typeof SalePropCardProvider;
+  Context: typeof SalePropCardContext;
+};
+const SalePropCard = InternalSalePropCard as CompoundedComponent;
+SalePropCard.Provider = SalePropCardProvider;
+SalePropCard.Context = SalePropCardContext;
 export default SalePropCard;
+export type * from './typing';
