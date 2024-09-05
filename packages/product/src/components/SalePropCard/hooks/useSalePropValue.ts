@@ -7,6 +7,7 @@ function unique(list: ValueType[]) {
 
 
 export default function useSalePropValue(
+    current?: ValueType,
     value?: ValueType[],
     uniqueGroup?: boolean,
     isGroup?: boolean,
@@ -30,7 +31,7 @@ export default function useSalePropValue(
         let _groupValue: string | undefined;
         let _currentGroupValue: string | undefined;
         if (isGroup) {
-            _groupValue = _intValue.find(f => f.group?.value)?.group?.value;
+            _groupValue = current?.group?.value || _intValue.find(f => f.group?.value)?.group?.value;
             _currentGroupValue = _groupValue || options?.find(f => f.group?.value)?.group?.value;
             _intValue = value?.filter(f => options?.some(s => s.value == f.value && f.group?.value == s.group?.value)) || [];
         } else {
@@ -40,7 +41,7 @@ export default function useSalePropValue(
         setCurrentValues(_intValue);
         setInitGroupValue(_groupValue);
         setCurrentGroupValue(_currentGroupValue);
-    }, [value, uniqueGroup, isGroup, options]);
+    }, [current, value, uniqueGroup, isGroup, options]);
 
     return {
         currentGroupValue, currentValues,

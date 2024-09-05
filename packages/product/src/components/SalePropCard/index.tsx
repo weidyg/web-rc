@@ -44,7 +44,7 @@ const SalePropCard = (props: SalePropCardProps) => {
   const { initGroupValue, initValues,
     currentGroupValue, currentValues,
     setCurrentGroupValue, setCurrentValues
-  } = useSalePropValue(value, uniqueGroup, isGroup, flattenOptions);
+  } = useSalePropValue(current,value, uniqueGroup, isGroup, flattenOptions);
 
   const itemOpts = useMemo(() => getItemOptions(currentGroupValue), [currentGroupValue]);
 

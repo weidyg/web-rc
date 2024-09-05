@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { Input, MenuProps, message, Popover, Space } from 'antd';
 import { classNames, useMergedState } from '@web-react/biz-utils';
 import { ImageInput, OptionGroupType, OptionItemType, SalePropCard, SalePropCardProps, ValueType } from '@web-react/biz-components';
@@ -28,6 +28,8 @@ export type SalePropInputProps = Pick<SalePropCardProps, 'options' | 'uniqueGrou
   /** 自定义样式前缀 */
   prefixCls?: string;
 
+  allowCustom?: boolean;
+
   defaultGroup?: SalePropGroupType;
   group?: SalePropGroupType;
   onGroupChange?: (value: SalePropGroupType) => void;
@@ -40,10 +42,12 @@ export type SalePropInputProps = Pick<SalePropCardProps, 'options' | 'uniqueGrou
 const SalePropInput = (
   props: SalePropInputProps
 ) => {
-  const { className, style, options = [], uniqueGroup } = props;
+  const { className, style, options = [], uniqueGroup, allowCustom } = props;
   const { prefixCls, wrapSSR, hashId, token } = useStyle(props.prefixCls);
+  const { flattenOptions } = useSalePropOptions(options);
   const [open, setOpen] = useState(false);
-  const [isStandard, setIsStandard] = useState(true);
+  
+  const [allValues, setAllValues] = useState<ValueType[]>([]);
 
   const [group, setGroup] = useMergedState({}, {
     defaultValue: props?.defaultGroup,
@@ -74,9 +78,6 @@ const SalePropInput = (
     },
   ];
 
-  const { isGroup, flattenOptions, getItemOptions } = useSalePropOptions(options);
-  const [allValues, setAllValues] = useState<ValueType[]>([]);
-
   const content = <SalePropCard
     single={!!value?.value}
     current={{ ...value, group } as ValueType}
@@ -99,12 +100,30 @@ const SalePropInput = (
     style={{ maxWidth: 580 }}
   />;
 
+  const placeholder = {
+    text: allowCustom ? "请输入" : "请选择",
+    remark: "备注"
+  }
+
+  const isStandard = useMemo(() => {
+    return flattenOptions.some(f => f.group?.value === group?.value && f.value === value?.value)
+  }, [flattenOptions, value]);
+
+  const getStandardOption = useCallback((text: string) => {
+    return flattenOptions.find(f => f.group?.value === group?.value && f.label === text);
+  }, [flattenOptions]);
+
   const children = <Input allowClear
-    placeholder={open ? (value?.text || '请输入') : '请输入'}
+    placeholder={value?.text || placeholder.text}
     value={open ? undefined : value?.text}
+    onFocus={(e) => {
+      if (!allowCustom) {
+        e.target.blur();
+      }
+    }}
     onChange={(e) => {
-      const id = e.target.value;
       const text = e.target.value;
+      const id = getStandardOption(text)?.value || text;
       setValue({ ...value, text, value: id });
     }}
     style={{ width: '180px' }}
@@ -135,6 +154,7 @@ const SalePropInput = (
           : children
         }
         <Input allowClear
+          placeholder={placeholder.remark}
           value={value?.remark}
           onChange={(e) => {
             const remark = e.target.value;
