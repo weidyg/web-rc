@@ -1,8 +1,8 @@
 export * from './images';
 import classNames from 'classnames';
-import useMergedState from 'rc-util/es/hooks/useMergedState';
 import useCopyClick from 'antd/es/typography/hooks/useCopyClick';
 import TransButton from 'antd/es/_util/transButton';
+import useMergedState from './hooks/useMergedState';
 
 const convertByteUnit = (bytes: number, digits?: number): string => {
   const units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
