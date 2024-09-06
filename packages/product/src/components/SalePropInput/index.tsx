@@ -127,6 +127,9 @@ const InternalSalePropInput = (
       if (text) {
         const id = getStandardOption(text)?.value || text;
         setValue({ ...value, text, value: id });
+        if (allowCustom && open) {
+          setOpen(false);
+        }
       } else {
         setValue(undefined);
       }
@@ -155,7 +158,12 @@ const InternalSalePropInput = (
             placement={'bottom'}
             content={content}
             open={open}
-            onOpenChange={setOpen}
+            onOpenChange={(open) => {
+              if (allowCustom && value?.text && open) {
+                return;
+              }
+              setOpen(open);
+            }}
           >
             {children}
           </Popover>
