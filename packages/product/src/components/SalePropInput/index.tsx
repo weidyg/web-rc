@@ -88,7 +88,7 @@ const InternalSalePropInput = (
         setValue({ ...value, text, value: id });
       }
       context?.onValuesChange?.(all.map(({ text, value }) => ({ text, value })));
-      // if (adds) { await context?.onAdd?.(adds.map(({ text, value }) => ({ text, value }))); }
+      if (adds) { await context?.onAdd?.(adds.map(({ text, value }) => ({ text, value }))); }
       setOpen(false);
     }}
     onCancel={() => {

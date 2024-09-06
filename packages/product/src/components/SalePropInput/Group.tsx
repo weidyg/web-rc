@@ -8,7 +8,7 @@ export type SalePropInputGroupConnextType = {
   uniqueGroup?: boolean;
   options?: OptionGroupType[] | OptionItemType[];
   // onClear?: () => void | Promise<void>;
-  // onAdd?: (values: SalePropValueType[]) => void | Promise<void>;
+  onAdd?: (values: SalePropValueType[]) => void | Promise<void>;
 
   group?: SalePropGroupType;
   values?: SalePropValueType[];
@@ -23,7 +23,7 @@ export interface SalePropInputGroupProps extends SalePropInputGroupConnextType {
   children?: React.ReactNode;
 }
 const SalePropInputGroup: React.FC<SalePropInputGroupProps> = (props) => {
-  const { children, uniqueGroup, options, ...restProps } = props;
+  const { children, uniqueGroup, options,onAdd, ...restProps } = props;
 
   const [group, setGroup] = useMergedState(undefined, {
     value: props?.group,
@@ -39,7 +39,7 @@ const SalePropInputGroup: React.FC<SalePropInputGroupProps> = (props) => {
   // const [values, setValues] = useState(props?.values);
 
   return <SalePropInputGroupConnext.Provider value={{
-    uniqueGroup, options, 
+    uniqueGroup, options, onAdd,
     group, values,
     onValuesChange: (value?: SalePropValueType[]) => {
       setValues(value || []);
