@@ -7,13 +7,14 @@ import { Typography } from "antd";
 export type SalePropInputGroupConnextType = {
   uniqueGroup?: boolean;
   options?: OptionGroupType[] | OptionItemType[];
-  onClear?: () => void | Promise<void>;
-  onAdd?: (values: SalePropValueType[]) => void | Promise<void>;
+  // onClear?: () => void | Promise<void>;
+  // onAdd?: (values: SalePropValueType[]) => void | Promise<void>;
 
   group?: SalePropGroupType;
   values?: SalePropValueType[];
   onGroupChange?: (value?: SalePropGroupType) => void;
   onValuesChange?: (value?: SalePropValueType[]) => void;
+  onChange?: (v: { group?: SalePropGroupType, adds?: SalePropValueType[] }) => void | Promise<void>;
 };
 export const SalePropInputGroupConnext = createContext<SalePropInputGroupConnextType>({});
 
@@ -22,7 +23,7 @@ export interface SalePropInputGroupProps extends SalePropInputGroupConnextType {
   children?: React.ReactNode;
 }
 const SalePropInputGroup: React.FC<SalePropInputGroupProps> = (props) => {
-  const { children, uniqueGroup, options, onAdd, onClear, ...restProps } = props;
+  const { children, uniqueGroup, options, ...restProps } = props;
 
   const [group, setGroup] = useMergedState(undefined, {
     value: props?.group,
@@ -38,7 +39,7 @@ const SalePropInputGroup: React.FC<SalePropInputGroupProps> = (props) => {
   // const [values, setValues] = useState(props?.values);
 
   return <SalePropInputGroupConnext.Provider value={{
-    uniqueGroup, options, onAdd, onClear,
+    uniqueGroup, options, 
     group, values,
     onValuesChange: (value?: SalePropValueType[]) => {
       setValues(value || []);

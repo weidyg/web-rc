@@ -87,9 +87,8 @@ const InternalSalePropInput = (
         setGroup(current?.group);
         setValue({ ...value, text, value: id });
       }
-      // context?.onValuesChange?.(all.map(({ text, value }) => ({ text, value })));
-      await context?.onClear?.();
-      if (adds) { await context?.onAdd?.(adds.map(({ text, value }) => ({ text, value }))); }
+      context?.onValuesChange?.(all.map(({ text, value }) => ({ text, value })));
+      // if (adds) { await context?.onAdd?.(adds.map(({ text, value }) => ({ text, value }))); }
       setOpen(false);
     }}
     onCancel={() => {

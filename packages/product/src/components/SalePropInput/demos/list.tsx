@@ -85,10 +85,10 @@ export default () => {
                   }
                   form.setFieldValue(['saleProp', 'p-20509', 'group'], group);
                 }}
-                onAdd={(values) => {
-                  console.log("onAdd", values);
-                  values?.forEach((item) => { add(item); });
-                }}
+                // onAdd={(values) => {
+                //   console.log("onAdd", values);
+                //   values?.forEach((item) => { add(item); });
+                // }}
               >
                 {fields.map(({ key, name, ...restField }) => (
                   <Form.Item key={key}  {...restField} name={[name]}>
