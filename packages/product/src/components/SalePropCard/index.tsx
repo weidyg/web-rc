@@ -26,7 +26,11 @@ export type SalePropCardProps = {
   options?: OptionGroupType[] | OptionItemType[];
   current?: ValueType;
   value?: ValueType[];
-  onOk?: (value: { all: ValueType[], current?: ValueType, adds?: ValueType[] }) => Promise<void> | void,
+  onOk?: (value: {
+    all: ValueType[],
+    current?: ValueType,
+    adds?: ValueType[]
+  }) => Promise<void> | void,
   onCancel?: () => void,
 };
 
@@ -63,8 +67,8 @@ const InternalSalePropCard = (props: SalePropCardProps) => {
     });
     let _new = _all.filter(f => !disabledValues.find(v => compareValue(f, v)));
     const _current = _all.find(f => compareValue(f, current)) || _new?.shift();
-    _new = _new.filter(f => !compareValue(f, _current));
-    await onOk?.({ current: _current, all: _all, adds: _new });
+    // _new = _new.filter(f => !compareValue(f, _current));
+    await onOk?.({ all: _all, current: _current, adds: _new });
   }
 
   function handleGroupChange(groupValue: string): void {

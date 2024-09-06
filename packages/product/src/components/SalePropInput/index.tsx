@@ -4,7 +4,7 @@ import { classNames, useMergedState } from '@web-react/biz-utils';
 import { ImageInput, SalePropCard, SalePropCardProps, ValueType } from '@web-react/biz-components';
 import { useStyle } from './style';
 import useSalePropOptions from '../SalePropCard/hooks/useSalePropOptions';
-import SalePropInputGroup, { SalePropInputGroupConnext } from './Group';
+import SalePropInputGroup, { SalePropInputGroupConnext, SalePropSelectDataType } from './Group';
 import { DeleteOutlined } from '@ant-design/icons';
 
 const StandardIcon: React.FC = () => {
@@ -46,48 +46,51 @@ const InternalSalePropInput = (
   const context = useContext(SalePropInputGroupConnext);
   const uniqueGroup = context?.uniqueGroup;
   const options = context?.options || props?.options || [];
-  const [group, setGroup] = useMergedState(context?.group, {
-    value: context?.group,
-    onChange: context?.onGroupChange
-  });
 
   const { isGroup, flatOptions } = useSalePropOptions(options);
-
-  // const [values, setValues] = useMergedState([], {
-  //   value: context?.values,
-  //   onChange: context?.onValuesChange
-  // });
-
   const [open, setOpen] = useState(false);
-  const [value, setValue] = useMergedState(props?.defaultValue, {
+
+  const [value, setValue] = useMergedState(undefined, {
+    defaultValue: props?.defaultValue,
     value: props?.value,
     onChange: props?.onChange
   });
 
-  const current = { ...value, group } as ValueType;
+  // const [value, setValue] = useState<SalePropValueType | undefined>(undefined);
+  // useEffect(() => {
+  //   props?.onChange?.(value);
+  // }, [value])
+
+  
+  const [data, setData] = useMergedState<SalePropSelectDataType>({}, {
+    value: context?.data,
+    onChange: context?.onSelectChange
+  });
+
+  const single = !!value?.value || !context;
+  const current = { ...value, group: data?.group } as ValueType;
   const allValues = useMemo(() => {
-    const _all = context?.values?.filter(f => f?.value)
-      ?.map(({ text, value }) => ({ text, value, group })) || [];
+    const _all = data?.value?.filter(f => f?.value)
+      ?.map(({ text, value }) => ({ text, value, group: data?.group })) || [];
     return _all as ValueType[];
-  }, [group, context?.values]);
+  }, [data]);
 
   const content = <SalePropCard
-    single={!!value?.value}
-    current={current}
     uniqueGroup={uniqueGroup}
     options={options}
+    single={single}
+    current={current}
     value={allValues}
     onOk={async ({ all, current, adds }) => {
-      console.log('onOk all', all);
-      console.log('onOk current', current);
-      console.log('onOk adds', adds);
       if (current) {
         const id = current?.value;
         const text = current?.text;
-        setGroup(current?.group);
         setValue({ ...value, text, value: id });
       }
-      context?.onValuesChange?.(all.map(({ text, value }) => ({ text, value })));
+      setData({
+        group: current?.group,
+        value: all.map(({ text, value }) => ({ text, value }))
+      });
       if (adds) { await context?.onAdd?.(adds.map(({ text, value }) => ({ text, value }))); }
       setOpen(false);
     }}
@@ -102,15 +105,14 @@ const InternalSalePropInput = (
     remark: "备注"
   }
 
-
   const isStandard = flatOptions.some(f =>
-    f.group?.value === group?.value
+    f.group?.value === data?.group?.value
     && f.value === value?.value
   );
 
   const getStandardOption = useCallback((text: string) => {
     return flatOptions.find(f =>
-      f.group?.value === group?.value &&
+      f.group?.value === data?.group?.value &&
       f.label === text);
   }, [flatOptions]);
 
@@ -123,16 +125,17 @@ const InternalSalePropInput = (
       }
     }}
     onChange={(e) => {
+      let newVal = undefined;
       const text = e.target.value;
       if (text) {
         const id = getStandardOption(text)?.value || text;
-        setValue({ ...value, text, value: id });
-        if (allowCustom && open) {
-          setOpen(false);
-        }
+        newVal = { ...value, text, value: id };
+        if (allowCustom && open) { setOpen(false); }
       } else {
-        setValue(undefined);
+        const newVals = data?.value?.filter(f => f.value != value?.value);
+        setData({ ...data, value: newVals });
       }
+      setValue(newVal);
     }}
     style={{ width: '180px' }}
     suffix={isStandard ? <StandardIcon /> : ''}
@@ -141,6 +144,7 @@ const InternalSalePropInput = (
   return wrapSSR(<>
     {/* <Typography>
       <pre>{JSON.stringify(value)}</pre>
+      <pre>{JSON.stringify(data)}</pre>
     </Typography> */}
     <Space style={style}
       className={classNames(`${prefixCls}`, className, hashId)}
