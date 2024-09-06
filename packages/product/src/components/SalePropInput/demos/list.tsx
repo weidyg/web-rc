@@ -60,55 +60,58 @@ export default () => {
         </>)}
       </Form.List> */}
       <Form.Item noStyle shouldUpdate>
-        {(form) => (<>
-          <Form.Item name={['saleProp', 'p-20509', 'group']} hidden noStyle>
-            <Input />
-          </Form.Item>
-          <Form.List name={['saleProp', 'p-20509', 'value']}>
-            {(fields, { add, remove }) => (<>
-              <SalePropInput.Group
-                uniqueGroup={uniqueGroup}
-                options={uniqueGroup
-                  ? dataJson.size
-                  : dataJson.color
-                }
-                group={form.getFieldValue(['saleProp', 'p-20509', 'group'])}
-                values={form.getFieldValue(['saleProp', 'p-20509', 'value'])}
-                onGroupChange={(group) => {
-                  console.log("onGroupChange", group);
-                  var old = form.getFieldValue(['saleProp', 'p-20509', 'group']);
-                  if (old?.value && group?.value != old.value && uniqueGroup) {
-                    for (let index = 0; index < fields.length; index++) {
-                      console.log("remove", index, form.getFieldValue(['saleProp', 'p-20509', 'value', fields[index].name]));
-                      remove(index);
-                    }
-                  }
-                  form.setFieldValue(['saleProp', 'p-20509', 'group'], group);
-                }}
+        {(form) => {
+          const groupName = ['saleProp', 'p-20509', 'group'];
+          const valueName = ['saleProp', 'p-20509', 'value'];
+          return <>
+            <Form.Item name={groupName} hidden noStyle>
+              <Input />
+            </Form.Item>
+            <Form.List name={valueName}>
+              {(fields, { add, remove }) => {
+                return <>
+                  <SalePropInput.Group
+                    uniqueGroup={uniqueGroup}
+                    options={uniqueGroup ? dataJson.size : dataJson.color}
+                    group={form.getFieldValue(groupName)}
+                    values={form.getFieldValue(valueName)}
+                    onGroupChange={(group) => {
+                      // console.log("onGroupChange", group);
+                      // var old = form.getFieldValue(['saleProp', 'p-20509', 'group']);
+                      // if (old?.value && group?.value != old.value && uniqueGroup) {
+                      //   for (let index = 0; index < fields.length; index++) {
+                      //     console.log("remove", index, form.getFieldValue(['saleProp', 'p-20509', 'value', fields[index].name]));
+                      //     remove(index);
+                      //   }
+                      // }
+                      form.setFieldValue(groupName, group);
+                    }}
 
-                // onAdd={(values) => {
-                //   console.log("onAdd", values);
-                //   values?.forEach((item) => { add(item); });
-                // }}
-              >
-                {fields.map(({ key, name, ...restField }) => (
-                  <Form.Item key={key}  {...restField} name={[name]}>
-                    <SalePropInput allowCustom onRemove={() => { remove(name); }} />
+                  // onAdd={(values) => {
+                  //   console.log("onAdd", values);
+                  //   values?.forEach((item) => { add(item); });
+                  // }}
+                  >
+                    {fields.map(({ key, name, ...restField }) => (
+                      <Form.Item key={key}  {...restField} name={[name]}>
+                        <SalePropInput allowCustom onRemove={() => { remove(name); }} />
+                      </Form.Item>
+                    ))}
+                  </SalePropInput.Group>
+                  <Form.Item>
+                    <Button
+                      type='text'
+                      icon={<PlusOutlined />}
+                      onClick={() => { add(); }}
+                    >
+                      新增
+                    </Button>
                   </Form.Item>
-                ))}
-              </SalePropInput.Group>
-              <Form.Item>
-                <Button
-                  type='text'
-                  icon={<PlusOutlined />}
-                  onClick={() => { add(); }}
-                >
-                  新增
-                </Button>
-              </Form.Item>
-            </>)}
-          </Form.List>
-        </>)}
+                </>
+              }}
+            </Form.List>
+          </>
+        }}
       </Form.Item>
 
       <Form.Item noStyle shouldUpdate>
