@@ -76,14 +76,15 @@ export default () => {
                     group={form.getFieldValue(groupName)}
                     values={form.getFieldValue(valueName)}
                     onGroupChange={(group) => {
-                      // console.log("onGroupChange", group);
-                      // var old = form.getFieldValue(['saleProp', 'p-20509', 'group']);
-                      // if (old?.value && group?.value != old.value && uniqueGroup) {
-                      //   for (let index = 0; index < fields.length; index++) {
-                      //     console.log("remove", index, form.getFieldValue(['saleProp', 'p-20509', 'value', fields[index].name]));
-                      //     remove(index);
-                      //   }
-                      // }
+                      console.log("onGroupChange", group);
+                      var old = form.getFieldValue(['saleProp', 'p-20509', 'group']);
+                      if (old?.value && group?.value != old.value && uniqueGroup) {
+                        form.setFieldValue(valueName, []);
+                        // for (let index = 0; index < fields.length; index++) {
+                        //   console.log("remove", index, form.getFieldValue(['saleProp', 'p-20509', 'value', fields[index].name]));
+                        //   remove(index);
+                        // }
+                      }
                       form.setFieldValue(groupName, group);
                     }}
                     onAdd={(values) => {
