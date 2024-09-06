@@ -14,7 +14,10 @@ export type SalePropInputGroupConnextType = {
   values?: SalePropValueType[];
   onGroupChange?: (value?: SalePropGroupType) => void;
   onValuesChange?: (value?: SalePropValueType[]) => void;
-  onChange?: (v: { group?: SalePropGroupType, adds?: SalePropValueType[] }) => void | Promise<void>;
+  onChange?: (v: { 
+    group?: SalePropGroupType, 
+    adds?: SalePropValueType[] ,
+  }) => void | Promise<void>;
 };
 export const SalePropInputGroupConnext = createContext<SalePropInputGroupConnextType>({});
 
