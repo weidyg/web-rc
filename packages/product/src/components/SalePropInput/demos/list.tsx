@@ -103,7 +103,7 @@ export default () => {
                       icon={<PlusOutlined />}
                       onClick={() => { add(); }}
                     >
-                      新增
+                      新 增
                     </Button>
                   </Form.Item>
                 </>
