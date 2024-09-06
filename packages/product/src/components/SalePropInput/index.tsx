@@ -53,19 +53,26 @@ const InternalSalePropInput = (
   const [value, setValue] = useMergedState(undefined, {
     defaultValue: props?.defaultValue,
     value: props?.value,
-    onChange: props?.onChange
+    onChange: props?.onChange,
   });
-
-  // const [value, setValue] = useState<SalePropValueType | undefined>(undefined);
-  // useEffect(() => {
-  //   props?.onChange?.(value);
-  // }, [value])
-
-  
-  const [data, setData] = useMergedState<SalePropSelectDataType>({}, {
+  const [data, setData] = useMergedState({}, {
     value: context?.data,
     onChange: context?.onSelectChange
   });
+  function handleChange(value?: SalePropValueType): void {
+    setValue(value);
+  }
+  function handleDataChange(value: SalePropSelectDataType): void {
+    // {
+    //   group: current?.group,
+    //   value: all.map(({ text, value }) => ({ text, value }))
+    // }
+
+    // const newVals = data?.value?.filter(f => f.value != value?.value);
+    // { ...data, value: newVals };
+    setData(value);
+  }
+
 
   const single = !!value?.value || !context;
   const current = { ...value, group: data?.group } as ValueType;
@@ -85,9 +92,9 @@ const InternalSalePropInput = (
       if (current) {
         const id = current?.value;
         const text = current?.text;
-        setValue({ ...value, text, value: id });
+        handleChange({ ...value, text, value: id });
       }
-      setData({
+      handleDataChange({
         group: current?.group,
         value: all.map(({ text, value }) => ({ text, value }))
       });
@@ -125,17 +132,19 @@ const InternalSalePropInput = (
       }
     }}
     onChange={(e) => {
-      let newVal = undefined;
+      let newVal;
       const text = e.target.value;
+      const { img, remark } = value || {};
       if (text) {
         const id = getStandardOption(text)?.value || text;
-        newVal = { ...value, text, value: id };
+        newVal = { img, remark, text, value: id };
         if (allowCustom && open) { setOpen(false); }
       } else {
+        newVal = (img || remark) ? { img, remark } : undefined;
         const newVals = data?.value?.filter(f => f.value != value?.value);
-        setData({ ...data, value: newVals });
+        handleDataChange({ ...data, value: newVals });
       }
-      setValue(newVal);
+      handleChange(newVal);
     }}
     style={{ width: '180px' }}
     suffix={isStandard ? <StandardIcon /> : ''}
@@ -152,7 +161,7 @@ const InternalSalePropInput = (
       <ImageInput
         value={value?.img}
         onChange={(img) => {
-          setValue({ ...value, img });
+          handleChange({ ...value, img });
         }}
       />
       <Space.Compact>
@@ -178,7 +187,7 @@ const InternalSalePropInput = (
           value={value?.remark}
           onChange={(e) => {
             const remark = e.target.value;
-            setValue({ ...value, remark });
+            handleChange({ ...value, remark });
           }}
           style={{ width: '98px' }}
         />

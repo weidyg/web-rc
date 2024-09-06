@@ -3,13 +3,13 @@ import useEvent from 'rc-util/es/hooks/useEvent';
 import { useLayoutUpdateEffect } from 'rc-util/es/hooks/useLayoutEffect';
 import useState from 'rc-util/es/hooks/useState';
 type Updater<T> = (
-  updater: T | ((origin: T) => T),
-  ignoreDestroy?: boolean,
+    updater: T | ((origin: T) => T),
+    ignoreDestroy?: boolean,
 ) => void;
 
 /** We only think `undefined` is empty */
 function hasValue(value: any) {
-  return value !== undefined;
+    return value !== undefined;
 }
 
 /**
@@ -17,58 +17,61 @@ function hasValue(value: any) {
  * Note that internal use rc-util `useState` hook.
  */
 export default function useMergedState<T, R = T>(
-  defaultStateValue: T | (() => T),
-  option?: {
-    defaultValue?: T | (() => T);
-    value?: T;
-    onChange?: (value: T, prevValue: T) => void;
-    postState?: (value: T) => T;
-  },
+    defaultStateValue: T | (() => T),
+    option?: {
+        defaultValue?: T | (() => T);
+        value?: T;
+        onChange?: (value: T, prevValue: T) => void;
+        postState?: (value: T) => T;
+    },
 ): [R, Updater<T>] {
-  const { defaultValue, value, onChange, postState } = option || {};
+    const { defaultValue, value, onChange, postState } = option || {};
 
-  // ======================= Init =======================
-  const [innerValue, setInnerValue] = useState<T>(() => {
-    if (hasValue(value)) {
-      return value;
-    } else if (hasValue(defaultValue)) {
-      return typeof defaultValue === 'function'
-        ? (defaultValue as any)()
-        : defaultValue;
-    } else {
-      return typeof defaultStateValue === 'function'
-        ? (defaultStateValue as any)()
-        : defaultStateValue;
-    }
-  });
+    // ======================= Init =======================
+    const [innerValue, setInnerValue] = useState<T>(() => {
+        if (hasValue(value)) {
+            return value;
+        } else if (hasValue(defaultValue)) {
+            return typeof defaultValue === 'function'
+                ? (defaultValue as any)()
+                : defaultValue;
+        } else {
+            return typeof defaultStateValue === 'function'
+                ? (defaultStateValue as any)()
+                : defaultStateValue;
+        }
+    });
 
-  const mergedValue = value !== undefined ? value : innerValue;
-  const postMergedValue = postState ? postState(mergedValue) : mergedValue;
+    const mergedValue = value !== undefined ? value : innerValue;
+    console.log(' value, innerValue', value, innerValue, mergedValue);
+    const postMergedValue = postState ? postState(mergedValue) : mergedValue;
 
-  // ====================== Change ======================
-  const onChangeFn = useEvent(onChange!);
+    // ====================== Change ======================
+    const onChangeFn = useEvent(onChange!);
 
-  const [prevValue, setPrevValue] = useState<[T]>([mergedValue]);
+    const [prevValue, setPrevValue] = useState<[T]>([mergedValue]);
 
-  useLayoutUpdateEffect(() => {
-    const prev = prevValue[0];
-    if (innerValue !== prev) {
-      onChangeFn(innerValue, prev);
-    }
-  }, [prevValue]);
+    useLayoutUpdateEffect(() => {
+        const prev = prevValue[0];
+        if (innerValue !== prev) {
+            onChangeFn(innerValue, prev);
+            console.log('useLayoutUpdateEffect prev', innerValue, prev, prevValue);
+        }
+    }, [prevValue]);
 
-  // Sync value back to `undefined` when it from control to un-control
-  useLayoutUpdateEffect(() => {
-    if (!hasValue(value)) {
-      setInnerValue(value!);
-    }
-  }, [value]);
+    // Sync value back to `undefined` when it from control to un-control
+    useLayoutUpdateEffect(() => {
+        if (!hasValue(value)) {
+            setInnerValue(value!);
+            console.log('useLayoutUpdateEffect value', value);
+        }
+    }, [value]);
 
-  // ====================== Update ======================
-  const triggerChange: Updater<T> = useEvent((updater, ignoreDestroy) => {
-    setInnerValue(updater, ignoreDestroy);
-    setPrevValue([mergedValue], ignoreDestroy);
-  });
+    // ====================== Update ======================
+    const triggerChange: Updater<T> = useEvent((updater, ignoreDestroy) => {
+        setInnerValue(updater, ignoreDestroy);
+        setPrevValue([mergedValue], ignoreDestroy);
+    });
 
-  return [postMergedValue as unknown as R, triggerChange];
+    return [postMergedValue as unknown as R, triggerChange];
 }
