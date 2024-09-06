@@ -1,10 +1,11 @@
-import { useCallback, useContext, useMemo, useState } from 'react';
-import { Input, MenuProps, Popover, Space } from 'antd';
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { Button, Input, MenuProps, Popover, Space, Typography } from 'antd';
 import { classNames, useMergedState } from '@web-react/biz-utils';
 import { ImageInput, SalePropCard, SalePropCardProps, ValueType } from '@web-react/biz-components';
 import { useStyle } from './style';
 import useSalePropOptions from '../SalePropCard/hooks/useSalePropOptions';
-import SalePropInputGroup from './Group';
+import SalePropInputGroup, { SalePropInputGroupConnext } from './Group';
+import { DeleteOutlined } from '@ant-design/icons';
 
 const StandardIcon: React.FC = () => {
   return <img style={{ width: '14px', }}
@@ -30,80 +31,45 @@ export type SalePropInputProps = Pick<SalePropCardProps, 'options'> & {
   prefixCls?: string;
 
   allowCustom?: boolean;
-
   defaultValue?: SalePropValueType;
   value?: SalePropValueType;
-  onChange?: (value: SalePropValueType) => void;
-
-  // onAdd?: (value: SalePropValueType[]) => void;
-  values?: SalePropValueType[];
-
-  defaultGroup?: SalePropGroupType;
-  group?: SalePropGroupType;
-  onGroupChange?: (value?: SalePropGroupType) => void;
+  onChange?: (value?: SalePropValueType) => void;
+  onRemove?: () => void;
 };
 
 const InternalSalePropInput = (
   props: SalePropInputProps
 ) => {
-  const { className, style, allowCustom, ...rest } = props;
+  const { className, style, allowCustom, onRemove } = props;
   const { prefixCls, wrapSSR, hashId, token } = useStyle(props.prefixCls);
 
-  // const [group, setGroup] = useMergedState(undefined, {
-  //   defaultValue: props?.defaultGroup,
-  //   value: props?.group,
-  //   onChange: props?.onGroupChange
-  // });
+  const context = useContext(SalePropInputGroupConnext);
+  const uniqueGroup = context?.uniqueGroup;
+  const options = context?.options || props?.options || [];
+  const [group, setGroup] = useMergedState(context?.group, {
+    value: context?.group,
+    onChange: context?.onGroupChange
+  });
 
-  // const context = useContext(SalePropCard.Context);
-  // const { isGroup, flatOptions, options, uniqueGroup } = context || {};
-
-  const uniqueGroup = false;
-  const { options = [] } = rest;
   const { isGroup, flatOptions } = useSalePropOptions(options);
 
+  // const [values, setValues] = useMergedState([], {
+  //   value: context?.values,
+  //   onChange: context?.onValuesChange
+  // });
+
   const [open, setOpen] = useState(false);
-  const [value, setValue] = useMergedState({}, {
-    defaultValue: props?.defaultValue,
+  const [value, setValue] = useMergedState(props?.defaultValue, {
     value: props?.value,
     onChange: props?.onChange
   });
 
-  const items: MenuProps['items'] = [
-    {
-      key: '1', label: '替换', onClick: () => {
-
-      }
-    },
-    {
-      key: '2', label: '删除', onClick: () => {
-        setValue({ ...value, img: undefined });
-      }
-    },
-    {
-      key: '3', label: '裁剪', onClick: () => {
-
-      }
-    },
-  ];
-
-  const [group, setGroup] = useMergedState(undefined, {
-    defaultValue: props?.defaultGroup,
-    value: props?.group,
-    onChange: props?.onGroupChange
-  });
-
-  const [values, setValues] = useMergedState([], {
-    value: props?.values,
-  });
-
-
   const current = { ...value, group } as ValueType;
   const allValues = useMemo(() => {
-    const _all = values?.filter(f => f?.value)
+    const _all = context?.values?.filter(f => f?.value)
       ?.map(({ text, value }) => ({ text, value, group })) || [];
     return _all as ValueType[];
-  }, [group, values]);
+  }, [group, context?.values]);
 
   const content = <SalePropCard
     single={!!value?.value}
@@ -111,19 +77,20 @@ const InternalSalePropInput = (
     uniqueGroup={uniqueGroup}
     options={options}
     value={allValues}
-    onOk={({ all, current, adds }) => {
-      console.log('onOk', all, current, adds);
+    onOk={async ({ all, current, adds }) => {
+      console.log('onOk all', all);
+      console.log('onOk current', current);
+      console.log('onOk adds', adds);
       if (current) {
         const id = current?.value;
         const text = current?.text;
         setGroup(current?.group);
         setValue({ ...value, text, value: id });
       }
+      // context?.onValuesChange?.(all.map(({ text, value }) => ({ text, value })));
+      await context?.onClear?.();
+      if (adds) { await context?.onAdd?.(adds.map(({ text, value }) => ({ text, value }))); }
       setOpen(false);
-      // if (adds && onAdd) {
-      //   const _adds = adds.map(({ text, value }) => ({ text, value }));
-      //   onAdd?.(_adds);
-      // }
     }}
     onCancel={() => {
       setOpen(false);
@@ -136,11 +103,11 @@ const InternalSalePropInput = (
     remark: "备注"
   }
 
-  const isStandard = useMemo(() => {
-    return flatOptions.some(f =>
-      f.group?.value === group?.value &&
-      f.value === value?.value)
-  }, [flatOptions, value]);
+
+  const isStandard = flatOptions.some(f =>
+    f.group?.value === group?.value
+    && f.value === value?.value
+  );
 
   const getStandardOption = useCallback((text: string) => {
     return flatOptions.find(f =>
@@ -158,14 +125,21 @@ const InternalSalePropInput = (
     }}
     onChange={(e) => {
       const text = e.target.value;
-      const id = getStandardOption(text)?.value || text;
-      setValue({ ...value, text, value: id });
+      if (text) {
+        const id = getStandardOption(text)?.value || text;
+        setValue({ ...value, text, value: id });
+      } else {
+        setValue(undefined);
+      }
     }}
     style={{ width: '180px' }}
     suffix={isStandard ? <StandardIcon /> : ''}
   />;
 
-  return wrapSSR(
+  return wrapSSR(<>
+    {/* <Typography>
+      <pre>{JSON.stringify(value)}</pre>
+    </Typography> */}
     <Space style={style}
       className={classNames(`${prefixCls}`, className, hashId)}
     >
@@ -198,16 +172,21 @@ const InternalSalePropInput = (
           style={{ width: '98px' }}
         />
       </Space.Compact>
+      {onRemove &&
+        <Button danger type='text' icon={<DeleteOutlined />} onClick={onRemove}
+          className={classNames(`${prefixCls}-del`, hashId)}
+        />
+      }
     </Space>
-  );
+  </>);
 };
 
 
 type CompoundedComponent = typeof InternalSalePropInput & {
   Group: typeof SalePropInputGroup;
-  // Context: typeof SalePropCardContext;
+  Context: typeof SalePropInputGroupConnext;
 };
 const SalePropInput = InternalSalePropInput as CompoundedComponent;
 SalePropInput.Group = SalePropInputGroup;
-// SalePropCard.Context = SalePropCardContext;
+SalePropInput.Context = SalePropInputGroupConnext;
 export default SalePropInput;

@@ -61,8 +61,9 @@ const InternalSalePropCard = (props: SalePropCardProps) => {
         f.group.text = group?.label || f.group?.text;
       }
     });
-    const _new = _all.filter(f => !disabledValues.find(v => compareValue(f, v)));
+    let _new = _all.filter(f => !disabledValues.find(v => compareValue(f, v)));
     const _current = _all.find(f => compareValue(f, current)) || _new?.shift();
+    _new = _new.filter(f => !compareValue(f, _current));
     await onOk?.({ current: _current, all: _all, adds: _new });
   }
 

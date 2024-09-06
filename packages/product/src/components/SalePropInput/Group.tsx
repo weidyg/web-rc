@@ -1,35 +1,57 @@
-import { createContext } from "react";
+import { createContext, useState } from "react";
 import { SalePropGroupType, SalePropValueType } from ".";
 import { OptionGroupType, OptionItemType } from "../SalePropCard";
+import { useMergedState } from "@web-react/biz-utils";
+import { Typography } from "antd";
 
 export type SalePropInputGroupConnextType = {
-
-};
-export const SalePropInputGroupConnext = createContext<SalePropInputGroupConnextType | null>(null);
-
-
-export interface SalePropInputGroupProps {
   uniqueGroup?: boolean;
-  values?: SalePropValueType[];
   options?: OptionGroupType[] | OptionItemType[];
-  
+  onClear?: () => void | Promise<void>;
+  onAdd?: (values: SalePropValueType[]) => void | Promise<void>;
+
   group?: SalePropGroupType;
-  onGroupChange?: (group?: SalePropGroupType) => void;
-  onAdd?: (values: SalePropValueType[]) => void;
+  values?: SalePropValueType[];
+  onGroupChange?: (value?: SalePropGroupType) => void;
+  onValuesChange?: (value?: SalePropValueType[]) => void;
+};
+export const SalePropInputGroupConnext = createContext<SalePropInputGroupConnextType>({});
+
+export interface SalePropInputGroupProps extends SalePropInputGroupConnextType {
+  // onRemove?: (values: SalePropValueType[]) => void;
   children?: React.ReactNode;
 }
 const SalePropInputGroup: React.FC<SalePropInputGroupProps> = (props) => {
-  const {
-    children,
-    ...restProps
-  } = props;
+  const { children, uniqueGroup, options, onAdd, onClear, ...restProps } = props;
 
+  const [group, setGroup] = useMergedState(undefined, {
+    value: props?.group,
+    onChange: props?.onGroupChange
+  });
 
-  return <SalePropInputGroupConnext.Provider
-    value={{
+  const [values, setValues] = useMergedState([], {
+    value: props?.values,
+    onChange: props?.onValuesChange
+  });
 
-    }}
+  // const [group, setGroup] = useState(props?.group);
+  // const [values, setValues] = useState(props?.values);
+
+  return <SalePropInputGroupConnext.Provider value={{
+    uniqueGroup, options, onAdd, onClear,
+    group, values,
+    onValuesChange: (value?: SalePropValueType[]) => {
+      setValues(value || []);
+    },
+    onGroupChange: (value?: SalePropGroupType) => {
+      setGroup(value);
+    },
+  }}
   >
+    <Typography>
+      <pre>{JSON.stringify(group)}</pre>
+      <pre>{JSON.stringify(values)}</pre>
+    </Typography>
     {children}
   </SalePropInputGroupConnext.Provider>;
 };

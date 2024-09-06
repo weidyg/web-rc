@@ -16,10 +16,8 @@ const onFinish = (values: any) => {
 export default () => {
   const [uniqueGroup, setUniqueGroup] = useState<boolean>(true);
 
-  const [form] = Form.useForm();
   return (<>
     <Form
-      form={form}
       name="dynamic_form_nest_item"
       onFinish={onFinish}
       style={{ maxWidth: 600 }}
@@ -61,71 +59,59 @@ export default () => {
           </Form.Item>
         </>)}
       </Form.List> */}
-
-      <Form.Item noStyle>
-        <Form.Item
-          name={['saleProp', 'p-20509', 'group']}
-          normalize={(value) => {
-            return value
-              ? { text: value?.label, value: value?.value, }
-              : value
-          }}
-          noStyle
-        >
-          <Select labelInValue options={dataJson.size} popupMatchSelectWidth />
-        </Form.Item>
-        <Form.List name={['saleProp', 'p-20509', 'value']}>
-          {(fields, { add, remove }) => (<>
-            <SalePropInput.Group
-              uniqueGroup={uniqueGroup}
-              options={uniqueGroup
-                ? dataJson.size
-                : dataJson.color
-              }
-              group={form.getFieldValue(['saleProp', 'p-20509', 'group'])}
-              values={form.getFieldValue(['saleProp', 'p-20509', 'value'])}
-              onGroupChange={(group) => {
-                form.setFieldValue(['saleProp', 'p-20509', 'group'], group);
-                for (let index = 0; index < fields.length; index++) { remove(index); }
-              }}
-              onAdd={(values) => {
-                values?.forEach((item) => { add(item); });
-              }}
-            >
-              {fields.map(({ key, name, ...restField }) => (
-                <Space key={key} wrap size={[4, 0]} style={{ marginBottom: "0px" }}>
-                  <Form.Item {...restField} name={[name]}>
-                    <SalePropInput />
-                  </Form.Item>
-                  <Form.Item>
-                    <Button danger
-                      type='text'
-                      shape='circle'
-                      icon={<DeleteOutlined />}
-                      onClick={() => {
-                        remove(name);
-                      }}>
-                    </Button>
-                  </Form.Item>
-                </Space>
-              ))}
-            </SalePropInput.Group>
-            <Form.Item>
-              <Button
-                type='text'
-                icon={<PlusOutlined />}
-                onClick={() => { add(); }}
-                style={{ padding: '2px' }}
+      <Form.Item noStyle shouldUpdate>
+        {(form) => (<>
+          <Form.Item name={['saleProp', 'p-20509', 'group']} hidden noStyle>
+            <Input />
+          </Form.Item>
+          <Form.List name={['saleProp', 'p-20509', 'value']}>
+            {(fields, { add, remove }) => (<>
+              <SalePropInput.Group
+                uniqueGroup={uniqueGroup}
+                options={uniqueGroup
+                  ? dataJson.size
+                  : dataJson.color
+                }
+                group={form.getFieldValue(['saleProp', 'p-20509', 'group'])}
+                values={form.getFieldValue(['saleProp', 'p-20509', 'value'])}
+                onGroupChange={(group) => {
+                  console.log("onGroupChange", group);
+                  var old = form.getFieldValue(['saleProp', 'p-20509', 'group']);
+                  if (old?.value && group?.value != old.value && uniqueGroup) {
+                    for (let index = 0; index < fields.length; index++) {
+                      console.log("remove", index, form.getFieldValue(['saleProp', 'p-20509', 'value', fields[index].name]));
+                      remove(index);
+                    }
+                  }
+                  form.setFieldValue(['saleProp', 'p-20509', 'group'], group);
+                }}
+                onAdd={(values) => {
+                  console.log("onAdd", values);
+                  values?.forEach((item) => { add(item); });
+                }}
               >
-                新增
-              </Button>
-            </Form.Item>
-          </>)}
-        </Form.List>
+                {fields.map(({ key, name, ...restField }) => (
+                  <Form.Item key={key}  {...restField} name={[name]}>
+                    <SalePropInput onRemove={() => { remove(name); }} />
+                  </Form.Item>
+                ))}
+              </SalePropInput.Group>
+              <Form.Item>
+                <Button
+                  type='text'
+                  icon={<PlusOutlined />}
+                  onClick={() => { add(); }}
+                >
+                  新增
+                </Button>
+              </Form.Item>
+            </>)}
+          </Form.List>
+        </>)}
       </Form.Item>
 
       <Form.Item noStyle shouldUpdate>
-        {() => (
+        {(form) => (
           <Typography>
             <pre>{JSON.stringify(form.getFieldsValue(), null, 2)}</pre>
           </Typography>
