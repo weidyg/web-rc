@@ -31,6 +31,8 @@ export type SalePropInputProps = Pick<SalePropCardProps, 'options'> & {
   prefixCls?: string;
 
   allowCustom?: boolean;
+  extFields?: ('img' | 'remark')[];
+
   defaultValue?: SalePropValueType;
   value?: SalePropValueType;
   onChange?: (value?: SalePropValueType) => void;
@@ -40,7 +42,7 @@ export type SalePropInputProps = Pick<SalePropCardProps, 'options'> & {
 const InternalSalePropInput = (
   props: SalePropInputProps
 ) => {
-  const { className, style, allowCustom, onRemove } = props;
+  const { className, style, extFields = ['img', 'remark'], allowCustom, onRemove } = props;
   const { prefixCls, wrapSSR, hashId, token } = useStyle(props.prefixCls);
 
   const context = useContext(SalePropInputGroupConnext);
@@ -98,7 +100,7 @@ const InternalSalePropInput = (
         group: current?.group,
         value: all.map(({ text, value }) => ({ text, value }))
       });
-      if (adds) { await context?.onAdd?.(adds.map(({ text, value }) => ({ text, value }))); }
+      // if (adds) { await context?.onAdd?.(adds.map(({ text, value }) => ({ text, value }))); }
       setOpen(false);
     }}
     onCancel={() => {
@@ -107,8 +109,9 @@ const InternalSalePropInput = (
     style={{ maxWidth: 580 }}
   />;
 
+  const hasOptions = options?.length > 1;
   const placeholder = {
-    text: allowCustom ? "请输入" : "请选择",
+    text: allowCustom ? `请${hasOptions ? '选择/' : ''}输入` : "请选择",
     remark: "备注"
   }
 
@@ -158,15 +161,17 @@ const InternalSalePropInput = (
     <Space style={style}
       className={classNames(`${prefixCls}`, className, hashId)}
     >
-      <ImageInput
-        value={value?.img}
-        onChange={(img) => {
-          handleChange({ ...value, img });
-        }}
-      />
+      {extFields.includes('img') &&
+        <ImageInput
+          value={value?.img}
+          onChange={(img) => {
+            handleChange({ ...value, img });
+          }}
+        />
+      }
       <Space.Compact>
-        {(options?.length > 1) ?
-          <Popover
+        {hasOptions
+          ? (<Popover
             trigger={'click'}
             placement={'bottom'}
             content={content}
@@ -179,10 +184,10 @@ const InternalSalePropInput = (
             }}
           >
             {children}
-          </Popover>
+          </Popover>)
           : children
         }
-        <Input allowClear
+        {extFields.includes('remark') && <Input allowClear
           placeholder={placeholder.remark}
           value={value?.remark}
           onChange={(e) => {
@@ -190,7 +195,8 @@ const InternalSalePropInput = (
             handleChange({ ...value, remark });
           }}
           style={{ width: '98px' }}
-        />
+        />}
+
       </Space.Compact>
       {onRemove &&
         <Button danger type='text' icon={<DeleteOutlined />} onClick={onRemove}

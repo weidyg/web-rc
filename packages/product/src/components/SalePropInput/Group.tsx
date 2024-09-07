@@ -1,4 +1,4 @@
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import { SalePropGroupType, SalePropValueType } from ".";
 import { OptionGroupType, OptionItemType } from "../SalePropCard";
 import { useMergedState } from "@web-react/biz-utils";
@@ -11,10 +11,6 @@ export type SalePropSelectDataType = {
 export type SalePropInputGroupConnextType = {
   uniqueGroup?: boolean;
   options?: OptionGroupType[] | OptionItemType[];
-
-  onClear?: () => void | Promise<void>;
-  onAdd?: (values: SalePropValueType[]) => void | Promise<void>;
-
   data?: SalePropSelectDataType,
   onSelectChange?: (data: SalePropSelectDataType) => void | Promise<void>;
 };
@@ -23,44 +19,53 @@ export const SalePropInputGroupConnext = createContext<SalePropInputGroupConnext
 export interface SalePropInputGroupProps {
   // onRemove?: (values: SalePropValueType[]) => void;
   children?: React.ReactNode;
-  options?: OptionGroupType[] | OptionItemType[];
+
   uniqueGroup?: boolean;
+  options?: OptionGroupType[] | OptionItemType[];
+  values?: SalePropValueType[];
+
   group?: SalePropGroupType;
   onGroupChange?: (value?: SalePropGroupType) => void;
-  values?: SalePropValueType[];
   onClear?: () => void | Promise<void>;
   onAdd?: (values: SalePropValueType[]) => void | Promise<void>;
 }
 const SalePropInputGroup: React.FC<SalePropInputGroupProps> = (props) => {
-  const { children, uniqueGroup, options, onAdd, onClear, ...restProps } = props;
+  const { children, uniqueGroup, options, onAdd, onClear } = props;
 
-  // const [group, setGroup] = useMergedState(undefined, {
-  //   value: props?.group,
-  //   onChange: props?.onGroupChange
-  // });
+  const [selectData, setSelectData] = useState<SalePropSelectDataType>({
+    group: props?.group,
+    value: props?.values,
+  });
 
-  // const [selectValues, setSelectChange] = useMergedState([], {
-  //   // value: props?.selectValues,
-  //   // onChange: props?.onSelectChange
-  // });
+  const handleSelectChange = (data: SalePropSelectDataType) => {
+    const { group, value } = data;
+    const groupChange = group?.value != selectData?.group?.value;
+    if (groupChange) {
+      props?.onGroupChange?.(group);
+    }
+    if (groupChange && uniqueGroup) {
+      onClear?.();
+      onAdd?.(value || []);
+    } else {
 
-  const [selectData, setSelectData] = useState<SalePropSelectDataType>();
-  // const [values, setValues] = useState(props?.values);
-
-  return <SalePropInputGroupConnext.Provider value={{
-    uniqueGroup, options, onAdd, onClear,
-    data: selectData,
-    onSelectChange: (data) => {
-      setSelectData(data);
-      // setSelectChange(value);
-    },
-  }}
-  >
+    }
+    setSelectData(data);
+  }
+  return (<>
     <Typography>
       <pre>{JSON.stringify(selectData)}</pre>
       {/* <pre>{JSON.stringify(values)}</pre> */}
     </Typography>
-    {children}
-  </SalePropInputGroupConnext.Provider>;
+
+    <SalePropInputGroupConnext.Provider
+      value={{
+        uniqueGroup, options,
+        data: selectData,
+        onSelectChange: handleSelectChange,
+      }}
+    >
+      {children}
+    </SalePropInputGroupConnext.Provider>
+  </>)
 };
 export default SalePropInputGroup;

@@ -4,9 +4,9 @@
  */
 import { useState } from "react";
 import { Button, Form, Input, message, Select, Space, Switch, Typography } from "antd";
+import { DeleteColumnOutlined, DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import { SalePropCard, SalePropInput, SalePropValueType, ValueType } from "@web-react/biz-components";
 import dataJson from './_data.json';
-import { DeleteColumnOutlined, DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 
 const onFinish = (values: any) => {
   console.log('Received values of form:', values);
@@ -23,42 +23,6 @@ export default () => {
       style={{ maxWidth: 600 }}
       autoComplete="off"
     >
-      {/* <Form.List name={['saleProp', 'p-1627207']}>
-        {(fields, { add, remove }) => (<>
-          {fields.map(({ key, name, ...restField }) => (
-            <Space key={key} wrap size={[4, 0]} style={{ marginBottom: "0px" }}>
-              <Form.Item {...restField} name={[name]}>
-                <SalePropInput
-                  uniqueGroup={uniqueGroup}
-                  options={uniqueGroup
-                    ? dataJson.size
-                    : dataJson.color
-                  }
-                />
-              </Form.Item>
-              <Form.Item>
-                <Button type='text' danger
-                  shape='circle'
-                  icon={<DeleteOutlined />}
-                  onClick={() => {
-                    remove(name);
-                  }}>
-                </Button>
-              </Form.Item>
-            </Space>
-          ))}
-          <Form.Item>
-            <Button
-              type='text'
-              icon={<PlusOutlined />}
-              onClick={() => { add(); }}
-              style={{ padding: '2px' }}
-            >
-              新增
-            </Button>
-          </Form.Item>
-        </>)}
-      </Form.List> */}
       <Form.Item noStyle shouldUpdate>
         {(form) => {
           const groupName = ['saleProp', 'p-20509', 'group'];
@@ -74,19 +38,11 @@ export default () => {
                     uniqueGroup={uniqueGroup}
                     options={uniqueGroup ? dataJson.size : dataJson.color}
                     group={form.getFieldValue(groupName)}
-                    values={form.getFieldValue(valueName)}
                     onGroupChange={(group) => {
-                      // console.log("onGroupChange", group);
-                      // var old = form.getFieldValue(['saleProp', 'p-20509', 'group']);
-                      // if (old?.value && group?.value != old.value && uniqueGroup) {
-                      //   form.setFieldValue(valueName, []);
-                      //   // for (let index = 0; index < fields.length; index++) {
-                      //   //   console.log("remove", index, form.getFieldValue(['saleProp', 'p-20509', 'value', fields[index].name]));
-                      //   //   remove(index);
-                      //   // }
-                      // }
                       form.setFieldValue(groupName, group);
                     }}
+
+
                     onAdd={(values) => {
                       // console.log("onAdd", values);
                       values?.forEach((item) => { add(item); });

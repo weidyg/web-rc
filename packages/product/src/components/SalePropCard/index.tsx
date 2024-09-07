@@ -5,7 +5,6 @@ import { classNames } from '@web-react/biz-utils';
 import useSalePropOptions from './hooks/useSalePropOptions';
 import { useSalePropValue } from './hooks/useSalePropValue';
 import { useStyle } from './style';
-import SalePropCardContext, { SalePropCardProvider } from './context';
 import { OptionGroupType, OptionItemType, ValueType } from './typing';
 
 const compareValue = (v1?: ValueType, v2?: ValueType) => {
@@ -65,10 +64,10 @@ const InternalSalePropCard = (props: SalePropCardProps) => {
         f.group.text = group?.label || f.group?.text;
       }
     });
-    let _new = _all.filter(f => !disabledValues.find(v => compareValue(f, v)));
-    const _current = _all.find(f => compareValue(f, current)) || _new?.shift();
-    // _new = _new.filter(f => !compareValue(f, _current));
-    await onOk?.({ all: _all, current: _current, adds: _new });
+    const _new = _all.filter(f => !disabledValues.find(v => compareValue(f, v)));
+    const _current = _new.find(f => compareValue(f, current)) || _new?.shift();
+    const _adds = _new.filter(f => !compareValue(f, _current));
+    await onOk?.({ all: _all, current: _current, adds: _adds });
   }
 
   function handleGroupChange(groupValue: string): void {
@@ -240,12 +239,7 @@ const InternalSalePropCard = (props: SalePropCardProps) => {
   </>);
 };
 
-type CompoundedComponent = typeof InternalSalePropCard & {
-  Provider: typeof SalePropCardProvider;
-  Context: typeof SalePropCardContext;
-};
+type CompoundedComponent = typeof InternalSalePropCard & {};
 const SalePropCard = InternalSalePropCard as CompoundedComponent;
-SalePropCard.Provider = SalePropCardProvider;
-SalePropCard.Context = SalePropCardContext;
 export default SalePropCard;
 export type * from './typing';

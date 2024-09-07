@@ -7,6 +7,7 @@ title: SalePropInput - 销售属性输入组件
 ## 代码演示
 <code src="./demos/basic.tsx" ></code>
 <code src="./demos/list.tsx" ></code>
+<code src="./demos/SCPPrint.tsx" ></code>
 
 ## API
 | 参数 | 说明 | 类型 | 默认值 | 版本 |
