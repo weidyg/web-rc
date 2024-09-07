@@ -64,17 +64,11 @@ const InternalSalePropInput = (
   function handleChange(value?: SalePropValueType): void {
     setValue(value);
   }
-  function handleDataChange(value: SalePropSelectDataType): void {
-    // {
-    //   group: current?.group,
-    //   value: all.map(({ text, value }) => ({ text, value }))
-    // }
-
-    // const newVals = data?.value?.filter(f => f.value != value?.value);
-    // { ...data, value: newVals };
+  function handleDataChange(value: SalePropSelectDataType & {
+    adds?: SalePropValueType[]
+  }): void {
     setData(value);
   }
-
 
   const single = !!value?.value || !context;
   const current = { ...value, group: data?.group } as ValueType;
@@ -91,16 +85,15 @@ const InternalSalePropInput = (
     current={current}
     value={allValues}
     onOk={async ({ all, current, adds }) => {
-      if (current) {
-        const id = current?.value;
-        const text = current?.text;
-        handleChange({ ...value, text, value: id });
+      const { group, ...restCurrent } = current || {};
+      if (restCurrent) {
+        handleChange({ ...value, ...restCurrent, });
       }
       handleDataChange({
-        group: current?.group,
-        value: all.map(({ text, value }) => ({ text, value }))
+        group: group,
+        value: all.map(({ text, value }) => ({ text, value })),
+        adds: adds?.map(({ text, value }) => ({ text, value })),
       });
-      // if (adds) { await context?.onAdd?.(adds.map(({ text, value }) => ({ text, value }))); }
       setOpen(false);
     }}
     onCancel={() => {
@@ -145,7 +138,7 @@ const InternalSalePropInput = (
       } else {
         newVal = (img || remark) ? { img, remark } : undefined;
         const newVals = data?.value?.filter(f => f.value != value?.value);
-        handleDataChange({ ...data, value: newVals });
+        handleDataChange({ ...data, value: newVals, adds: undefined });
       }
       handleChange(newVal);
     }}

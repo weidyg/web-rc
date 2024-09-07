@@ -1,7 +1,6 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useState } from "react";
 import { SalePropGroupType, SalePropValueType } from ".";
 import { OptionGroupType, OptionItemType } from "../SalePropCard";
-import { useMergedState } from "@web-react/biz-utils";
 import { Typography } from "antd";
 
 export type SalePropSelectDataType = {
@@ -12,7 +11,9 @@ export type SalePropInputGroupConnextType = {
   uniqueGroup?: boolean;
   options?: OptionGroupType[] | OptionItemType[];
   data?: SalePropSelectDataType,
-  onSelectChange?: (data: SalePropSelectDataType) => void | Promise<void>;
+  onSelectChange?: (data: SalePropSelectDataType & {
+    adds?: SalePropValueType[]
+  }) => void | Promise<void>;
 };
 export const SalePropInputGroupConnext = createContext<SalePropInputGroupConnextType | undefined>(undefined);
 
@@ -37,17 +38,17 @@ const SalePropInputGroup: React.FC<SalePropInputGroupProps> = (props) => {
     value: props?.values,
   });
 
-  const handleSelectChange = (data: SalePropSelectDataType) => {
-    const { group, value } = data;
-    const groupChange = group?.value != selectData?.group?.value;
+  const handleSelectChange = (data: SalePropSelectDataType & { adds?: SalePropValueType[] }) => {
+    const { group, value } = selectData;
+    const groupChange = group?.value != data?.group?.value;
     if (groupChange) {
-      props?.onGroupChange?.(group);
+      props?.onGroupChange?.(data?.group);
     }
     if (groupChange && uniqueGroup) {
       onClear?.();
-      onAdd?.(value || []);
-    } else {
-
+      onAdd?.(data?.value || []);
+    } else if (data?.adds) {
+      onAdd?.(data?.adds);
     }
     setSelectData(data);
   }

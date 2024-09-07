@@ -41,8 +41,9 @@ export default () => {
                     onGroupChange={(group) => {
                       form.setFieldValue(groupName, group);
                     }}
-
-
+                    onClear={() => {
+                      form.setFieldValue(valueName, []);
+                    }}
                     onAdd={(values) => {
                       // console.log("onAdd", values);
                       values?.forEach((item) => { add(item); });
