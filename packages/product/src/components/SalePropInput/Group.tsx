@@ -1,7 +1,8 @@
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import { SalePropGroupType, SalePropValueType } from ".";
 import { OptionGroupType, OptionItemType } from "../SalePropCard";
 import { Typography } from "antd";
+import { useMergedState } from "@web-react/biz-utils";
 
 export type SalePropSelectDataType = {
   group?: SalePropGroupType;
@@ -18,14 +19,11 @@ export type SalePropInputGroupConnextType = {
 export const SalePropInputGroupConnext = createContext<SalePropInputGroupConnextType | undefined>(undefined);
 
 export interface SalePropInputGroupProps {
-  // onRemove?: (values: SalePropValueType[]) => void;
   children?: React.ReactNode;
-
   uniqueGroup?: boolean;
   options?: OptionGroupType[] | OptionItemType[];
-  values?: SalePropValueType[];
-
   group?: SalePropGroupType;
+  values?: SalePropValueType[];
   onGroupChange?: (value?: SalePropGroupType) => void;
   onClear?: () => void | Promise<void>;
   onAdd?: (values: SalePropValueType[]) => void | Promise<void>;
@@ -33,24 +31,24 @@ export interface SalePropInputGroupProps {
 const SalePropInputGroup: React.FC<SalePropInputGroupProps> = (props) => {
   const { children, uniqueGroup, options, onAdd, onClear } = props;
 
-  const [selectData, setSelectData] = useState<SalePropSelectDataType>({
-    group: props?.group,
-    value: props?.values,
+  const [selectData, setSelectData] = useMergedState({}, {
+    value: {
+      group: props?.group,
+      value: props?.values,
+    }
   });
 
   const handleSelectChange = (data: SalePropSelectDataType & { adds?: SalePropValueType[] }) => {
-    const { group, value } = selectData;
-    const groupChange = group?.value != data?.group?.value;
-    if (groupChange) {
-      props?.onGroupChange?.(data?.group);
-    }
+    const { group, value, adds } = data;
+    const groupChange = group?.value != selectData?.group?.value;
+    if (groupChange) { props?.onGroupChange?.(group); }
     if (groupChange && uniqueGroup) {
       onClear?.();
-      onAdd?.(data?.value || []);
-    } else if (data?.adds) {
-      onAdd?.(data?.adds);
+      onAdd?.(value || []);
+    } else if (adds) {
+      onAdd?.(adds);
     }
-    setSelectData(data);
+    setSelectData({ group, value });
   }
   return (<>
     <Typography>

@@ -38,6 +38,7 @@ export default () => {
                     uniqueGroup={uniqueGroup}
                     options={uniqueGroup ? dataJson.size : dataJson.color}
                     group={form.getFieldValue(groupName)}
+                    values={form.getFieldValue(valueName)}
                     onGroupChange={(group) => {
                       form.setFieldValue(groupName, group);
                     }}
