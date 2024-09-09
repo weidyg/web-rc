@@ -31,9 +31,17 @@ type PrintResult = {
     detail: string,
     printer: string,
 }
-type PrintDocument = {
+export type PrintContent = string | {
+    ver?: string;
+    encryptedData?: string;
+    signature?: string;
+    data?: { [k: string]: any };
+    templateURL: string;
+    [k: string]: any;
+}
+export type PrintDocument = {
     documentID: string,
-    contents: any[]
+    contents: PrintContent[]
 }
 type GetPrintersOptions = {
     type: WaybillType,

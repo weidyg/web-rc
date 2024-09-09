@@ -1,5 +1,5 @@
 import { Button, message } from "antd";
-import wayBillPrint, { WaybillType } from "./wayBillPrint";
+import wayBillPrint, { PrintContent, PrintDocument, WaybillType } from "./wayBillPrint";
 export default () => {
     return (<>
         <Button
@@ -20,7 +20,7 @@ export default () => {
                         {
                             masterWaybillNo: "SF7444488695775",
                             customData: {
-                                GridNo:'1'
+                                GridNo: '<%=_data.OrderSort%>'
                             }
                         }
                     ]
@@ -30,10 +30,16 @@ export default () => {
                 if (printData.apiResultData?.success) {
                     const { fileType, files } = printData.apiResultData?.obj;
                     if (fileType == 'cainiao') {
-                        const documents = files.map((item) => {
+                        const documents: PrintDocument[] = files.map((item) => {
+                            const contents: PrintContent[] = item.contents || [];
+                            contents.forEach((content: any) => {
+                                content.data = {
+                                    OrderSort: "11"
+                                };
+                            })
                             return {
                                 documentID: item.waybillNo,
-                                contents: item.contents
+                                contents: contents
                             }
                         });
                         caniaoPrint("Microsoft Print to PDF", documents)
@@ -49,10 +55,7 @@ export default () => {
 
 function caniaoPrint(
     printer: string,
-    documents: {
-        documentID: string,
-        contents: { templateURL: string }[]
-    }[]
+    documents: PrintDocument[]
 ) {
     wayBillPrint.doPrint({
         type: WaybillType.CaiNiao,
