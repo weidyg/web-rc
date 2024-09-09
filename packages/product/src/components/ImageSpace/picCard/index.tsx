@@ -8,6 +8,7 @@ const refImage = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACoAAAAqCAYAAADF
 
 type PicCardProps = {
     prefixCls?: string;
+    mutiple?: boolean;
     defaultChecked?: boolean;
     checked?: boolean;
     onChange?: (value: boolean, prevValue: boolean) => void;
@@ -20,7 +21,7 @@ type PicCardProps = {
     onAiEdit?: (id?: Key, fullUrl?: string) => void | Promise<void>;
 };
 const InternalPicCard: React.FC<PicCardProps> = (props) => {
-    const { id, name, fullUrl = '', pixel, isRef, onAiEdit } = props;
+    const { mutiple, id, name, fullUrl = '', pixel, isRef, onAiEdit } = props;
     const { prefixCls, wrapSSR, hashId } = useStyle(props?.prefixCls);
     const [preview, setPreview] = useState(false);
     const { copied, copyLoading, onClick: onCopyClick } = useCopyClick({ copyConfig: { text: fullUrl } });
@@ -34,6 +35,7 @@ const InternalPicCard: React.FC<PicCardProps> = (props) => {
         value: props?.checked,
         onChange: props?.onChange,
     });
+    const Selectbox = mutiple ? Checkbox : Radio;
     return wrapSSR(
         <div className={classNames(`${prefixCls}`, hashId)}>
             <div className={classNames(`${prefixCls}-background`, hashId)}>
@@ -67,41 +69,39 @@ const InternalPicCard: React.FC<PicCardProps> = (props) => {
                             </span>
                         )}
                     </div>
-                    {fullUrl && (
-                        <>
-                            <Checkbox
-                                checked={checked}
-                                onChange={(e) => {
-                                    setChecked(e.target.checked);
-                                }}
-                                className={classNames(`${prefixCls}-checkbox`, hashId, {
-                                    ['checked']: checked,
-                                })}
-                            />
-                            <div
-                                className={classNames(`${prefixCls}-controlWrap`, hashId)}
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    e.stopPropagation();
-                                }}
+                    {fullUrl && (<>
+                        <Selectbox
+                            checked={checked}
+                            onChange={(e) => {
+                                setChecked(e.target.checked);
+                            }}
+                            className={classNames(`${prefixCls}-checkbox`, hashId, {
+                                ['checked']: checked,
+                            })}
+                        />
+                        <div
+                            className={classNames(`${prefixCls}-controlWrap`, hashId)}
+                            onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                            }}
+                        >
+                            {pixel && <span className={classNames(`${prefixCls}-spec`, hashId)}>{pixel}</span>}
+                            <TransButton
+                                style={{ display: 'none' }}
+                                className={classNames(`${prefixCls}-copy`, hashId)}
+                                onClick={onCopyClick}
                             >
-                                {pixel && <span className={classNames(`${prefixCls}-spec`, hashId)}>{pixel}</span>}
-                                <TransButton
-                                    style={{ display: 'none' }}
-                                    className={classNames(`${prefixCls}-copy`, hashId)}
-                                    onClick={onCopyClick}
-                                >
-                                    {copied ? <CheckOutlined /> : copyLoading ? <LoadingOutlined /> : <CopyOutlined />}
-                                </TransButton>
-                                <ExpandOutlined
-                                    className={classNames(`${prefixCls}-fullView`, hashId)}
-                                    onClick={() => {
-                                        setPreview(true);
-                                    }}
-                                />
-                            </div>
-                        </>
-                    )}
+                                {copied ? <CheckOutlined /> : copyLoading ? <LoadingOutlined /> : <CopyOutlined />}
+                            </TransButton>
+                            <ExpandOutlined
+                                className={classNames(`${prefixCls}-fullView`, hashId)}
+                                onClick={() => {
+                                    setPreview(true);
+                                }}
+                            />
+                        </div>
+                    </>)}
                 </label>
                 <div className={classNames(`${prefixCls}-title-wrap`, hashId)}>
                     {isRef && (

@@ -28,7 +28,7 @@ type ImageSpaceProps<
   pageSize?: number;
   defaultFolder?: FolderTreeType;
   fetchFolders?: () => Promise<FolderTreeType[]>;
-  fetchData: (param: RequestParamType) => Promise<{ items: ImageFile[], total: number, }>;
+  fetchData?: (param: RequestParamType) => Promise<{ items: ImageFile[], total: number, }>;
   defaultValue?: Key[];
   value?: Key[];
   onChange?: (ids: Key[], files: ImageFile[]) => void | Promise<void>;
@@ -351,6 +351,7 @@ ImageSpace.Modal = ImageSpaceModal;
 ImageSpace.Uploader = PicUploader;
 
 export type {
+  ImageSpaceProps,
   ImageFile, FolderTreeType, ImageSpaceRef, BaseRequestParam,
   DisplayPanelType, FolderType, UploadResponseBody
 };

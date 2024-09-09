@@ -37,9 +37,7 @@ const PicPanel = (props: PicPanelProps) => {
     const [selectKeys, setSelectKeys] = useMergedState<Key[]>([], {
         defaultValue: props?.defaultSelectKeys,
         value: props?.selectKeys,
-        onChange: (value, prevValue) => {
-            props?.onSelect?.(value);
-        },
+        onChange: props?.onSelect,
     });
 
     const handleScroll = async (event: React.SyntheticEvent<HTMLDivElement>) => {
@@ -83,14 +81,16 @@ const PicPanel = (props: PicPanelProps) => {
     }
 
     const RenderFileName = (props: {
-        file: ImageFile
+        file: ImageFile,
+        mutiple?: boolean,
     }) => {
-        const { file } = props;
+        const { file, mutiple = true } = props;
         const [preview, setPreview] = useState(false);
         const checked = isChecked(file.id);
+        const Selectbox = mutiple ? Checkbox : Radio;
         return <div className={classNames(`${prefixCls}-fileName`, hashId)}>
             <div className={classNames(`${prefixCls}-fileName-checkbox`, hashId)}>
-                <Checkbox
+                <Selectbox
                     checked={checked}
                     onChange={(e) => {
                         checkChange(file.id, e.target.checked);
@@ -122,7 +122,7 @@ const PicPanel = (props: PicPanelProps) => {
     const columns: ColumnsType<ImageFile> = [
         {
             dataIndex: 'name', title: '文件',
-            render: (_, record) => (<RenderFileName file={record}/>),
+            render: (_, record) => (<RenderFileName file={record} />),
         },
         { dataIndex: 'pixel', title: '尺寸' },
         {
@@ -190,6 +190,7 @@ const PicPanel = (props: PicPanelProps) => {
                     <div className={classNames(`${prefixCls}-list-document`, hashId)}>
                         {data.map((item, index) => (
                             <PicCard
+                                mutiple={mutiple}
                                 key={index}
                                 id={item.id}
                                 name={item.name}

@@ -97,7 +97,6 @@ const genBizStyle: GenerateStyle<PicPanelToken> = (token) => {
             textOverflow: 'ellipsis',
           }
         }
-
       },
     },
   };

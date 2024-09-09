@@ -1,9 +1,9 @@
-import { useEffect, useMemo, useState } from 'react';
+import { forwardRef, Ref, useEffect, useMemo, useState } from 'react';
 import { Dropdown, Image, MenuProps } from 'antd';
 import { PictureOutlined } from '@ant-design/icons';
 import { classNames, useMergedState } from '@web-react/biz-utils';
 import { useStyle } from './style';
-import { ImageSpace } from '@web-react/biz-components';
+import { ImageSpace, ImageSpaceProps } from '@web-react/biz-components';
 
 
 type ImageInputProps = {
@@ -17,13 +17,19 @@ type ImageInputProps = {
   defaultValue?: string;
   value?: string;
   onChange?: (value?: string) => void;
-  content?: React.ReactNode | (() => React.ReactNode);
+  menus?: MenuProps['items'];
+  emptyRender?: (originNode: React.ReactNode) => React.ReactNode;
+  imageSpaceProps?: Omit<ImageSpaceProps, 'mutiple'>;
 };
+type ImageInputRef = {
 
-const ImageInput = (
-  props: ImageInputProps
+}
+
+const ImageInput = forwardRef<ImageInputRef, ImageInputProps>((
+  props: ImageInputProps,
+  ref: Ref<ImageInputRef>
 ) => {
-  const { className, style, placeholder, content } = props;
+  const { className, style, placeholder, menus, emptyRender, imageSpaceProps } = props;
   const { prefixCls, wrapSSR, hashId, token } = useStyle(props.prefixCls);
   const [imgUrl, setImgUrl] = useMergedState(undefined, {
     defaultValue: props?.defaultValue,
@@ -31,37 +37,24 @@ const ImageInput = (
     onChange: props?.onChange
   });
 
-  const items: MenuProps['items'] = [
-    {
-      key: '1', label: '替换', onClick: () => {
+  const emptyImage = () => {
+    return (
+      <div className={classNames(`${prefixCls}-placeholder`, hashId)}>
+        <PictureOutlined className={classNames(`${prefixCls}-placeholder-icon`, hashId)} />
+        {placeholder &&
+          <span className={classNames(`${prefixCls}-placeholder-text`, hashId)}>{placeholder}</span>
+        }
+      </div>
+    );
+  };
 
-      }
-    },
-    {
-      key: '2', label: '删除', onClick: () => {
-        setImgUrl(undefined);
-      }
-    },
-    {
-      key: '3', label: '裁剪', onClick: () => {
-
-      }
-    },
-  ];
-
-  // const EmptyImage = <div className={classNames(`${prefixCls}-placeholder`, hashId)}>
-  //   <PictureOutlined className={classNames(`${prefixCls}-placeholder-icon`, hashId)} />
-  //   {placeholder &&
-  //     <span className={classNames(`${prefixCls}-placeholder-text`, hashId)}>{placeholder}</span>
-  //   }
-  // </div> 
-   const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   return wrapSSR(
     <div style={style} className={classNames(`${prefixCls}-wrap`,
       className, { [`${prefixCls}-empty`]: !!!imgUrl }, hashId)
     }>
       {imgUrl ? (
-        <Dropdown menu={{ items }} arrow={false} placement='bottomCenter'>
+        <Dropdown menu={{ items: menus }} arrow={false} placement='bottomCenter'>
           <Image src={imgUrl} preview={{ mask: false }}
             wrapperClassName={classNames(`${prefixCls}-content`, hashId)}
             className={classNames(`${prefixCls}-img`, hashId)}
@@ -69,34 +62,29 @@ const ImageInput = (
         </Dropdown>
       ) : (
         <ImageSpace.Popover
-          destroyTooltipOnHide
           open={isOpen}
           onOpenChange={setIsOpen}
-          // content={
-          //   <ImageSelect
-          //     mutiple={false}
-          //     onOk={(files) => {
-          //       const urls = files.map((file) => file.fullUrl!);
-          //       if (urls?.length > 0) {
-          //         onOk?.(urls[0]);
-          //         setIsOpen(false);
-          //       }
-          //     }}
-          //   />
-          // }
+          content={
+            <ImageSpace
+              style={{ width: '880px', height: '600px', }}
+              mutiple={false}
+              {...imageSpaceProps}
+              onChange={(ids, files) => {
+                const urls = files.map((file) => file.fullUrl!);
+                if (urls?.length > 0) {
+                  setImgUrl(urls[0]);
+                  setIsOpen(false);
+                }
+              }}
+            />
+          }
         >
-          <div className={classNames(`${prefixCls}-placeholder`, hashId)}>
-            <PictureOutlined className={classNames(`${prefixCls}-placeholder-icon`, hashId)} />
-            {placeholder &&
-              <span className={classNames(`${prefixCls}-placeholder-text`, hashId)}>{placeholder}</span>
-            }
-          </div>
+          {emptyImage()}
         </ImageSpace.Popover>
       )}
-    </div>
+    </div >
   );
-};
-
+});
 
 export type { ImageInputProps };
 export default ImageInput;
