@@ -1,4 +1,4 @@
-import { forwardRef, Ref, useEffect, useMemo, useState } from 'react';
+import { forwardRef, Ref, useEffect, useImperativeHandle, useMemo, useState } from 'react';
 import { Dropdown, Image, MenuProps } from 'antd';
 import { PictureOutlined } from '@ant-design/icons';
 import { classNames, useMergedState } from '@web-react/biz-utils';
@@ -36,6 +36,10 @@ const ImageInput = forwardRef<ImageInputRef, ImageInputProps>((
     value: props?.value,
     onChange: props?.onChange
   });
+
+  useImperativeHandle(ref, () => ({
+    
+  }));
 
   const emptyImage = () => {
     return (

@@ -31,7 +31,7 @@ export default () => {
     },
   ];
 
-  
+
   const _ref = useRef<ImageSpaceRef>(null);
   const [searchParam, setSearchParam] = useState({ type: 'picture', value: '', order: 'timeDes', });
   const imageSpaceProps: ImageSpaceProps = {
@@ -41,12 +41,12 @@ export default () => {
           <Select
             style={{ width: '100px' }}
             popupMatchSelectWidth={false}
-            value={searchParam.type}
             options={[
               { label: '图片', value: 'picture' },
               { label: '宝贝名称', value: 'name' },
               { label: '宝贝ID', value: 'id' },
             ]}
+            value={searchParam.type}
             onChange={(value) => {
               setSearchParam(data => ({ ...data, type: value }));
             }}
