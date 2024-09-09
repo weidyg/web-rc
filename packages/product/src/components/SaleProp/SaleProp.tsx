@@ -1,22 +1,10 @@
-import { createContext, useEffect, useState } from "react";
-import { SalePropGroupType, SalePropValueType } from ".";
-import { OptionGroupType, OptionItemType } from "../SalePropCard";
-import { Typography } from "antd";
+import { createContext, } from "react";
 import { useMergedState } from "@web-react/biz-utils";
+import { SalePropGroupType, SalePropConnextType, SalePropSelectDataType, SalePropValueType } from ".";
+import { OptionGroupType, OptionItemType } from ".";
 
-export type SalePropSelectDataType = {
-  group?: SalePropGroupType;
-  value?: SalePropValueType[];
-}
-export type SalePropInputGroupConnextType = {
-  uniqueGroup?: boolean;
-  options?: OptionGroupType[] | OptionItemType[];
-  data?: SalePropSelectDataType,
-  onSelectChange?: (data: SalePropSelectDataType & {
-    adds?: SalePropValueType[]
-  }) => void | Promise<void>;
-};
-export const SalePropInputGroupConnext = createContext<SalePropInputGroupConnextType | undefined>(undefined);
+
+export const SalePropInputGroupConnext = createContext<SalePropConnextType | undefined>(undefined);
 
 export interface SalePropInputGroupProps {
   children?: React.ReactNode;
@@ -28,7 +16,7 @@ export interface SalePropInputGroupProps {
   onClear?: () => void | Promise<void>;
   onAdd?: (values: SalePropValueType[]) => void | Promise<void>;
 }
-const SalePropInputGroup: React.FC<SalePropInputGroupProps> = (props) => {
+const SaleProp: React.FC<SalePropInputGroupProps> = (props) => {
   const { children, uniqueGroup, options, onAdd, onClear } = props;
 
   const [selectData, setSelectData] = useMergedState({}, {
@@ -51,11 +39,6 @@ const SalePropInputGroup: React.FC<SalePropInputGroupProps> = (props) => {
     setSelectData({ group, value });
   }
   return (<>
-    <Typography>
-      <pre>{JSON.stringify(selectData)}</pre>
-      {/* <pre>{JSON.stringify(values)}</pre> */}
-    </Typography>
-
     <SalePropInputGroupConnext.Provider
       value={{
         uniqueGroup, options,
@@ -67,4 +50,4 @@ const SalePropInputGroup: React.FC<SalePropInputGroupProps> = (props) => {
     </SalePropInputGroupConnext.Provider>
   </>)
 };
-export default SalePropInputGroup;
+export default SaleProp;

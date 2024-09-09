@@ -1,39 +1,14 @@
-import { useContext, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Alert, Button, Card, Checkbox, Flex, Input, Menu, Modal, Radio, Space, Switch, Typography } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import { classNames } from '@web-react/biz-utils';
-import useSalePropOptions from './hooks/useSalePropOptions';
-import { useSalePropValue } from './hooks/useSalePropValue';
+import useSalePropOptions from '../_hooks/useSalePropOptions';
+import { useSalePropValue } from '../_hooks/useSalePropValue';
+import { OptionItemType, SalePropCardProps } from '../typing';
 import { useStyle } from './style';
-import { OptionGroupType, OptionItemType, ValueType } from './typing';
+import { compareValue } from '../_utils';
 
-const compareValue = (v1?: ValueType, v2?: ValueType) => {
-  return v1?.group?.value == v2?.group?.value && v1?.value == v2?.value
-}
-
-
-export type SalePropCardProps = {
-  /** 类名 */
-  className?: string;
-  /** 样式 */
-  style?: React.CSSProperties;
-  /** 自定义样式前缀 */
-  prefixCls?: string;
-
-  single?: boolean;
-  uniqueGroup?: boolean;
-  options?: OptionGroupType[] | OptionItemType[];
-  current?: ValueType;
-  value?: ValueType[];
-  onOk?: (value: {
-    all: ValueType[],
-    current?: ValueType,
-    adds?: ValueType[]
-  }) => Promise<void> | void,
-  onCancel?: () => void,
-};
-
-const InternalSalePropCard = (props: SalePropCardProps) => {
+const SalePropCard = (props: SalePropCardProps) => {
   const { style, className, options = [],
     single, uniqueGroup, current, value, onOk, onCancel
   } = props;
@@ -238,8 +213,4 @@ const InternalSalePropCard = (props: SalePropCardProps) => {
     </Card>
   </>);
 };
-
-type CompoundedComponent = typeof InternalSalePropCard & {};
-const SalePropCard = InternalSalePropCard as CompoundedComponent;
 export default SalePropCard;
-export type * from './typing';

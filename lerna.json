@@ -6,6 +6,7 @@
     "**/*.test.ts",
     "**/*.e2e.ts",
     "**/demos/**",
+    "**/_demos/**",
     "**/fixtures/**",
     "**/dist/**",
     "**/lib/**",

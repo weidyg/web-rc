@@ -4,7 +4,7 @@
  */
 import { useState } from 'react';
 import { message, Switch, Typography } from 'antd';
-import { SalePropCard, } from '@web-react/biz-components';
+import { SaleProp } from '@web-react/biz-components';
 import dataJson from './_data.json';
 export default () => {
   const [uniqueGroup, setUniqueGroup] = useState<boolean>(true);
@@ -18,7 +18,7 @@ export default () => {
           setCurrentValue(undefined);
           setValue([]);
         }} />
-      <SalePropCard
+      <SaleProp.Card
         single={!!currentValue?.value}
         current={currentValue}
         uniqueGroup={uniqueGroup}

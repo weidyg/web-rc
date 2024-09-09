@@ -4,8 +4,8 @@
  */
 import { useState } from "react";
 import { Space, Switch, Typography } from "antd";
-import { SalePropInput, SalePropValueType } from "@web-react/biz-components";
 import dataJson from './_data.json';
+import { SaleProp, SalePropValueType } from "@web-react/biz-components";
 
 export default () => {
   const [allowCustom, setAllowCustom] = useState<boolean>(false);
@@ -16,7 +16,7 @@ export default () => {
         允许自定义: <Switch checked={allowCustom} onChange={setAllowCustom} />
       </Space>
       <div>
-        <SalePropInput
+        <SaleProp.Input
           allowCustom={allowCustom}
           options={dataJson.size}
           value={value}

@@ -43,17 +43,6 @@ const genBizStyle: GenerateStyle<SalePropCardToken> = (token) => {
         marginInline: 0,
         borderRadius: token.borderRadius,
         backgroundColor: token.colorFillContent,
-        // [`&:has(${token.antCls}-checkbox-checked:not(${token.antCls}-checkbox-disabled)),
-        //   &:has(${token.antCls}-radio-checked:not(${token.antCls}-radio-disabled))`]: {
-        //   backgroundColor: token.colorPrimaryBg,
-        // },
-        // [`&-only-checked:has(${token.antCls}-checkbox:not(${token.antCls}-checkbox-checked)),
-        //   &-only-checked:has(${token.antCls}-radio:not(${token.antCls}-radio-checked)),
-        //   &-hidden`]: {
-        //   display: 'none',
-        //   width: '0px',
-        //   height: '0px',
-        // },   
         '&-action': {
           backgroundColor: token.colorPrimaryBg,
         },
