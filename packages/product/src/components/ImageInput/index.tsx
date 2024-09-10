@@ -74,11 +74,11 @@ const ImageInput = forwardRef<ImageInputRef, ImageInputProps>((
               mutiple={false}
               {...imageSpaceProps}
               onChange={(ids, files) => {
-                const urls = files.map((file) => file.fullUrl!);
-                if (urls?.length > 0) {
-                  setImgUrl(urls[0]);
-                  setIsOpen(false);
-                }
+                // const urls = files.map((file) => file.fullUrl!);
+                // if (urls?.length > 0) {
+                //   setImgUrl(urls[0]);
+                //   setIsOpen(false);
+                // }
               }}
             />
           }

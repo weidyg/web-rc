@@ -32,57 +32,59 @@ export default () => {
   ];
 
 
-  const _ref = useRef<ImageSpaceRef>(null);
   const [searchParam, setSearchParam] = useState({ type: 'picture', value: '', order: 'timeDes', });
-  const imageSpaceProps: ImageSpaceProps = {
-    actions: {
-      left: <Space>
-        <Space.Compact>
-          <Select
-            style={{ width: '100px' }}
-            popupMatchSelectWidth={false}
-            options={[
-              { label: '图片', value: 'picture' },
-              { label: '宝贝名称', value: 'name' },
-              { label: '宝贝ID', value: 'id' },
-            ]}
-            value={searchParam.type}
-            onChange={(value) => {
-              setSearchParam(data => ({ ...data, type: value }));
-            }}
-          />
-          <Input
-            allowClear
-            style={{ width: '180px' }}
-            suffix={<SearchOutlined />}
-            placeholder={'搜索'}
-            value={searchParam.value}
-            onChange={(e) => {
-              setSearchParam(data => ({ ...data, value: e.target.value, }));
-            }}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                _ref?.current?.refresh();
-              }
-            }}
-          />
-        </Space.Compact>
+  const ActionLeft = () => {
+    const _ref = useRef<ImageSpaceRef>(null);
+    const [searchParam, setSearchParam] = useState({ type: 'picture', value: '', order: 'timeDes', });
+    return <Space>
+      <Space.Compact>
         <Select
+          style={{ width: '100px' }}
+          popupMatchSelectWidth={false}
           options={[
-            { label: '文件名升序', value: 'nameAsc' },
-            { label: '文件名降序', value: 'nameDes' },
-            { label: '上传时间升序', value: 'timeAsc' },
-            { label: '上传时间降序', value: 'timeDes' },
+            { label: '图片', value: 'picture' },
+            { label: '宝贝名称', value: 'name' },
+            { label: '宝贝ID', value: 'id' },
           ]}
-          value={searchParam.order}
+          value={searchParam.type}
           onChange={(value) => {
-            setSearchParam(data => ({ ...data, order: value, }));
+            setSearchParam(data => ({ ...data, type: value }));
           }}
-          style={{ width: '147px', }}
         />
-      </Space>
-    },
-    footer: {},
+        <Input
+          allowClear
+          style={{ width: '180px' }}
+          suffix={<SearchOutlined />}
+          placeholder={'搜索'}
+          value={searchParam.value}
+          onChange={(e) => {
+            setSearchParam(data => ({ ...data, value: e.target.value, }));
+          }}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              _ref?.current?.refresh();
+            }
+          }}
+        />
+      </Space.Compact>
+      <Select
+        options={[
+          { label: '文件名升序', value: 'nameAsc' },
+          { label: '文件名降序', value: 'nameDes' },
+          { label: '上传时间升序', value: 'timeAsc' },
+          { label: '上传时间降序', value: 'timeDes' },
+        ]}
+        value={searchParam.order}
+        onChange={(value) => {
+          setSearchParam(data => ({ ...data, order: value, }));
+        }}
+        style={{ width: '147px', }}
+      />
+    </Space>;
+  }
+  const imageSpaceProps: ImageSpaceProps = {
+    actions: { left: <ActionLeft /> },
+    // footer: {},
     defaultFolder: { value: '0', label: '全部图片', },
     fetchFolders: () => {
       return new Promise<FolderTreeType[]>((resolve, reject) => {

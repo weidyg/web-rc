@@ -32,7 +32,12 @@ type ImageSpaceProps<
   defaultValue?: Key[];
   value?: Key[];
   onChange?: (ids: Key[], files: ImageFile[]) => void | Promise<void>;
-  actions?: { left?: ReactNode },
+  // actionsRender?: () => ReactNode;
+  // footerRender?: () => ReactNode;
+
+  actions?: {
+    left?: ReactNode
+  },
   footer?: {
     left?: ReactNode | ((count: number) => ReactNode),
     right?: ReactNode | ((count: number) => ReactNode),
