@@ -1,40 +1,4 @@
-export interface UploadProgressEvent extends Partial<ProgressEvent> {
-    percent?: number;
-}
-export interface UploadRequestError extends Error {
-    status?: number;
-    method?: UploadRequestMethod;
-    url?: string;
-}
-export type UploadRequestHeader = Record<string, string>;
-export type UploadRequestMethod = 'POST' | 'PUT' | 'PATCH' | 'post' | 'put' | 'patch';
-export type BeforeUploadFileType = File | Blob | boolean | string;
-export interface RcFile extends File { uid: string; }
-export type UploadResponseBody = {
-    url?: string,
-    thumbUrl?: string,
-    error?: {
-        message?: string,
-        [key: string]: any
-    },
-    [key: string]: any
-}
-
-export interface UploadRequestOption<T extends UploadResponseBody = any> {
-    onProgress?: (event: UploadProgressEvent) => void;
-    onError?: (event: UploadRequestError | ProgressEvent, body?: T) => void;
-    onSuccess?: (body: T, xhr?: XMLHttpRequest) => void;
-    data?: Record<string, unknown>;
-    filename?: string;
-    file: Exclude<BeforeUploadFileType, File | boolean> | RcFile;
-    withCredentials?: boolean;
-    action: string;
-    headers?: UploadRequestHeader;
-    method: UploadRequestMethod;
-    normalize?: {
-        responseBody: (response: any) => T;
-    }
-}
+import { UploadProgressEvent, UploadRequestError, UploadRequestOption, UploadResponseBody } from "../typing";
 
 function getError(option: UploadRequestOption, xhr: XMLHttpRequest, errMsg?: string) {
     const msg = errMsg || `cannot ${option.method} ${option.action} ${xhr.status}'`;

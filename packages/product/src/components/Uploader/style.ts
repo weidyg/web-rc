@@ -4,38 +4,25 @@ import { setAlpha, useStyle as useAntdStyle } from '@web-react/biz-components';
 const genBizStyle: GenerateStyle<PicUploaderToken> = (token) => {
   return {
     [token.componentCls]: {
-      '&-container': {
-        // position: 'absolute',
-        // top: 0,
-        // left: 0,
-        width: '100%',
-        height: '100%',
-        overflow: 'hidden',
-        borderRadius: '12px',
-        zIndex: 1,
+      overflow: 'hidden',
+      borderRadius: token.borderRadius,
+      backgroundColor: token.colorBgContainer,
+      height: '100%',
+      '&-body': {
+        margin: token.marginSM,
+        height: `calc(100% - ${token.marginSM * 2}px)`,
+      },
+      '&-panel, &-list': {
         display: 'flex',
         flexDirection: 'column',
-        backgroundColor: token.colorBgContainer,
-      },
-      '&-body': {
-        height: 'calc(100% - 65px)',
-        flex: '1 1',
+        height: '100%',
       },
       '&-panel': {
-        padding: '8px 21px 0',
-        height: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-        '&-header': {
-          height: '100%',
-          display: 'flex',
-          flexDirection: 'column',
-          flexWrap: 'nowrap',
-        },
         '&-config': {
           display: 'flex',
           alignItems: 'center',
           flexWrap: 'wrap',
+          marginBottom: token.marginXXS,
           [`${token.antCls}-form-item`]: {
             padding: '4px 0',
             display: 'flex',
@@ -46,50 +33,37 @@ const genBizStyle: GenerateStyle<PicUploaderToken> = (token) => {
         '&-board': {
           height: '100%',
           width: '100%',
-          marginTop: '9px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           flexDirection: 'column',
           cursor: 'pointer',
-        },
-        '&-tips': {
-          marginTop: '18px',
-          marginRight: '0',
-          marginBottom: '0',
-          marginLeft: '0',
-          fontWeight: '400',
-          color: token.colorTextSecondary,
-        },
-        '&-format': {
-          marginTop: '14px',
-          marginRight: '0',
-          marginBottom: '0',
-          marginLeft: '0',
-          fontWeight: '400',
-          color: token.colorTextDescription,
+          '&-tips': {
+            marginTop: '18px',
+            marginRight: '0',
+            marginBottom: '0',
+            marginLeft: '0',
+            fontWeight: '400',
+            color: token.colorTextSecondary,
+          },
+          '&-format': {
+            marginTop: '14px',
+            marginRight: '0',
+            marginBottom: '0',
+            marginLeft: '0',
+            fontWeight: '400',
+            color: token.colorTextDescription,
+          },
         },
       },
+
       '&-list': {
-        display: 'flex',
-        flex: '1 1',
-        width: '100%',
-        height: '100%',
-        flexDirection: 'column',
-        paddingBottom: '20px',
-        '&-container': {
-          display: 'none',
-          flex: '1 1',
-          height: 'calc(100vh - 65px)',
-          flexDirection: 'column',
-        },
         '&-files': {
           display: 'flex',
-          marginTop: '12px',
           flexDirection: 'column',
-          width: '100%',
-          height: 'calc(100% - 118px)',
           overflowY: 'auto',
+          flex: 'auto',
+          padding: `${token.paddingSM}px 0`,
         },
         '&-item': {
           display: 'flex',
@@ -146,15 +120,15 @@ const genBizStyle: GenerateStyle<PicUploaderToken> = (token) => {
           },
         },
         '&-actions': {
+          display: 'flex',
+          alignItems: 'center',
           '&-wrap': {
-            marginTop: '20px',
+            // marginTop: '20px',
             flexShrink: 0,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
           },
-          display: 'flex',
-          alignItems: 'center',
         },
       }
     },
