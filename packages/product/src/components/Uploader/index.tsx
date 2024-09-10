@@ -270,7 +270,7 @@ const InternalUploader = <
                                             上传成功
                                         </>) : file.status === 'error' ? (<>
                                             <CloseCircleFilled style={{ color: token.colorError, marginRight: '10px' }} />
-                                            <div dangerouslySetInnerHTML={{ __html: file?.error?.message || '上传失败' }} />
+                                            <span dangerouslySetInnerHTML={{ __html: file?.error?.message || '上传失败' }} />
                                             {/* 上传失败&nbsp;&nbsp;网络错误，请尝试禁止浏览器插件或者换浏览器或者换电脑重试 */}
                                         </>) : (
                                             <></>
