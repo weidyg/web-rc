@@ -32,26 +32,6 @@ export default function uploadRequest<T extends UploadResponseBody>(
             option.onProgress?.(e);
         };
     }
-    const formData = new FormData();
-    if (option.data) {
-        Object.keys(option.data).forEach(key => {
-            const value = option.data?.[key];
-            if (Array.isArray(value)) {
-                value.forEach(item => {
-                    formData.append(`${key}[]`, item);
-                });
-                return;
-            }
-            formData.append(key, value as string | Blob);
-        });
-    }
-
-    const { file, filename = 'file' } = option;
-    if (file instanceof Blob) {
-        formData.append(filename, file, (file as any).name);
-    } else {
-        formData.append(filename, file);
-    }
 
     xhr.onerror = function error(e) {
         // console.log('error', xhr, e);
@@ -68,6 +48,7 @@ export default function uploadRequest<T extends UploadResponseBody>(
         } else if (body.error) {
             return option.onError?.(getError(option, xhr, body?.error?.message), body);
         }
+        console.log('onload', body);
         return option.onSuccess?.(body, xhr);
     };
 
@@ -89,6 +70,27 @@ export default function uploadRequest<T extends UploadResponseBody>(
             xhr.setRequestHeader(h, headers[h]);
         }
     });
+    
+    const formData = new FormData();
+    if (option.data) {
+        Object.keys(option.data).forEach(key => {
+            const value = option.data?.[key];
+            if (Array.isArray(value)) {
+                value.forEach(item => {
+                    formData.append(`${key}[]`, item);
+                });
+                return;
+            }
+            formData.append(key, value as string | Blob);
+        });
+    }
+
+    const { file, filename = 'file' } = option;
+    if (file instanceof Blob) {
+        formData.append(filename, file, (file as any).name);
+    } else {
+        formData.append(filename, file);
+    }
 
     xhr.send(formData);
 

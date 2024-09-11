@@ -1,7 +1,7 @@
 
 import useEvent from 'rc-util/es/hooks/useEvent';
-import { useLayoutUpdateEffect } from 'rc-util/es/hooks/useLayoutEffect';
 import useState from 'rc-util/es/hooks/useState';
+import { useLayoutUpdateEffect } from 'rc-util/es/hooks/useLayoutEffect';
 type Updater<T> = (
     updater: T | ((origin: T) => T),
     ignoreDestroy?: boolean,
@@ -43,7 +43,6 @@ export default function useMergedState<T, R = T>(
     });
 
     const mergedValue = value !== undefined ? value : innerValue;
-    console.log(' value, innerValue', value, innerValue, mergedValue);
     const postMergedValue = postState ? postState(mergedValue) : mergedValue;
 
     // ====================== Change ======================
@@ -55,7 +54,6 @@ export default function useMergedState<T, R = T>(
         const prev = prevValue[0];
         if (innerValue !== prev) {
             onChangeFn(innerValue, prev);
-            console.log('useLayoutUpdateEffect prev', innerValue, prev, prevValue);
         }
     }, [prevValue]);
 
@@ -63,7 +61,6 @@ export default function useMergedState<T, R = T>(
     useLayoutUpdateEffect(() => {
         if (!hasValue(value)) {
             setInnerValue(value!);
-            console.log('useLayoutUpdateEffect value', value);
         }
     }, [value]);
 

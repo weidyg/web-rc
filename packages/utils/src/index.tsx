@@ -19,5 +19,5 @@ export {
   TransButton,
   convertByteUnit,
   useMergedState,
-  useCopyClick,
+  useCopyClick
 };

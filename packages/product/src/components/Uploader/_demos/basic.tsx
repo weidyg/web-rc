@@ -16,16 +16,17 @@ export default () => {
             defaultDirValue={'0'}
             dirs={dataJson.dirs as DirType[]}
             upload={{
-                // action: 'https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload',
-                // normalize: {
-                //     responseBody: (res) => {
-                //         return {
-                //             error: {
-                //                 message: '',
-                //             }
-                //         }
-                //     }
-                // }
+                action: 'http://localhost:49007/api/services/app/ProductPublish/UploadImages',
+                normalize: {
+                    responseBody: (res) => {
+                        const error = res.Error;
+                        const result = res.Result || {};
+                        return {
+                            ...result,
+                            error
+                        }
+                    }
+                }
             }}
         // display={displayPanel}
         // onDisplayChange={(displayPanel) => {

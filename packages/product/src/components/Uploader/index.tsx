@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Alert, Button, Cascader, Checkbox, Form, InputNumber, message, Radio, Select, Upload, UploadFile, UploadProps, } from 'antd';
 import { CheckCircleFilled, CloseCircleFilled, LoadingOutlined, UploadOutlined } from '@ant-design/icons';
-import { classNames, convertByteUnit, drawImage, useMergedState } from '@web-react/biz-utils';
+import { classNames, convertByteUnit, drawImage, previewImage, useMergedState } from '@web-react/biz-utils';
 import uploadRequest from './_utils/request';
 import { DirKey, FolderSelectProps, PicUploaderProps, UploadButtonProps, UploadResponseBody } from './typing';
 import { findPath } from './_utils';
@@ -61,7 +61,7 @@ const InternalUploader = <
 >(
     props: PicUploaderProps<UploadResponseBodyType>,
 ) => {
-    const { defaultDirValue, dirs, config, upload = {} } = props;
+    const { defaultDirValue, dirs, configRender, previewFile = previewImage, upload = {} } = props;
     const {
         data: uploadData, normalize, customRequest,
         accept = 'image/jpeg,image/bmp,image/gif,.heic,image/png,.webp',
@@ -71,11 +71,33 @@ const InternalUploader = <
     const [form] = Form.useForm<ConfigFormValueType>();
 
     const [showUploadList, setShowUploadList] = useState(false);
-
     const [fileList, setFileList] = useMergedState<UploadFile<UploadResponseBodyType>[]>([], {
         value: props?.fileList,
         onChange: (value) => props?.onChange?.(value),
     });
+
+    useEffect(() => {
+        (fileList || []).forEach((file) => {
+            if (
+                typeof document === 'undefined' ||
+                typeof window === 'undefined' ||
+                !(window as any).FileReader ||
+                !(window as any).File ||
+                !(file.originFileObj instanceof File || (file.originFileObj as any) instanceof Blob) ||
+                file.thumbUrl !== undefined
+            ) {
+                return;
+            }
+            file.thumbUrl = '';
+            if (previewFile) {
+                previewFile(file.originFileObj as File)
+                    .then((previewDataUrl: string) => {
+                        file.thumbUrl = previewDataUrl || '';
+                        // forceUpdate();
+                    });
+            }
+        });
+    }, [fileList, previewFile]);
 
     const count = useMemo(() => {
         let count = { uploading: 0, success: 0, failed: 0 };
@@ -118,8 +140,14 @@ const InternalUploader = <
         showUploadList: false,
         fileList: fileList,
         onChange: ({ file, fileList, event }) => {
-            console.log("onChange", { file, fileList, event });
-            setFileList(fileList);
+            let newFileList = [...fileList];
+            newFileList = newFileList.map((file) => {
+                if (file.response) {
+                    file.url = file.response.url;
+                }
+                return file;
+            });
+            setFileList(newFileList);
         },
         customRequest: (option) => {
             const _option = { ...option, normalize }
@@ -135,7 +163,10 @@ const InternalUploader = <
             const config = form.getFieldsValue();
             if (config.picWidth) {
                 const width = config.picWidthOption == -1 ? config.picWidthValue : config.picWidthOption;
-                if (width > 0) { return drawImage(file, { width }, true); }
+                if (width > 0) {
+
+                    return drawImage(file, { width }, true);
+                }
             }
             return file;
         },
@@ -146,76 +177,78 @@ const InternalUploader = <
         setFileList(fileList => fileList.filter(file => file.status == 'uploading'));
     }
 
+    const defaultConfigDom = <>
+        <Form<ConfigFormValueType>
+            form={form}
+            layout="inline"
+            initialValues={{
+                folderId: defaultDirValue,
+                originSize: true,
+            }}
+            onValuesChange={(changedValues, allValues) => {
+                const { picWidth, picWidthOption } = changedValues || {};
+                if (picWidth === false) {
+                    form.setFieldsValue({ picWidthOption: undefined });
+                } else if (!picWidthOption) {
+                    form.setFieldsValue({ picWidthOption: 620 });
+                }
+                if (picWidthOption !== -1) {
+                    form.setFieldsValue({ picWidthValue: 0 });
+                }
+            }}
+        >
+            <Form.Item label="上传至" name="folderId">
+                <FolderSelect options={dirs} />
+            </Form.Item>
+            <Form.Item noStyle dependencies={['picWidth']}>
+                {({ getFieldValue }) => (
+                    <Form.Item<ConfigFormValueType> name="picWidth" valuePropName={'checked'}
+                        style={{ marginRight: getFieldValue('picWidth') ? 0 : undefined }}>
+                        <Checkbox>
+                            <span style={{ fontSize: '12px' }}>图片宽度调整</span>
+                        </Checkbox>
+                    </Form.Item>
+                )}
+            </Form.Item>
+            <Form.Item noStyle dependencies={['picWidth']}>
+                {({ getFieldValue }) => getFieldValue('picWidth') && (
+                    <Form.Item<ConfigFormValueType> name="picWidthOption">
+                        <Select
+                            style={{ width: '140px' }}
+                            options={[
+                                { label: '手机图片(620px)', value: 620 },
+                                { label: '800px', value: 800 },
+                                { label: '640px', value: 640 },
+                                { label: '自定义', value: -1 },
+                            ]}
+                        />
+                    </Form.Item>
+                )}
+            </Form.Item>
+            <Form.Item noStyle dependencies={['picWidth', 'picWidthOption']}>
+                {({ getFieldValue }) => getFieldValue('picWidthOption') === -1 && (
+                    <Form.Item<ConfigFormValueType> name="picWidthValue">
+                        <InputNumber min={0} max={10000} suffix="px" />
+                    </Form.Item>
+                )}
+            </Form.Item>
+            {/* <Form.Item<ConfigFormValueType> name="originSize">
+            <Radio.Group
+                options={[
+                    { label: <span style={{ fontSize: '12px' }}>原图上传</span>, value: true },
+                    { label: <span style={{ fontSize: '12px' }}>图片无损压缩上传</span>, value: false },
+                ]}
+            />
+        </Form.Item> */}
+        </Form>
+    </>;
     return wrapSSR(
         <div className={classNames(prefixCls, hashId)}>
             <div className={classNames(`${prefixCls}-body`, hashId)}>
                 <div style={{ display: !showUploadList ? 'flex' : 'none', }}
                     className={classNames(`${prefixCls}-panel`, hashId)}>
                     <div className={classNames(`${prefixCls}-panel-config`, hashId)}>
-                        <Form<ConfigFormValueType>
-                            form={form}
-                            layout="inline"
-                            initialValues={{
-                                folderId: defaultDirValue,
-                                originSize: true,
-                            }}
-                            onValuesChange={(changedValues, allValues) => {
-                                const { picWidth, picWidthOption } = changedValues || {};
-                                if (picWidth === false) {
-                                    form.setFieldsValue({ picWidthOption: undefined });
-                                } else if (!picWidthOption) {
-                                    form.setFieldsValue({ picWidthOption: 620 });
-                                }
-                                if (picWidthOption !== -1) {
-                                    form.setFieldsValue({ picWidthValue: 0 });
-                                }
-                            }}
-                        >
-                            <Form.Item label="上传至" name="folderId">
-                                <FolderSelect options={dirs} />
-                            </Form.Item>
-                            <Form.Item noStyle dependencies={['picWidth']}>
-                                {({ getFieldValue }) => (
-                                    <Form.Item<ConfigFormValueType> name="picWidth" valuePropName={'checked'}
-                                        style={{ marginRight: getFieldValue('picWidth') ? 0 : undefined }}>
-                                        <Checkbox>
-                                            <span style={{ fontSize: '12px' }}>图片宽度调整</span>
-                                        </Checkbox>
-                                    </Form.Item>
-                                )}
-                            </Form.Item>
-                            <Form.Item noStyle dependencies={['picWidth']}>
-                                {({ getFieldValue }) => getFieldValue('picWidth') && (
-                                    <Form.Item<ConfigFormValueType> name="picWidthOption">
-                                        <Select
-                                            style={{ width: '140px' }}
-                                            options={[
-                                                { label: '手机图片(620px)', value: 620 },
-                                                { label: '800px', value: 800 },
-                                                { label: '640px', value: 640 },
-                                                { label: '自定义', value: -1 },
-                                            ]}
-                                        />
-                                    </Form.Item>
-                                )}
-                            </Form.Item>
-                            <Form.Item noStyle dependencies={['picWidth', 'picWidthOption']}>
-                                {({ getFieldValue }) => getFieldValue('picWidthOption') === -1 && (
-                                    <Form.Item<ConfigFormValueType> name="picWidthValue">
-                                        <InputNumber min={0} max={10000} suffix="px" />
-                                    </Form.Item>
-                                )}
-                            </Form.Item>
-                            {/* <Form.Item<ConfigFormValueType> name="originSize">
-                                    <Radio.Group
-                                        options={[
-                                            { label: <span style={{ fontSize: '12px' }}>原图上传</span>, value: true },
-                                            { label: <span style={{ fontSize: '12px' }}>图片无损压缩上传</span>, value: false },
-                                        ]}
-                                    />
-                                </Form.Item> */}
-                        </Form>
-                        {config?.right}
+                        {configRender?.(defaultConfigDom) || defaultConfigDom}
                     </div>
                     <Upload.Dragger
                         {...uploadProps}
@@ -240,19 +273,16 @@ const InternalUploader = <
                         showIcon
                         type={count.uploading > 0 ? 'info' : count.failed > 0 ? 'error' : 'success'}
                         icon={count.uploading > 0 ? <LoadingOutlined /> : undefined}
-                        message={
-                            count.uploading > 0
-                                ? `上传中，正在上传 ${fileList.length} 个文件`
-                                : `有 ${count.failed} 个上传失败，本次共成功上传 ${count.success} 个文件，请稍后重试。`
+                        message={count.uploading > 0
+                            ? `上传中，正在上传 ${count.uploading}/${fileList.length} 个文件`
+                            : `本次共成功上传 ${count.success} 个文件${(count.failed > 0 ? `，失败 ${count.failed} 个，请稍后重试` : '')}。`
                         }
                     />
                     <div className={classNames(`${prefixCls}-list-files`, hashId)}>
                         {fileList.map((file, index) => {
-                            // const windowURL = window.URL || window.webkitURL;
                             return (<div key={index} className={classNames(`${prefixCls}-list-item`, hashId)}>
                                 <div className={classNames(`${prefixCls}-list-item-img`, hashId)}>
                                     <img src={file.thumbUrl || file.url} />
-                                    {/* <img src={windowURL.createObjectURL(file.originFileObj!)} /> */}
                                 </div>
                                 <div className={classNames(`${prefixCls}-list-item-content`, hashId)}>
                                     <div className={classNames(`${prefixCls}-list-item-name`, hashId)}>{file.name}</div>
@@ -271,10 +301,8 @@ const InternalUploader = <
                                         </>) : file.status === 'error' ? (<>
                                             <CloseCircleFilled style={{ color: token.colorError, marginRight: '10px' }} />
                                             <span dangerouslySetInnerHTML={{ __html: file?.error?.message || '上传失败' }} />
-                                            {/* 上传失败&nbsp;&nbsp;网络错误，请尝试禁止浏览器插件或者换浏览器或者换电脑重试 */}
-                                        </>) : (
-                                            <></>
-                                        )}
+                                        </>) : (<>
+                                        </>)}
                                     </div>
                                 </div>
                             </div>)

@@ -44,9 +44,7 @@ export interface UploadRequestOption<T extends UploadResponseBody = any> {
   action: string;
   headers?: UploadRequestHeader;
   method: UploadRequestMethod;
-  normalize?: {
-    responseBody: (response: any) => T;
-  }
+  normalize?: { responseBody?: (response: any) => T; }
 }
 
 export type UploadResponseBody = {
@@ -63,14 +61,13 @@ export type PicUploaderProps<T extends UploadResponseBody = UploadResponseBody> 
   prefixCls?: string;
   defaultDirValue: DirKey;
   dirs?: DirType[];
-  config?: {
-    right?: React.ReactNode;
-  }
+  configRender?: (dom: ReactNode) => ReactNode;
   upload?: {
     buttonProps?: ButtonProps;
-    normalize?: { responseBody: (response: any) => T; }
+    normalize?: { responseBody?: (response: any) => T; }
     customRequest?: (options: UploadRequestOption<T>) => void;
   } & Pick<UploadProps<T>, 'accept' | 'data' | 'headers' | 'method' | 'action'>;
+  previewFile?: (file: File | Blob) => PromiseLike<string>;
   fileList?: UploadFile<T>[];
   onChange?: (fileList: UploadFile<T>[]) => void;
 };
