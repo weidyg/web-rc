@@ -140,14 +140,23 @@ const InternalUploader = <
         showUploadList: false,
         fileList: fileList,
         onChange: ({ file, fileList, event }) => {
+            let success = true;
             let newFileList = [...fileList];
             newFileList = newFileList.map((file) => {
                 if (file.response) {
                     file.url = file.response.url;
                 }
+                if (file.status != 'done') {
+                    success = false;
+                }
                 return file;
             });
             setFileList(newFileList);
+            if (success) {
+                setTimeout(() => {
+                    setShowUploadList(false);
+                }, 1000);
+            }
         },
         customRequest: (option) => {
             const _option = { ...option, normalize }
