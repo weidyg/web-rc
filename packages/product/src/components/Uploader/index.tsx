@@ -140,14 +140,12 @@ const InternalUploader = <
         showUploadList: false,
         fileList: fileList,
         onChange: ({ file, fileList, event }) => {
-            let success = true;
+            let success = false;
             let newFileList = [...fileList];
             newFileList = newFileList.map((file) => {
+                success = success && file.status == 'done';
                 if (file.response) {
                     file.url = file.response.url;
-                }
-                if (file.status != 'done') {
-                    success = false;
                 }
                 return file;
             });
