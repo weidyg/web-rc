@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { forwardRef, Ref, useEffect, useImperativeHandle, useState } from 'react';
 import { Button, Cascader, Checkbox, Form, InputNumber, Select, UploadFile, UploadProps, } from 'antd';
 import { classNames, drawImage, useMergedState } from '@web-react/biz-utils';
 import { UploadResponse, DirKey, DirType, UploaderProps } from './typing';
 import { findPath } from './_utils';
 import { useStyle } from './style';
-import InternalDraggerUpload from './DraggerUpload';
+import InternalUploadBox from './UploadBox';
 import InternalUploadList from './UploadList';
 
 type ConfigFormValueType = {
@@ -45,10 +45,9 @@ const FolderSelect = (props: {
     />;
 }
 
-const InternalUploader = <
-    UploadResponseBodyType extends UploadResponse = UploadResponse,
->(
-    props: UploaderProps<UploadResponseBodyType>,
+type UploaderRef = {}
+const InternalUploader = forwardRef(<Type extends UploadResponse = UploadResponse>(
+    props: UploaderProps<Type>, ref: Ref<UploaderRef>
 ) => {
     const { defaultDirValue, dirs, configRender, previewFile, upload = {} } = props;
     const { data: uploadData, ...restUpload } = upload;
@@ -57,10 +56,14 @@ const InternalUploader = <
     const [form] = Form.useForm<ConfigFormValueType>();
 
     const [showUploadList, setShowUploadList] = useState(false);
-    const [fileList, setFileList] = useMergedState<UploadFile<UploadResponseBodyType>[]>([], {
+    const [fileList, setFileList] = useMergedState<UploadFile<Type>[]>([], {
         value: props?.fileList,
         onChange: (value) => props?.onChange?.(value),
     });
+
+    useImperativeHandle(ref, () => ({
+
+    }));
 
     function handleUpload(): void {
         setShowUploadList(false);
@@ -135,7 +138,7 @@ const InternalUploader = <
     return wrapSSR(
         <div className={classNames(prefixCls, hashId)}>
             <div className={classNames(`${prefixCls}-body`, hashId)}>
-                <InternalDraggerUpload
+                <InternalUploadBox
                     style={{ display: !showUploadList ? 'flex' : 'none', }}
                     configRender={() => configRender?.(defaultConfigDom) || defaultConfigDom}
                     data={async (file) => {
@@ -180,7 +183,7 @@ const InternalUploader = <
             </div>
         </div>
     )
-};
+});
 
 type CompoundedComponent<T = UploadResponse> = typeof InternalUploader & {
     <U extends T>(props: UploadProps<U>,): React.ReactElement;
@@ -188,8 +191,7 @@ type CompoundedComponent<T = UploadResponse> = typeof InternalUploader & {
 const Uploader = InternalUploader as CompoundedComponent;
 export default Uploader;
 export type {
-    DirKey,
-    DirType,
-    UploaderProps,
+    UploaderRef, UploaderProps,
+    DirKey, DirType,
     UploadResponse
 };
