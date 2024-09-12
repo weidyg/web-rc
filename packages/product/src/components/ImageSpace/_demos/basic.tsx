@@ -10,7 +10,7 @@ import { Button, Input, Select, Space } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 
 import dataJson from './_data.json';
-import { ImageSpace } from '@web-react/biz-components';
+import { ImageFile, ImageSpace } from '@web-react/biz-components';
 import { FolderTreeType } from '../FolderTree';
 export default () => {
 
@@ -25,6 +25,18 @@ export default () => {
         return new Promise<FolderTreeType[]>((resolve, reject) => {
           setTimeout(() => {
             resolve(dataJson.dirs);
+          }, 1000);
+        })
+      }}
+      fetchData={(param) => {
+        const queryParam = { ...param }
+        const { page, size } = queryParam;
+        return new Promise<{ items: ImageFile[], total: number, }>((resolve, reject) => {
+          setTimeout(() => {
+            const newData: ImageFile[] = dataJson.files
+              .slice((page - 1) * size, page * size)
+              .map((file) => ({ ...file, id: file.id + '_' + page, }));
+            resolve({ items: newData, total: dataJson.files.length, });
           }, 1000);
         })
       }}
