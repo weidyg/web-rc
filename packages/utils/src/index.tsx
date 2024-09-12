@@ -3,6 +3,7 @@ import classNames from 'classnames';
 import useCopyClick from 'antd/es/typography/hooks/useCopyClick';
 import TransButton from 'antd/es/_util/transButton';
 import useMergedState from './hooks/useMergedState';
+import useForceUpdate from './hooks/useForceUpdate';
 
 const convertByteUnit = (bytes: number, digits?: number): string => {
   const units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
@@ -19,5 +20,6 @@ export {
   TransButton,
   convertByteUnit,
   useMergedState,
+  useForceUpdate,
   useCopyClick
 };

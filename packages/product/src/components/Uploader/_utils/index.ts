@@ -1,6 +1,4 @@
-import { Key } from "react";
 import { DirKey, DirType } from "../typing";
-
 export function findPath(tree?: DirType[], targetId?: DirKey) {
     let path: DirKey[] = [];
     if (!tree || !targetId) { return path; }

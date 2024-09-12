@@ -28,19 +28,6 @@ export default () => {
                     }
                 }
             }}
-        // display={displayPanel}
-        // onDisplayChange={(displayPanel) => {
-        //     setDisplayPanel(displayPanel);
-        // }}
-        // fileList={fileList}
-        // onChange={(fileList) => {
-        // if (fileList.every((m) => m.status === 'done')) {
-        //     setFileList([]);
-        //     setDisplayPanel('uploader');
-        // } else {
-        //     setFileList(fileList);
-        // }
-        // }}
         />
     </div>
 

@@ -1,6 +1,6 @@
-import { UploadProgressEvent, UploadRequestError, UploadRequestOption, UploadResponseBody } from "../typing";
+import { BaseUploadResponseBody, UploadProgressEvent, UploadRequestError, UploadRequestOption } from "../typing";
 
-function getError(option: UploadRequestOption, xhr: XMLHttpRequest, errMsg?: string) {
+function getError<T extends BaseUploadResponseBody>(option: UploadRequestOption<T>, xhr: XMLHttpRequest, errMsg?: string): UploadRequestError {
     const msg = errMsg || `cannot ${option.method} ${option.action} ${xhr.status}'`;
     const err = new Error(msg) as UploadRequestError;
     err.status = xhr.status;
@@ -8,7 +8,7 @@ function getError(option: UploadRequestOption, xhr: XMLHttpRequest, errMsg?: str
     err.url = option.action;
     return err;
 }
-function getBody<T extends UploadResponseBody>(option: UploadRequestOption<T>, xhr: XMLHttpRequest): T {
+function getBody<T extends BaseUploadResponseBody>(option: UploadRequestOption<T>, xhr: XMLHttpRequest): T {
     const text = xhr.responseText || xhr.response;
     if (!text) { return text; }
     try {
@@ -16,12 +16,12 @@ function getBody<T extends UploadResponseBody>(option: UploadRequestOption<T>, x
         const body = option?.normalize?.responseBody?.(bodyJson) || bodyJson;
         return body;
     } catch (e) {
-        const body: UploadResponseBody = { error: { message: text } };
+        const body: BaseUploadResponseBody = { error: { message: text } };
         return body as T;
     }
 }
 
-export default function uploadRequest<T extends UploadResponseBody>(
+export default function uploadRequest<T extends BaseUploadResponseBody = BaseUploadResponseBody>(
     option: UploadRequestOption<T>
 ) {
     const xhr = new XMLHttpRequest();
@@ -70,7 +70,7 @@ export default function uploadRequest<T extends UploadResponseBody>(
             xhr.setRequestHeader(h, headers[h]);
         }
     });
-    
+
     const formData = new FormData();
     if (option.data) {
         Object.keys(option.data).forEach(key => {
