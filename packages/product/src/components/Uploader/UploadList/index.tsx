@@ -80,7 +80,9 @@ const UploadList = (props: UploadListProps) => {
                             />
                         </div>
                         <div className={classNames(`${prefixCls}-item-content`, hashId)}>
-                            <div className={classNames(`${prefixCls}-item-name`, hashId)}>{file.name}</div>
+                            <div className={classNames(`${prefixCls}-item-name`, hashId)}>
+                                {file.name}
+                            </div>
                             <div className={classNames(`${prefixCls}-item-desc`, hashId)}>
                                 {convertByteUnit(file.size || 0)}
                             </div>

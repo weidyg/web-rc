@@ -5,12 +5,12 @@
 import { useState } from "react";
 import { UploadFile } from "antd";
 import { Uploader } from "@web-react/biz-components";
-import { DirType, UploadResponseBody } from "../typing";
+import { DirType, BaseUploadResponseBody } from "../typing";
 import dataJson from './_data.json';
 
 export default () => {
     // const [displayPanel, setDisplayPanel] = useState<DisplayPanelType>('uploader');
-    const [fileList, setFileList] = useState<UploadFile<UploadResponseBody>[]>([]);
+    const [fileList, setFileList] = useState<UploadFile<BaseUploadResponseBody>[]>([]);
     return <div style={{ height: '100vh' }}>
         <Uploader
             defaultDirValue={'0'}
@@ -21,10 +21,7 @@ export default () => {
                     responseBody: (res) => {
                         const error = res.Error;
                         const result = res.Result || {};
-                        return {
-                            ...result,
-                            error
-                        }
+                        return { ...result, error }
                     }
                 }
             }}

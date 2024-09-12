@@ -1,21 +1,33 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { Alert, Button, Cascader, Checkbox, Form, InputNumber, Select, UploadFile, UploadProps, } from 'antd';
-import { CheckCircleFilled, CloseCircleFilled, LoadingOutlined } from '@ant-design/icons';
-import { classNames, convertByteUnit, drawImage, previewImage, useMergedState } from '@web-react/biz-utils';
-import { BaseUploadResponseBody, ConfigFormValueType, DirKey, FolderSelectProps, PicUploaderProps } from './typing';
+import React, { useEffect, useState } from 'react';
+import { Button, Cascader, Checkbox, Form, InputNumber, Select, UploadFile, UploadProps, } from 'antd';
+import { classNames, drawImage, useMergedState } from '@web-react/biz-utils';
+import { BaseUploadResponseBody, DirKey, DirType, UploaderProps } from './typing';
 import { findPath } from './_utils';
 import { useStyle } from './style';
 import InternalDraggerUpload from './DraggerUpload';
 import InternalUploadList from './UploadList';
 
-const FolderSelect = (props: FolderSelectProps) => {
+type ConfigFormValueType = {
+    folderId: string,
+    picWidth: boolean,
+    picWidthOption: number,
+    picWidthValue: number,
+    originSize: boolean
+};
+
+const FolderSelect = (props: {
+    value?: DirKey,
+    defaultValue?: DirKey,
+    onChange?: (value: DirKey) => void,
+    options?: DirType[],
+}) => {
     const { value, defaultValue, onChange, options } = props;
+    const [selectKeys, setSelectKeys] = useState<DirKey[]>([]);
     const [folderId, setFolderId] = useMergedState<DirKey>('', {
         value: value,
         defaultValue: defaultValue,
         onChange: onChange,
     });
-    const [selectKeys, setSelectKeys] = useState<DirKey[]>([]);
     useEffect(() => {
         const keys = findPath(options, folderId);
         setSelectKeys(keys);
@@ -36,7 +48,7 @@ const FolderSelect = (props: FolderSelectProps) => {
 const InternalUploader = <
     UploadResponseBodyType extends BaseUploadResponseBody = BaseUploadResponseBody,
 >(
-    props: PicUploaderProps<UploadResponseBodyType>,
+    props: UploaderProps<UploadResponseBodyType>,
 ) => {
     const { defaultDirValue, dirs, configRender, previewFile, upload = {} } = props;
     const { data: uploadData, ...restUpload } = upload;

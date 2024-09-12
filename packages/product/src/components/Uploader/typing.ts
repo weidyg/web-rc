@@ -1,5 +1,5 @@
+import { ReactNode } from "react";
 import { ButtonProps, UploadFile, UploadProps } from "antd";
-import { CSSProperties, ReactNode } from "react";
 
 export type DirKey = string | number;
 export type DirType = {
@@ -7,19 +7,6 @@ export type DirType = {
   label: ReactNode;
   children?: DirType[],
 };
-
-export type FolderSelectProps = {
-  value?: DirKey,
-  defaultValue?: DirKey,
-  onChange?: (value: DirKey) => void,
-  options?: DirType[],
-}
-
-export type UploadButtonProps = {
-  uploadProps?: Omit<UploadProps, 'children'>,
-  buttonProps?: ButtonProps,
-}
-
 
 export interface UploadProgressEvent extends Partial<ProgressEvent> {
   percent?: number;
@@ -65,7 +52,7 @@ export type CustomUploadProps<T extends BaseUploadResponseBody = BaseUploadRespo
   | 'beforeUpload' | 'fileList' | 'onChange'
 >;
 
-export type PicUploaderProps<T extends BaseUploadResponseBody = BaseUploadResponseBody> = {
+export type UploaderProps<T extends BaseUploadResponseBody = BaseUploadResponseBody> = {
   upload?: CustomUploadProps<T>;
   defaultDirValue: DirKey;
   dirs?: DirType[];
@@ -73,12 +60,4 @@ export type PicUploaderProps<T extends BaseUploadResponseBody = BaseUploadRespon
   previewFile?: UploadProps<T>['previewFile'];
   fileList?: UploadFile<T>[];
   onChange?: (fileList: UploadFile<T>[]) => void;
-};
-
-export type ConfigFormValueType = {
-  folderId: string,
-  picWidth: boolean,
-  picWidthOption: number,
-  picWidthValue: number,
-  originSize: boolean
 };
