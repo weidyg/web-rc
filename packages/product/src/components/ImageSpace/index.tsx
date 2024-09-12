@@ -68,17 +68,15 @@ const InternalImageSpace = forwardRef<ImageSpaceRef, ImageSpaceProps>((
       <div className={classNames(`${prefixCls}-body`, hashId)}>
         <div className={classNames(`${prefixCls}-aside`, hashId)}>
           <div className={classNames(`${prefixCls}-treeDom`, hashId)} >
-            {/* {dirloading &&
-              <div className={classNames(`${prefixCls}-mask`, hashId)}>
-                <Spin spinning={true} />
-              </div>
-            } */}
-            <FolderTree
-              data={folders}
-              value={folderId}
-              onChange={(val) => {
-                setFolderId(val);
-              }} />
+            <Spin spinning={dirloading}
+              wrapperClassName={classNames(`${prefixCls}-spin`, hashId)}>
+              <FolderTree
+                data={folders}
+                value={folderId}
+                onChange={(val) => {
+                  setFolderId(val);
+                }} />
+            </Spin>
           </div>
         </div>
         <div className={classNames(`${prefixCls}-container`, hashId)}>
@@ -86,9 +84,12 @@ const InternalImageSpace = forwardRef<ImageSpaceRef, ImageSpaceProps>((
 
           </div>
           <div className={classNames(`${prefixCls}-container-list`, hashId)}>
-            <div style={{ height: '1000px', }}>
+            <Spin spinning={dirloading}
+              wrapperClassName={classNames(`${prefixCls}-spin`, hashId)}>
+              <div style={{ height: '1000px', }}>
 
-            </div>
+              </div>
+            </Spin>
           </div>
         </div>
       </div>

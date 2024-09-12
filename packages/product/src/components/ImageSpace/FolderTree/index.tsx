@@ -82,6 +82,7 @@ const FolderTree = (props: FolderTreeProps) => {
         <Tree
             rootStyle={{
                 height: 'calc(100% - 40px)',
+                overflow:'auto'
             }}
             blockNode
             showIcon={true}
