@@ -2,24 +2,24 @@ import { CSSProperties, ReactNode, useMemo } from 'react';
 import { Button, message, Upload, UploadFile, UploadProps } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import { classNames } from '@web-react/biz-utils';
-import { BaseUploadResponseBody, CustomUploadProps } from '../typing';
+import { UploadResponse, CustomUploadProps } from '../typing';
 import { useStyle } from './style';
 import uploadRequest from '../_utils/request';
 
-const fillRespUrl = <T extends BaseUploadResponseBody>(file: UploadFile<T>) => {
+const fillRespUrl = <T extends UploadResponse>(file: UploadFile<T>) => {
     if (file?.response?.url) {
         file.url = file.response.url;
     }
     return file;
 }
 
-type UploadDraggerProps<T extends BaseUploadResponseBody = BaseUploadResponseBody> = {
+type UploadDraggerProps<T extends UploadResponse = UploadResponse> = {
     style?: CSSProperties;
     configRender?: () => ReactNode;
 } & CustomUploadProps<T>;
 
 const InternalDraggerUpload = <
-    T extends BaseUploadResponseBody = BaseUploadResponseBody,
+    T extends UploadResponse = UploadResponse,
 >(props: UploadDraggerProps<T>) => {
     const { buttonProps, style, normalize, configRender,
         data: uploadData, customRequest, beforeUpload,

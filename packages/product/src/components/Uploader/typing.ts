@@ -19,22 +19,20 @@ export interface UploadRequestError extends Error {
 export type UploadRequestHeader = Record<string, string>;
 export type UploadRequestMethod = 'POST' | 'PUT' | 'PATCH' | 'post' | 'put' | 'patch';
 export type BeforeUploadFileType = File | Blob | boolean | string;
-export interface RcFile extends File { uid: string; }
-export interface UploadRequestOption<T extends BaseUploadResponseBody = BaseUploadResponseBody> {
+export type UploadRequestOption<T extends UploadResponse = UploadResponse> = {
   onProgress?: (event: UploadProgressEvent) => void;
   onError?: (event: UploadRequestError | ProgressEvent, body?: T) => void;
   onSuccess?: (body: T, xhr?: XMLHttpRequest) => void;
   data?: Record<string, unknown>;
   filename?: string;
-  file: Exclude<BeforeUploadFileType, File | boolean> | RcFile;
+  file: Exclude<BeforeUploadFileType, File | boolean> | File & { uid: string; };
   withCredentials?: boolean;
   action: string;
   headers?: UploadRequestHeader;
   method: UploadRequestMethod;
-  normalize?: { responseBody?: (response: any) => T; }
-}
+} & Pick<CustomUploadProps<T>, 'normalize'>;
 
-export type BaseUploadResponseBody = {
+export type UploadResponse = {
   url?: string,
   thumbUrl?: string,
   error?: {
@@ -44,15 +42,15 @@ export type BaseUploadResponseBody = {
   [key: string]: any
 }
 
-export type CustomUploadProps<T extends BaseUploadResponseBody = BaseUploadResponseBody> = {
+export type CustomUploadProps<T extends UploadResponse = UploadResponse> = {
   buttonProps?: Omit<ButtonProps, 'children'>;
-  normalize?: { responseBody?: (response: any) => T; }
+  normalize?: { uploadResponse?: (response: any) => T; }
   customRequest?: (options?: UploadRequestOption<T>) => void;
 } & Pick<UploadProps<T>, 'accept' | 'data' | 'headers' | 'method' | 'action'
   | 'beforeUpload' | 'fileList' | 'onChange'
 >;
 
-export type UploaderProps<T extends BaseUploadResponseBody = BaseUploadResponseBody> = {
+export type UploaderProps<T extends UploadResponse = UploadResponse> = {
   upload?: CustomUploadProps<T>;
   defaultDirValue: DirKey;
   dirs?: DirType[];

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Cascader, Checkbox, Form, InputNumber, Select, UploadFile, UploadProps, } from 'antd';
 import { classNames, drawImage, useMergedState } from '@web-react/biz-utils';
-import { BaseUploadResponseBody, DirKey, DirType, UploaderProps } from './typing';
+import { UploadResponse, DirKey, DirType, UploaderProps } from './typing';
 import { findPath } from './_utils';
 import { useStyle } from './style';
 import InternalDraggerUpload from './DraggerUpload';
@@ -46,7 +46,7 @@ const FolderSelect = (props: {
 }
 
 const InternalUploader = <
-    UploadResponseBodyType extends BaseUploadResponseBody = BaseUploadResponseBody,
+    UploadResponseBodyType extends UploadResponse = UploadResponse,
 >(
     props: UploaderProps<UploadResponseBodyType>,
 ) => {
@@ -182,8 +182,14 @@ const InternalUploader = <
     )
 };
 
-type CompoundedComponent<T = BaseUploadResponseBody> = typeof InternalUploader & {
+type CompoundedComponent<T = UploadResponse> = typeof InternalUploader & {
     <U extends T>(props: UploadProps<U>,): React.ReactElement;
 };
 const Uploader = InternalUploader as CompoundedComponent;
 export default Uploader;
+export type {
+    DirKey,
+    DirType,
+    UploaderProps,
+    UploadResponse
+};
