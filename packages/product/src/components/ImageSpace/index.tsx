@@ -73,12 +73,14 @@ const InternalImageSpace = forwardRef<ImageSpaceRef, ImageSpaceProps>((
                 <Spin spinning={true} />
               </div>
             } */}
-            <FolderTree
-              data={folders}
-              value={folderId}
-              onChange={(val) => {
-                setFolderId(val);
-              }} />
+            <Spin spinning={dirloading} >
+              <FolderTree
+                data={folders}
+                value={folderId}
+                onChange={(val) => {
+                  setFolderId(val);
+                }} />
+            </Spin>
           </div>
         </div>
         <div className={classNames(`${prefixCls}-container`, hashId)}>

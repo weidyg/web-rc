@@ -1,17 +1,6 @@
 import React, { Key, ReactNode, useEffect, useState } from "react";
 import { Select, Tree } from "antd";
 import { useMergedState } from "@web-react/biz-utils";
-
-type FlatDataType = {
-    value: Key;
-    label: string;
-    [key: string]: any;
-};
-type TreeDataType = {
-    key: Key;
-    title: ReactNode;
-    children?: TreeDataType[],
-};
 function flatTreeHelper(list?: FolderTreeType[], pValues?: Key[]): FlatDataType[] {
     if (!list || list.length === 0) { return []; }
     return list.flatMap(item => {
@@ -26,6 +15,17 @@ function geTreeData(list: FolderTreeType[]): TreeDataType[] {
         return { key: value, title: label, children: geTreeData(children) };
     });
 }
+
+type FlatDataType = {
+    value: Key;
+    label: string;
+    [key: string]: any;
+};
+type TreeDataType = {
+    key: Key;
+    title: ReactNode;
+    children?: TreeDataType[],
+};
 
 export type FolderTreeType = {
     value: Key;
