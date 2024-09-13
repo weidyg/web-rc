@@ -5,10 +5,18 @@ import { useStyle } from './style';
 import React from 'react';
 import FolderTree, { FolderTreeType } from './FolderTree';
 
-type BaseRequestParam = {
+type RequestParam = {
   page: number,
   size: number,
   folderId?: Key
+}
+type ImageFile = {
+  id: Key;
+  name?: string;
+  size?: number;
+  pixel?: string;
+  fullUrl?: string;
+  isRef?: boolean;
 }
 
 type ImageSpaceProps = {
@@ -16,6 +24,9 @@ type ImageSpaceProps = {
   style?: CSSProperties;
   defaultFolder?: FolderTreeType;
   fetchFolders?: () => Promise<FolderTreeType[]>;
+
+  pageSize?: number;
+  fetchData?: (param: RequestParam) => Promise<{ items: ImageFile[], total: number, }>;
 };
 
 interface ImageSpaceRef {
@@ -26,11 +37,15 @@ const InternalImageSpace = forwardRef<ImageSpaceRef, ImageSpaceProps>((
   props: ImageSpaceProps,
   ref: Ref<ImageSpaceRef>
 ) => {
+  const { defaultFolder, fetchFolders, fetchData, pageSize = 20, } = props;
   const { prefixCls, wrapSSR, hashId, token } = useStyle();
-  const { defaultFolder, fetchFolders } = props;
+  const [loading, setLoading] = useState(false);
+  const [curPage, setCurPage] = useState(0);
+  const [totalCount, setTotalCount] = useState(0);
   const [dirloading, setDirLoading] = useState(false);
   const [folderId, setFolderId] = useState<Key>(defaultFolder?.value || '');
   const [folders, setFolders] = useState<FolderTreeType[]>(defaultFolder ? [defaultFolder] : []);
+  const [imageFiles, setImageFiles] = useState<ImageFile[]>([]);
 
   useImperativeHandle(ref, () => ({
 
@@ -38,11 +53,11 @@ const InternalImageSpace = forwardRef<ImageSpaceRef, ImageSpaceProps>((
 
   useEffect(() => {
     loadDirs();
-    // loadData({ page: curPage + 1, fist: true });
+    loadData({ page: curPage + 1, fist: true });
   }, []);
 
   useEffect(() => {
-    // if (folderId) { loadData({ page: 1 }); }
+    if (folderId) { loadData({ page: 1 }); }
   }, [folderId]);
 
   const loadDirs = async () => {
@@ -60,6 +75,28 @@ const InternalImageSpace = forwardRef<ImageSpaceRef, ImageSpaceProps>((
     }
   };
 
+  const loadData = async (param: { page: number, fist?: boolean, [key: string]: any }) => {
+    const { page, fist, ...rest } = param;
+    const totalPage = fist ? 1 : Math.ceil(totalCount / pageSize);
+    if (page > totalPage) { return; }
+    setLoading(true);
+    try {
+      const param: RequestParam = { ...rest, page, size: pageSize, folderId } as any;
+      const data = await fetchData?.(param) || { items: [], total: 0 };
+      const newData = data?.items || [];
+      const newImageFiles = page > 1
+        ? [...imageFiles, ...newData]
+        : newData;
+      setCurPage(page);
+      setTotalCount(data.total || 0);
+      setImageFiles(newImageFiles);
+    } catch (error: any) {
+      message.error(error?.message || '加载失败');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return wrapSSR(
     <div className={classNames(`${prefixCls}`, hashId)}>
       {/* <div className={classNames(`${prefixCls}-header`, hashId)}>
@@ -68,12 +105,8 @@ const InternalImageSpace = forwardRef<ImageSpaceRef, ImageSpaceProps>((
       <div className={classNames(`${prefixCls}-body`, hashId)}>
         <div className={classNames(`${prefixCls}-aside`, hashId)}>
           <div className={classNames(`${prefixCls}-treeDom`, hashId)} >
-            {/* {dirloading &&
-              <div className={classNames(`${prefixCls}-mask`, hashId)}>
-                <Spin spinning={true} />
-              </div>
-            } */}
-            <Spin spinning={dirloading} >
+            <Spin spinning={dirloading}
+              wrapperClassName={classNames(`${prefixCls}-spin`, hashId)}>
               <FolderTree
                 data={folders}
                 value={folderId}
@@ -88,14 +121,17 @@ const InternalImageSpace = forwardRef<ImageSpaceRef, ImageSpaceProps>((
 
           </div>
           <div className={classNames(`${prefixCls}-container-list`, hashId)}>
-            <div style={{ height: '1000px', }}>
-
-            </div>
+            <Spin spinning={loading}
+              wrapperClassName={classNames(`${prefixCls}-spin`, hashId)}>
+              <div style={{ height: '1000px', }}>
+                123456789
+              </div>
+            </Spin>
           </div>
         </div>
       </div>
       <div className={classNames(`${prefixCls}-footer`, hashId)}>
-        2
+        
       </div>
     </div>
   );
@@ -112,4 +148,5 @@ export default ImageSpace;
 export type {
   ImageSpaceProps,
   ImageSpaceRef,
+  ImageFile
 };

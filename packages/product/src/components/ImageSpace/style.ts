@@ -102,6 +102,14 @@ const genBizStyle: GenerateStyle<ImageSpaceToken> = (token) => {
         justifyContent: 'space-between',
         backgroundColor: token.colorBgFooter,
       },
+      '&-spin': {
+        height: '100%',
+        width: '100%',
+        [`${token.antCls}-spin-container`]: {
+          height: '100%',
+          width: '100%',
+        }
+      },
     },
   };
 };
