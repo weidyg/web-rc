@@ -1,4 +1,5 @@
 /**
+ * iframe: true
  * title: 基本使用
  * description: 图片上传器
  */

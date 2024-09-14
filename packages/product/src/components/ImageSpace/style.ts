@@ -86,7 +86,8 @@ const genBizStyle: GenerateStyle<ImageSpaceToken> = (token) => {
         backgroundColor: token.colorBgContainer,
         '&-top': {
           display: 'flex',
-          height: '35px',
+          height: '38px',
+          padding: '6px',
         },
         '&-list': {
           display: 'flex',

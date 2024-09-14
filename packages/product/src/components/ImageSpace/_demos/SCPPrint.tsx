@@ -18,6 +18,8 @@ export default () => {
                 documents: [
                     {
                         masterWaybillNo: "SF7444488695775",
+                        branchWaybillNo: "SF74444886957751",
+                        backWaybillNo:'SF74444886957752',
                         customData: {
                             GridNo: '<%=_data.OrderSort%>'
                         }
@@ -33,7 +35,7 @@ export default () => {
                         const contents: PrintContent[] = item.contents || [];
                         contents.forEach((content: any) => {
                             content.data = {
-                                OrderSort: "11"
+                                // GridNo: "11"
                             };
                         })
                         return {

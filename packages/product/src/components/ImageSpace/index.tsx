@@ -1,9 +1,10 @@
-import { CSSProperties, forwardRef, Key, ReactNode, Ref, useCallback, useEffect, useImperativeHandle, useMemo, useState } from 'react';
-import { Button, Flex, message, Modal, ModalProps, Popover, PopoverProps, Spin, Typography, UploadFile } from 'antd';
-import { classNames, useMergedState } from '@web-react/biz-utils';
+import { CSSProperties, forwardRef, Key, ReactNode, Ref, useEffect, useImperativeHandle, useState } from 'react';
+import { Button, message, Segmented, Space, Spin } from 'antd';
+import { classNames } from '@web-react/biz-utils';
 import { useStyle } from './style';
-import React from 'react';
+
 import FolderTree, { FolderTreeType } from './FolderTree';
+import { AppstoreOutlined, BarsOutlined } from '@ant-design/icons';
 
 type RequestParam = {
   page: number,
@@ -22,22 +23,22 @@ type ImageFile = {
 type ImageSpaceProps = {
   className?: string;
   style?: CSSProperties;
+  actionsRender?: (dom: ReactNode) => ReactNode;
   defaultFolder?: FolderTreeType;
   fetchFolders?: () => Promise<FolderTreeType[]>;
-
   pageSize?: number;
   fetchData?: (param: RequestParam) => Promise<{ items: ImageFile[], total: number, }>;
 };
 
 interface ImageSpaceRef {
-
+  refresh: () => void | Promise<void>;
 }
 
 const InternalImageSpace = forwardRef<ImageSpaceRef, ImageSpaceProps>((
   props: ImageSpaceProps,
   ref: Ref<ImageSpaceRef>
 ) => {
-  const { defaultFolder, fetchFolders, fetchData, pageSize = 20, } = props;
+  const { defaultFolder, fetchFolders, fetchData, pageSize = 20, actionsRender } = props;
   const { prefixCls, wrapSSR, hashId, token } = useStyle();
   const [loading, setLoading] = useState(false);
   const [curPage, setCurPage] = useState(0);
@@ -46,9 +47,12 @@ const InternalImageSpace = forwardRef<ImageSpaceRef, ImageSpaceProps>((
   const [folderId, setFolderId] = useState<Key>(defaultFolder?.value || '');
   const [folders, setFolders] = useState<FolderTreeType[]>(defaultFolder ? [defaultFolder] : []);
   const [imageFiles, setImageFiles] = useState<ImageFile[]>([]);
+  const [showType, setShowType] = useState<'list' | 'table'>('list');
 
   useImperativeHandle(ref, () => ({
-
+    refresh: () => {
+      return handleRefresh();
+    },
   }));
 
   useEffect(() => {
@@ -57,8 +61,12 @@ const InternalImageSpace = forwardRef<ImageSpaceRef, ImageSpaceProps>((
   }, []);
 
   useEffect(() => {
-    if (folderId) { loadData({ page: 1 }); }
+    if (folderId) { handleRefresh(); }
   }, [folderId]);
+
+  const handleRefresh = async () => {
+    await loadData({ page: 1 });
+  }
 
   const loadDirs = async () => {
     setDirLoading(true);
@@ -97,6 +105,25 @@ const InternalImageSpace = forwardRef<ImageSpaceRef, ImageSpaceProps>((
     }
   };
 
+  const defaultactions = (
+    <Space>
+      <Segmented
+        defaultValue={showType}
+        options={[
+          { value: 'list', icon: <AppstoreOutlined /> },
+          { value: 'table', icon: <BarsOutlined /> },
+        ]}
+        onChange={(value: any) => {
+          setShowType(value)
+        }}
+      />
+      <Button disabled={loading}
+        onClick={handleRefresh}>
+        刷新
+      </Button>
+    </Space>
+  )
+
   return wrapSSR(
     <div className={classNames(`${prefixCls}`, hashId)}>
       {/* <div className={classNames(`${prefixCls}-header`, hashId)}>
@@ -118,7 +145,7 @@ const InternalImageSpace = forwardRef<ImageSpaceRef, ImageSpaceProps>((
         </div>
         <div className={classNames(`${prefixCls}-container`, hashId)}>
           <div className={classNames(`${prefixCls}-container-top`, hashId)}>
-
+            {actionsRender?.(defaultactions) || defaultactions}
           </div>
           <div className={classNames(`${prefixCls}-container-list`, hashId)}>
             <Spin spinning={loading}
@@ -131,7 +158,7 @@ const InternalImageSpace = forwardRef<ImageSpaceRef, ImageSpaceProps>((
         </div>
       </div>
       <div className={classNames(`${prefixCls}-footer`, hashId)}>
-        
+
       </div>
     </div>
   );
