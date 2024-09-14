@@ -94,6 +94,11 @@ const genBizStyle: GenerateStyle<ImageSpaceToken> = (token) => {
           flex: 1,
           overflow: 'auto',
         },
+        '&-table': {
+          display: 'flex',
+          flex: 1,
+          margin: '0 8px'
+        }
       },
       '&-footer': {
         display: 'flex',
@@ -109,6 +114,34 @@ const genBizStyle: GenerateStyle<ImageSpaceToken> = (token) => {
         [`${token.antCls}-spin-container`]: {
           height: '100%',
           width: '100%',
+        }
+      },
+      '&-fileName': {
+        overflow: 'hidden',
+        display: 'flex',
+        alignItems: 'center',
+        alignContent: 'center',
+        '&-checkbox': {
+          marginRight: '10px',
+        },
+        '&-img, &-img img': {
+          cursor: 'pointer',
+          width: '36px !important',
+          height: '36px !important',
+          objectFit: 'contain',
+          borderRadius: '6px',
+          background: token.colorBgLayout,
+        },
+        '&-title': {
+          maxWidth: '105px',
+          marginLeft: '10px',
+          'p': {
+            display: 'inline',
+            textAlign: 'center',
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+          }
         }
       },
     },
