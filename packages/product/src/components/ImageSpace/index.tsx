@@ -53,7 +53,7 @@ const InternalImageSpace = forwardRef<ImageSpaceRef, ImageSpaceProps>((
   const [folderId, setFolderId] = useState<Key>(defaultFolder?.value || '');
   const [folders, setFolders] = useState<FolderTreeType[]>(defaultFolder ? [defaultFolder] : []);
   const [imageFiles, setImageFiles] = useState<ImageFile[]>([]);
-  const [showType, setShowType] = useState<'list' | 'table'>('list');
+  const [showType, setShowType] = useState<'list' | 'table'>('table');
 
   const [selectKeys, setSelectKeys] = useMergedState<Key[]>([], {
     defaultValue: props?.defaultValue,
@@ -296,22 +296,14 @@ const InternalImageSpace = forwardRef<ImageSpaceRef, ImageSpaceProps>((
             </div>
           }
           {showType == 'table' &&
-            <div className={classNames(`${prefixCls}-container-list`, hashId)}>
-              <Table
-                rowKey={'id'}
-                size="middle"
-                loading={loading}
-                // scroll={{ y: 'calc(-180px + 100vh)' }}
-                pagination={false}
-                onScroll={handleScroll}
-                columns={columns}
-                dataSource={imageFiles}
-                components={{
-                  body: {
-                    wrapper: BodyWrapper,
-                  },
-                }}
-              />
+            <div className={classNames(`${prefixCls}-container-table`, hashId)}>
+              {/* <div style={{ height: '1000px' }}>123</div> */}
+              <div className={classNames(`${prefixCls}-container-table-header`, hashId)}>
+              header
+              </div>
+              <div className={classNames(`${prefixCls}-container-table-body`, hashId)}>
+                <div style={{ height: '1000px' }}>123</div>
+              </div>
             </div>
           }
         </div>

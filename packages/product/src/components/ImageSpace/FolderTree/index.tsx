@@ -1,5 +1,5 @@
 import React, { Key, ReactNode, useEffect, useState } from "react";
-import { Select, Tree } from "antd";
+import { Select, Space, Tree } from "antd";
 import { useMergedState } from "@web-react/biz-utils";
 function flatTreeHelper(list?: FolderTreeType[], pValues?: Key[]): FlatDataType[] {
     if (!list || list.length === 0) { return []; }
@@ -82,7 +82,7 @@ const FolderTree = (props: FolderTreeProps) => {
         <Tree
             rootStyle={{
                 height: 'calc(100% - 40px)',
-                overflow:'auto'
+                overflow: 'auto'
             }}
             blockNode
             showIcon={true}

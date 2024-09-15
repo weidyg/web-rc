@@ -8,6 +8,7 @@ const genBizStyle: GenerateStyle<ImageSpaceToken> = (token) => {
       flexDirection: 'column',
       width: '100%',
       height: '100%',
+      minWidth:'fit-content',
       overflow: 'hidden',
       border: `1px solid ${token.colorBorderSecondary}`,
       borderRadius: token.borderRadius,
@@ -16,8 +17,8 @@ const genBizStyle: GenerateStyle<ImageSpaceToken> = (token) => {
         display: 'flex',
       },
       '&-body': {
-        display: 'flex',
         flex: 1,
+        display: 'flex',
         overflow: 'hidden',
       },
       '&-aside': {
@@ -80,8 +81,8 @@ const genBizStyle: GenerateStyle<ImageSpaceToken> = (token) => {
         },
       },
       '&-container': {
-        display: 'flex',
         flex: 1,
+        display: 'flex',
         flexDirection: 'column',
         backgroundColor: token.colorBgContainer,
         '&-top': {
@@ -90,14 +91,23 @@ const genBizStyle: GenerateStyle<ImageSpaceToken> = (token) => {
           padding: '6px',
         },
         '&-list': {
-          display: 'flex',
           flex: 1,
+          display: 'flex',
           overflow: 'auto',
         },
         '&-table': {
-          display: 'flex',
           flex: 1,
-          margin: '0 8px'
+          display: 'flex',
+          overflow: 'hidden',
+          flexDirection: 'column',
+          '&-header': {
+            display: 'flex',
+          },
+          '&-body': {
+            flex: 1,
+            display: 'flex',
+            overflow: 'auto',
+          },
         }
       },
       '&-footer': {
