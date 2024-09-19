@@ -13,15 +13,15 @@ export default () => {
             const printData = await getSfPrintData_CAINIAO({
                 partnerID: 'QCCXXF5088X0',
                 templateCode: "fm_76130_standard_QCCXXF5088X0",
-                customTemplateCode: "fm_76130_standard_custom_10030674830_1",
+                customTemplateCode: "fm_76130_standard_custom_10030674830_5",
                 accessToken: data?.accessToken,
                 documents: [
                     {
                         masterWaybillNo: "SF7444488695775",
-                        branchWaybillNo: "SF74444886957751",
-                        backWaybillNo:'SF74444886957752',
+                        isPrintLogo:true,
                         customData: {
-                            GridNo: '<%=_data.OrderSort%>'
+                            OrderSort: '<%=_data.OrderSort%>',
+                            LogisticsWatermark: '<%=_data.LogisticsWatermark%>'
                         }
                     }
                 ]
@@ -35,7 +35,8 @@ export default () => {
                         const contents: PrintContent[] = item.contents || [];
                         contents.forEach((content: any) => {
                             content.data = {
-                                // GridNo: "11"
+                                OrderSort: "11",
+                                LogisticsWatermark: "顺丰"
                             };
                         })
                         return {
@@ -95,7 +96,7 @@ type SfPrintDataRequest_CAINIAO = {
             backWaybillNo?: string; // 签回单号
             seq?: string; // 顺序号
             sum?: string; // 子母件运单总数
-            isPrintLogo?: string; // 是否打印LOGO
+            isPrintLogo?: boolean; // 是否打印LOGO
             remark?: string; // 自定义区域备注
             waybillNoCheckType?: string; // 运单号权限校验类型
             waybillNoCheckValue?: string; // 运单号合法校验具体值

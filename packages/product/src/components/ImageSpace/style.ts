@@ -8,7 +8,7 @@ const genBizStyle: GenerateStyle<ImageSpaceToken> = (token) => {
       flexDirection: 'column',
       width: '100%',
       height: '100%',
-      minWidth:'fit-content',
+      minWidth: 'fit-content',
       overflow: 'hidden',
       border: `1px solid ${token.colorBorderSecondary}`,
       borderRadius: token.borderRadius,
@@ -29,9 +29,10 @@ const genBizStyle: GenerateStyle<ImageSpaceToken> = (token) => {
         backgroundColor: token.colorBgSide,
       },
       '&-treeDom': {
-        flex: '1 1',
+        // flex: '1 1',
         overflow: 'auto',
-        maxHeight: 'calc(100% - 1px)',
+        height: '100%',
+        // maxHeight: 'calc(100% - 1px)',
         '&::-webkit-scrollbar': {
           width: '7.5px',
           height: ' 7.5px',
@@ -85,28 +86,70 @@ const genBizStyle: GenerateStyle<ImageSpaceToken> = (token) => {
         display: 'flex',
         flexDirection: 'column',
         backgroundColor: token.colorBgContainer,
+        padding: '0 0 0 8px',
         '&-top': {
           display: 'flex',
           height: '38px',
-          padding: '6px',
+          padding: '6px 6px 6px 0',
         },
         '&-list': {
-          flex: 1,
+          // flex: 1,
+          width: '100%',
+          height: '100%',
           display: 'flex',
           overflow: 'auto',
+          '&-content': {
+            display: 'flex',
+            flexWrap: 'wrap',
+            justifyContent: 'space-between',
+            // margin: '8px 8px 0 8px'
+          }
         },
         '&-table': {
-          flex: 1,
+          // flex: 1,
+          width: '100%',
+          height: '100%',
           display: 'flex',
           overflow: 'hidden',
           flexDirection: 'column',
+          boxSizing: 'border-box',
+          color: token.colorText,
+          fontSize: token.fontSize,
+          lineHeight: token.lineHeight,
+          fontFamily: token.fontFamily,
+          background: token.colorBgContainer,
+          borderTop: `${token.lineWidth}px ${token.lineType} ${token.colorBorderSecondary}`,
+          // borderRadius: `${token.borderRadius}px ${token.borderRadius}px 0 0`,
+          [`
+            &-header > tr > th,
+            &-body > tr > td
+          `]: {
+            padding: '8px 0',
+          },
           '&-header': {
             display: 'flex',
+            ['tr']: {
+              ['th']: {
+                position: 'relative',
+                textAlign: 'start',
+                color: token.colorText,
+                background: token.colorBgContainer,
+                fontWeight: token.fontWeightStrong,
+                borderBottom: `${token.lineWidth}px ${token.lineType} ${token.colorBorderSecondary}`,
+                transition: 'background 0.2s ease'
+              }
+            }
           },
           '&-body': {
             flex: 1,
-            display: 'flex',
+            // display: 'flex',
             overflow: 'auto',
+            ['tr']: {
+              ['td']: {
+                transition: `background 0.2s,border-color 0.2s`,
+                borderBottom: `${token.lineWidth}px ${token.lineType} ${token.colorBorderSecondary}`,
+              }
+            }
           },
         }
       },
@@ -119,8 +162,9 @@ const genBizStyle: GenerateStyle<ImageSpaceToken> = (token) => {
         backgroundColor: token.colorBgFooter,
       },
       '&-spin': {
-        height: '100%',
-        width: '100%',
+        flex: 1,
+        display: 'flex',
+        overflow: 'hidden',
         [`${token.antCls}-spin-container`]: {
           height: '100%',
           width: '100%',

@@ -87,7 +87,8 @@ const InternalImageSpace = forwardRef<ImageSpaceRef, ImageSpaceProps>((
   }
   const handleScroll = async (event: React.SyntheticEvent<HTMLDivElement>) => {
     const { scrollTop, clientHeight, scrollHeight } = event.target as HTMLDivElement;
-    if (scrollTop + clientHeight >= scrollHeight) {
+    // console.log("handleScroll", scrollTop + clientHeight - scrollHeight);
+    if (scrollTop + clientHeight + 2 >= scrollHeight) {
       if (!loading) { await handleLoadMore?.(); }
     }
   };
@@ -230,14 +231,14 @@ const InternalImageSpace = forwardRef<ImageSpaceRef, ImageSpaceProps>((
   const BodyWrapper = (props: any) => {
     const { children, ...restProps } = props;
     return <tbody   {...restProps}>
-      <>
-        {children}
-        <LoadMore wrapper={(node) => (<tr>
+      {children}
+      <LoadMore wrapper={(node) => (
+        <tr>
           <td colSpan={columns?.length || 1}>
             {node}
           </td>
-        </tr>)} />
-      </>
+        </tr>
+      )} />
     </tbody>;
   };
   return wrapSSR(
@@ -247,33 +248,28 @@ const InternalImageSpace = forwardRef<ImageSpaceRef, ImageSpaceProps>((
       </div> */}
       <div className={classNames(`${prefixCls}-body`, hashId)}>
         <div className={classNames(`${prefixCls}-aside`, hashId)}>
-          <div className={classNames(`${prefixCls}-treeDom`, hashId)} >
-            <Spin spinning={dirloading}
-              wrapperClassName={classNames(`${prefixCls}-spin`, hashId)}>
+          <Spin spinning={dirloading}
+            wrapperClassName={classNames(`${prefixCls}-spin`, hashId)}>
+            <div className={classNames(`${prefixCls}-treeDom`, hashId)} >
               <FolderTree
                 data={folders}
                 value={folderId}
                 onChange={(val) => {
                   setFolderId(val);
                 }} />
-            </Spin>
-          </div>
+            </div>
+          </Spin>
         </div>
         <div className={classNames(`${prefixCls}-container`, hashId)}>
           <div className={classNames(`${prefixCls}-container-top`, hashId)}>
             {actionsRender?.(defaultactions) || defaultactions}
           </div>
           {showType == 'list' &&
-            <div className={classNames(`${prefixCls}-container-list`, hashId)}
-              onScroll={handleScroll}>
-              <Spin spinning={loading}
-                wrapperClassName={classNames(`${prefixCls}-spin`, hashId)}>
-                <div style={{
-                  display: 'flex',
-                  flexWrap: 'wrap',
-                  justifyContent: 'space-between',
-                  margin: '8px 8px 0 8px'
-                }}>
+            <Spin spinning={loading}
+              wrapperClassName={classNames(`${prefixCls}-spin`, hashId)}>
+              <div onScroll={handleScroll}
+                className={classNames(`${prefixCls}-container-list`, hashId)}>
+                <div className={classNames(`${prefixCls}-container-list-content`, hashId)}>
                   {imageFiles.map((item, index) => (
                     <PicCard
                       mutiple={mutiple}
@@ -292,26 +288,40 @@ const InternalImageSpace = forwardRef<ImageSpaceRef, ImageSpaceProps>((
                   {Array.from({ length: 10 }).map((_, index) => (<PicCard.Empty key={index} />))}
                   <LoadMore />
                 </div>
-              </Spin>
-            </div>
+              </div>
+            </Spin>
           }
           {showType == 'table' &&
-            <div className={classNames(`${prefixCls}-container-table`, hashId)}>
-              {/* <div style={{ height: '1000px' }}>123</div> */}
-              <div className={classNames(`${prefixCls}-container-table-header`, hashId)}>
-              header
-              </div>
-              <div className={classNames(`${prefixCls}-container-table-body`, hashId)}>
-                <div style={{ height: '1000px' }}>123</div>
-              </div>
-            </div>
+            <Spin spinning={loading}
+              wrapperClassName={classNames(`${prefixCls}-spin`, hashId)}>
+              <table className={classNames(`${prefixCls}-container-table`, hashId)}>
+                <thead className={classNames(`${prefixCls}-container-table-header`, hashId)}>
+                  <tr className="ant-table-row">
+                    <th className="ant-table-cell" scope="col">文件</th>
+                    <th className="ant-table-cell" scope="col">尺寸</th>
+                    <th className="ant-table-cell" scope="col">大小</th>
+                  </tr>
+                </thead>
+                <tbody onScroll={handleScroll}
+                  className={classNames(`${prefixCls}-container-table-body`, hashId)}>
+                  {imageFiles.map((record, index) => (
+                    <tr key={index}>
+                      <td><RenderFileName file={record} /></td>
+                      <td>{record.pixel}</td>
+                      <td>{convertByteUnit(record.size || 0)}</td>
+                    </tr>
+                  ))}
+                  <LoadMore />
+                </tbody>
+              </table>
+            </Spin>
           }
         </div>
-      </div>
+      </div >
       <div className={classNames(`${prefixCls}-footer`, hashId)}>
 
       </div>
-    </div>
+    </div >
   );
 }
 );
