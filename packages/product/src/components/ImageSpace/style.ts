@@ -15,6 +15,12 @@ const genBizStyle: GenerateStyle<ImageSpaceToken> = (token) => {
       backgroundColor: token.colorBgPage,
       '&-header': {
         display: 'flex',
+        borderBottom: `${token.lineWidth}px ${token.lineType} ${token.colorBorderSecondary}`,
+        borderRadius: `${token.borderRadius}px ${token.borderRadius}px 0 0`,
+        fontSize: token.fontSize,
+        color: token.colorText,
+        background: token.colorBgContainer,
+        padding: `${token.padding}px ${token.padding}px`,
       },
       '&-body': {
         flex: 1,
@@ -89,7 +95,7 @@ const genBizStyle: GenerateStyle<ImageSpaceToken> = (token) => {
         padding: '0 4px 0 8px',
         '&-top': {
           display: 'flex',
-          height: '38px',
+          // height: '38px',
           padding: '6px 6px 6px 0',
         },
       },
@@ -184,7 +190,7 @@ const genBizStyle: GenerateStyle<ImageSpaceToken> = (token) => {
           width: '36px !important',
           height: '36px !important',
           objectFit: 'contain',
-          borderRadius: '6px',
+          borderRadius: token.borderRadius,
           background: token.colorBgLayout,
         },
         '&-title': {

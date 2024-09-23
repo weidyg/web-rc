@@ -9,7 +9,7 @@ const genBizStyle: GenerateStyle<PicUploaderToken> = (token) => {
       backgroundColor: token.colorBgContainer,
       height: '100%',
       '&-body': {
-        margin: token.marginSM,
+        margin: `${token.marginSM / 2}px  ${token.marginSM}px `,
         height: `calc(100% - ${token.marginSM * 2}px)`,
       },
       '&-panel, &-list': {

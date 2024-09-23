@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { CSSProperties, ReactNode } from "react";
 import { ButtonProps, UploadFile, UploadProps } from "antd";
 
 export type DirKey = string | number;
@@ -51,6 +51,9 @@ export type CustomUploadProps<T extends UploadResponse = UploadResponse> = {
 >;
 
 export type UploaderProps<T extends UploadResponse = UploadResponse> = {
+  className?: string;
+  style?: CSSProperties;
+  
   upload?: CustomUploadProps<T>;
   defaultDirValue: DirKey;
   dirs?: DirType[];

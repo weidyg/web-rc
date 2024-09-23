@@ -1,7 +1,7 @@
 import React, { Key, ReactNode, useEffect, useState } from "react";
 import { Select, Space, Tree } from "antd";
 import { useMergedState } from "@web-react/biz-utils";
-function flatTreeHelper(list?: FolderTreeType[], pValues?: Key[]): FlatDataType[] {
+function flatTreeHelper(list?: DirType[], pValues?: Key[]): FlatDataType[] {
     if (!list || list.length === 0) { return []; }
     return list.flatMap(item => {
         const { children, ...rest } = item;
@@ -9,31 +9,32 @@ function flatTreeHelper(list?: FolderTreeType[], pValues?: Key[]): FlatDataType[
         return [data, ...flatTreeHelper(children, [...pValues || [], item.value])];
     });
 }
-function geTreeData(list: FolderTreeType[]): TreeDataType[] {
+function geTreeData(list: DirType[]): TreeDataType[] {
     return list.map((item) => {
         const { value, label, children = [] } = item;
         return { key: value, title: label, children: geTreeData(children) };
     });
 }
 
+
+export type DirKey = string | number;
 type FlatDataType = {
-    value: Key;
+    value: DirKey;
     label: string;
     [key: string]: any;
 };
 type TreeDataType = {
-    key: Key;
-    title: ReactNode;
+    key: DirKey;
+    title: string;
     children?: TreeDataType[],
 };
-
-export type FolderTreeType = {
-    value: Key;
-    label: string;
-    children?: FolderTreeType[],
+export type DirType = {
+  value: DirKey;
+  label: string;
+  children?: DirType[],
 };
 export type FolderTreeProps = {
-    data?: FolderTreeType[];
+    data?: DirType[];
     defaultValue?: Key;
     value?: Key;
     onChange?: (value: Key) => void;

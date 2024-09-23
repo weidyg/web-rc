@@ -3,10 +3,10 @@ import { Image, Button, Checkbox, Divider, message, Radio, Segmented, Space, Spi
 import { classNames, convertByteUnit, useMergedState } from '@web-react/biz-utils';
 import { useStyle } from './style';
 
-import FolderTree, { FolderTreeType } from './FolderTree';
+import FolderTree, { DirType } from './FolderTree';
 import { AppstoreOutlined, BarsOutlined } from '@ant-design/icons';
 import PicCard from './PicCard';
-import { ColumnsType } from 'antd/es/table';
+import { Uploader } from '@web-react/biz-components';
 
 type RequestParam = {
   page: number,
@@ -28,8 +28,8 @@ type ImageSpaceProps = {
   mutiple?: boolean,
   pageSize?: number;
   actionsRender?: (dom: ReactNode) => ReactNode;
-  defaultFolder?: FolderTreeType;
-  fetchFolders?: () => Promise<FolderTreeType[]>;
+  defaultFolder?: DirType;
+  fetchFolders?: () => Promise<DirType[]>;
   defaultValue?: Key[];
   value?: Key[];
   onChange?: (ids: Key[], files: ImageFile[]) => void | Promise<void>;
@@ -44,14 +44,14 @@ const InternalImageSpace = forwardRef<ImageSpaceRef, ImageSpaceProps>((
   props: ImageSpaceProps,
   ref: Ref<ImageSpaceRef>
 ) => {
-  const { defaultFolder, fetchFolders, fetchData, actionsRender, pageSize = 20, mutiple = true } = props;
+  const { className, style, defaultFolder, fetchFolders, fetchData, actionsRender, pageSize = 20, mutiple = true } = props;
   const { prefixCls, wrapSSR, hashId, token } = useStyle();
   const [loading, setLoading] = useState(false);
   const [curPage, setCurPage] = useState(0);
   const [totalCount, setTotalCount] = useState(0);
   const [dirloading, setDirLoading] = useState(false);
   const [folderId, setFolderId] = useState<Key>(defaultFolder?.value || '');
-  const [folders, setFolders] = useState<FolderTreeType[]>(defaultFolder ? [defaultFolder] : []);
+  const [folders, setFolders] = useState<DirType[]>(defaultFolder ? [defaultFolder] : []);
   const [imageFiles, setImageFiles] = useState<ImageFile[]>([]);
   const [showType, setShowType] = useState<'list' | 'table'>('table');
 
@@ -106,7 +106,6 @@ const InternalImageSpace = forwardRef<ImageSpaceRef, ImageSpaceProps>((
       setDirLoading(false);
     }
   };
-
   const loadData = async (param: { page: number, fist?: boolean, [key: string]: any }) => {
     const { page, fist, ...rest } = param;
     const totalPage = fist ? 1 : Math.ceil(totalCount / pageSize);
@@ -128,8 +127,6 @@ const InternalImageSpace = forwardRef<ImageSpaceRef, ImageSpaceProps>((
       setLoading(false);
     }
   };
-
-
   const isChecked = (id: Key): boolean => {
     return selectKeys?.includes(id) ?? false;
   };
@@ -180,19 +177,6 @@ const InternalImageSpace = forwardRef<ImageSpaceRef, ImageSpaceProps>((
     return props?.wrapper?.(node) || node;
   }
 
-  const columns: ColumnsType<ImageFile> = [
-    {
-      dataIndex: 'name', title: '文件',
-      render: (_, record) => (<RenderFileName file={record} />),
-    },
-    { dataIndex: 'pixel', title: '尺寸' },
-    {
-      dataIndex: 'size', title: '大小',
-      render: (value) => convertByteUnit(value)
-    },
-    // { dataIndex: 'status', title: '状态' },
-    // { dataIndex: 'gmtModified', title: '修改时间' },
-  ]
   const RenderFileName = (props: { file: ImageFile, mutiple?: boolean, }) => {
     const { file, mutiple = true } = props;
     const [preview, setPreview] = useState(false);
@@ -229,9 +213,9 @@ const InternalImageSpace = forwardRef<ImageSpaceRef, ImageSpaceProps>((
     </div>
   }
   return wrapSSR(
-    <div className={classNames(`${prefixCls}`, hashId)}>
+    <div style={style} className={classNames(`${prefixCls}`, className, hashId)}>
       {/* <div className={classNames(`${prefixCls}-header`, hashId)}>
-
+        选择图片（最小宽度375，最小高度500，大小不超过5M）
       </div> */}
       <div className={classNames(`${prefixCls}-body`, hashId)}>
         <div className={classNames(`${prefixCls}-aside`, hashId)}>

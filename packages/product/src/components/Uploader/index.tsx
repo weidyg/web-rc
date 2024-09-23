@@ -49,7 +49,7 @@ type UploaderRef = {}
 const InternalUploader = forwardRef(<Type extends UploadResponse = UploadResponse>(
     props: UploaderProps<Type>, ref: Ref<UploaderRef>
 ) => {
-    const { defaultDirValue, dirs, configRender, previewFile, upload = {} } = props;
+    const { className, style, defaultDirValue, dirs, configRender, previewFile, upload = {} } = props;
     const { data: uploadData, ...restUpload } = upload;
 
     const { prefixCls, wrapSSR, hashId, token } = useStyle();
@@ -136,7 +136,7 @@ const InternalUploader = forwardRef(<Type extends UploadResponse = UploadRespons
         </Form>
     </>;
     return wrapSSR(
-        <div className={classNames(prefixCls, hashId)}>
+        <div style={style} className={classNames(prefixCls, className, hashId)}>
             <div className={classNames(`${prefixCls}-body`, hashId)}>
                 <InternalUploadBox
                     style={{ display: !showUploadList ? 'flex' : 'none', }}
