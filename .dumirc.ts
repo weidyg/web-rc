@@ -24,6 +24,7 @@ const tailPkgList = pkgList.map((path) => `packages/${path}/src/components`);
 
 const config: IDumiConfig = {
   alias,
+  // mako: {},
   resolve: {
     docDirs: ['docs'],
     atomDirs: tailPkgList.map((dir) => ({ type: 'component', dir })),

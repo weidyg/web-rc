@@ -228,19 +228,6 @@ const InternalImageSpace = forwardRef<ImageSpaceRef, ImageSpaceProps>((
       </div>
     </div>
   }
-  const BodyWrapper = (props: any) => {
-    const { children, ...restProps } = props;
-    return <tbody   {...restProps}>
-      {children}
-      <LoadMore wrapper={(node) => (
-        <tr>
-          <td colSpan={columns?.length || 1}>
-            {node}
-          </td>
-        </tr>
-      )} />
-    </tbody>;
-  };
   return wrapSSR(
     <div className={classNames(`${prefixCls}`, hashId)}>
       {/* <div className={classNames(`${prefixCls}-header`, hashId)}>
@@ -268,8 +255,8 @@ const InternalImageSpace = forwardRef<ImageSpaceRef, ImageSpaceProps>((
             <Spin spinning={loading}
               wrapperClassName={classNames(`${prefixCls}-spin`, hashId)}>
               <div onScroll={handleScroll}
-                className={classNames(`${prefixCls}-container-list`, hashId)}>
-                <div className={classNames(`${prefixCls}-container-list-content`, hashId)}>
+                className={classNames(`${prefixCls}-list-container`, hashId)}>
+                <div className={classNames(`${prefixCls}-list`, hashId)}>
                   {imageFiles.map((item, index) => (
                     <PicCard
                       mutiple={mutiple}
@@ -294,26 +281,33 @@ const InternalImageSpace = forwardRef<ImageSpaceRef, ImageSpaceProps>((
           {showType == 'table' &&
             <Spin spinning={loading}
               wrapperClassName={classNames(`${prefixCls}-spin`, hashId)}>
-              <table className={classNames(`${prefixCls}-container-table`, hashId)}>
-                <thead className={classNames(`${prefixCls}-container-table-header`, hashId)}>
-                  <tr className="ant-table-row">
-                    <th className="ant-table-cell" scope="col">文件</th>
-                    <th className="ant-table-cell" scope="col">尺寸</th>
-                    <th className="ant-table-cell" scope="col">大小</th>
-                  </tr>
-                </thead>
-                <tbody onScroll={handleScroll}
-                  className={classNames(`${prefixCls}-container-table-body`, hashId)}>
-                  {imageFiles.map((record, index) => (
-                    <tr key={index}>
-                      <td><RenderFileName file={record} /></td>
-                      <td>{record.pixel}</td>
-                      <td>{convertByteUnit(record.size || 0)}</td>
-                    </tr>
-                  ))}
-                  <LoadMore />
-                </tbody>
-              </table>
+              <div className={classNames(`${prefixCls}-table-container`, hashId)}>
+                <div className={classNames(`${prefixCls}-table-header`, hashId)}>
+                  <table >
+                    <thead>
+                      <tr>
+                        <th style={{ paddingLeft: '28px' }}>文件</th>
+                        <th style={{ width: 120 }}>尺寸</th>
+                        <th style={{ width: 120 }}>大小</th>
+                      </tr>
+                    </thead>
+                  </table>
+                </div>
+                <div onScroll={handleScroll}
+                  className={classNames(`${prefixCls}-table-body`, hashId)}>
+                  <table >
+                    <tbody>
+                      {imageFiles.map((record, index) => (
+                        <tr key={index}>
+                          <td><RenderFileName file={record} /></td>
+                          <td style={{ width: 120 }}>{record.pixel}</td>
+                          <td style={{ width: 120 }}>{convertByteUnit(record.size || 0)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
             </Spin>
           }
         </div>

@@ -86,32 +86,30 @@ const genBizStyle: GenerateStyle<ImageSpaceToken> = (token) => {
         display: 'flex',
         flexDirection: 'column',
         backgroundColor: token.colorBgContainer,
-        padding: '0 0 0 8px',
+        padding: '0 4px 0 8px',
         '&-top': {
           display: 'flex',
           height: '38px',
           padding: '6px 6px 6px 0',
         },
-        '&-list': {
-          // flex: 1,
+      },
+      '&-list': {
+        display: 'flex',
+        flexWrap: 'wrap',
+        justifyContent: 'space-between',
+        '&-container': {
           width: '100%',
           height: '100%',
           display: 'flex',
           overflow: 'auto',
-          '&-content': {
-            display: 'flex',
-            flexWrap: 'wrap',
-            justifyContent: 'space-between',
-            // margin: '8px 8px 0 8px'
-          }
         },
-        '&-table': {
-          // flex: 1,
+      },
+      '&-table': {
+        '&-container': {
           width: '100%',
           height: '100%',
-          display: 'flex',
+          position: 'relative',
           overflow: 'hidden',
-          flexDirection: 'column',
           boxSizing: 'border-box',
           color: token.colorText,
           fontSize: token.fontSize,
@@ -119,39 +117,42 @@ const genBizStyle: GenerateStyle<ImageSpaceToken> = (token) => {
           fontFamily: token.fontFamily,
           background: token.colorBgContainer,
           borderTop: `${token.lineWidth}px ${token.lineType} ${token.colorBorderSecondary}`,
-          // borderRadius: `${token.borderRadius}px ${token.borderRadius}px 0 0`,
-          [`
-            &-header > tr > th,
-            &-body > tr > td
-          `]: {
+        },
+        '&-header': {
+          height: '40px',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          zIndex: 1,
+          ['tr > th']: {
+            position: 'relative',
+            textAlign: 'start',
+            color: token.colorText,
+            background: token.colorBgLayout,
+            fontWeight: token.fontWeightStrong,
+            transition: 'background 0.2s ease',
+          }
+        },
+        '&-body': {
+          top: '40px',
+          height: 'calc(100% - 40px)',
+          overflowY: 'auto',
+          position: 'relative',
+          ['tr > td']: {
+            transition: `background 0.2s,border-color 0.2s`,
+          }
+        },
+        [`&-header,&-body`]: {
+          ['table']: {
+            width: '100%',
+            borderCollapse: 'collapse',
+          },
+          ['th,td']: {
             padding: '8px 0',
-          },
-          '&-header': {
-            display: 'flex',
-            ['tr']: {
-              ['th']: {
-                position: 'relative',
-                textAlign: 'start',
-                color: token.colorText,
-                background: token.colorBgContainer,
-                fontWeight: token.fontWeightStrong,
-                borderBottom: `${token.lineWidth}px ${token.lineType} ${token.colorBorderSecondary}`,
-                transition: 'background 0.2s ease'
-              }
-            }
-          },
-          '&-body': {
-            flex: 1,
-            // display: 'flex',
-            overflow: 'auto',
-            ['tr']: {
-              ['td']: {
-                transition: `background 0.2s,border-color 0.2s`,
-                borderBottom: `${token.lineWidth}px ${token.lineType} ${token.colorBorderSecondary}`,
-              }
-            }
-          },
-        }
+            borderBottom: `${token.lineWidth}px ${token.lineType} ${token.colorBorderSecondary}`,
+          }
+        },
       },
       '&-footer': {
         display: 'flex',
@@ -176,7 +177,7 @@ const genBizStyle: GenerateStyle<ImageSpaceToken> = (token) => {
         alignItems: 'center',
         alignContent: 'center',
         '&-checkbox': {
-          marginRight: '10px',
+          margin: '0 8px 0 8px',
         },
         '&-img, &-img img': {
           cursor: 'pointer',
@@ -187,7 +188,7 @@ const genBizStyle: GenerateStyle<ImageSpaceToken> = (token) => {
           background: token.colorBgLayout,
         },
         '&-title': {
-          maxWidth: '105px',
+          // maxWidth: '105px',
           marginLeft: '10px',
           'p': {
             display: 'inline',
