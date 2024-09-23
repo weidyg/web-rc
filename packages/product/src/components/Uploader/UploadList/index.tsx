@@ -1,6 +1,6 @@
 
 import { CSSProperties, ReactNode, useEffect, useMemo } from 'react';
-import { Alert, UploadFile, UploadProps } from 'antd';
+import { Alert, Typography, UploadFile, UploadProps } from 'antd';
 import { CheckCircleFilled, CloseCircleFilled, FileTwoTone, LoadingOutlined, PaperClipOutlined, PictureTwoTone } from '@ant-design/icons';
 import { classNames, convertByteUnit, previewImage, useForceUpdate } from '@web-react/biz-utils';
 import { useStyle } from "./style";
@@ -57,6 +57,25 @@ const UploadList = (props: UploadListProps) => {
         return count;
     }, [fileList]);
 
+
+    // {file.status === 'uploading' ? (<>
+    //     <LoadingOutlined style={{ color: token.colorPrimary, marginRight: '10px' }} />
+    //     {`上传中 ${file.percent?.toFixed(2)}%`}
+    // </>) : file.status === 'done' ? (<>
+    //     <CheckCircleFilled style={{ color: token.colorSuccess, marginRight: '10px' }} />
+    //     {`上传成功`}
+    // </>) : file.status === 'error' ? (<>
+    //     <CloseCircleFilled style={{ color: token.colorError, marginRight: '10px' }} />
+    //     <span dangerouslySetInnerHTML={{ __html: file?.error?.message || '上传上传上传失败上传失败失败上传失败上传失败上传失败上传失败上传失败上传失败上传失败上传失败上传失败失败' }} />
+    // </>) : (<>
+    // </>)}
+
+
+    const status = {
+        'uploading': { icon: LoadingOutlined, color: token.colorPrimary, message: '上传中' },
+        'done': { icon: CheckCircleFilled, color: token.colorPrimary, message: '上传成功' },
+        'error': { icon: CloseCircleFilled, color: token.colorPrimary, message: '上传失败' }
+    }
     return wrapSSR(
         <div style={{ ...style }} className={classNames(`${prefixCls}`, hashId)}>
             <Alert
@@ -71,41 +90,43 @@ const UploadList = (props: UploadListProps) => {
             />
             <div className={classNames(`${prefixCls}-files`, hashId)}>
                 {fileList.map((file, index) => {
-                    return (<div key={index} className={classNames(`${prefixCls}-item`, hashId)}>
-                        <div className={classNames(`${prefixCls}-item-img`, hashId)}>
-                            <img src={file.thumbUrl || file.url}
-                                alt={file.name}
-                                className={`${prefixCls}-list-item-image`}
-                                crossOrigin={file.crossOrigin}
-                            />
-                        </div>
-                        <div className={classNames(`${prefixCls}-item-content`, hashId)}>
+                    return (
+                        <div key={index} className={classNames(`${prefixCls}-item`, hashId)}>
+                            <div className={classNames(`${prefixCls}-item-img`, hashId)}>
+                                <img src={file.thumbUrl || file.url}
+                                    alt={file.name}
+                                    className={`${prefixCls}-list-item-image`}
+                                    crossOrigin={file.crossOrigin}
+                                />
+                            </div>
                             <div className={classNames(`${prefixCls}-item-name`, hashId)}>
-                                {file.name}
+                                <Typography.Text ellipsis={{ tooltip: file.name }}>
+                                    {file.name}
+                                </Typography.Text>
+                                <div className={classNames(`${prefixCls}-item-name-desc`, hashId)}>
+                                    {convertByteUnit(file.size || 0)}
+                                </div>
                             </div>
-                            <div className={classNames(`${prefixCls}-item-desc`, hashId)}>
-                                {convertByteUnit(file.size || 0)}
+                            <div className={classNames(`${prefixCls}-item-state`, hashId)}>
+                                <div style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                    {file.status === 'uploading' ? (<>
+                                        <LoadingOutlined style={{ color: token.colorPrimary, marginRight: '10px' }} />
+                                        {`上传中 ${file.percent?.toFixed(2)}%`}
+                                    </>) : file.status === 'done' ? (<>
+                                        <CheckCircleFilled style={{ color: token.colorSuccess, marginRight: '10px' }} />
+                                        {`上传成功`}
+                                    </>) : file.status === 'error' ? (<>
+                                        <CloseCircleFilled style={{ color: token.colorError, marginRight: '10px' }} />
+                                        <span dangerouslySetInnerHTML={{ __html: file?.error?.message || '上传上传上传失败上传失败失败上传失败上传失败上传失败上传失败上传失败上传失败上传失败上传失败上传失败失败' }} />
+                                    </>) : (<>
+                                    </>)}
+                                </div>
                             </div>
                         </div>
-                        <div className={classNames(`${prefixCls}-item-state`, hashId)}>
-                            <div style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                                {file.status === 'uploading' ? (<>
-                                    <LoadingOutlined style={{ color: token.colorPrimary, marginRight: '10px' }} />
-                                    {`上传中 ${file.percent?.toFixed(2)}%`}
-                                </>) : file.status === 'done' ? (<>
-                                    <CheckCircleFilled style={{ color: token.colorSuccess, marginRight: '10px' }} />
-                                    上传成功
-                                </>) : file.status === 'error' ? (<>
-                                    <CloseCircleFilled style={{ color: token.colorError, marginRight: '10px' }} />
-                                    <span dangerouslySetInnerHTML={{ __html: file?.error?.message || '上传失败' }} />
-                                </>) : (<>
-                                </>)}
-                            </div>
-                        </div>
-                    </div>)
+                    )
                 })}
             </div>
-            <div className={classNames(`${prefixCls}-actions-wrap`, hashId)}>
+            <div className={classNames(`${prefixCls}-actions-container`, hashId)}>
                 <div className={classNames(`${prefixCls}-actions`, hashId)}>
                     {actionsRender?.(<></>)}
                 </div>

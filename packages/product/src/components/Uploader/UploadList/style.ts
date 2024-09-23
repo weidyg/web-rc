@@ -22,41 +22,29 @@ const genBizStyle: GenerateStyle<UploadListToken> = (token) => {
         lineHeight: token.lineHeight,
         fontFamily: token.fontFamily,
         background: token.colorBgContainer,
-        '&:last-child': {
-          marginBottom: 0,
-        },
+        padding: `${token.paddingXS}px 0`,
+        borderBottom: `${token.lineWidth}px ${token.lineType} ${token.colorBorderSecondary}`,
+        // '&:last-child': {
+        //   marginBottom: 0,
+        // },
         '&-img, &-img img': {
-          width: '48px !important',
-          height: '48px !important',
+          width: '36px !important',
+          height: '36px !important',
           objectFit: 'contain',
           borderRadius: token.borderRadius,
           background: token.colorBgLayout,
         },
-        '&-content': {
+        '&-name': {
           width: '40%',
-          height: '100%',
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'space-between',
-          overflow: 'hidden',
-          flexShrink: 0,
-          paddingLeft: `${token.paddingSM}px`,
-        },
-        '&-name': {
-          fontSize: token.fontSize,
-          color: token.colorText,
-          flex: '1 1',
-          overflow: 'hidden',
-          textOverflow: 'ellipsis',
-          display: '-webkit-box',
-          whiteSpace: 'break-all',
-          WebkitLineClamp: '2',
-          WebkitBoxOrient: 'vertical',
-        },
-        '&-desc': {
-          flexShrink: 0,
-          color: token.colorTextSecondary,
-          fontSize: token.fontSizeSM,
+          padding: `0 ${token.paddingSM}px`,
+          '&-desc': {
+            flexShrink: 0,
+            color: token.colorTextSecondary,
+            fontSize: token.fontSizeSM,
+          },
         },
         '&-state': {
           flex: '1 1',
@@ -69,7 +57,7 @@ const genBizStyle: GenerateStyle<UploadListToken> = (token) => {
       '&-actions': {
         display: 'flex',
         alignItems: 'center',
-        '&-wrap': {
+        '&-container': {
           flexShrink: 0,
           display: 'flex',
           alignItems: 'center',
