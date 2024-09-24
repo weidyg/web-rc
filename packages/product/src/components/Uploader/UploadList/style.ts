@@ -40,18 +40,19 @@ const genBizStyle: GenerateStyle<UploadListToken> = (token) => {
           flexDirection: 'column',
           justifyContent: 'space-between',
           padding: `0 ${token.paddingSM}px`,
-          '&-desc': {
-            flexShrink: 0,
-            color: token.colorTextSecondary,
-            fontSize: token.fontSizeSM,
-          },
+        },
+        '&-desc': {
+          flexShrink: 0,
+          color: token.colorTextSecondary,
+          fontSize: token.fontSizeSM,
         },
         '&-state': {
           flex: '1 1',
           width: '30%',
-          textOverflow: 'ellipsis',
           overflow: 'hidden',
           whiteSpace: 'nowrap',
+          textOverflow: 'ellipsis',
+          padding: `${token.paddingSM}px 0`,
         },
       },
       '&-actions': {

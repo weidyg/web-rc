@@ -49,13 +49,17 @@ type UploaderRef = {}
 const InternalUploader = forwardRef(<Type extends UploadResponse = UploadResponse>(
     props: UploaderProps<Type>, ref: Ref<UploaderRef>
 ) => {
-    const { className, style, defaultDirValue, dirs, configRender, previewFile, upload = {} } = props;
+    const { className, style, onUploaDone,
+        defaultDirValue, dirs, configRender, previewFile, upload = {} } = props;
     const { data: uploadData, ...restUpload } = upload;
 
     const { prefixCls, wrapSSR, hashId, token } = useStyle();
     const [form] = Form.useForm<ConfigFormValueType>();
 
-    const [showUploadList, setShowUploadList] = useState(false);
+    const [showUploadList, setShowUploadList] = useMergedState<boolean>(false, {
+        value: props?.showUploadList,
+        onChange: props?.onShowUploadListChange,
+    });
     const [fileList, setFileList] = useMergedState<UploadFile<Type>[]>([], {
         value: props?.fileList,
         onChange: (value) => props?.onChange?.(value),
@@ -160,11 +164,10 @@ const InternalUploader = forwardRef(<Type extends UploadResponse = UploadRespons
                     fileList={fileList}
                     onChange={({ fileList }) => {
                         setFileList(fileList);
-                        const success = fileList.every(e => e.status === 'done');
-                        if (success) {
-                            setTimeout(() => {
-                                setShowUploadList(false);
-                            }, 1000);
+                        if (onUploaDone) {
+                            if (fileList.every(e => e.status === 'done')) {
+                                onUploaDone?.(fileList);
+                            }
                         }
                     }}
                     {...restUpload}

@@ -45,6 +45,11 @@ export default () => {
             }
           }
         }}
+        onUploaDone={() => {
+          setTimeout(() => {
+            setIsUpload(false);
+          }, 1000);
+        }}
       />
     ) : (
       <ImageSpace

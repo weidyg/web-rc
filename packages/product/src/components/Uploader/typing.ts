@@ -53,7 +53,9 @@ export type CustomUploadProps<T extends UploadResponse = UploadResponse> = {
 export type UploaderProps<T extends UploadResponse = UploadResponse> = {
   className?: string;
   style?: CSSProperties;
-  
+  showUploadList?: boolean;
+  onShowUploadListChange?: (show: boolean) => void;
+  onUploaDone?: (fileList: UploadFile<T>[]) => void;
   upload?: CustomUploadProps<T>;
   defaultDirValue: DirKey;
   dirs?: DirType[];

@@ -1,7 +1,7 @@
 
 import { CSSProperties, ReactNode, useEffect, useMemo } from 'react';
-import { Alert, Typography, UploadFile, UploadProps } from 'antd';
-import { CheckCircleFilled, CloseCircleFilled, FileTwoTone, LoadingOutlined, PaperClipOutlined, PictureTwoTone } from '@ant-design/icons';
+import { Alert, Progress, Typography, UploadFile, UploadProps } from 'antd';
+import { LoadingOutlined } from '@ant-design/icons';
 import { classNames, convertByteUnit, previewImage, useForceUpdate } from '@web-react/biz-utils';
 import { useStyle } from "./style";
 
@@ -57,25 +57,6 @@ const UploadList = (props: UploadListProps) => {
         return count;
     }, [fileList]);
 
-
-    // {file.status === 'uploading' ? (<>
-    //     <LoadingOutlined style={{ color: token.colorPrimary, marginRight: '10px' }} />
-    //     {`上传中 ${file.percent?.toFixed(2)}%`}
-    // </>) : file.status === 'done' ? (<>
-    //     <CheckCircleFilled style={{ color: token.colorSuccess, marginRight: '10px' }} />
-    //     {`上传成功`}
-    // </>) : file.status === 'error' ? (<>
-    //     <CloseCircleFilled style={{ color: token.colorError, marginRight: '10px' }} />
-    //     <span dangerouslySetInnerHTML={{ __html: file?.error?.message || '上传上传上传失败上传失败失败上传失败上传失败上传失败上传失败上传失败上传失败上传失败上传失败上传失败失败' }} />
-    // </>) : (<>
-    // </>)}
-
-
-    const status = {
-        'uploading': { icon: LoadingOutlined, color: token.colorPrimary, message: '上传中' },
-        'done': { icon: CheckCircleFilled, color: token.colorPrimary, message: '上传成功' },
-        'error': { icon: CloseCircleFilled, color: token.colorPrimary, message: '上传失败' }
-    }
     return wrapSSR(
         <div style={{ ...style }} className={classNames(`${prefixCls}`, hashId)}>
             <Alert
@@ -90,36 +71,30 @@ const UploadList = (props: UploadListProps) => {
             />
             <div className={classNames(`${prefixCls}-files`, hashId)}>
                 {fileList.map((file, index) => {
+                    const { name, url, thumbUrl, size, crossOrigin, percent = 0, status, error } = file;
+                    let _percent = status === 'uploading' && percent >= 100 ? 99 : percent;
+                    _percent = status === 'error' ? 100 : _percent;
                     return (
                         <div key={index} className={classNames(`${prefixCls}-item`, hashId)}>
                             <div className={classNames(`${prefixCls}-item-img`, hashId)}>
-                                <img src={file.thumbUrl || file.url}
-                                    alt={file.name}
-                                    className={`${prefixCls}-list-item-image`}
-                                    crossOrigin={file.crossOrigin}
-                                />
+                                <img src={thumbUrl || url} alt={name} crossOrigin={crossOrigin}
+                                    className={`${prefixCls}-list-item-image`} />
                             </div>
                             <div className={classNames(`${prefixCls}-item-name`, hashId)}>
-                                <Typography.Text ellipsis={{ tooltip: file.name }}>
-                                    {file.name}
-                                </Typography.Text>
-                                <div className={classNames(`${prefixCls}-item-name-desc`, hashId)}>
-                                    {convertByteUnit(file.size || 0)}
+                                <Typography.Text ellipsis={{ tooltip: name }}>{name}</Typography.Text>
+                                <div className={classNames(`${prefixCls}-item-desc`, hashId)}>
+                                    {convertByteUnit(size || 0)}
                                 </div>
                             </div>
                             <div className={classNames(`${prefixCls}-item-state`, hashId)}>
                                 <div style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                                    {file.status === 'uploading' ? (<>
-                                        <LoadingOutlined style={{ color: token.colorPrimary, marginRight: '10px' }} />
-                                        {`上传中 ${file.percent?.toFixed(2)}%`}
-                                    </>) : file.status === 'done' ? (<>
-                                        <CheckCircleFilled style={{ color: token.colorSuccess, marginRight: '10px' }} />
-                                        {`上传成功`}
-                                    </>) : file.status === 'error' ? (<>
-                                        <CloseCircleFilled style={{ color: token.colorError, marginRight: '10px' }} />
-                                        <span dangerouslySetInnerHTML={{ __html: file?.error?.message || '上传上传上传失败上传失败失败上传失败上传失败上传失败上传失败上传失败上传失败上传失败上传失败上传失败失败' }} />
-                                    </>) : (<>
-                                    </>)}
+                                    <Progress size={'small'} percent={_percent} status={status === 'error' ? 'exception' : undefined} />
+                                    {status === 'error' &&
+                                        <Typography.Paragraph ellipsis={{ tooltip: error?.message, symbol: '...' }}
+                                            style={{ margin: 0 }} className={classNames(`${prefixCls}-item-desc`, hashId)}>
+                                            <span dangerouslySetInnerHTML={{ __html: error?.message || '上传失败' }} />
+                                        </Typography.Paragraph>
+                                    }
                                 </div>
                             </div>
                         </div>

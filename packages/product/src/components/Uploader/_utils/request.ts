@@ -34,7 +34,7 @@ export default function uploadRequest<T extends UploadResponse = UploadResponse>
     }
 
     xhr.onerror = function error(e) {
-        // console.log('error', xhr, e);
+        console.log('error', xhr, e);
         option.onError?.(e);
     };
 
@@ -43,12 +43,12 @@ export default function uploadRequest<T extends UploadResponse = UploadResponse>
         // allow success when 2xx status
         // see https://github.com/react-component/upload/issues/34
         const body = getBody(option, xhr);
+        console.log('onload', body);
         if (xhr.status < 200 || xhr.status >= 300) {
             return option.onError?.(getError(option, xhr), body);
         } else if (body.error) {
             return option.onError?.(getError(option, xhr, body?.error?.message), body);
         }
-        console.log('onload', body);
         return option.onSuccess?.(body, xhr);
     };
 
@@ -93,7 +93,7 @@ export default function uploadRequest<T extends UploadResponse = UploadResponse>
     }
 
     xhr.send(formData);
-
+    
     return {
         abort() {
             xhr.abort();
