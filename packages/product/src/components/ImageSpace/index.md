@@ -5,6 +5,7 @@ title: ImageSpace - 图片空间
 ---
 
 ## 代码演示
+<!-- https://d.umijs.org/config/demo -->
 <code src="./_demos/basic.tsx" ></code>
 
 <code src="./_demos/SCPPrint.tsx" ></code>

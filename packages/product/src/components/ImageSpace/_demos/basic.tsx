@@ -3,7 +3,6 @@
  * title: 图片上传器
  * description: 基本的图片空间展示
  */
-// https://d.umijs.org/config/demo
 import { useEffect, useRef, useState } from 'react';
 import { Button, Flex, Input, Select, Space } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
@@ -21,7 +20,12 @@ export default () => {
   const handleRefresh = () => {
     _ref?.current?.refresh();
   }
-  return (<div style={{ width: '100vw', height: '100vh', overflow: 'hidden' }}>
+  return (<div style={{
+    width: 'calc(100vw - 8px)',
+    height: 'calc(100vh - 8px)',
+    margin: '4px',
+    overflow: 'hidden'
+  }}>
     {isUpload ? (
       <Uploader
         configRender={(dom) => {
@@ -48,9 +52,9 @@ export default () => {
           }
         }}
         onUploaDone={() => {
-          // setTimeout(() => {
-          //   setIsUpload(false);
-          // }, 1000);
+          setTimeout(() => {
+            setIsUpload(false);
+          }, 1000);
         }}
       />
     ) : (

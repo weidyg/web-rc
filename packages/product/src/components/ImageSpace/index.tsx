@@ -27,7 +27,8 @@ type ImageSpaceProps = {
   style?: CSSProperties;
   mutiple?: boolean,
   pageSize?: number;
-  actionsRender?: (dom: ReactNode) => ReactNode;
+  actionsRender?: (dom?: ReactNode) => ReactNode;
+  footerRender?: (dom?: ReactNode) => ReactNode;
   defaultFolder?: DirType;
   fetchFolders?: () => Promise<DirType[]>;
   defaultValue?: Key[];
@@ -44,7 +45,10 @@ const InternalImageSpace = forwardRef<ImageSpaceRef, ImageSpaceProps>((
   props: ImageSpaceProps,
   ref: Ref<ImageSpaceRef>
 ) => {
-  const { className, style, defaultFolder, fetchFolders, fetchData, actionsRender, pageSize = 20, mutiple = true } = props;
+  const { className, style, defaultFolder, pageSize = 20, mutiple = true,
+    fetchFolders, fetchData,
+    actionsRender, footerRender
+  } = props;
   const { prefixCls, wrapSSR, hashId, token } = useStyle();
   const [loading, setLoading] = useState(false);
   const [curPage, setCurPage] = useState(0);
@@ -296,9 +300,12 @@ const InternalImageSpace = forwardRef<ImageSpaceRef, ImageSpaceProps>((
           }
         </div>
       </div >
-      <div className={classNames(`${prefixCls}-footer`, hashId)}>
+      {footerRender &&
+        <div className={classNames(`${prefixCls}-footer`, hashId)}>
+          {footerRender?.()}
+        </div>
+      }
 
-      </div>
     </div >
   );
 }
