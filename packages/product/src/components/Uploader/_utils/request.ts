@@ -14,6 +14,7 @@ function getBody<T extends UploadResponse>(option: UploadRequestOption<T>, xhr: 
     try {
         const bodyJson = JSON.parse(text);
         const body = option?.normalize?.uploadResponse?.(bodyJson) || bodyJson;
+        // console.log('getBody', body);
         return body;
     } catch (e) {
         const body: UploadResponse = { error: { message: text } };
@@ -34,7 +35,7 @@ export default function uploadRequest<T extends UploadResponse = UploadResponse>
     }
 
     xhr.onerror = function error(e) {
-        console.log('error', xhr, e);
+        // console.log('error', xhr, e);
         option.onError?.(e);
     };
 
@@ -43,7 +44,7 @@ export default function uploadRequest<T extends UploadResponse = UploadResponse>
         // allow success when 2xx status
         // see https://github.com/react-component/upload/issues/34
         const body = getBody(option, xhr);
-        console.log('onload', body);
+        // console.log('onload', body);
         if (xhr.status < 200 || xhr.status >= 300) {
             return option.onError?.(getError(option, xhr), body);
         } else if (body.error) {
@@ -93,7 +94,7 @@ export default function uploadRequest<T extends UploadResponse = UploadResponse>
     }
 
     xhr.send(formData);
-    
+
     return {
         abort() {
             xhr.abort();

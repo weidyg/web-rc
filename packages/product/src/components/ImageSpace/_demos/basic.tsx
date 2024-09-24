@@ -41,14 +41,16 @@ export default () => {
             uploadResponse: (res) => {
               const error = res.Error;
               const result = res.Result || {};
-              return { ...result, error }
+              const data = { ...result, error }
+              // console.log('uploadResponse', data);
+              return data;
             }
           }
         }}
         onUploaDone={() => {
-          setTimeout(() => {
-            setIsUpload(false);
-          }, 1000);
+          // setTimeout(() => {
+          //   setIsUpload(false);
+          // }, 1000);
         }}
       />
     ) : (

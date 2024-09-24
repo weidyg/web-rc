@@ -7,9 +7,8 @@ import { useStyle } from './style';
 import uploadRequest from '../_utils/request';
 
 const fillRespUrl = <T extends UploadResponse>(file: UploadFile<T>) => {
-    if (file?.response?.url) {
-        file.url = file.response.url;
-    }
+    if (file?.response?.url) { file.url = file.response.url; }
+    if (file?.response?.thumbUrl) { file.thumbUrl = file.response.thumbUrl; }
     return file;
 }
 
@@ -53,9 +52,10 @@ const InternalDraggerUpload = <
                 fileList: newFileList,
                 event: info?.event
             });
+            // console.log('InternalDraggerUpload', newFile, newFileList);
         },
         customRequest: (options) => {
-            const _option = { ...options }
+            const _option = { normalize, ...options }
             return customRequest?.(_option) || uploadRequest?.(_option);
         },
         beforeUpload(file, fileList) {

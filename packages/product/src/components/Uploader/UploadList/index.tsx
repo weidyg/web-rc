@@ -72,12 +72,11 @@ const UploadList = (props: UploadListProps) => {
             <div className={classNames(`${prefixCls}-files`, hashId)}>
                 {fileList.map((file, index) => {
                     const { name, url, thumbUrl, size, crossOrigin, percent = 0, status, error } = file;
-                    let _percent = status === 'uploading' && percent >= 100 ? 99 : percent;
-                    _percent = status === 'error' ? 100 : _percent;
+                    let _percent = parseFloat((status === 'uploading' && percent >= 100 ? 99 : (status === 'error' ? 100 : percent)).toFixed(2));
                     return (
                         <div key={index} className={classNames(`${prefixCls}-item`, hashId)}>
                             <div className={classNames(`${prefixCls}-item-img`, hashId)}>
-                                <img src={thumbUrl || url} alt={name} crossOrigin={crossOrigin}
+                                <img src={thumbUrl || url} crossOrigin={crossOrigin}
                                     className={`${prefixCls}-list-item-image`} />
                             </div>
                             <div className={classNames(`${prefixCls}-item-name`, hashId)}>
