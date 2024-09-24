@@ -1,6 +1,6 @@
 import React, { forwardRef, Ref, useEffect, useImperativeHandle, useState } from 'react';
 import { Button, Cascader, Checkbox, Form, InputNumber, Select, UploadFile, UploadProps, } from 'antd';
-import { classNames, drawImage, useMergedState } from '@web-react/biz-utils';
+import { classNames, drawImage, previewImage, useForceUpdate, useMergedState } from '@web-react/biz-utils';
 import { UploadResponse, DirKey, DirType, UploaderProps } from './typing';
 import { findPath } from './_utils';
 import { useStyle } from './style';
@@ -50,7 +50,7 @@ const InternalUploader = forwardRef(<Type extends UploadResponse = UploadRespons
     props: UploaderProps<Type>, ref: Ref<UploaderRef>
 ) => {
     const { className, style, onUploaDone,
-        defaultDirValue, dirs, configRender, previewFile, upload = {} } = props;
+        defaultDirValue, dirs, configRender, previewFile = previewImage, upload = {} } = props;
     const { data: uploadData, ...restUpload } = upload;
 
     const { prefixCls, wrapSSR, hashId, token } = useStyle();
@@ -64,6 +64,27 @@ const InternalUploader = forwardRef(<Type extends UploadResponse = UploadRespons
         value: props?.fileList,
         onChange: (value) => props?.onChange?.(value),
     });
+
+    // const forceUpdate = useForceUpdate();
+    // useEffect(() => {
+    //     (fileList || []).forEach(async (file) => {
+    //         if (
+    //             typeof document === 'undefined' ||
+    //             typeof window === 'undefined' ||
+    //             !(window as any).FileReader ||
+    //             !(window as any).File ||
+    //             !(file.originFileObj instanceof File || (file.originFileObj as any) instanceof Blob) ||
+    //             file.thumbUrl !== undefined
+    //         ) {
+    //             return;
+    //         }
+    //         file.thumbUrl = '';
+    //         if (previewFile) {
+    //             file.thumbUrl = await previewFile(file.originFileObj as File);
+    //             forceUpdate();
+    //         }
+    //     });
+    // }, [fileList, previewFile]);
 
     useImperativeHandle(ref, () => ({
 

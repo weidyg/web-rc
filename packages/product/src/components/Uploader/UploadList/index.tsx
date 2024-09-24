@@ -1,5 +1,5 @@
 
-import { CSSProperties, ReactNode, useEffect, useMemo } from 'react';
+import { CSSProperties, ReactNode, useCallback, useEffect, useMemo } from 'react';
 import { Alert, Progress, Typography, UploadFile, UploadProps } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 import { classNames, convertByteUnit, previewImage, useForceUpdate } from '@web-react/biz-utils';
@@ -17,26 +17,22 @@ const UploadList = (props: UploadListProps) => {
 
     const forceUpdate = useForceUpdate();
     useEffect(() => {
-        (fileList || []).forEach((file) => {
-            if (
-                typeof document === 'undefined' ||
-                typeof window === 'undefined' ||
-                !(window as any).FileReader ||
-                !(window as any).File ||
-                !(file.originFileObj instanceof File || (file.originFileObj as any) instanceof Blob) ||
-                file.thumbUrl !== undefined
-            ) {
-                return;
-            }
-            file.thumbUrl = '';
-            if (previewFile) {
-                previewFile(file.originFileObj as File)
-                    .then((previewDataUrl: string) => {
-                        file.thumbUrl = previewDataUrl || '';
-                        forceUpdate();
-                    });
-            }
-        });
+        if (previewFile) {
+            (fileList || []).forEach(async (file) => {
+                if (
+                    file.thumbUrl !== undefined ||
+                    typeof document === 'undefined' ||
+                    typeof window === 'undefined' ||
+                    !(window as any).FileReader ||
+                    !(window as any).File ||
+                    !(file.originFileObj instanceof File || (file.originFileObj as any) instanceof Blob)
+                ) {
+                    return;
+                }
+                file.thumbUrl = await previewFile(file.originFileObj as File);
+                forceUpdate();
+            });
+        }
     }, [fileList, previewFile]);
 
     const count = useMemo(() => {
