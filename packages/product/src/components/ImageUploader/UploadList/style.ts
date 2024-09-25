@@ -52,7 +52,6 @@ const genBizStyle: GenerateStyle<UploadListToken> = (token) => {
           overflow: 'hidden',
           whiteSpace: 'nowrap',
           textOverflow: 'ellipsis',
-          padding: `${token.paddingSM}px 0`,
         },
       },
       '&-actions': {

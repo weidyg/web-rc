@@ -1,12 +1,6 @@
 import { CSSProperties, ReactNode } from "react";
 import { ButtonProps, UploadFile, UploadProps } from "antd";
-
-export type DirKey = string | number;
-export type DirType = {
-  value: DirKey;
-  label: ReactNode;
-  children?: DirType[],
-};
+import { FolderProps } from "@web-react/biz-components";
 
 export interface UploadProgressEvent extends Partial<ProgressEvent> {
   percent?: number;
@@ -50,15 +44,15 @@ export type CustomUploadProps<T extends UploadResponse = UploadResponse> = {
   | 'beforeUpload' | 'fileList' | 'onChange'
 >;
 
-export type UploaderProps<T extends UploadResponse = UploadResponse> = {
+export type ImageUploaderProps<T extends UploadResponse = UploadResponse> = {
   className?: string;
   style?: CSSProperties;
   showUploadList?: boolean;
   onShowUploadListChange?: (show: boolean) => void;
   onUploaDone?: (fileList: UploadFile<T>[]) => void;
   upload?: CustomUploadProps<T>;
-  defaultDirValue: DirKey;
-  dirs?: DirType[];
+  defaultFolder?: FolderProps['defaultValue'];
+  folders?: FolderProps['data'];
   configRender?: (dom: ReactNode) => ReactNode;
   previewFile?: UploadProps<T>['previewFile'];
   fileList?: UploadFile<T>[];

@@ -1,11 +1,11 @@
-import React, { forwardRef, Ref, useEffect, useImperativeHandle, useState } from 'react';
-import { Button, Cascader, Checkbox, Form, InputNumber, Select, UploadFile, UploadProps, } from 'antd';
-import { classNames, drawImage, previewImage, useForceUpdate, useMergedState } from '@web-react/biz-utils';
-import { UploadResponse, DirKey, DirType, UploaderProps } from './typing';
-import { findPath } from './_utils';
+import React, { forwardRef, Ref, useImperativeHandle } from 'react';
+import { Button, Checkbox, Form, InputNumber, Select, UploadFile, UploadProps, } from 'antd';
+import { classNames, drawImage, previewImage, useMergedState } from '@web-react/biz-utils';
+import { UploadResponse, ImageUploaderProps } from './typing';
 import { useStyle } from './style';
 import InternalUploadBox from './UploadBox';
 import InternalUploadList from './UploadList';
+import { Folder } from '@web-react/biz-components';
 
 type ConfigFormValueType = {
     folderId: string,
@@ -15,42 +15,14 @@ type ConfigFormValueType = {
     originSize: boolean
 };
 
-const FolderSelect = (props: {
-    value?: DirKey,
-    defaultValue?: DirKey,
-    onChange?: (value: DirKey) => void,
-    options?: DirType[],
-}) => {
-    const { value, defaultValue, onChange, options } = props;
-    const [selectKeys, setSelectKeys] = useState<DirKey[]>([]);
-    const [folderId, setFolderId] = useMergedState<DirKey>('', {
-        value: value,
-        defaultValue: defaultValue,
-        onChange: onChange,
-    });
-    useEffect(() => {
-        const keys = findPath(options, folderId);
-        setSelectKeys(keys);
-    }, [folderId])
-
-    return <Cascader
-        allowClear={false}
-        style={{ width: '150px' }}
-        changeOnSelect
-        options={options}
-        value={selectKeys}
-        onChange={(value: DirKey[]) => {
-            setFolderId(value?.pop() || '');
-        }}
-    />;
-}
-
-type UploaderRef = {}
+type ImageUploaderRef = {}
 const InternalUploader = forwardRef(<Type extends UploadResponse = UploadResponse>(
-    props: UploaderProps<Type>, ref: Ref<UploaderRef>
+    props: ImageUploaderProps<Type>, ref: Ref<ImageUploaderRef>
 ) => {
-    const { className, style, onUploaDone,
-        defaultDirValue, dirs, configRender, previewFile = previewImage, upload = {} } = props;
+    const {
+        className, style, upload = {}, defaultFolder, folders,
+        onUploaDone, configRender, previewFile = previewImage
+    } = props;
     const { data: uploadData, ...restUpload } = upload;
 
     const { prefixCls, wrapSSR, hashId, token } = useStyle();
@@ -64,27 +36,6 @@ const InternalUploader = forwardRef(<Type extends UploadResponse = UploadRespons
         value: props?.fileList,
         onChange: (value) => props?.onChange?.(value),
     });
-
-    // const forceUpdate = useForceUpdate();
-    // useEffect(() => {
-    //     (fileList || []).forEach(async (file) => {
-    //         if (
-    //             typeof document === 'undefined' ||
-    //             typeof window === 'undefined' ||
-    //             !(window as any).FileReader ||
-    //             !(window as any).File ||
-    //             !(file.originFileObj instanceof File || (file.originFileObj as any) instanceof Blob) ||
-    //             file.thumbUrl !== undefined
-    //         ) {
-    //             return;
-    //         }
-    //         file.thumbUrl = '';
-    //         if (previewFile) {
-    //             file.thumbUrl = await previewFile(file.originFileObj as File);
-    //             forceUpdate();
-    //         }
-    //     });
-    // }, [fileList, previewFile]);
 
     useImperativeHandle(ref, () => ({
 
@@ -100,7 +51,7 @@ const InternalUploader = forwardRef(<Type extends UploadResponse = UploadRespons
             form={form}
             layout="inline"
             initialValues={{
-                folderId: defaultDirValue,
+                folderId: defaultFolder,
                 originSize: true,
             }}
             onValuesChange={(changedValues, allValues) => {
@@ -116,7 +67,7 @@ const InternalUploader = forwardRef(<Type extends UploadResponse = UploadRespons
             }}
         >
             <Form.Item label="上传至" name="folderId">
-                <FolderSelect options={dirs} />
+                <Folder data={folders} type='select' />
             </Form.Item>
             <Form.Item noStyle dependencies={['picWidth']}>
                 {({ getFieldValue }) => (
@@ -212,10 +163,10 @@ const InternalUploader = forwardRef(<Type extends UploadResponse = UploadRespons
 type CompoundedComponent<T = UploadResponse> = typeof InternalUploader & {
     <U extends T>(props: UploadProps<U>,): React.ReactElement;
 };
-const Uploader = InternalUploader as CompoundedComponent;
-export default Uploader;
+const ImageUploader = InternalUploader as CompoundedComponent;
+export default ImageUploader;
 export type {
-    UploaderRef, UploaderProps,
-    DirKey, DirType,
+    ImageUploaderRef,
+    ImageUploaderProps,
     UploadResponse
 };

@@ -31,68 +31,15 @@ const genBizStyle: GenerateStyle<ImageSpaceToken> = (token) => {
         display: 'flex',
         width: '158px',
         overflow: 'hidden',
-        padding: '6px 6px 0',
+        padding: '6px 6px',
         backgroundColor: token.colorBgSide,
-      },
-      '&-treeDom': {
-        // flex: '1 1',
-        overflow: 'auto',
-        height: '100%',
-        // maxHeight: 'calc(100% - 1px)',
-        '&::-webkit-scrollbar': {
-          width: '7.5px',
-          height: ' 7.5px',
-          borderRadius: '6px',
-        },
-        '&::-webkit-scrollbar-thumb': {
-          width: '7.5px',
-          height: '7.5px',
-          borderRadius: '6px',
-          '&:hover': {
-            backgroundColor: token.colorBorder,
-          },
-        },
-        '&::-webkit-scrollbar-track': {
-          background: 'transparent',
-          padding: '0',
-          width: '4px',
-          height: '4px',
-          borderRadius: '6px',
-        },
-        [`${token.antCls}-tree`]: {
-          padding: '6px 0',
-          [`&-switcher`]: {
-            width: 'unset',
-            '&:hover': {
-              background: 'transparent !important',
-            }
-          },
-          [`&-node-content-wrapper`]: {
-            '&:hover': {
-              background: 'transparent !important',
-            }
-          },
-          [`&-treenode`]: {
-            margin: '2px 6px',
-            padding: '4px 2px',
-            overflow: 'hidden',
-            [`&-selected`]: {
-              background: token.controlItemBgActive,
-              borderRadius: token.borderRadius,
-            },
-            '&:hover': {
-              background: token.controlItemBgActive,
-              borderRadius: token.borderRadius,
-            }
-          },
-        },
       },
       '&-container': {
         flex: 1,
         display: 'flex',
         flexDirection: 'column',
         backgroundColor: token.colorBgContainer,
-        padding: '0 4px 0 8px',
+        margin: '0 8px 8px 8px',
         '&-top': {
           display: 'flex',
           // height: '38px',

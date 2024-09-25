@@ -1,8 +1,11 @@
-export type * from './Uploader';
-import Uploader from './Uploader';
+export type * from './ImageUploader';
+import ImageUploader from './ImageUploader';
 export type * from './ImageSpace';
 import ImageSpace from './ImageSpace';
+export type * from './Folder';
+import Folder from './Folder';
 export {
-    Uploader,
-    ImageSpace
+    ImageUploader,
+    ImageSpace,
+    Folder
 };

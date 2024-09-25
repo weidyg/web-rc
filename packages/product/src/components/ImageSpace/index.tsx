@@ -1,12 +1,11 @@
 import { CSSProperties, forwardRef, Key, ReactNode, Ref, useEffect, useImperativeHandle, useState } from 'react';
-import { Image, Button, Checkbox, Divider, message, Radio, Segmented, Space, Spin, Table } from 'antd';
+import { Image, Button, Checkbox, Divider, message, Radio, Segmented, Space, Spin } from 'antd';
+import { AppstoreOutlined, BarsOutlined } from '@ant-design/icons';
 import { classNames, convertByteUnit, useMergedState } from '@web-react/biz-utils';
 import { useStyle } from './style';
 
-import FolderTree, { DirType } from './FolderTree';
-import { AppstoreOutlined, BarsOutlined } from '@ant-design/icons';
 import PicCard from './PicCard';
-import { Uploader } from '@web-react/biz-components';
+import { Folder, FolderProps } from '@web-react/biz-components';
 
 type RequestParam = {
   page: number,
@@ -29,8 +28,8 @@ type ImageSpaceProps = {
   pageSize?: number;
   actionsRender?: (dom?: ReactNode) => ReactNode;
   footerRender?: (dom?: ReactNode) => ReactNode;
-  defaultFolder?: DirType;
-  fetchFolders?: () => Promise<DirType[]>;
+  defaultFolder?: FolderProps['defaultValue'];
+  folders?: FolderProps['data'];
   defaultValue?: Key[];
   value?: Key[];
   onChange?: (ids: Key[], files: ImageFile[]) => void | Promise<void>;
@@ -45,17 +44,15 @@ const InternalImageSpace = forwardRef<ImageSpaceRef, ImageSpaceProps>((
   props: ImageSpaceProps,
   ref: Ref<ImageSpaceRef>
 ) => {
-  const { className, style, defaultFolder, pageSize = 20, mutiple = true,
-    fetchFolders, fetchData,
-    actionsRender, footerRender
+  const { className, style, pageSize = 20, mutiple = true,
+    defaultFolder, folders,
+    fetchData, actionsRender, footerRender
   } = props;
   const { prefixCls, wrapSSR, hashId, token } = useStyle();
   const [loading, setLoading] = useState(false);
   const [curPage, setCurPage] = useState(0);
   const [totalCount, setTotalCount] = useState(0);
-  const [dirloading, setDirLoading] = useState(false);
-  const [folderId, setFolderId] = useState<Key>(defaultFolder?.value || '');
-  const [folders, setFolders] = useState<DirType[]>(defaultFolder ? [defaultFolder] : []);
+  const [folderId, setFolderId] = useState(defaultFolder);
   const [imageFiles, setImageFiles] = useState<ImageFile[]>([]);
   const [showType, setShowType] = useState<'list' | 'table'>('table');
 
@@ -75,7 +72,6 @@ const InternalImageSpace = forwardRef<ImageSpaceRef, ImageSpaceProps>((
   }));
 
   useEffect(() => {
-    loadDirs();
     handleLoadMore(true);
   }, []);
 
@@ -94,20 +90,6 @@ const InternalImageSpace = forwardRef<ImageSpaceRef, ImageSpaceProps>((
     // console.log("handleScroll", scrollTop + clientHeight - scrollHeight);
     if (scrollTop + clientHeight + 2 >= scrollHeight) {
       if (!loading) { await handleLoadMore?.(); }
-    }
-  };
-  const loadDirs = async () => {
-    setDirLoading(true);
-    try {
-      const data = await fetchFolders?.() || [];
-      const folders = defaultFolder && !data.some(s => s.value === defaultFolder.value)
-        ? [defaultFolder, ...data]
-        : data;
-      setFolders(folders);
-    } catch (error: any) {
-      message.error(error?.message || '加载失败');
-    } finally {
-      setDirLoading(false);
     }
   };
   const loadData = async (param: { page: number, fist?: boolean, [key: string]: any }) => {
@@ -223,17 +205,12 @@ const InternalImageSpace = forwardRef<ImageSpaceRef, ImageSpaceProps>((
       </div> */}
       <div className={classNames(`${prefixCls}-body`, hashId)}>
         <div className={classNames(`${prefixCls}-aside`, hashId)}>
-          <Spin spinning={dirloading}
-            wrapperClassName={classNames(`${prefixCls}-spin`, hashId)}>
-            <div className={classNames(`${prefixCls}-treeDom`, hashId)} >
-              <FolderTree
-                data={folders}
-                value={folderId}
-                onChange={(val) => {
-                  setFolderId(val);
-                }} />
-            </div>
-          </Spin>
+          <Folder
+            data={folders}
+            value={folderId}
+            onChange={(val) => {
+              setFolderId(val);
+            }} />
         </div>
         <div className={classNames(`${prefixCls}-container`, hashId)}>
           <div className={classNames(`${prefixCls}-container-top`, hashId)}>
@@ -300,11 +277,11 @@ const InternalImageSpace = forwardRef<ImageSpaceRef, ImageSpaceProps>((
           }
         </div>
       </div >
-      {footerRender &&
+      {/* {footerRender && */}
         <div className={classNames(`${prefixCls}-footer`, hashId)}>
           {footerRender?.()}
         </div>
-      }
+      {/* } */}
 
     </div >
   );
