@@ -1,5 +1,5 @@
 import React, { forwardRef, Ref, useEffect, useState } from "react";
-import { Cascader, message, Select, Spin, Tree } from "antd";
+import { Cascader, Empty, message, Select, Spin, Tree } from "antd";
 import { classNames, useMergedState } from "@web-react/biz-utils";
 import { useStyle } from './style';
 
@@ -78,7 +78,7 @@ const InternalFolder = forwardRef<FolderRef, FolderProps>((
             <Cascader
                 loading={loading}
                 allowClear={false}
-                style={{ width: '150px' }}
+                style={{ minWidth: '148px' }}
                 changeOnSelect
                 options={treeData}
                 value={selectKeys}
@@ -93,7 +93,8 @@ const InternalFolder = forwardRef<FolderRef, FolderProps>((
                     <Select
                         showSearch
                         options={flatData}
-                        value={value}
+                        placeholder='请选择文件夹'
+                        value={loading ? undefined : value}
                         onChange={(val) => {
                             setValue(val);
                         }}
@@ -104,25 +105,31 @@ const InternalFolder = forwardRef<FolderRef, FolderProps>((
                         }}
                         className={classNames(`${prefixCls}-select`, hashId)}
                     />
-                    <Tree
-                        blockNode
-                        showIcon={true}
-                        treeData={treeData as any}
-                        expandedKeys={selectKeys}
-                        onExpand={(keys) => {
-                            setSelectKeys(keys as string[]);
-                        }}
-                        selectedKeys={[value]}
-                        onSelect={(value) => {
-                            setValue(value[0] as string)
-                        }}
-                        fieldNames={{
-                            key: 'value',
-                            title: 'label',
-                            children: 'children'
-                        }}
-                        rootClassName={classNames(`${prefixCls}-tree`, hashId)}
-                    />
+                    {treeData.length == 0 ? (
+                        <div className={classNames(`${prefixCls}-empty`, hashId)} >
+                            <Empty />
+                        </div>
+                    ) : (
+                        <Tree
+                            blockNode
+                            showIcon={true}
+                            treeData={treeData as any}
+                            expandedKeys={selectKeys}
+                            onExpand={(keys) => {
+                                setSelectKeys(keys as string[]);
+                            }}
+                            selectedKeys={[value]}
+                            onSelect={(value) => {
+                                setValue(value[0] as string)
+                            }}
+                            fieldNames={{
+                                key: 'value',
+                                title: 'label',
+                                children: 'children'
+                            }}
+                            rootClassName={classNames(`${prefixCls}-tree`, hashId)}
+                        />
+                    )}
                 </div>
             </Spin>
         )}

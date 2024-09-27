@@ -6,9 +6,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { Button, Flex, Input, Select, Space } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
-
+import { ImageFile, ImageSpace, ImageSpaceRef, ImageUploader } from '@web-react/biz-components';
 import dataJson from './_data.json';
-import { DirType, ImageFile, ImageSpace, ImageSpaceRef, ImageUploader } from '@web-react/biz-components';
+
 export default () => {
   const _ref = useRef<ImageSpaceRef>(null);
   const [isUpload, setIsUpload] = useState(false);

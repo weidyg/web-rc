@@ -20,7 +20,7 @@ const genBizStyle: GenerateStyle<ImageSpaceToken> = (token) => {
         fontSize: token.fontSize,
         color: token.colorText,
         background: token.colorBgContainer,
-        padding: `${token.padding}px ${token.padding}px`,
+        padding: `${token.padding}px`,
       },
       '&-body': {
         flex: 1,
@@ -29,9 +29,9 @@ const genBizStyle: GenerateStyle<ImageSpaceToken> = (token) => {
       },
       '&-aside': {
         display: 'flex',
-        width: '158px',
+        width: '148px',
         overflow: 'hidden',
-        padding: '6px 6px',
+        padding: `${token.paddingXXS}px`,
         backgroundColor: token.colorBgSide,
       },
       '&-container': {
@@ -39,11 +39,11 @@ const genBizStyle: GenerateStyle<ImageSpaceToken> = (token) => {
         display: 'flex',
         flexDirection: 'column',
         backgroundColor: token.colorBgContainer,
-        margin: '0 8px 8px 8px',
+        margin: `0 ${token.marginXS / 2}px ${token.marginXS}px ${token.marginXS}px`,
         '&-top': {
           display: 'flex',
-          // height: '38px',
-          padding: '6px 6px 6px 0',
+          padding: `${token.paddingXXS}px ${token.paddingXXS}px ${token.paddingXS}px 0`,
+          borderBottom: `${token.lineWidth}px ${token.lineType} ${token.colorBorderSecondary}`,
         },
       },
       '&-list': {
@@ -69,7 +69,6 @@ const genBizStyle: GenerateStyle<ImageSpaceToken> = (token) => {
           lineHeight: token.lineHeight,
           fontFamily: token.fontFamily,
           background: token.colorBgContainer,
-          borderTop: `${token.lineWidth}px ${token.lineType} ${token.colorBorderSecondary}`,
         },
         '&-header': {
           height: '40px',
@@ -110,7 +109,7 @@ const genBizStyle: GenerateStyle<ImageSpaceToken> = (token) => {
       '&-footer': {
         display: 'flex',
         width: '100%',
-        height: '60px',
+        height: '46px',
         alignItems: 'center',
         justifyContent: 'space-between',
         backgroundColor: token.colorBgFooter,
@@ -123,6 +122,14 @@ const genBizStyle: GenerateStyle<ImageSpaceToken> = (token) => {
           height: '100%',
           width: '100%',
         }
+      },
+      '&-empty': {
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        justifyItems: 'center',
       },
       '&-fileName': {
         overflow: 'hidden',

@@ -5,16 +5,16 @@
  */
 import { useState } from "react";
 import { UploadFile } from "antd";
-import { Uploader, DirType, UploadResponse } from "@web-react/biz-components";
+import { ImageUploader, DirType, UploadResponse } from "@web-react/biz-components";
 import dataJson from './_data.json';
 
 export default () => {
     // const [displayPanel, setDisplayPanel] = useState<DisplayPanelType>('uploader');
     const [fileList, setFileList] = useState<UploadFile<UploadResponse>[]>([]);
     return <div style={{ height: '100vh' }}>
-        <Uploader
-            defaultDirValue={'0'}
-            dirs={dataJson.dirs as DirType[]}
+        <ImageUploader
+            defaultFolder={'0'}
+            folders={dataJson.dirs as DirType[]}
             upload={{
                 action: 'http://localhost:49007/api/services/app/ProductPublish/UploadImages',
                 normalize: {

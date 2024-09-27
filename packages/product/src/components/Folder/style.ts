@@ -36,9 +36,13 @@ const genBizStyle: GenerateStyle<FolderToken> = (token) => {
         width: '100%',
         marginBottom: '4px'
       },
-      '&-tree': {
+      ['&-tree,&-empty']: {
         height: `calc(100% - ${token.controlHeight}px)`,
         overflow: 'auto'
+      },
+      '&-empty': {
+        display: 'flex',
+        alignItems: 'center',
       },
       '&-spin': {
         flex: 1,

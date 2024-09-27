@@ -1,5 +1,5 @@
 import { CSSProperties, forwardRef, Key, ReactNode, Ref, useEffect, useImperativeHandle, useState } from 'react';
-import { Image, Button, Checkbox, Divider, message, Radio, Segmented, Space, Spin } from 'antd';
+import { Image, Button, Checkbox, Divider, message, Radio, Segmented, Space, Spin, Empty } from 'antd';
 import { AppstoreOutlined, BarsOutlined } from '@ant-design/icons';
 import { classNames, convertByteUnit, useMergedState } from '@web-react/biz-utils';
 import { useStyle } from './style';
@@ -38,6 +38,7 @@ type ImageSpaceProps = {
 
 interface ImageSpaceRef {
   refresh: () => void | Promise<void>;
+  clearSelected: () => void;
 }
 
 const InternalImageSpace = forwardRef<ImageSpaceRef, ImageSpaceProps>((
@@ -54,7 +55,7 @@ const InternalImageSpace = forwardRef<ImageSpaceRef, ImageSpaceProps>((
   const [totalCount, setTotalCount] = useState(0);
   const [folderId, setFolderId] = useState(defaultFolder);
   const [imageFiles, setImageFiles] = useState<ImageFile[]>([]);
-  const [showType, setShowType] = useState<'list' | 'table'>('table');
+  const [showType, setShowType] = useState<'list' | 'table'>('list');
 
   const [selectKeys, setSelectKeys] = useMergedState<Key[]>([], {
     defaultValue: props?.defaultValue,
@@ -68,6 +69,9 @@ const InternalImageSpace = forwardRef<ImageSpaceRef, ImageSpaceProps>((
   useImperativeHandle(ref, () => ({
     refresh: () => {
       return handleRefresh();
+    },
+    clearSelected: () => {
+      return setSelectKeys([]);
     },
   }));
 
@@ -221,25 +225,31 @@ const InternalImageSpace = forwardRef<ImageSpaceRef, ImageSpaceProps>((
               wrapperClassName={classNames(`${prefixCls}-spin`, hashId)}>
               <div onScroll={handleScroll}
                 className={classNames(`${prefixCls}-list-container`, hashId)}>
-                <div className={classNames(`${prefixCls}-list`, hashId)}>
-                  {imageFiles.map((item, index) => (
-                    <PicCard
-                      mutiple={mutiple}
-                      key={index}
-                      id={item.id}
-                      name={item.name}
-                      fullUrl={item.fullUrl}
-                      pixel={item.pixel}
-                      isRef={item.isRef}
-                      checked={isChecked(item.id)}
-                      onChange={(value: boolean) => {
-                        checkChange(item.id, value);
-                      }}
-                    />
-                  ))}
-                  {Array.from({ length: 10 }).map((_, index) => (<PicCard.Empty key={index} />))}
-                  <LoadMore />
-                </div>
+                {imageFiles?.length == 0 ? (
+                  <div className={classNames(`${prefixCls}-empty`, hashId)} >
+                    <Empty />
+                  </div>
+                ) : (
+                  <div className={classNames(`${prefixCls}-list`, hashId)}>
+                    {imageFiles.map((item, index) => (
+                      <PicCard
+                        mutiple={mutiple}
+                        key={index}
+                        id={item.id}
+                        name={item.name}
+                        fullUrl={item.fullUrl}
+                        pixel={item.pixel}
+                        isRef={item.isRef}
+                        checked={isChecked(item.id)}
+                        onChange={(value: boolean) => {
+                          checkChange(item.id, value);
+                        }}
+                      />
+                    ))}
+                    {Array.from({ length: 10 }).map((_, index) => (<PicCard.Empty key={index} />))}
+                    <LoadMore />
+                  </div>
+                )}
               </div>
             </Spin>
           }
@@ -260,17 +270,26 @@ const InternalImageSpace = forwardRef<ImageSpaceRef, ImageSpaceProps>((
                 </div>
                 <div onScroll={handleScroll}
                   className={classNames(`${prefixCls}-table-body`, hashId)}>
-                  <table >
-                    <tbody>
-                      {imageFiles.map((record, index) => (
-                        <tr key={index}>
-                          <td><RenderFileName file={record} /></td>
-                          <td style={{ width: 120 }}>{record.pixel}</td>
-                          <td style={{ width: 120 }}>{convertByteUnit(record.size || 0)}</td>
+                  {imageFiles?.length == 0 ? (
+                    <div className={classNames(`${prefixCls}-empty`, hashId)} >
+                      <Empty />
+                    </div>
+                  ) : (
+                    <table>
+                      <tbody>
+                        {imageFiles.map((record, index) => (
+                          <tr key={index}>
+                            <td><RenderFileName file={record} /></td>
+                            <td style={{ width: 120 }}>{record.pixel}</td>
+                            <td style={{ width: 120 }}>{convertByteUnit(record.size || 0)}</td>
+                          </tr>
+                        ))}
+                        <tr>
+                          <td colSpan={3}><LoadMore /></td>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                      </tbody>
+                    </table>
+                  )}
                 </div>
               </div>
             </Spin>
@@ -278,11 +297,10 @@ const InternalImageSpace = forwardRef<ImageSpaceRef, ImageSpaceProps>((
         </div>
       </div >
       {/* {footerRender && */}
-        <div className={classNames(`${prefixCls}-footer`, hashId)}>
-          {footerRender?.()}
-        </div>
+      <div className={classNames(`${prefixCls}-footer`, hashId)}>
+        {footerRender?.()}
+      </div>
       {/* } */}
-
     </div >
   );
 }
