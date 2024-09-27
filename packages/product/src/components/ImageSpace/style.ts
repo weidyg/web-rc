@@ -50,6 +50,7 @@ const genBizStyle: GenerateStyle<ImageSpaceToken> = (token) => {
         display: 'flex',
         flexWrap: 'wrap',
         justifyContent: 'space-between',
+        padding: `${token.paddingXXS}px 0`,
         '&-container': {
           width: '100%',
           height: '100%',
