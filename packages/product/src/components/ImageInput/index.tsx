@@ -25,9 +25,11 @@ type ImageInputProps = {
   fetchData: ImageSpaceProps['fetchData'];
   // imageSpaceProps?: Omit<ImageSpaceProps, 'mutiple'>;
   // imageUploaderProps?: Omit<ImageUploaderProps, 'mutiple'>;
+  actions: React.ReactNode[];
 };
 type ImageInputRef = {
   onOpen: () => void;
+  refresh(): void | Promise<void>;
 }
 
 const ImageInput = forwardRef<ImageInputRef, ImageInputProps>((
@@ -35,7 +37,7 @@ const ImageInput = forwardRef<ImageInputRef, ImageInputProps>((
   ref: Ref<ImageInputRef>
 ) => {
   const { className, style, placeholder, menus,
-    defaultFolder, folders, upload, fetchData
+    defaultFolder, folders, upload, fetchData, actions
   } = props;
   const { prefixCls, wrapSSR, hashId, token } = useStyle(props.prefixCls);
   const [imgUrl, setImgUrl] = useMergedState(undefined, {
@@ -47,7 +49,10 @@ const ImageInput = forwardRef<ImageInputRef, ImageInputProps>((
   useImperativeHandle(ref, () => ({
     onOpen() {
       handleOpen(true);
-    }
+    },
+    refresh() {
+      return _imageSpaceRef?.current?.refresh();
+    },
   }));
 
   const handleOpen = (open: boolean) => {
@@ -68,7 +73,10 @@ const ImageInput = forwardRef<ImageInputRef, ImageInputProps>((
       actionsRender={(dom) => {
         return <Flex style={{ width: '100%' }}
           align='flex-start' justify='space-between'>
-          <Space wrap>{dom}</Space>
+          <Space wrap>
+            {dom}
+            {actions}
+          </Space>
           <Button onClick={() => { setIsUpload(true); }}>上传</Button>
         </Flex>
       }}

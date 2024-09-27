@@ -83,7 +83,9 @@ export default () => {
       }
     },
   ];
-
+  const handleRefresh = () => {
+    _imageInputRef?.current?.refresh();
+  }
   return (
     <div style={{ margin: 20 }}>
       <Button onClick={() => {
@@ -137,6 +139,7 @@ export default () => {
         fetchData={(param) => {
           const queryParam = { ...param, ...searchParam }
           const { page, size } = queryParam;
+          console.log('queryParam', queryParam);
           return new Promise<{ items: ImageFile[], total: number, }>((resolve, reject) => {
             setTimeout(() => {
               let newData: ImageFile[] = dataJson.files
@@ -146,6 +149,52 @@ export default () => {
             }, 1000);
           })
         }}
+        actions={[
+          <Space.Compact>
+            <Select
+              style={{ width: '88px' }}
+              popupMatchSelectWidth={false}
+              value={searchParam.type}
+              options={[
+                { label: '图片', value: 'picture' },
+                { label: '名称', value: 'name' },
+                { label: '宝贝ID', value: 'id' },
+              ]}
+              onChange={(value) => {
+                setSearchParam(data => ({ ...data, type: value }));
+              }}
+            />
+            <Input
+              allowClear
+              style={{ width: '80px' }}
+              suffix={<SearchOutlined />}
+              placeholder={'搜索'}
+              value={searchParam.value}
+              onChange={(e) => {
+                setSearchParam(data => ({ ...data, value: e.target.value, }));
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  handleRefresh();
+                }
+              }}
+            />
+          </Space.Compact>,
+          <Select
+            options={[
+              { label: '文件名升序', value: 'nameAsc' },
+              { label: '文件名降序', value: 'nameDes' },
+              { label: '上传时间升序', value: 'timeAsc' },
+              { label: '上传时间降序', value: 'timeDes' },
+            ]}
+            value={searchParam.order}
+            onChange={(value) => {
+              setSearchParam(data => ({ ...data, order: value, }));
+              setTimeout(() => { handleRefresh(); }, 500);
+            }}
+            style={{ width: '128px', }}
+          />
+        ]}
       />
     </div>
   );
