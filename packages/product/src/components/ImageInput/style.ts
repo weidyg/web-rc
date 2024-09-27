@@ -1,5 +1,6 @@
 ﻿import type { GenerateStyle, BizAliasToken } from '@web-react/biz-components';
 import { setAlpha, useStyle as useAntdStyle } from '@web-react/biz-components';
+import { unit } from '@ant-design/cssinjs';
 
 const genBizStyle: GenerateStyle<ImageInputToken> = (token) => {
   return {
@@ -48,6 +49,15 @@ const genBizStyle: GenerateStyle<ImageInputToken> = (token) => {
         height: 'inherit !important',
         borderRadius: 'inherit',
         objectFit: 'contain',
+      },
+      [`&-mask-info`]: {
+        padding: `0 ${unit(token.paddingXXS)}`,
+        [token.antCls]: {
+          marginInlineEnd: token.marginXXS,
+          svg: {
+            verticalAlign: 'baseline',
+          },
+        },
       },
     },
   }

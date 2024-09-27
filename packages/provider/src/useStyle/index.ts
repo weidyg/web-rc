@@ -34,6 +34,7 @@ export type BizAliasToken = GlobalToken & {
   bizComponentsCls: string;
   componentCls: string;
   antCls: string;
+  iconCls: string;
 };
 
 /**
@@ -50,7 +51,7 @@ export function useStyle(
   let { token = {} as Record<string, any> as BizAliasToken } = useContext(BizProvider);
   const { hashed, theme: provideTheme } = useContext(BizProvider);
   const { token: antdToken, hashId } = useToken();
-  const { getPrefixCls } = useContext(AntdConfigProvider.ConfigContext);
+  const { iconPrefixCls, getPrefixCls } = useContext(AntdConfigProvider.ConfigContext);
   const suffixCls = componentName
     ?.replace(/([A-Z])/g, (_, g) => '-' + g.toLowerCase())
     ?.replace(/^\-/, '')
@@ -60,7 +61,8 @@ export function useStyle(
   // if (!token.layout) { token = { ...antdToken } as any; }
   token = { ...antdToken } as any;
   token.antCls = `.${getPrefixCls()}`;
-  token.bizComponentsCls = `.${token.bizComponentsCls?.replace(/^\./, '') ?? 'biz'}`;
+  token.iconCls = `.${iconPrefixCls}`,
+    token.bizComponentsCls = `.${token.bizComponentsCls?.replace(/^\./, '') ?? 'biz'}`;
   token.componentCls = `.${(prefixCls ?? token.bizComponentsCls)?.replace(/^\./, '')}-${suffixCls}`;
   return {
     wrapSSR: useStyleRegister(

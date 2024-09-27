@@ -1,6 +1,6 @@
 import { forwardRef, Key, Ref, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { Button, Dropdown, Flex, Image, MenuProps, Popover, Space } from 'antd';
-import { PictureOutlined } from '@ant-design/icons';
+import { EyeOutlined, PictureOutlined } from '@ant-design/icons';
 import { classNames, useMergedState } from '@web-react/biz-utils';
 import { useStyle } from './style';
 import { FolderProps, ImageFile, ImageSpace, ImageSpaceProps, ImageSpaceRef, ImageUploader, ImageUploaderProps } from '@web-react/biz-components';
@@ -118,7 +118,11 @@ const ImageInput = forwardRef<ImageInputRef, ImageInputProps>((
         }}>
         {imgUrl ? (
           <Dropdown menu={{ items: menus }} arrow={false} placement='bottom'>
-            <Image src={imgUrl} preview={{ mask: false }}
+            <Image src={imgUrl} preview={{
+              mask: <div className={`${prefixCls}-mask-info`}>
+                <EyeOutlined />
+              </div>
+            }}
               wrapperClassName={classNames(`${prefixCls}-content`, hashId)}
               className={classNames(`${prefixCls}-img`, hashId)}
             />
