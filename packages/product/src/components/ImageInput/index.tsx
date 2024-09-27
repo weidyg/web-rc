@@ -46,11 +46,17 @@ const ImageInput = forwardRef<ImageInputRef, ImageInputProps>((
 
   useImperativeHandle(ref, () => ({
     onOpen() {
-      setIsOpen(true);
+      handleOpen(true);
     }
   }));
 
-
+  const handleOpen = (open: boolean) => {
+    setIsOpen(open);
+    setTimeout(() => {
+      setIsUpload(false);
+      _imageSpaceRef?.current?.clearSelected();
+    }, 500);
+  }
 
   const [isOpen, setIsOpen] = useState(false);
   const [isUpload, setIsUpload] = useState(false);
@@ -72,11 +78,8 @@ const ImageInput = forwardRef<ImageInputRef, ImageInputProps>((
       mutiple={false}
       onChange={(ids: Key[], files: ImageFile[]) => {
         if (files?.length > 0) {
-          setIsOpen(false);
+          handleOpen(false);
           setImgUrl(files[0]?.fullUrl);
-          setTimeout(() => {
-            _imageSpaceRef?.current?.clearSelected();
-          }, 1000);
         }
       }}
     />
@@ -112,8 +115,8 @@ const ImageInput = forwardRef<ImageInputRef, ImageInputProps>((
         open={isOpen}
         destroyTooltipOnHide={false}
         onOpenChange={(open, e) => {
-          if (!imgUrl) {
-            setIsOpen?.(open);
+          if (!imgUrl || (imgUrl && !open)) {
+            handleOpen?.(open);
           }
         }}>
         {imgUrl ? (

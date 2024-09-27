@@ -296,11 +296,11 @@ const InternalImageSpace = forwardRef<ImageSpaceRef, ImageSpaceProps>((
           }
         </div>
       </div >
-      {/* {footerRender && */}
-      <div className={classNames(`${prefixCls}-footer`, hashId)}>
-        {footerRender?.()}
-      </div>
-      {/* } */}
+      {footerRender &&
+        <div className={classNames(`${prefixCls}-footer`, hashId)}>
+          {footerRender?.()}
+        </div>
+      }
     </div >
   );
 }

@@ -49,6 +49,7 @@ const genBizStyle: GenerateStyle<ImageInputToken> = (token) => {
         height: 'inherit !important',
         borderRadius: 'inherit',
         objectFit: 'contain',
+        // backgroundColor: token.colorBgLayout,
       },
       [`&-mask-info`]: {
         padding: `0 ${unit(token.paddingXXS)}`,
