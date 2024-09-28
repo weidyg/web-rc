@@ -14,15 +14,15 @@ type ImageDescProps = {
   value?: string[];
   defaultValue?: string[];
   onChange?: (value: string[]) => void;
-  renderActions?: {
+  actionsRender?: {
     add: ReactNode;
     edit: (index: number) => ReactNode;
     remove: (index: number) => ReactNode;
   };
 }
 const ImageDesc = forwardRef((props: ImageDescProps, ref: Ref<ImageDescRef>) => {
-  const { renderActions } = props;
-  const { add, edit, remove } = renderActions || {};
+  const { actionsRender } = props;
+  const { add, edit, remove } = actionsRender || {};
   const { prefixCls, wrapSSR, hashId, token } = useStyle();
 
   const [value, setValue] = useMergedState<string[]>([], {
