@@ -1,14 +1,17 @@
 export type * from './ImageUploader';
 export type * from './ImageSpace';
-export type * from './ImageInput';
+export type * from './ImageCard';
+export type * from './ImageDesc';
 export type * from './Folder';
 
-import Folder from './Folder';
-import ImageInput from './ImageInput';
+import ImageDesc from './ImageDesc';
+import ImageCard from './ImageCard';
 import ImageSpace from './ImageSpace';
 import ImageUploader from './ImageUploader';
+import Folder from './Folder';
 export {
-    ImageInput,
+    ImageDesc,
+    ImageCard,
     ImageUploader,
     ImageSpace,
     Folder

@@ -27,16 +27,14 @@ type FolderProps = {
     value?: string,
     defaultValue?: string,
     onChange?: (value: string) => void,
-    data?: DirType[] | (() => Promise<DirType[]>),
+    loading?: boolean;
+    data?: DirType[] | (() => Promise<DirType[]>) | (() => DirType[]),
     type?: 'defalut' | 'select';
 }
 
 interface FolderRef { }
-const InternalFolder = forwardRef<FolderRef, FolderProps>((
-    props: FolderProps,
-    ref: Ref<FolderRef>
-) => {
-    const { data = [], type = 'defalut' } = props;
+const InternalFolder = forwardRef((props: FolderProps, ref: Ref<FolderRef>) => {
+    const { data = [], type = 'defalut', loading: propLoading } = props;
     const { prefixCls, wrapSSR, hashId, token } = useStyle();
 
     const [value, setValue] = useMergedState<string>('', {
@@ -52,7 +50,7 @@ const InternalFolder = forwardRef<FolderRef, FolderProps>((
 
     useEffect(() => {
         loadDirs();
-    }, []);
+    }, [data]);
 
     useEffect(() => {
         const opt = flatData.find(m => m.value === value);
@@ -73,10 +71,11 @@ const InternalFolder = forwardRef<FolderRef, FolderProps>((
         }
     };
 
+    const _loading = loading || propLoading;
     return wrapSSR(<>
         {type == 'select' ? (
             <Cascader
-                loading={loading}
+                loading={_loading}
                 allowClear={false}
                 style={{ minWidth: '148px' }}
                 changeOnSelect
@@ -87,14 +86,14 @@ const InternalFolder = forwardRef<FolderRef, FolderProps>((
                 }}
             />
         ) : (
-            <Spin spinning={loading}
+            <Spin spinning={_loading}
                 wrapperClassName={classNames(`${prefixCls}-spin`, hashId)}>
                 <div className={classNames(`${prefixCls}`, hashId)}>
                     <Select
                         showSearch
                         options={flatData}
                         placeholder='请选择文件夹'
-                        value={loading ? undefined : value}
+                        value={_loading ? undefined : value}
                         onChange={(val) => {
                             setValue(val);
                         }}

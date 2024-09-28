@@ -2,7 +2,7 @@
 import { setAlpha, useStyle as useAntdStyle } from '@web-react/biz-components';
 import { unit } from '@ant-design/cssinjs';
 
-const genBizStyle: GenerateStyle<ImageInputToken> = (token) => {
+const genBizStyle: GenerateStyle<ImageCardToken> = (token) => {
   return {
     [token.componentCls]: {
       '&-wrap': {
@@ -64,12 +64,12 @@ const genBizStyle: GenerateStyle<ImageInputToken> = (token) => {
   }
 };
 // repeating-linear-gradient(-45deg, transparent, transparent 6px, #f0f2f5 0, #f0f2f5 8px) !important;
-interface ImageInputToken extends BizAliasToken {
+interface ImageCardToken extends BizAliasToken {
 
 }
 export function useStyle(prefixCls?: string) {
-  return useAntdStyle('ImageInput', (token) => {
-    const bizToken: ImageInputToken = {
+  return useAntdStyle('ImageCard', (token) => {
+    const bizToken: ImageCardToken = {
       ...token,
     };
     return [genBizStyle(bizToken)];

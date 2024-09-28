@@ -28,6 +28,7 @@ type ImageSpaceProps = {
   pageSize?: number;
   actionsRender?: (dom?: ReactNode) => ReactNode;
   footerRender?: (dom?: ReactNode) => ReactNode;
+  folderLoading?: boolean;
   defaultFolder?: FolderProps['defaultValue'];
   folders?: FolderProps['data'];
   defaultValue?: Key[];
@@ -46,7 +47,7 @@ const InternalImageSpace = forwardRef<ImageSpaceRef, ImageSpaceProps>((
   ref: Ref<ImageSpaceRef>
 ) => {
   const { className, style, pageSize = 20, mutiple = true,
-    defaultFolder, folders,
+    folderLoading, defaultFolder, folders,
     fetchData, actionsRender, footerRender
   } = props;
   const { prefixCls, wrapSSR, hashId, token } = useStyle();
@@ -213,6 +214,7 @@ const InternalImageSpace = forwardRef<ImageSpaceRef, ImageSpaceProps>((
       <div className={classNames(`${prefixCls}-body`, hashId)}>
         <div className={classNames(`${prefixCls}-aside`, hashId)}>
           <Folder
+            loading={folderLoading}
             data={folders}
             value={folderId}
             onChange={(val) => {

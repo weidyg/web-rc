@@ -51,6 +51,7 @@ export type ImageUploaderProps<T extends UploadResponse = UploadResponse> = {
   onShowUploadListChange?: (show: boolean) => void;
   onUploaDone?: (fileList: UploadFile<T>[]) => void;
   upload?: CustomUploadProps<T>;
+  folderLoading?: boolean;
   defaultFolder?: FolderProps['defaultValue'];
   folders?: FolderProps['data'];
   configRender?: (dom: ReactNode) => ReactNode;

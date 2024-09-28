@@ -20,7 +20,7 @@ const InternalUploader = forwardRef(<Type extends UploadResponse = UploadRespons
     props: ImageUploaderProps<Type>, ref: Ref<ImageUploaderRef>
 ) => {
     const {
-        className, style, upload = {}, defaultFolder, folders,
+        className, style, upload = {}, folderLoading, defaultFolder, folders,
         onUploaDone, configRender, previewFile = previewImage
     } = props;
     const { data: uploadData, ...restUpload } = upload;
@@ -67,7 +67,7 @@ const InternalUploader = forwardRef(<Type extends UploadResponse = UploadRespons
             }}
         >
             <Form.Item label="上传至" name="folderId">
-                <Folder data={folders} type='select' />
+                <Folder loading={folderLoading} data={folders} type='select' />
             </Form.Item>
             <Form.Item noStyle dependencies={['picWidth']}>
                 {({ getFieldValue }) => (
