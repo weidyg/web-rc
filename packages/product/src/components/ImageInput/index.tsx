@@ -66,18 +66,17 @@ const ImageInput = forwardRef<ImageInputRef, ImageInputProps>((
   const [isOpen, setIsOpen] = useState(false);
   const [isUpload, setIsUpload] = useState(false);
   const _imageSpaceRef = useRef<ImageSpaceRef>(null);
-  const imagePopover = <div style={{ width: '680px', height: '400px', }}>
+  const imagePopover = <div style={{ width: '745px', height: '400px', }}>
     <ImageSpace
       ref={_imageSpaceRef}
       style={{ display: !isUpload ? '' : 'none' }}
       actionsRender={(dom) => {
-        return <Flex style={{ width: '100%' }}
-          align='flex-start' justify='space-between'>
-          <Space wrap>
-            {dom}
-            {actions}
-          </Space>
-          <Button onClick={() => { setIsUpload(true); }}>上传</Button>
+        return <Flex gap={4} style={{ width: '100%' }} wrap>
+          {dom}
+          {actions}
+          <Flex gap={4} flex={1} justify='flex-end'>
+            <Button onClick={() => { setIsUpload(true); }}>上传</Button>
+          </Flex>
         </Flex>
       }}
       fetchData={fetchData}

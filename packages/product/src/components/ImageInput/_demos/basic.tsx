@@ -145,14 +145,14 @@ export default () => {
               let newData: ImageFile[] = dataJson.files
                 .slice((page - 1) * size, page * size)
                 .map((file) => ({ ...file, id: file.id + '_' + page, }));
-              resolve({ items: newData, total: newData.length, });
+              resolve({ items: newData, total:  dataJson.files.length, });
             }, 1000);
           })
         }}
         actions={[
           <Space.Compact>
             <Select
-              style={{ width: '88px' }}
+              style={{ width: '100px' }}
               popupMatchSelectWidth={false}
               value={searchParam.type}
               options={[
@@ -166,7 +166,7 @@ export default () => {
             />
             <Input
               allowClear
-              style={{ width: '80px' }}
+              style={{ width: '120px' }}
               suffix={<SearchOutlined />}
               placeholder={'搜索'}
               value={searchParam.value}

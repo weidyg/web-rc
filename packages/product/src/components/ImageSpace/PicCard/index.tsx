@@ -121,7 +121,7 @@ const InternalPicCard: React.FC<PicCardProps> = (props) => {
 const EmptyPicCard = (props: { prefixCls?: string }) => {
     const { prefixCls, wrapSSR, hashId } = useStyle(props?.prefixCls);
     return wrapSSR(
-        <i className={classNames(`${prefixCls}-picCard`, `${prefixCls}-picCard-empty`, hashId)} />
+        <i className={classNames(`${prefixCls}`, `${prefixCls}-empty`, hashId)} />
     );
 };
 

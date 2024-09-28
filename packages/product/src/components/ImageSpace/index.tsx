@@ -91,14 +91,16 @@ const InternalImageSpace = forwardRef<ImageSpaceRef, ImageSpaceProps>((
   }
   const handleScroll = async (event: React.SyntheticEvent<HTMLDivElement>) => {
     const { scrollTop, clientHeight, scrollHeight } = event.target as HTMLDivElement;
-    // console.log("handleScroll", scrollTop + clientHeight - scrollHeight);
     if (scrollTop + clientHeight + 2 >= scrollHeight) {
-      if (!loading) { await handleLoadMore?.(); }
+      if (!loading) {
+        await handleLoadMore?.();
+      }
     }
   };
   const loadData = async (param: { page: number, fist?: boolean, [key: string]: any }) => {
     const { page, fist, ...rest } = param;
     const totalPage = fist ? 1 : Math.ceil(totalCount / pageSize);
+    console.log("loadData", param, page, totalPage);
     if (page > totalPage) { return; }
     setLoading(true);
     try {
@@ -111,6 +113,7 @@ const InternalImageSpace = forwardRef<ImageSpaceRef, ImageSpaceProps>((
       setCurPage(page);
       setTotalCount(data.total || 0);
       setImageFiles(newImageFiles);
+      console.log("loadData1", param, page, data.total);
     } catch (error: any) {
       message.error(error?.message || '加载失败');
     } finally {
@@ -285,7 +288,9 @@ const InternalImageSpace = forwardRef<ImageSpaceRef, ImageSpaceProps>((
                           </tr>
                         ))}
                         <tr>
-                          <td colSpan={3}><LoadMore /></td>
+                          <td colSpan={3} style={{ padding: 0, borderBottom: 'none' }}>
+                            <LoadMore />
+                          </td>
                         </tr>
                       </tbody>
                     </table>
