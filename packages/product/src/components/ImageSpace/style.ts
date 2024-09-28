@@ -42,7 +42,7 @@ const genBizStyle: GenerateStyle<ImageSpaceToken> = (token) => {
         margin: `0 ${token.marginXS / 2}px ${token.marginXS}px ${token.marginXS}px`,
         '&-top': {
           display: 'flex',
-          padding: `${token.paddingXXS}px ${token.paddingXXS}px ${token.paddingXS}px 0`,
+          padding: `${token.paddingXXS}px ${token.paddingXXS}px ${token.paddingXXS}px 0`,
           borderBottom: `${token.lineWidth}px ${token.lineType} ${token.colorBorderSecondary}`,
         },
       },

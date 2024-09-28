@@ -98,7 +98,7 @@ export default () => {
             title='选择图片'
             trigger={'click'}
             arrow={false}
-            content={<div style={{ width: '745px', height: '400px', }}>
+            content={<div style={{ width: '760px', height: '400px', }}>
               <ImageSpace
                 ref={_imageSpaceRef}
                 style={{ display: !isUpload ? '' : 'none' }}
@@ -160,7 +160,7 @@ export default () => {
                 fetchData={(param) => {
                   const queryParam = { ...param, ...searchParam }
                   const { page, size } = queryParam;
-                  console.log('queryParam', queryParam);
+                  // console.log('queryParam', queryParam);
                   return new Promise<{ items: ImageFile[], total: number, }>((resolve, reject) => {
                     setTimeout(() => {
                       let newData: ImageFile[] = dataJson.files
