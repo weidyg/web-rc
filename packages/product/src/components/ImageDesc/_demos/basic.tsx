@@ -7,8 +7,8 @@
 import { forwardRef, Key, ReactNode, Ref, useEffect, useImperativeHandle, useInsertionEffect, useRef, useState } from 'react';
 import dataJson from './_data.json';
 import { DirType, ImageDesc, ImageFile, ImageSpace, ImageSpaceRef, ImageUploader } from '@web-react/biz-components';
-import { DeleteOutlined, EditOutlined, SearchOutlined } from '@ant-design/icons';
-import { Button, Flex, Input, Popover, Select, Space } from 'antd';
+import { DeleteOutlined, EditOutlined, FileImageOutlined, SearchOutlined } from '@ant-design/icons';
+import { Button, Flex, Input, Modal, Popover, Select, Space } from 'antd';
 
 const imgList = [
   'https://pics.17qcc.com/imgextra/product/202408/20/15656633466472.jpg',
@@ -29,9 +29,45 @@ const imgList = [
 ]
 
 const Add = ({ onOk }: { onOk: (url: string[]) => void }) => {
-  return <>
+  const _imageSpaceRef = useRef<ImageSpaceRef>(null);
+  const [isOpen, setIsOpen] = useState(false);
+  const [urls, setUrls] = useState<string[]>([]);
+  const handleOpen = (open: boolean) => {
+    setIsOpen(open);
+    setTimeout(() => {
+      setUrls([]);
+      _imageSpaceRef?.current?.clearSelected();
+    }, 10);
+  }
+  return (<>
+    <Modal
+      title='选择图片'
+      width={'fit-content'}
+      styles={{ content: { width: 'fit-content' } }}
+      open={isOpen}
+      onCancel={() => handleOpen(false)}
+      onOk={() => {
+        onOk?.(urls);
+        handleOpen(false)
+      }}
+    >
+      <ImageSpaceDom
+        ref={_imageSpaceRef}
+        mutiple={true}
+        onOk={(urls) => {
+          setUrls(urls);
+        }} />
+    </Modal>
 
+    <Button icon={<FileImageOutlined />}
+      shape="round" type="primary"
+      onClick={() => {
+        handleOpen(true);
+      }}>
+      添加图片
+    </Button>
   </>
+  )
 };
 const Edit = ({ onOk }: { onOk: (url: string) => void }) => {
   const _imageSpaceRef = useRef<ImageSpaceRef>(null);
