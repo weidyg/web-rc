@@ -15,11 +15,4 @@ const convertByteUnit = (bytes: number, digits?: number): string => {
   return `${bytes.toFixed(digits || 2)} ${units[unitIndex]}`;
 };
 
-export {
-  classNames,
-  TransButton,
-  convertByteUnit,
-  useMergedState,
-  useForceUpdate,
-  useCopyClick
-};
+export { classNames, TransButton, convertByteUnit, useMergedState, useForceUpdate, useCopyClick };

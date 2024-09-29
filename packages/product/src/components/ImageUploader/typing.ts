@@ -1,6 +1,6 @@
-import { CSSProperties, ReactNode } from "react";
-import { ButtonProps, UploadFile, UploadProps } from "antd";
-import { FolderProps } from "@web-react/biz-components";
+import { CSSProperties, ReactNode } from 'react';
+import { ButtonProps, UploadFile, UploadProps } from 'antd';
+import { FolderProps } from '@web-react/biz-components';
 
 export interface UploadProgressEvent extends Partial<ProgressEvent> {
   percent?: number;
@@ -19,7 +19,7 @@ export type UploadRequestOption<T extends UploadResponse = UploadResponse> = {
   onSuccess?: (body: T, xhr?: XMLHttpRequest) => void;
   data?: Record<string, unknown>;
   filename?: string;
-  file: Exclude<BeforeUploadFileType, File | boolean> | File & { uid: string; };
+  file: Exclude<BeforeUploadFileType, File | boolean> | (File & { uid: string });
   withCredentials?: boolean;
   action: string;
   headers?: UploadRequestHeader;
@@ -27,21 +27,22 @@ export type UploadRequestOption<T extends UploadResponse = UploadResponse> = {
 } & Pick<CustomUploadProps<T>, 'normalize'>;
 
 export type UploadResponse = {
-  url?: string,
-  thumbUrl?: string,
+  url?: string;
+  thumbUrl?: string;
   error?: {
-    message?: string,
-    [key: string]: any
-  },
-  [key: string]: any
-}
+    message?: string;
+    [key: string]: any;
+  };
+  [key: string]: any;
+};
 
 export type CustomUploadProps<T extends UploadResponse = UploadResponse> = {
   buttonProps?: Omit<ButtonProps, 'children'>;
-  normalize?: { uploadResponse?: (response: any) => T; }
+  normalize?: { uploadResponse?: (response: any) => T };
   customRequest?: (options?: UploadRequestOption<T>) => void;
-} & Pick<UploadProps<T>, 'accept' | 'data' | 'headers' | 'method' | 'action'
-  | 'beforeUpload' | 'fileList' | 'onChange'
+} & Pick<
+  UploadProps<T>,
+  'accept' | 'data' | 'headers' | 'method' | 'action' | 'beforeUpload' | 'fileList' | 'onChange'
 >;
 
 export type ImageUploaderProps<T extends UploadResponse = UploadResponse> = {

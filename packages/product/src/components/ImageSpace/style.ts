@@ -85,7 +85,7 @@ const genBizStyle: GenerateStyle<ImageSpaceToken> = (token) => {
             background: token.colorBgLayout,
             fontWeight: token.fontWeightStrong,
             transition: 'background 0.2s ease',
-          }
+          },
         },
         '&-body': {
           top: '40px',
@@ -94,7 +94,7 @@ const genBizStyle: GenerateStyle<ImageSpaceToken> = (token) => {
           position: 'relative',
           ['tr > td']: {
             transition: `background 0.2s,border-color 0.2s`,
-          }
+          },
         },
         [`&-header,&-body`]: {
           ['table']: {
@@ -104,7 +104,7 @@ const genBizStyle: GenerateStyle<ImageSpaceToken> = (token) => {
           ['th,td']: {
             padding: '8px 0',
             borderBottom: `${token.lineWidth}px ${token.lineType} ${token.colorBorderSecondary}`,
-          }
+          },
         },
       },
       '&-footer': {
@@ -122,7 +122,7 @@ const genBizStyle: GenerateStyle<ImageSpaceToken> = (token) => {
         [`${token.antCls}-spin-container`]: {
           height: '100%',
           width: '100%',
-        }
+        },
       },
       '&-empty': {
         width: '100%',
@@ -151,14 +151,14 @@ const genBizStyle: GenerateStyle<ImageSpaceToken> = (token) => {
         '&-title': {
           // maxWidth: '105px',
           marginLeft: '10px',
-          'p': {
+          p: {
             display: 'inline',
             textAlign: 'center',
             whiteSpace: 'nowrap',
             overflow: 'hidden',
             textOverflow: 'ellipsis',
-          }
-        }
+          },
+        },
       },
     },
   };
@@ -170,13 +170,17 @@ interface ImageSpaceToken extends BizAliasToken {
   colorBgSide: string;
 }
 export function useStyle(prefixCls?: string) {
-  return useAntdStyle('ImageSpace', (token) => {
-    const bizToken: ImageSpaceToken = {
-      ...token,
-      colorBgPage: token.colorBgElevated,
-      colorBgSide: token.colorBgLayout,
-      colorBgFooter: token.colorBgElevated,
-    };
-    return [genBizStyle(bizToken)];
-  }, prefixCls);
+  return useAntdStyle(
+    'ImageSpace',
+    (token) => {
+      const bizToken: ImageSpaceToken = {
+        ...token,
+        colorBgPage: token.colorBgElevated,
+        colorBgSide: token.colorBgLayout,
+        colorBgFooter: token.colorBgElevated,
+      };
+      return [genBizStyle(bizToken)];
+    },
+    prefixCls,
+  );
 }

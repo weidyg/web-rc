@@ -9,10 +9,4 @@ import ImageCard from './ImageCard';
 import ImageSpace from './ImageSpace';
 import ImageUploader from './ImageUploader';
 import Folder from './Folder';
-export {
-    ImageDesc,
-    ImageCard,
-    ImageUploader,
-    ImageSpace,
-    Folder
-};
+export { ImageDesc, ImageCard, ImageUploader, ImageSpace, Folder };

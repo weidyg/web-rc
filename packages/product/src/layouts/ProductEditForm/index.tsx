@@ -1,11 +1,5 @@
-export type ProductEditFormProps = {
+export type ProductEditFormProps = {};
 
-};
-
-export default function ProductEditForm(
-    props: ProductEditFormProps,
-) {
-    return <>
-
-    </>;
+export default function ProductEditForm(props: ProductEditFormProps) {
+  return <></>;
 }

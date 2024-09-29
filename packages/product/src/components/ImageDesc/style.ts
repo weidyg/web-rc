@@ -1,7 +1,6 @@
 import type { GenerateStyle, BizAliasToken } from '@web-react/biz-components';
 import { useStyle as useAntdStyle } from '@web-react/biz-components';
 
-
 const genBizStyle: GenerateStyle<ImageDescToken> = (token) => {
   return {
     [token.componentCls]: {
@@ -56,7 +55,7 @@ const genBizStyle: GenerateStyle<ImageDescToken> = (token) => {
         boxSizing: 'border-box',
         img: {
           width: '210px',
-          height: '38px'
+          height: '38px',
         },
       },
       '&-header': {
@@ -78,19 +77,21 @@ const genBizStyle: GenerateStyle<ImageDescToken> = (token) => {
             color: token.colorTextDescription,
           },
         },
-      }
-    }
+      },
+    },
   };
 };
 
-interface ImageDescToken extends BizAliasToken {
-
-}
+interface ImageDescToken extends BizAliasToken {}
 export function useStyle(prefixCls?: string) {
-  return useAntdStyle('ImageDesc', (token) => {
-    const bizToken: ImageDescToken = {
-      ...token,
-    };
-    return [genBizStyle(bizToken)];
-  }, prefixCls,);
+  return useAntdStyle(
+    'ImageDesc',
+    (token) => {
+      const bizToken: ImageDescToken = {
+        ...token,
+      };
+      return [genBizStyle(bizToken)];
+    },
+    prefixCls,
+  );
 }

@@ -1,6 +1,4 @@
-﻿const intlMap = {
-
-};
+﻿const intlMap = {};
 
 const intlMapKeys = Object.keys(intlMap);
 
@@ -17,6 +15,4 @@ export const findIntlKeyByAntdLocaleKey = <T extends string>(localeKey?: T) => {
   }) as T;
 };
 
-export {
-
-};
+export {};

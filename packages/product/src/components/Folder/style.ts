@@ -11,12 +11,12 @@ const genBizStyle: GenerateStyle<FolderToken> = (token) => {
           width: 'unset',
           '&:hover': {
             background: 'transparent !important',
-          }
+          },
         },
         [`&-node-content-wrapper`]: {
           '&:hover': {
             background: 'transparent !important',
-          }
+          },
         },
         [`&-treenode`]: {
           margin: '2px 6px',
@@ -29,16 +29,16 @@ const genBizStyle: GenerateStyle<FolderToken> = (token) => {
           '&:hover': {
             background: token.controlItemBgActive,
             borderRadius: token.borderRadius,
-          }
+          },
         },
       },
       '&-select': {
         width: '100%',
-        marginBottom: '4px'
+        marginBottom: '4px',
       },
       ['&-tree,&-empty']: {
         height: `calc(100% - ${token.controlHeight}px)`,
-        overflow: 'auto'
+        overflow: 'auto',
       },
       '&-empty': {
         display: 'flex',
@@ -51,19 +51,22 @@ const genBizStyle: GenerateStyle<FolderToken> = (token) => {
         [`${token.antCls}-spin-container`]: {
           height: '100%',
           width: '100%',
-        }
-      }
+        },
+      },
     },
   };
 };
 
-interface FolderToken extends BizAliasToken {
-}
+interface FolderToken extends BizAliasToken {}
 export function useStyle(prefixCls?: string) {
-  return useAntdStyle('Folder', (token) => {
-    const bizToken: FolderToken = {
-      ...token,
-    };
-    return [genBizStyle(bizToken)];
-  }, prefixCls);
+  return useAntdStyle(
+    'Folder',
+    (token) => {
+      const bizToken: FolderToken = {
+        ...token,
+      };
+      return [genBizStyle(bizToken)];
+    },
+    prefixCls,
+  );
 }

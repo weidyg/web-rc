@@ -21,18 +21,15 @@ type ImageCardProps = {
 
 type ImageCardRef = {
   setValue: (val?: string) => void;
-}
+};
 
-const ImageCard = forwardRef<ImageCardRef, ImageCardProps>((
-  props: ImageCardProps,
-  ref: Ref<ImageCardRef>
-) => {
+const ImageCard = forwardRef<ImageCardRef, ImageCardProps>((props: ImageCardProps, ref: Ref<ImageCardRef>) => {
   const { className, style, placeholder, menus, children } = props;
   const { prefixCls, wrapSSR, hashId, token } = useStyle(props.prefixCls);
   const [imgUrl, setImgUrl] = useMergedState(undefined, {
     defaultValue: props?.defaultValue,
     value: props?.value,
-    onChange: props?.onChange
+    onChange: props?.onChange,
   });
 
   useImperativeHandle(ref, () => ({
@@ -42,13 +39,17 @@ const ImageCard = forwardRef<ImageCardRef, ImageCardProps>((
   }));
 
   const _children = useMemo(() => {
-    return (imgUrl ? (
-      <Dropdown menu={{ items: menus }} arrow={false} placement='bottom'>
-        <Image src={imgUrl} preview={{
-          mask: <div className={`${prefixCls}-mask-info`}>
-            <EyeOutlined />
-          </div>
-        }}
+    return imgUrl ? (
+      <Dropdown menu={{ items: menus }} arrow={false} placement="bottom">
+        <Image
+          src={imgUrl}
+          preview={{
+            mask: (
+              <div className={`${prefixCls}-mask-info`}>
+                <EyeOutlined />
+              </div>
+            ),
+          }}
           wrapperClassName={classNames(`${prefixCls}-content`, hashId)}
           className={classNames(`${prefixCls}-img`, hashId)}
         />
@@ -56,19 +57,18 @@ const ImageCard = forwardRef<ImageCardRef, ImageCardProps>((
     ) : (
       <div className={classNames(`${prefixCls}-placeholder`, hashId)}>
         <PictureOutlined className={classNames(`${prefixCls}-placeholder-icon`, hashId)} />
-        {placeholder &&
-          <span className={classNames(`${prefixCls}-placeholder-text`, hashId)}>{placeholder}</span>
-        }
+        {placeholder && <span className={classNames(`${prefixCls}-placeholder-text`, hashId)}>{placeholder}</span>}
       </div>
-    ));
+    );
   }, [imgUrl, menus]);
 
   return wrapSSR(
-    <div style={style} className={classNames(`${prefixCls}-wrap`,
-      className, { [`${prefixCls}-empty`]: !!!imgUrl }, hashId)
-    }>
+    <div
+      style={style}
+      className={classNames(`${prefixCls}-wrap`, className, { [`${prefixCls}-empty`]: !!!imgUrl }, hashId)}
+    >
       {children?.(_children) || _children}
-    </div >
+    </div>,
   );
 });
 

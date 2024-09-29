@@ -8,10 +8,10 @@ import PicCard from './PicCard';
 import { Folder, FolderProps } from '@web-react/biz-components';
 
 type RequestParam = {
-  page: number,
-  size: number,
-  folderId?: Key
-}
+  page: number;
+  size: number;
+  folderId?: Key;
+};
 type ImageFile = {
   id: Key;
   name?: string;
@@ -19,12 +19,12 @@ type ImageFile = {
   pixel?: string;
   fullUrl?: string;
   isRef?: boolean;
-}
+};
 
 type ImageSpaceProps = {
   className?: string;
   style?: CSSProperties;
-  mutiple?: boolean,
+  mutiple?: boolean;
   pageSize?: number;
   actionsRender?: (dom?: ReactNode) => ReactNode;
   footerRender?: (dom?: ReactNode) => ReactNode;
@@ -33,8 +33,8 @@ type ImageSpaceProps = {
   folders?: FolderProps['data'];
   defaultValue?: Key[];
   value?: Key[];
-  onChange?: (value: { ids: Key[], files: ImageFile[] }) => void | Promise<void>;
-  fetchData?: (param: RequestParam) => Promise<{ items: ImageFile[], total: number, }>;
+  onChange?: (value: { ids: Key[]; files: ImageFile[] }) => void | Promise<void>;
+  fetchData?: (param: RequestParam) => Promise<{ items: ImageFile[]; total: number }>;
 };
 
 interface ImageSpaceRef {
@@ -43,9 +43,17 @@ interface ImageSpaceRef {
 }
 
 const InternalImageSpace = forwardRef((props: ImageSpaceProps, ref: Ref<ImageSpaceRef>) => {
-  const { className, style, pageSize = 20, mutiple = true,
-    folderLoading, defaultFolder, folders,
-    fetchData, actionsRender, footerRender
+  const {
+    className,
+    style,
+    pageSize = 20,
+    mutiple = true,
+    folderLoading,
+    defaultFolder,
+    folders,
+    fetchData,
+    actionsRender,
+    footerRender,
   } = props;
   const { prefixCls, wrapSSR, hashId, token } = useStyle();
   const [loading, setLoading] = useState(false);
@@ -78,15 +86,17 @@ const InternalImageSpace = forwardRef((props: ImageSpaceProps, ref: Ref<ImageSpa
   }, []);
 
   useEffect(() => {
-    if (folderId) { handleRefresh(); }
+    if (folderId) {
+      handleRefresh();
+    }
   }, [folderId]);
 
   const handleRefresh = async () => {
     await loadData({ page: 1 });
-  }
+  };
   const handleLoadMore = async (fist?: boolean) => {
     loadData({ page: curPage + 1, fist: fist });
-  }
+  };
   const handleScroll = async (event: React.SyntheticEvent<HTMLDivElement>) => {
     const { scrollTop, clientHeight, scrollHeight } = event.target as HTMLDivElement;
     if (scrollTop + clientHeight + 2 >= scrollHeight) {
@@ -95,19 +105,19 @@ const InternalImageSpace = forwardRef((props: ImageSpaceProps, ref: Ref<ImageSpa
       }
     }
   };
-  const loadData = async (param: { page: number, fist?: boolean, [key: string]: any }) => {
+  const loadData = async (param: { page: number; fist?: boolean; [key: string]: any }) => {
     const { page, fist, ...rest } = param;
     const totalPage = fist ? 1 : Math.ceil(totalCount / pageSize);
     // console.log("loadData", param, page, totalPage);
-    if (page > totalPage) { return; }
+    if (page > totalPage) {
+      return;
+    }
     setLoading(true);
     try {
       const param: RequestParam = { ...rest, page, size: pageSize, folderId } as any;
-      const data = await fetchData?.(param) || { items: [], total: 0 };
+      const data = (await fetchData?.(param)) || { items: [], total: 0 };
       const newData = data?.items || [];
-      const newImageFiles = page > 1
-        ? [...imageFiles, ...newData]
-        : newData;
+      const newImageFiles = page > 1 ? [...imageFiles, ...newData] : newData;
       setCurPage(page);
       setTotalCount(data.total || 0);
       setImageFiles(newImageFiles);
@@ -123,10 +133,16 @@ const InternalImageSpace = forwardRef((props: ImageSpaceProps, ref: Ref<ImageSpa
   };
   const checkChange = (id: Key, checked: boolean) => {
     const keys = !mutiple
-      ? (checked ? [id] : [])
-      : (selectKeys.includes(id)
-        ? (checked ? selectKeys : selectKeys.filter(k => k !== id))
-        : (checked ? [...selectKeys, id] : selectKeys));
+      ? checked
+        ? [id]
+        : []
+      : selectKeys.includes(id)
+      ? checked
+        ? selectKeys
+        : selectKeys.filter((k) => k !== id)
+      : checked
+      ? [...selectKeys, id]
+      : selectKeys;
     setSelectKeys(keys);
   };
 
@@ -139,70 +155,79 @@ const InternalImageSpace = forwardRef((props: ImageSpaceProps, ref: Ref<ImageSpa
           { value: 'table', icon: <BarsOutlined /> },
         ]}
         onChange={(value: any) => {
-          setShowType(value)
+          setShowType(value);
         }}
       />
-      <Button disabled={loading}
-        onClick={handleRefresh}>
+      <Button disabled={loading} onClick={handleRefresh}>
         刷新
       </Button>
     </Space>
-  )
+  );
 
   const LoadMore = (props: { wrapper?: (node: React.ReactNode) => React.ReactNode }) => {
     const hasMore = curPage * pageSize >= totalCount;
-    if (loading || hasMore) { return <></> }
-    const node = <Divider dashed={true}>
-      <span
-        style={{
-          cursor: 'pointer',
-          fontSize: token.fontSize,
-          color: token.colorTextTertiary,
-        }}
-        onClick={() => {
-          handleLoadMore?.();
-        }}>
-        加载更多...
-      </span>
-    </Divider>
+    if (loading || hasMore) {
+      return <></>;
+    }
+    const node = (
+      <Divider dashed={true}>
+        <span
+          style={{
+            cursor: 'pointer',
+            fontSize: token.fontSize,
+            color: token.colorTextTertiary,
+          }}
+          onClick={() => {
+            handleLoadMore?.();
+          }}
+        >
+          加载更多...
+        </span>
+      </Divider>
+    );
     return props?.wrapper?.(node) || node;
-  }
+  };
 
-  const RenderFileName = (props: { file: ImageFile, mutiple?: boolean, }) => {
+  const RenderFileName = (props: { file: ImageFile; mutiple?: boolean }) => {
     const { file, mutiple = true } = props;
     const [preview, setPreview] = useState(false);
     const checked = isChecked(file.id);
     const Selectbox = mutiple ? Checkbox : Radio;
-    return <div className={classNames(`${prefixCls}-fileName`, hashId)}>
-      <div className={classNames(`${prefixCls}-fileName-checkbox`, hashId)}>
-        <Selectbox
-          checked={checked}
-          onChange={(e) => {
-            checkChange(file.id, e.target.checked);
-          }}
-        />
+    return (
+      <div className={classNames(`${prefixCls}-fileName`, hashId)}>
+        <div className={classNames(`${prefixCls}-fileName-checkbox`, hashId)}>
+          <Selectbox
+            checked={checked}
+            onChange={(e) => {
+              checkChange(file.id, e.target.checked);
+            }}
+          />
+        </div>
+        <div className={classNames(`${prefixCls}-fileName-img`, hashId)}>
+          <Image
+            src={file?.fullUrl}
+            onClick={() => {
+              setPreview(true);
+            }}
+            preview={{
+              visible: preview,
+              maskStyle: { backgroundColor: 'rgba(0, 0, 0, 0.65)' },
+              src: file?.fullUrl,
+              mask: undefined,
+              onVisibleChange: (value: boolean, prevValue: boolean) => {
+                if (value == false && prevValue == true) {
+                  setPreview(value);
+                }
+              },
+            }}
+          />
+        </div>
+        <div className={classNames(`${prefixCls}-fileName-title`, hashId)}>
+          <p>{file?.name}</p>
+        </div>
       </div>
-      <div className={classNames(`${prefixCls}-fileName-img`, hashId)}>
-        <Image
-          src={file?.fullUrl}
-          onClick={() => { setPreview(true); }}
-          preview={{
-            visible: preview,
-            maskStyle: { backgroundColor: 'rgba(0, 0, 0, 0.65)' },
-            src: file?.fullUrl,
-            mask: undefined,
-            onVisibleChange: (value: boolean, prevValue: boolean) => {
-              if (value == false && prevValue == true) {
-                setPreview(value);
-              }
-            },
-          }} />
-      </div>
-      <div className={classNames(`${prefixCls}-fileName-title`, hashId)} >
-        <p>{file?.name}</p>
-      </div>
-    </div>
-  }
+    );
+  };
   return wrapSSR(
     <div style={style} className={classNames(`${prefixCls}`, className, hashId)}>
       {/* <div className={classNames(`${prefixCls}-header`, hashId)}>
@@ -216,19 +241,18 @@ const InternalImageSpace = forwardRef((props: ImageSpaceProps, ref: Ref<ImageSpa
             value={folderId}
             onChange={(val) => {
               setFolderId(val);
-            }} />
+            }}
+          />
         </div>
         <div className={classNames(`${prefixCls}-container`, hashId)}>
           <div className={classNames(`${prefixCls}-container-top`, hashId)}>
             {actionsRender?.(defaultactions) || defaultactions}
           </div>
-          {showType == 'list' &&
-            <Spin spinning={loading}
-              wrapperClassName={classNames(`${prefixCls}-spin`, hashId)}>
-              <div onScroll={handleScroll}
-                className={classNames(`${prefixCls}-list-container`, hashId)}>
+          {showType == 'list' && (
+            <Spin spinning={loading} wrapperClassName={classNames(`${prefixCls}-spin`, hashId)}>
+              <div onScroll={handleScroll} className={classNames(`${prefixCls}-list-container`, hashId)}>
                 {imageFiles?.length == 0 ? (
-                  <div className={classNames(`${prefixCls}-empty`, hashId)} >
+                  <div className={classNames(`${prefixCls}-empty`, hashId)}>
                     <Empty />
                   </div>
                 ) : (
@@ -248,19 +272,20 @@ const InternalImageSpace = forwardRef((props: ImageSpaceProps, ref: Ref<ImageSpa
                         }}
                       />
                     ))}
-                    {Array.from({ length: 10 }).map((_, index) => (<PicCard.Empty key={index} />))}
+                    {Array.from({ length: 10 }).map((_, index) => (
+                      <PicCard.Empty key={index} />
+                    ))}
                     <LoadMore />
                   </div>
                 )}
               </div>
             </Spin>
-          }
-          {showType == 'table' &&
-            <Spin spinning={loading}
-              wrapperClassName={classNames(`${prefixCls}-spin`, hashId)}>
+          )}
+          {showType == 'table' && (
+            <Spin spinning={loading} wrapperClassName={classNames(`${prefixCls}-spin`, hashId)}>
               <div className={classNames(`${prefixCls}-table-container`, hashId)}>
                 <div className={classNames(`${prefixCls}-table-header`, hashId)}>
-                  <table >
+                  <table>
                     <thead>
                       <tr>
                         <th style={{ paddingLeft: '28px' }}>文件</th>
@@ -270,10 +295,9 @@ const InternalImageSpace = forwardRef((props: ImageSpaceProps, ref: Ref<ImageSpa
                     </thead>
                   </table>
                 </div>
-                <div onScroll={handleScroll}
-                  className={classNames(`${prefixCls}-table-body`, hashId)}>
+                <div onScroll={handleScroll} className={classNames(`${prefixCls}-table-body`, hashId)}>
                   {imageFiles?.length == 0 ? (
-                    <div className={classNames(`${prefixCls}-empty`, hashId)} >
+                    <div className={classNames(`${prefixCls}-empty`, hashId)}>
                       <Empty />
                     </div>
                   ) : (
@@ -281,7 +305,9 @@ const InternalImageSpace = forwardRef((props: ImageSpaceProps, ref: Ref<ImageSpa
                       <tbody>
                         {imageFiles.map((record, index) => (
                           <tr key={index}>
-                            <td><RenderFileName file={record} /></td>
+                            <td>
+                              <RenderFileName file={record} />
+                            </td>
                             <td style={{ width: 120 }}>{record.pixel}</td>
                             <td style={{ width: 120 }}>{convertByteUnit(record.size || 0)}</td>
                           </tr>
@@ -297,28 +323,16 @@ const InternalImageSpace = forwardRef((props: ImageSpaceProps, ref: Ref<ImageSpa
                 </div>
               </div>
             </Spin>
-          }
+          )}
         </div>
-      </div >
-      {footerRender &&
-        <div className={classNames(`${prefixCls}-footer`, hashId)}>
-          {footerRender?.()}
-        </div>
-      }
-    </div >
+      </div>
+      {footerRender && <div className={classNames(`${prefixCls}-footer`, hashId)}>{footerRender?.()}</div>}
+    </div>,
   );
-}
-);
+});
 
-
-type CompoundedComponent = typeof InternalImageSpace & {
-
-};
+type CompoundedComponent = typeof InternalImageSpace & {};
 const ImageSpace = InternalImageSpace as CompoundedComponent;
 
 export default ImageSpace;
-export type {
-  ImageSpaceProps,
-  ImageSpaceRef,
-  ImageFile
-};
+export type { ImageSpaceProps, ImageSpaceRef, ImageFile };

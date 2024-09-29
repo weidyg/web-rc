@@ -61,8 +61,8 @@ export function useStyle(
   // if (!token.layout) { token = { ...antdToken } as any; }
   token = { ...antdToken } as any;
   token.antCls = `.${getPrefixCls()}`;
-  token.iconCls = `.${iconPrefixCls}`,
-    token.bizComponentsCls = `.${token.bizComponentsCls?.replace(/^\./, '') ?? 'biz'}`;
+  (token.iconCls = `.${iconPrefixCls}`),
+    (token.bizComponentsCls = `.${token.bizComponentsCls?.replace(/^\./, '') ?? 'biz'}`);
   token.componentCls = `.${(prefixCls ?? token.bizComponentsCls)?.replace(/^\./, '')}-${suffixCls}`;
   return {
     wrapSSR: useStyleRegister(

@@ -68,13 +68,16 @@ const genBizStyle: GenerateStyle<UploadListToken> = (token) => {
   };
 };
 
-interface UploadListToken extends BizAliasToken {
-}
+interface UploadListToken extends BizAliasToken {}
 export function useStyle(prefixCls?: string) {
-  return useAntdStyle('UploadList', (token) => {
-    const bizToken: UploadListToken = {
-      ...token,
-    };
-    return [genBizStyle(bizToken)];
-  }, prefixCls);
+  return useAntdStyle(
+    'UploadList',
+    (token) => {
+      const bizToken: UploadListToken = {
+        ...token,
+      };
+      return [genBizStyle(bizToken)];
+    },
+    prefixCls,
+  );
 }

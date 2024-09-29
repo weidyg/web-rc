@@ -130,18 +130,21 @@ const genBizStyle: GenerateStyle<PicUploaderToken> = (token) => {
             justifyContent: 'space-between',
           },
         },
-      }
+      },
     },
   };
 };
 
-interface PicUploaderToken extends BizAliasToken {
-}
+interface PicUploaderToken extends BizAliasToken {}
 export function useStyle(prefixCls?: string) {
-  return useAntdStyle('PicUploader', (token) => {
-    const bizToken: PicUploaderToken = {
-      ...token,
-    };
-    return [genBizStyle(bizToken)];
-  }, prefixCls);
+  return useAntdStyle(
+    'PicUploader',
+    (token) => {
+      const bizToken: PicUploaderToken = {
+        ...token,
+      };
+      return [genBizStyle(bizToken)];
+    },
+    prefixCls,
+  );
 }

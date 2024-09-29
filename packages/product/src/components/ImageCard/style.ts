@@ -36,13 +36,12 @@ const genBizStyle: GenerateStyle<ImageCardToken> = (token) => {
           marginTop: token.marginXS,
           fontSize: token.fontSizeSM,
         },
-
       },
       '&-empty': {
         border: `1px dashed ${token.colorBorder}`,
         '&:hover': {
           border: `1px dashed ${token.colorPrimaryHover}`,
-        }
+        },
       },
       '&-img': {
         width: 'inherit !important',
@@ -61,17 +60,19 @@ const genBizStyle: GenerateStyle<ImageCardToken> = (token) => {
         },
       },
     },
-  }
+  };
 };
 // repeating-linear-gradient(-45deg, transparent, transparent 6px, #f0f2f5 0, #f0f2f5 8px) !important;
-interface ImageCardToken extends BizAliasToken {
-
-}
+interface ImageCardToken extends BizAliasToken {}
 export function useStyle(prefixCls?: string) {
-  return useAntdStyle('ImageCard', (token) => {
-    const bizToken: ImageCardToken = {
-      ...token,
-    };
-    return [genBizStyle(bizToken)];
-  }, prefixCls,);
+  return useAntdStyle(
+    'ImageCard',
+    (token) => {
+      const bizToken: ImageCardToken = {
+        ...token,
+      };
+      return [genBizStyle(bizToken)];
+    },
+    prefixCls,
+  );
 }

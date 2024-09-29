@@ -11,15 +11,11 @@ import type { BizAliasToken } from './useStyle';
 import { defaultToken, emptyTheme } from './useStyle/token';
 export * from './useStyle';
 
-
-
 type OmitUndefined<T> = {
   [P in keyof T]: NonNullable<T[P]>;
 };
 
-const omitUndefined = <T extends Record<string, any>>(
-  obj: T,
-): OmitUndefined<T> => {
+const omitUndefined = <T extends Record<string, any>>(obj: T): OmitUndefined<T> => {
   const newObj = {} as Record<string, any> as T;
   Object.keys(obj || {}).forEach((key) => {
     if (obj[key] !== undefined) {
@@ -41,8 +37,7 @@ const omitUndefined = <T extends Record<string, any>>(
 export const isNeedOpenHash = () => {
   if (
     typeof process !== 'undefined' &&
-    (process.env.NODE_ENV?.toUpperCase() === 'TEST' ||
-      process.env.NODE_ENV?.toUpperCase() === 'DEV')
+    (process.env.NODE_ENV?.toUpperCase() === 'TEST' || process.env.NODE_ENV?.toUpperCase() === 'DEV')
   ) {
     return false;
   }
@@ -50,9 +45,7 @@ export const isNeedOpenHash = () => {
 };
 
 export type ParamsType = Record<string, any>;
-export type DeepPartial<T> = T extends object
-  ? { [P in keyof T]?: DeepPartial<T[P]>; }
-  : T;
+export type DeepPartial<T> = T extends object ? { [P in keyof T]?: DeepPartial<T[P]> } : T;
 
 /**
  * 自带的token 配置
@@ -107,16 +100,8 @@ const ConfigProviderContainer: React.FC<{
   dark?: boolean;
   prefixCls?: string;
 }> = (props) => {
-  const {
-    children,
-    dark,
-    autoClearCache = false,
-    token: propsToken,
-    prefixCls,
-  } = props;
-  const { locale, getPrefixCls, ...restConfig } = useContext(
-    AntdConfigProvider.ConfigContext,
-  );
+  const { children, dark, autoClearCache = false, token: propsToken, prefixCls } = props;
+  const { locale, getPrefixCls, ...restConfig } = useContext(AntdConfigProvider.ConfigContext);
   const tokenContext = bizTheme.useToken?.();
   const bizProvide = useContext(BizConfigContext);
 
@@ -126,9 +111,7 @@ const ConfigProviderContainer: React.FC<{
    * @example .ant-pro
    */
 
-  const bizComponentsCls: string = prefixCls
-    ? `.${prefixCls}`
-    : `.${getPrefixCls()}-biz`;
+  const bizComponentsCls: string = prefixCls ? `.${prefixCls}` : `.${getPrefixCls()}-biz`;
 
   const antCls = '.' + getPrefixCls();
 
@@ -144,15 +127,7 @@ const ConfigProviderContainer: React.FC<{
         themeId: tokenContext.theme.id,
       }),
     };
-  }, [
-    locale?.locale,
-    bizProvide,
-    dark,
-    tokenContext.token,
-    tokenContext.theme.id,
-    bizComponentsCls,
-    antCls,
-  ]);
+  }, [locale?.locale, bizProvide, dark, tokenContext.token, tokenContext.theme.id, bizComponentsCls, antCls]);
 
   const finalToken = {
     ...(bizProvideValue.token || {}),
@@ -208,13 +183,7 @@ const ConfigProviderContainer: React.FC<{
       hashed,
       hashId,
     };
-  }, [
-    bizProvideValue,
-    token,
-    tokenContext.theme,
-    hashed,
-    hashId,
-  ]);
+  }, [bizProvideValue, token, tokenContext.theme, hashed, hashId]);
 
   const configProviderDom = useMemo(() => {
     return (
@@ -229,21 +198,11 @@ const ConfigProviderContainer: React.FC<{
     );
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    restConfig,
-    themeConfig,
-    bizConfigContextValue,
-    autoClearCache,
-    children,
-  ]);
+  }, [restConfig, themeConfig, bizConfigContextValue, autoClearCache, children]);
 
   if (!autoClearCache) return configProviderDom;
 
-  return (
-    <SWRConfig value={{ provider: () => new Map() }}>
-      {configProviderDom}
-    </SWRConfig>
-  );
+  return <SWRConfig value={{ provider: () => new Map() }}>{configProviderDom}</SWRConfig>;
 };
 
 /**
@@ -262,15 +221,11 @@ export const BizConfigProvider: React.FC<{
 }> = (props) => {
   const { needDeps, dark, token } = props;
   const bizProvide = useContext(BizConfigContext);
-  const { locale, theme, ...rest } = useContext(
-    AntdConfigProvider.ConfigContext,
-  );
+  const { locale, theme, ...rest } = useContext(AntdConfigProvider.ConfigContext);
 
   // 是不是不需要渲染 provide
   const isNullProvide =
-    needDeps &&
-    bizProvide.hashId !== undefined &&
-    Object.keys(props).sort().join('-') === 'children-needDeps';
+    needDeps && bizProvide.hashId !== undefined && Object.keys(props).sort().join('-') === 'children-needDeps';
 
   if (isNullProvide) return <>{props.children}</>;
 
@@ -280,9 +235,7 @@ export const BizConfigProvider: React.FC<{
       return [bizTheme.darkAlgorithm, theme?.algorithm].filter(Boolean);
     }
     if (isDark && Array.isArray(theme?.algorithm)) {
-      return [bizTheme.darkAlgorithm, ...(theme?.algorithm || [])].filter(
-        Boolean,
-      );
+      return [bizTheme.darkAlgorithm, ...(theme?.algorithm || [])].filter(Boolean);
     }
     return theme?.algorithm;
   };

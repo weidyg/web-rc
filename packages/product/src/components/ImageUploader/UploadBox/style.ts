@@ -48,13 +48,16 @@ const genBizStyle: GenerateStyle<DraggerUploadToken> = (token) => {
   };
 };
 
-interface DraggerUploadToken extends BizAliasToken {
-}
+interface DraggerUploadToken extends BizAliasToken {}
 export function useStyle(prefixCls?: string) {
-  return useAntdStyle('DraggerUpload', (token) => {
-    const bizToken: DraggerUploadToken = {
-      ...token,
-    };
-    return [genBizStyle(bizToken)];
-  }, prefixCls);
+  return useAntdStyle(
+    'DraggerUpload',
+    (token) => {
+      const bizToken: DraggerUploadToken = {
+        ...token,
+      };
+      return [genBizStyle(bizToken)];
+    },
+    prefixCls,
+  );
 }

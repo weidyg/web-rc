@@ -51,7 +51,7 @@ const genBizStyle: GenerateStyle<PicCardToken> = (token) => {
             },
           },
         },
-        'img': {
+        img: {
           maxHeight: '120px',
           maxWidth: '120px',
         },
@@ -153,12 +153,16 @@ interface PicCardToken extends BizAliasToken {
   colorControlText: string;
 }
 export function useStyle(prefixCls?: string) {
-  return useAntdStyle('PicCard', (token) => {
-    const bizToken: PicCardToken = {
-      ...token,
-      colorBgPicCard: token.colorBgLayout,
-      colorControlText: token.colorWhite,
-    };
-    return [genBizStyle(bizToken)];
-  }, prefixCls);
+  return useAntdStyle(
+    'PicCard',
+    (token) => {
+      const bizToken: PicCardToken = {
+        ...token,
+        colorBgPicCard: token.colorBgLayout,
+        colorControlText: token.colorWhite,
+      };
+      return [genBizStyle(bizToken)];
+    },
+    prefixCls,
+  );
 }

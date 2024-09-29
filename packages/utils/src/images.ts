@@ -105,12 +105,11 @@ export const getBase64Image = (file: File): Promise<string> => {
     reader.onload = () => resolve(reader.result as string);
     reader.onerror = (error) => reject(error);
   });
-}
+};
 
 export const isImageFileType = (type: string): boolean => type.indexOf('image/') === 0;
 
-export const previewImage = (file: File | Blob, measureSize?: number): Promise<string> => {
-  measureSize = measureSize ?? 200;
+export const previewImage = (file: File | Blob, measureSize: number = 200): Promise<string> => {
   return new Promise<string>((resolve) => {
     if (!file.type || !isImageFileType(file.type)) {
       resolve('');
@@ -166,4 +165,4 @@ export const previewImage = (file: File | Blob, measureSize?: number): Promise<s
       img.src = window.URL.createObjectURL(file);
     }
   });
-}
+};

@@ -17,30 +17,30 @@ const genBizStyle: GenerateStyle<ImageItemToken> = (token) => {
     [token.componentCls]: {
       width: 88,
       height: 88,
-      position: "relative",
+      position: 'relative',
       borderRadius: token.borderRadius,
       border: `1px solid ${token.colorBorderSecondary}`,
       '&:hover': {
         [token.componentCls]: {
           '&-mask': {
-            opacity: "1",
-          }
-        }
+            opacity: '1',
+          },
+        },
       },
       '&-drag': {
         cursor: 'move',
       },
       '&-no': {
-        left: "0",
-        position: "absolute",
-        zIndex: "3",
-        width: "24px",
-        height: "24px",
-        textAlign: "center",
+        left: '0',
+        position: 'absolute',
+        zIndex: '3',
+        width: '24px',
+        height: '24px',
+        textAlign: 'center',
         fontSize: token.fontSize,
         lineHeight: token.lineHeight,
         color: token.colorPrimary,
-        backdropFilter: "blur(6px)",
+        backdropFilter: 'blur(6px)',
         backgroundColor: token.colorBgBlur,
         borderRadius: `${token.borderRadius}px 0 ${token.borderRadius}px 0`,
       },
@@ -49,18 +49,18 @@ const genBizStyle: GenerateStyle<ImageItemToken> = (token) => {
         height: 'inherit',
         objectFit: 'scale-down',
         borderRadius: token.borderRadius,
-        backgroundColor: token.colorFillContent
+        backgroundColor: token.colorFillContent,
       },
       '&-mask': {
-        left: "0",
-        right: "0",
-        bottom: "0",
-        position: "absolute",
-        display: "flex",
-        alignContent: "center",
-        justifyContent: "center",
-        alignItems: "center",
-        textAlign: "center",
+        left: '0',
+        right: '0',
+        bottom: '0',
+        position: 'absolute',
+        display: 'flex',
+        alignContent: 'center',
+        justifyContent: 'center',
+        alignItems: 'center',
+        textAlign: 'center',
         opacity: 0,
         cursor: 'default',
         color: token.colorTextLightSolid,
@@ -70,18 +70,20 @@ const genBizStyle: GenerateStyle<ImageItemToken> = (token) => {
       // '.down-out': {
       //   animation: `${downOut} 0.3s both`
       // }
-    }
+    },
   };
 };
 
-interface ImageItemToken extends BizAliasToken {
-
-}
+interface ImageItemToken extends BizAliasToken {}
 export function useStyle(prefixCls?: string) {
-  return useAntdStyle('ImageItem', (token) => {
-    const bizToken: ImageItemToken = {
-      ...token,
-    };
-    return [genBizStyle(bizToken)];
-  }, prefixCls,);
+  return useAntdStyle(
+    'ImageItem',
+    (token) => {
+      const bizToken: ImageItemToken = {
+        ...token,
+      };
+      return [genBizStyle(bizToken)];
+    },
+    prefixCls,
+  );
 }
