@@ -46,6 +46,7 @@ const Add = ({ onOk }: { onOk: (url: string[]) => void }) => {
       styles={{ content: { width: 'fit-content' } }}
       open={isOpen}
       onCancel={() => handleOpen(false)}
+      okButtonProps={{ disabled: urls.length == 0 }}
       onOk={() => {
         onOk?.(urls);
         handleOpen(false)
