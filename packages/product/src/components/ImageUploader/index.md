@@ -1,7 +1,7 @@
 ---
 order: 0
-atomId: Uploader
-title: Uploader - 图片上传
+atomId: ImageUploader
+title: ImageUploader - 图片上传器
 ---
 
 ## 代码演示

@@ -19,11 +19,11 @@ $ npm i @web-react/biz-components --save
 <!-- | pure -->
 ```jsx   
 import React from 'react';
-import { Foo } from '@web-react/biz-components';
+import { ImageCard } from '@web-react/biz-components';
 
 export default () => {
-  return <Foo title="Hello react!" />;
-};
+  return <ImageCard />;
+}
 ```
 
 我们所有的包都使用 CSS-in-JS 管理样式，只需引入 js 即可。

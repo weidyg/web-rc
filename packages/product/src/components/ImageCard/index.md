@@ -1,7 +1,7 @@
 ---
 order: 0
-atomId: ImageInput
-title: ImageInput - 图片选择
+atomId: ImageCard
+title: ImageCard - 图片卡片
 ---
 
 ## 代码演示
