@@ -42,10 +42,7 @@ interface ImageSpaceRef {
   clearSelected: () => void;
 }
 
-const InternalImageSpace = forwardRef<ImageSpaceRef, ImageSpaceProps>((
-  props: ImageSpaceProps,
-  ref: Ref<ImageSpaceRef>
-) => {
+const InternalImageSpace = forwardRef((props: ImageSpaceProps, ref: Ref<ImageSpaceRef>) => {
   const { className, style, pageSize = 20, mutiple = true,
     folderLoading, defaultFolder, folders,
     fetchData, actionsRender, footerRender
