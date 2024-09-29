@@ -171,7 +171,7 @@ export default () => {
                   })
                 }}
                 mutiple={false}
-                onChange={(ids: Key[], files: ImageFile[]) => {
+                onChange={({ files }) => {
                   if (files?.length > 0) {
                     handleOpen(false);
                     setValue(files[0]?.fullUrl);

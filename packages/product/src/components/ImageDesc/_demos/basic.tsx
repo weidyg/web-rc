@@ -55,7 +55,7 @@ const Add = ({ onOk }: { onOk: (url: string[]) => void }) => {
       <ImageSpaceDom
         ref={_imageSpaceRef}
         mutiple={true}
-        onOk={(urls) => {
+        onChange={(urls) => {
           setUrls(urls);
         }} />
     </Modal>
@@ -86,9 +86,11 @@ const Edit = ({ onOk }: { onOk: (url: string) => void }) => {
     content={<ImageSpaceDom
       ref={_imageSpaceRef}
       mutiple={false}
-      onOk={(urls) => {
-        onOk?.(urls[0]);
-        setIsOpen(false);
+      onChange={(urls) => {
+        if (urls.length > 0) {
+          onOk?.(urls[0]);
+          setIsOpen(false);
+        }
       }} />
     }
     open={isOpen}
@@ -103,11 +105,11 @@ const Edit = ({ onOk }: { onOk: (url: string) => void }) => {
 const ImageSpaceDom = forwardRef((
   props: {
     mutiple?: boolean,
-    onOk: (url: string[]) => void
+    onChange: (url: string[]) => void
   },
   ref: Ref<ImageSpaceRef>
 ) => {
-  const { mutiple, onOk } = props;
+  const { mutiple, onChange } = props;
 
   const [searchParam, setSearchParam] = useState({ type: 'picture', value: '', order: 'timeDes', });
 
@@ -137,9 +139,9 @@ const ImageSpaceDom = forwardRef((
     _imageSpaceRef?.current?.refresh();
   }
 
-  const handleChange = (ids: Key[], files: ImageFile[]) => {
+  const handleChange = ({ files }: { files: ImageFile[] }) => {
     const urls = files.map(m => m.fullUrl).filter(f => f != undefined) || [];
-    onOk?.(urls);
+    onChange?.(urls);
   }
   const loadDirs = async () => {
     setFolderLoading(true);
