@@ -137,7 +137,7 @@ const ImageSpaceDom = forwardRef((
     _imageSpaceRef?.current?.refresh();
   }
 
-  const handleChange = (files: ImageFile[]) => {
+  const handleChange = (ids: Key[], files: ImageFile[]) => {
     const urls = files.map(m => m.fullUrl).filter(f => f != undefined) || [];
     onOk?.(urls);
   }
@@ -222,11 +222,7 @@ const ImageSpaceDom = forwardRef((
           })
         }}
         mutiple={mutiple}
-        onChange={(ids: Key[], files: ImageFile[]) => {
-          if (files?.length > 0) {
-            handleChange(files);
-          }
-        }}
+        onChange={handleChange}
       />
       <ImageUploader
         style={{ display: isUpload ? '' : 'none' }}

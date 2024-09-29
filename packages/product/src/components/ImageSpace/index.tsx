@@ -33,7 +33,7 @@ type ImageSpaceProps = {
   folders?: FolderProps['data'];
   defaultValue?: Key[];
   value?: Key[];
-  onChange?: (ids: Key[], files: ImageFile[]) => void | Promise<void>;
+  onChange?: (value: { ids: Key[], files: ImageFile[] }) => void | Promise<void>;
   fetchData?: (param: RequestParam) => Promise<{ items: ImageFile[], total: number, }>;
 };
 
@@ -60,7 +60,7 @@ const InternalImageSpace = forwardRef((props: ImageSpaceProps, ref: Ref<ImageSpa
     value: props?.value,
     onChange: (value) => {
       const selectFiles = imageFiles.filter((item) => value.includes(item.id));
-      props?.onChange?.(value, selectFiles);
+      props?.onChange?.({ ids: value, files: selectFiles });
     },
   });
 
@@ -98,7 +98,7 @@ const InternalImageSpace = forwardRef((props: ImageSpaceProps, ref: Ref<ImageSpa
   const loadData = async (param: { page: number, fist?: boolean, [key: string]: any }) => {
     const { page, fist, ...rest } = param;
     const totalPage = fist ? 1 : Math.ceil(totalCount / pageSize);
-    console.log("loadData", param, page, totalPage);
+    // console.log("loadData", param, page, totalPage);
     if (page > totalPage) { return; }
     setLoading(true);
     try {
@@ -111,7 +111,7 @@ const InternalImageSpace = forwardRef((props: ImageSpaceProps, ref: Ref<ImageSpa
       setCurPage(page);
       setTotalCount(data.total || 0);
       setImageFiles(newImageFiles);
-      console.log("loadData1", param, page, data.total);
+      // console.log("loadData1", param, page, data.total);
     } catch (error: any) {
       message.error(error?.message || '加载失败');
     } finally {
