@@ -5,4 +5,4 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 # 1.0.0-beta.2 (2024-09-29)
 
-**Note:** Version bump only for package @web-react/biz-product
+**Note:** Version bump only for package @web-react/biz-utils
