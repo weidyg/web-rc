@@ -5,7 +5,7 @@
 import { forwardRef, ReactNode, Ref, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { Button, Flex, Input, Modal, Popover, Select, Space } from 'antd';
 import { DeleteOutlined, EditOutlined, FileImageOutlined, SearchOutlined } from '@ant-design/icons';
-import { DirType, ImageDesc, ImageFile, ImageSpace, ImageSpaceRef, ImageUploader } from '@web-react/biz-components';
+import { BizConfigProvider, DirType, ImageDesc, ImageFile, ImageSpace, ImageSpaceRef, ImageUploader } from '@web-react/biz-components';
 import dataJson from './_data.json';
 
 const imgList = [
@@ -160,7 +160,7 @@ const ImageSpaceDom = forwardRef(
       }, 1000);
     };
     return (
-      <>
+      <BizConfigProvider>
         <div style={{ width: '760px', height: '400px' }}>
           <ImageSpace
             ref={_imageSpaceRef}
@@ -283,7 +283,7 @@ const ImageSpaceDom = forwardRef(
             }}
           />
         </div>
-      </>
+      </BizConfigProvider>
     );
   },
 );

@@ -59,7 +59,7 @@ export type ConfigContextPropsType = {
 };
 
 /* Creating a context object with the default values. */
-const BizConfigContext = React.createContext<ConfigContextPropsType>({
+export const BizConfigContext = React.createContext<ConfigContextPropsType>({
   theme: emptyTheme,
   hashed: true,
   dark: false,
@@ -95,21 +95,14 @@ const CacheClean = () => {
 const ConfigProviderContainer: React.FC<{
   children: React.ReactNode;
   autoClearCache?: boolean;
-  token?: DeepPartial<BizAliasToken>;
   hashed?: boolean;
   dark?: boolean;
   prefixCls?: string;
 }> = (props) => {
-  const { children, dark, autoClearCache = false, token: propsToken, prefixCls } = props;
+  const { children, dark, autoClearCache = false, prefixCls } = props;
   const { locale, getPrefixCls, ...restConfig } = useContext(AntdConfigProvider.ConfigContext);
   const tokenContext = bizTheme.useToken?.();
   const bizProvide = useContext(BizConfigContext);
-
-  /**
-   * pro 的 类
-   * @type {string}
-   * @example .ant-pro
-   */
 
   const bizComponentsCls: string = prefixCls ? `.${prefixCls}` : `.${getPrefixCls()}-biz`;
 
@@ -122,8 +115,7 @@ const ConfigProviderContainer: React.FC<{
       ...bizProvide,
       dark: dark ?? bizProvide.dark,
       token: merge(bizProvide.token, tokenContext.token, {
-        bizComponentsCls,
-        antCls,
+        antCls, bizComponentsCls,
         themeId: tokenContext.theme.id,
       }),
     };
@@ -147,7 +139,9 @@ const ConfigProviderContainer: React.FC<{
     if (props.hashed === false) {
       return false;
     }
-    if (bizProvide.hashed === false) return false;
+    if (bizProvide.hashed === false) {
+      return false;
+    }
     return true;
   }, [bizProvide.hashed, props.hashed]);
 
@@ -177,11 +171,8 @@ const ConfigProviderContainer: React.FC<{
 
   const bizConfigContextValue = useMemo(() => {
     return {
-      ...bizProvideValue!,
-      token,
+      ...bizProvideValue!, hashed, hashId, token,
       theme: tokenContext.theme as unknown as Theme<any, any>,
-      hashed,
-      hashId,
     };
   }, [bizProvideValue, token, tokenContext.theme, hashed, hashId]);
 
@@ -213,13 +204,12 @@ const ConfigProviderContainer: React.FC<{
 export const BizConfigProvider: React.FC<{
   children: React.ReactNode;
   autoClearCache?: boolean;
-  token?: DeepPartial<BizAliasToken>;
   needDeps?: boolean;
   dark?: boolean;
   hashed?: boolean;
   prefixCls?: string;
 }> = (props) => {
-  const { needDeps, dark, token } = props;
+  const { needDeps, dark } = props;
   const bizProvide = useContext(BizConfigContext);
   const { locale, theme, ...rest } = useContext(AntdConfigProvider.ConfigContext);
 
@@ -251,11 +241,7 @@ export const BizConfigProvider: React.FC<{
 
   return (
     <AntdConfigProvider {...configProvider}>
-      <ConfigProviderContainer {...props} token={token} />
+      <ConfigProviderContainer {...props} />
     </AntdConfigProvider>
   );
 };
-
-BizConfigContext.displayName = 'BizProvider';
-export const BizProvider = BizConfigContext;
-export default BizConfigContext;

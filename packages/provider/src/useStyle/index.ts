@@ -4,7 +4,7 @@ import { CSSInterpolation, useStyleRegister } from '@ant-design/cssinjs';
 import type { GlobalToken } from 'antd/lib/theme/interface';
 import { TinyColor } from '@ctrl/tinycolor';
 import * as batToken from './token';
-import { BizProvider } from '../index';
+import { BizConfigContext } from '../index';
 
 /**
  * 把一个颜色设置一下透明度
@@ -48,8 +48,8 @@ export function useStyle(
   styleFn: (token: BizAliasToken) => CSSInterpolation,
   prefixCls?: string,
 ) {
-  let { token = {} as Record<string, any> as BizAliasToken } = useContext(BizProvider);
-  const { hashed, theme: provideTheme } = useContext(BizProvider);
+  let { token = {} as Record<string, any> as BizAliasToken } = useContext(BizConfigContext);
+  const { hashed, theme: provideTheme } = useContext(BizConfigContext);
   const { token: antdToken, hashId } = useToken();
   const { iconPrefixCls, getPrefixCls } = useContext(AntdConfigProvider.ConfigContext);
   const suffixCls = componentName
