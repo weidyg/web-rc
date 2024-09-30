@@ -2,11 +2,12 @@
  * title: 基本使用
  * description: 基本的描述图编辑器
  */
-import { forwardRef, ReactNode, Ref, useEffect, useImperativeHandle, useRef, useState } from 'react';
-import { Button, Flex, Input, Modal, Popover, Select, Space } from 'antd';
+import { forwardRef, ReactNode, Ref, useContext, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import { Button, ConfigProvider, Flex, Input, Modal, Popover, Select, Space } from 'antd';
 import { DeleteOutlined, EditOutlined, FileImageOutlined, SearchOutlined } from '@ant-design/icons';
 import { BizConfigProvider, DirType, ImageDesc, ImageFile, ImageSpace, ImageSpaceRef, ImageUploader } from '@web-react/biz-components';
 import dataJson from './_data.json';
+import { theme } from "antd";
 
 const imgList = [
   'https://pics.17qcc.com/imgextra/product/202408/20/15656633466472.jpg',
@@ -302,12 +303,7 @@ export default () => {
   }
 
   return (
-    <BizConfigProvider
-      dark={true}
-      antPrefixCls='aa'
-      bizPrefixCls={'bb'}
-      iconPrefixCls={'cc'}
-    >
+    <BizConfigProvider>
       <ImageDesc
         value={value}
         onChange={(v) => {

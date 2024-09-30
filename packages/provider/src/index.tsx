@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useMemo } from 'react';
-import { ConfigProvider as AntdConfigProvider, MappingAlgorithm } from 'antd';
+import { ConfigProvider as AntdConfigProvider, ConfigProvider, MappingAlgorithm, theme } from 'antd';
 import { SWRConfig, useSWRConfig } from 'swr';
 import zh_CN from 'antd/lib/locale/zh_CN';
 import type { Theme } from '@ant-design/cssinjs';
@@ -86,7 +86,7 @@ const CacheClean = () => {
  * @param props
  * @returns
  */
-export const BizConfigProvider: React.FC<{
+const ConfigProviderContainer: React.FC<{
   children: React.ReactNode;
   autoClearCache?: boolean;
   hashed?: boolean;
@@ -94,14 +94,9 @@ export const BizConfigProvider: React.FC<{
   antPrefixCls?: string;
   iconPrefixCls?: string;
   bizPrefixCls?: string;
-  needDeps?: boolean;
 }> = (props) => {
-  const { children, dark, autoClearCache = false, needDeps } = props;
+  const { children, dark, autoClearCache = false } = props;
   const bizProvide = useContext(BizConfigContext);
-  const isNullProvide = needDeps && bizProvide.hashId !== undefined
-    && Object.keys(props).sort().join('-') === 'children-needDeps';
-  if (isNullProvide) return <>{props.children}</>;
-
   const {
     locale, theme: antTheme,
     iconPrefixCls: antIconPrefixCls,
@@ -163,15 +158,9 @@ export const BizConfigProvider: React.FC<{
 
 
   const themeConfig = useMemo(() => {
-    const isDark = dark || bizProvide.dark;
-    return omitUndefined({
+    return {
       ...antTheme, hashId, hashed,
-      algorithm: isDark ? (
-        Array.isArray(antTheme?.algorithm)
-          ? [bizTheme.darkAlgorithm, ...(antTheme?.algorithm || [])].filter(Boolean)
-          : [bizTheme.darkAlgorithm, antTheme?.algorithm!].filter(Boolean)
-      ) : antTheme?.algorithm,
-    });
+    };
   }, [dark, antTheme, hashId, hashed]);
 
   const configProviderDom = useMemo(() => {
@@ -180,7 +169,6 @@ export const BizConfigProvider: React.FC<{
         {...restConfig}
         prefixCls={antPrefixCls}
         iconPrefixCls={iconPrefixCls}
-        locale={locale || zh_CN}
         theme={themeConfig}
       >
         <BizConfigContext.Provider value={bizConfigContextValue}>
@@ -198,4 +186,50 @@ export const BizConfigProvider: React.FC<{
   if (!autoClearCache) return configProviderDom;
 
   return <SWRConfig value={{ provider: () => new Map() }}>{configProviderDom}</SWRConfig>;
+};
+
+/**
+ * 用于配置 Biz 的一些全局性的东西
+ * @param props
+ * @returns
+ */
+export const BizConfigProvider: React.FC<{
+  children: React.ReactNode;
+  autoClearCache?: boolean;
+  needDeps?: boolean;
+  dark?: boolean;
+  hashed?: boolean;
+  antPrefixCls?: string;
+  iconPrefixCls?: string;
+  bizPrefixCls?: string;
+}> = (props) => {
+  const { needDeps, dark } = props;
+  const bizProvide = useContext(BizConfigContext);
+  const { locale, theme, ...rest } = useContext(AntdConfigProvider.ConfigContext);
+
+  // 是不是不需要渲染 provide
+  const isNullProvide = needDeps && bizProvide.hashId !== undefined
+    && Object.keys(props).sort().join('-') === 'children-needDeps';
+
+  if (isNullProvide) { return <>{props.children}</>; }
+
+  const mergeAlgorithm = () => {
+    const isDark = dark ?? bizProvide.dark;
+    return isDark ? bizTheme.darkAlgorithm : theme?.algorithm;
+  };
+  // 自动注入 antd 的配置
+  const configProvider = {
+    ...rest,
+    locale: locale || zh_CN,
+    theme: omitUndefined({
+      ...theme,
+      algorithm: mergeAlgorithm(),
+    }),
+  } as typeof theme;
+
+  return (
+    <AntdConfigProvider {...configProvider}>
+      <ConfigProviderContainer {...props} dark={dark} />
+    </AntdConfigProvider>
+  );
 };
