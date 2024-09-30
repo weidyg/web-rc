@@ -34,9 +34,9 @@ type FolderProps = {
   type?: 'defalut' | 'select';
 };
 
-interface FolderRef {}
+interface FolderRef { }
 const InternalFolder = forwardRef((props: FolderProps, ref: Ref<FolderRef>) => {
-  const { data = [], type = 'defalut', loading: propLoading } = props;
+  const { data = [], type = 'defalut', loading: propLoading = false } = props;
   const { prefixCls, wrapSSR, hashId, token } = useStyle();
 
   const [value, setValue] = useMergedState<string>('', {

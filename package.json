@@ -14,7 +14,7 @@
     "version": "node ./scripts/gen_version.js",
     "dumi": "node ./scripts/preDeploy && cross-env SITE_DEPLOY='TRUE' dumi build",
     "site": "npm run build && cross-env SITE_DEPLOY='TRUE' dumi build",
-    "deploy": "cross-env SITE_DEPLOY='TRUE' npm run site && gh-pages -d ./dist"
+    "deploy": "npm run site && gh-pages -d ./dist"
   },
   "lint-staged": {
     "*.{md,json}": [

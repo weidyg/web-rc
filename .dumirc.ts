@@ -23,6 +23,8 @@ const alias = pkgList.reduce((pre, pkg) => {
 const tailPkgList = pkgList.map((path) => `packages/${path}/src/components`);
 
 const config: IDumiConfig = {
+  base: '/web-react/',
+  publicPath: '/web-react/',
   alias,
   // mako: {},
   resolve: {
@@ -70,8 +72,8 @@ const config: IDumiConfig = {
 
 export interface IDumiConfig extends IDumiUserConfig {
   themeConfig?: IThemeConfig &
-    Omit<SiteThemeConfig, 'hero'> & {
-      hero?: IHero;
-    };
+  Omit<SiteThemeConfig, 'hero'> & {
+    hero?: IHero;
+  };
 }
 export default defineConfig(config);
