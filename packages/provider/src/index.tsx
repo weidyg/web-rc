@@ -50,10 +50,10 @@ export type DeepPartial<T> = T extends object ? { [P in keyof T]?: DeepPartial<T
  * 自带的token 配置
  */
 export type ConfigContextPropsType = {
-  token?: BizAliasToken;
   hashId?: string;
   hashed?: boolean;
   dark?: boolean;
+  token?: BizAliasToken;
   theme?: Theme<any, any>;
 };
 
@@ -133,56 +133,46 @@ export const BizConfigProvider: React.FC<{
     bizPrefixCls,
   };
 
+
   const [token, nativeHashId] = useCacheToken<BizAliasToken>(
     tokenContext.theme as unknown as Theme<any, any>,
     [tokenContext.token, finalToken ?? {}],
     { salt: bizPrefixCls, override: finalToken, },
   );
 
-  const hashed = useMemo(() => {
-    if (props.hashed === false) {
-      return false;
-    }
-    if (bizProvide.hashed === false) {
-      return false;
-    }
-    return true;
-  }, [bizProvide.hashed, props.hashed]);
-
-  const hashId = useMemo(() => {
-    if (props.hashed === false) { return ''; }
-    if (bizProvide.hashed === false) { return ''; }
-    //Fix issue with hashId code
-    if (isNeedOpenHash() === false) {
-      return '';
+  const [hashed, hashId] = useMemo(() => {
+    if (props.hashed === false
+      || bizProvide.hashed === false
+      || isNeedOpenHash() === false) {
+      return [false, ''];
     } else if (tokenContext.hashId) {
-      return tokenContext.hashId;
+      return [true, tokenContext.hashId];
     } else {
       // 生产环境或其他环境
-      return nativeHashId;
+      return [true, nativeHashId];
     }
   }, [nativeHashId, bizProvide.hashed, props.hashed]);
+
+  const bizConfigContextValue = useMemo(() => {
+    return {
+      ...bizProvideValue!,
+      theme: tokenContext.theme as unknown as Theme<any, any>,
+      token, hashed, hashId,
+    };
+  }, [bizProvideValue, tokenContext.theme, token, hashed, hashId]);
+
 
   const themeConfig = useMemo(() => {
     const isDark = dark || bizProvide.dark;
     return omitUndefined({
-      ...antTheme,
-      hashId: hashId,
-      hashed: hashed && isNeedOpenHash(),
+      ...antTheme, hashId, hashed,
       algorithm: isDark ? (
         Array.isArray(antTheme?.algorithm)
           ? [bizTheme.darkAlgorithm, ...(antTheme?.algorithm || [])].filter(Boolean)
           : [bizTheme.darkAlgorithm, antTheme?.algorithm!].filter(Boolean)
       ) : antTheme?.algorithm,
     });
-  }, [dark, antTheme, hashId, hashed, isNeedOpenHash()]);
-
-  const bizConfigContextValue = useMemo(() => {
-    return {
-      ...bizProvideValue!, hashed, hashId, token,
-      theme: tokenContext.theme as unknown as Theme<any, any>,
-    };
-  }, [bizProvideValue, token, tokenContext.theme, hashed, hashId]);
+  }, [dark, antTheme, hashId, hashed]);
 
   const configProviderDom = useMemo(() => {
     return (
