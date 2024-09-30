@@ -31,10 +31,10 @@ export const useToken = bizTheme.useToken;
 
 export type BizAliasToken = GlobalToken & {
   themeId: number;
-  bizComponentsCls: string;
+  antPrefixCls: string;
+  iconPrefixCls: string;
+  bizPrefixCls: string;
   componentCls: string;
-  antCls: string;
-  iconCls: string;
 };
 
 /**
@@ -48,22 +48,20 @@ export function useStyle(
   styleFn: (token: BizAliasToken) => CSSInterpolation,
   prefixCls?: string,
 ) {
-  let { token = {} as Record<string, any> as BizAliasToken } = useContext(BizConfigContext);
-  const { hashed, theme: provideTheme } = useContext(BizConfigContext);
-  const { token: antdToken, hashId } = useToken();
+  let { token, hashed, theme: provideTheme } = useContext(BizConfigContext);
   const { iconPrefixCls, getPrefixCls } = useContext(AntdConfigProvider.ConfigContext);
+  const { token: antdToken, hashId } = useToken();
   const suffixCls = componentName
     ?.replace(/([A-Z])/g, (_, g) => '-' + g.toLowerCase())
     ?.replace(/^\-/, '')
     ?.replace(/^biz\-/, '');
 
-  // 如果不在 Provider 里面，就用 antd 的
-  // if (!token.layout) { token = { ...antdToken } as any; }
-  token = { ...antdToken } as any;
-  token.antCls = `.${getPrefixCls()}`;
-  (token.iconCls = `.${iconPrefixCls}`),
-    (token.bizComponentsCls = `.${token.bizComponentsCls?.replace(/^\./, '') ?? 'biz'}`);
-  token.componentCls = `.${(prefixCls ?? token.bizComponentsCls)?.replace(/^\./, '')}-${suffixCls}`;
+  if (!token) { token = { ...antdToken } as BizAliasToken; }
+  token.antPrefixCls = token.antPrefixCls || getPrefixCls();
+  token.iconPrefixCls = token.iconPrefixCls || iconPrefixCls;
+  token.bizPrefixCls = token.bizPrefixCls || 'biz';
+
+  token.componentCls = `.${(prefixCls ?? token.bizPrefixCls)?.replace(/^\./, '')}-${suffixCls}`;
   return {
     wrapSSR: useStyleRegister(
       {
@@ -71,7 +69,7 @@ export function useStyle(
         theme: provideTheme!,
         path: [componentName],
       },
-      () => styleFn(token as BizAliasToken),
+      () => styleFn(token)
     ),
     token,
     hashId: hashed ? hashId : '',

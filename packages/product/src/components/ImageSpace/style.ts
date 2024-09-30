@@ -119,7 +119,7 @@ const genBizStyle: GenerateStyle<ImageSpaceToken> = (token) => {
         flex: 1,
         display: 'flex',
         overflow: 'hidden',
-        [`${token.antCls}-spin-container`]: {
+        [`.${token.antPrefixCls}-spin-container`]: {
           height: '100%',
           width: '100%',
         },

@@ -8,7 +8,6 @@ import { merge } from './utils/merge';
 
 import { bizTheme } from './useStyle';
 import type { BizAliasToken } from './useStyle';
-import { defaultToken, emptyTheme } from './useStyle/token';
 export * from './useStyle';
 
 type OmitUndefined<T> = {
@@ -51,7 +50,7 @@ export type DeepPartial<T> = T extends object ? { [P in keyof T]?: DeepPartial<T
  * 自带的token 配置
  */
 export type ConfigContextPropsType = {
-  token: BizAliasToken;
+  token?: BizAliasToken;
   hashId?: string;
   hashed?: boolean;
   dark?: boolean;
@@ -59,12 +58,7 @@ export type ConfigContextPropsType = {
 };
 
 /* Creating a context object with the default values. */
-export const BizConfigContext = React.createContext<ConfigContextPropsType>({
-  theme: emptyTheme,
-  hashed: true,
-  dark: false,
-  token: defaultToken as BizAliasToken,
-});
+export const BizConfigContext = React.createContext<ConfigContextPropsType>({});
 
 export const { Consumer: ConfigConsumer } = BizConfigContext;
 
@@ -100,39 +94,35 @@ const ConfigProviderContainer: React.FC<{
   prefixCls?: string;
 }> = (props) => {
   const { children, dark, autoClearCache = false, prefixCls } = props;
-  const { locale, getPrefixCls, ...restConfig } = useContext(AntdConfigProvider.ConfigContext);
+  const { locale, iconPrefixCls, getPrefixCls, ...restConfig } = useContext(AntdConfigProvider.ConfigContext);
   const tokenContext = bizTheme.useToken?.();
   const bizProvide = useContext(BizConfigContext);
 
-  const bizComponentsCls: string = prefixCls ? `.${prefixCls}` : `.${getPrefixCls()}-biz`;
-
-  const antCls = '.' + getPrefixCls();
-
-  const salt = `${bizComponentsCls}`;
+  const antPrefixCls: string = getPrefixCls();
+  const bizPrefixCls: string = prefixCls ? prefixCls : `.${antPrefixCls}-biz`;
 
   const bizProvideValue = useMemo(() => {
     return {
       ...bizProvide,
       dark: dark ?? bizProvide.dark,
       token: merge(bizProvide.token, tokenContext.token, {
-        antCls, bizComponentsCls,
         themeId: tokenContext.theme.id,
+        antPrefixCls,
+        iconPrefixCls,
+        bizPrefixCls,
       }),
     };
-  }, [locale?.locale, bizProvide, dark, tokenContext.token, tokenContext.theme.id, bizComponentsCls, antCls]);
+  }, [locale?.locale, bizProvide, dark, tokenContext.token, tokenContext.theme.id, bizPrefixCls, antPrefixCls]);
 
   const finalToken = {
     ...(bizProvideValue.token || {}),
-    bizComponentsCls,
+    bizPrefixCls,
   };
 
   const [token, nativeHashId] = useCacheToken<BizAliasToken>(
     tokenContext.theme as unknown as Theme<any, any>,
     [tokenContext.token, finalToken ?? {}],
-    {
-      salt,
-      override: finalToken,
-    },
+    { salt: bizPrefixCls, override: finalToken, },
   );
 
   const hashed = useMemo(() => {
@@ -178,7 +168,7 @@ const ConfigProviderContainer: React.FC<{
 
   const configProviderDom = useMemo(() => {
     return (
-      <AntdConfigProvider {...restConfig} theme={themeConfig}>
+      <AntdConfigProvider {...restConfig} theme={themeConfig} >
         <BizConfigContext.Provider value={bizConfigContextValue}>
           <>
             {autoClearCache && <CacheClean />}
