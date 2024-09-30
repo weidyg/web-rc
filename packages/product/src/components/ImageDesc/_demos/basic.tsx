@@ -302,7 +302,12 @@ export default () => {
   }
 
   return (
-    <BizConfigProvider>
+    <BizConfigProvider
+      dark={true}
+      antPrefixCls='aa'
+      bizPrefixCls={'bb'}
+      iconPrefixCls={'cc'}
+    >
       <ImageDesc
         value={value}
         onChange={(v) => {
