@@ -25,6 +25,9 @@ const tailPkgList = pkgList.map((path) => `packages/${path}/src/components`);
 const config: IDumiConfig = {
   base: '/web-react/',
   publicPath: '/web-react/',
+  codeSplitting: {
+    jsStrategy: 'granularChunks',
+  },
   alias,
   // mako: {},
   resolve: {
