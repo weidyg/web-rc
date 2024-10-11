@@ -19,7 +19,8 @@
       "@web-react/biz-utils": ["./packages/utils/src/index.tsx"],
       "@web-react/biz-provider": ["./packages/provider/src/index.tsx"],
       "@web-react/biz-layout": ["./packages/layout/src/index.tsx"],
-      "@web-react/biz-product": ["./packages/product/src/index.tsx"]
+      "@web-react/biz-product": ["./packages/product/src/index.tsx"],
+      "@web-react/biz-account": ["./packages/account/src/index.tsx"]
     }
   },
   "include": [".dumirc.ts"]

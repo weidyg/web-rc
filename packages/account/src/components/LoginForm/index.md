@@ -1,7 +1,7 @@
 ---
 order: 0
-atomId: Login
-title: Login - 登录页面
+atomId: LoginForm
+title: LoginForm - 登录页面
 ---
 
 ## 代码演示
