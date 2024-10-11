@@ -112,7 +112,16 @@ export default defineConfig({
       if (!existsSync(srcDir)) {
         mkdirSync(srcDir);
       }
-      writeFileSync(srcIndexPath, '');
+      writeFileSync(srcIndexPath, `export * from './components';`);
+    }
+
+    const componentsIndexPath = join(pkgPath, 'src', 'components', 'index.tsx');
+    if (args.force || !existsSync(componentsIndexPath)) {
+      const srcDir = join(pkgPath, 'src', 'components');
+      if (!existsSync(srcDir)) {
+        mkdirSync(srcDir);
+      }
+      writeFileSync(srcIndexPath, `export { };`);
     }
   });
 })();
