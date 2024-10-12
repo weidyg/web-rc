@@ -1,4 +1,4 @@
-import { forwardRef, Ref, useImperativeHandle, useMemo, useState } from 'react';
+import { forwardRef, ReactNode, Ref, useImperativeHandle, useMemo, useState } from 'react';
 import { Alert, Avatar, Divider, Dropdown, Form, Image, MenuProps, Popover, Space, Tabs, TabsProps, Typography } from 'antd';
 import { EyeOutlined, PictureOutlined, UserOutlined } from '@ant-design/icons';
 import { classNames, useMergedState } from '@web-react/biz-utils';
@@ -11,39 +11,47 @@ const initialValues = {
 
 type UserLoginState = { status: 'success' | 'error'; message: string };
 type GrantType = 'password' | 'smscode';
+
+
 type Agreement = { link: string, label: string };
+type ThirdPartyLogin = { text: string, icon?: ReactNode, onClick?: () => void };
 type LoginFormProps = {
-  urlPath?: {
-    register?: string,
-    forgotPassword?: string,
-    externalLogin?: string,
-    appHomeUrl?: string,
-    userAgreement?: string,
-    privacyPolicy?: string,
-  },
+  // urlPath?: {
+  //   register?: string,
+  //   forgotPassword?: string,
+  //   externalLogin?: string,
+  //   appHomeUrl?: string,
+  //   userAgreement?: string,
+  //   privacyPolicy?: string,
+  // },
   currentUser?: {
     isAuthenticated?: boolean,
     userName?: string,
     avatar?: string
   },
   agreements?: Agreement[],
-  grantTypes?: GrantType[],
-  externalProviders?: string[],
-  allowRememberMe?: boolean,
-  loginBoxBlur?: boolean,
-  onLogin: (values: Record<string, any>) => Promise<any>
-  onGetCaptcha: (mobile: string) => Promise<any>
+  thirdPartyLogins?: ThirdPartyLogin[],
+
+  // grantTypes?: GrantType[],
+  // allowRememberMe?: boolean,
+  // loginBoxBlur?: boolean,
+  // onLogin: (values: Record<string, any>) => Promise<any>
+  // onGetCaptcha: (mobile: string) => Promise<any>
 };
 
 type LoginFormRef = {
 };
 
 const LoginForm = forwardRef((props: LoginFormProps, ref: Ref<LoginFormRef>) => {
-  const { urlPath, currentUser,
+  const {
+    // urlPath, 
+    currentUser,
     agreements = [],
-    grantTypes = ['password'],
-    externalProviders = [],
-    allowRememberMe, onLogin, onGetCaptcha } = props;
+    thirdPartyLogins = [],
+    // grantTypes = ['password'],
+    // externalProviders = [],
+    // allowRememberMe, onLogin, onGetCaptcha
+  } = props;
 
   const { isAuthenticated, userName, avatar } = currentUser || {};
   const { prefixCls, wrapSSR, hashId, token } = useStyle();
@@ -57,22 +65,23 @@ const LoginForm = forwardRef((props: LoginFormProps, ref: Ref<LoginFormRef>) => 
 
 
   return wrapSSR(<>
-    <div className={classNames(`${prefixCls}`, hashId)}>
+    <div className={classNames(`${prefixCls}-container`, hashId)}>
+      {/* <div className={`${getCls('top')} ${hashId}`.trim()}>
+        {title || logoDom ? (
+          <div className={`${getCls('header')}`}>
+            {logoDom ? <span className={getCls('logo')}>{logoDom}</span> : null}
+            {title ? <span className={getCls('title')}>{title}</span> : null}
+          </div>
+        ) : null}
+        {subTitle ? <div className={getCls('desc')}>{subTitle}</div> : null}
+      </div> */}
       <div className={classNames(`${prefixCls}-main`, hashId)} >
 
         <CurrentAccount />
 
         <div className={classNames(`${prefixCls}-main-other`, hashId)}>
-          {!confirmLogin &&
-            <ExternalLogins
-              actions={[
-                { name: 'QQ', text: 'QQ', },
-                { name: 'GitHub', text: 'GitHub', },
-              ]}
-              onClick={(name) => {
-
-              }}
-            />
+          {!confirmLogin && thirdPartyLogins.length > 0 &&
+            <ExternalLogins actions={thirdPartyLogins} />
           }
           {agreements.length > 0 &&
             <div>
@@ -80,8 +89,10 @@ const LoginForm = forwardRef((props: LoginFormProps, ref: Ref<LoginFormRef>) => 
                 登录即视为您已阅读并同意
               </Typography.Text>
               {agreements.map(({ link, label }, i) => {
-                return <Typography.Link target='_blank'
-                  href={link} style={{ fontSize: 12, }}>
+                return <Typography.Link
+                  href={link} target='_blank'
+                  style={{ fontSize: token.fontSizeSM, }}
+                >
                   《{label}》
                 </Typography.Link>
               })}
@@ -89,7 +100,6 @@ const LoginForm = forwardRef((props: LoginFormProps, ref: Ref<LoginFormRef>) => 
           }
         </div>
       </div>
-
     </div>
   </>);
 });

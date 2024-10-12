@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { ReactNode, useMemo } from "react";
 import { Avatar, Button, Divider, Popover, Space } from "antd";
 import { useStyle } from "./style";
 import classNames from "classnames";
@@ -13,13 +13,13 @@ export const DefaultIcon: React.FC<{
     );
 }
 
+type ThirdPartyLogin = { text: string, icon?: ReactNode, onClick?: () => void };
 type ExternalLoginsProps = {
     maxCount?: number,
-    actions?: { name: string, text: string, icon?: React.ReactNode }[],
-    onClick?: (name: string) => void;
+    actions?: ThirdPartyLogin[],
 }
 const ExternalLogins = (props: ExternalLoginsProps) => {
-    const { maxCount = 4, actions = [], onClick } = props;
+    const { maxCount = 4, actions = [] } = props;
     const { prefixCls, hashId } = useStyle();
     const { show, more } = useMemo(() => {
         const all = actions || [];
@@ -30,14 +30,10 @@ const ExternalLogins = (props: ExternalLoginsProps) => {
         return { show, more };
     }, [actions, maxCount]);
 
-    function handleExternalLogin(authScheme: string) {
-        onClick?.(authScheme);
-    }
-
-    const ActionItem = (props: { name: string, text: string, icon?: React.ReactNode }) => {
-        const { name, text, icon } = props;
-        return <div className={classNames(`${prefixCls}-item`, hashId)}
-            onClick={() => handleExternalLogin?.(name)}>
+    const ActionItem = (props: ThirdPartyLogin) => {
+        const { text, icon, onClick } = props;
+        return <div onClick={onClick}
+            className={classNames(`${prefixCls}-item`, hashId)}>
             {icon || <DefaultIcon text={text} />}
         </div>
     }
