@@ -47,6 +47,7 @@ const genBizStyle: GenerateStyle<LoginFormToken> = (token) => {
           fontSize: token.fontSizeLG,
         }
       },
+      
       [`@media (max-width: ${token.screenMDMin}px)`]: {
         [`&-container`]: {
           padding: `${token.paddingLG}px`,
