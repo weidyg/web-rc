@@ -7,9 +7,9 @@ const genBizStyle: GenerateStyle<LoginFormToken> = (token) => {
   const opacity = loginBoxBlur ? (isDarkMode ? 0.65 : 0.25) : 0.98;
   return {
     [token.componentCls]: {
-      [`&-container`]: {
+      '&-container': {
         overflow: 'hidden',
-        padding: '24px 48px',
+        padding: `${token.paddingLG}px ${token.paddingLG * 2}px`,
         borderRadius: token.borderRadius,
         backgroundSize: '100%',
         backgroundPosition: 'top',
@@ -17,29 +17,49 @@ const genBizStyle: GenerateStyle<LoginFormToken> = (token) => {
         backgroundImage: 'radial-gradient(circle at 93% 1e+02%, rgba(22,119,255,0.17) 0%, rgba(255,255,255,0.05) 23%, rgba(255,255,255,0.03) 87%, rgba(22,119,255,0.12) 109%)',
         backgroundColor: isDarkMode ? `rgba(0, 0, 0,${opacity})` : `rgba(255, 255,255,${opacity})`,
         boxShadow: isDarkMode ? '0px 0px 24px 0px rgba(255,255,255,0.2)' : '0px 0px 24px 0px rgba(0,0,0,0.1)',
+        display: 'flex',
+        justifyContent: 'space-around',
       },
-      [`@media (max-width: ${token.screenMDMin}px)`]: {
-        [`&-container`]: {
-          padding: 24,
-          boxShadow: 'none',
-          borderRadius: '0px',
-          display: 'flex',
-          justifyContent: 'center',
-          background: 'unset',
-          overflow: 'unset',
-          backdropFilter: 'unset',
-        },
+      '&-qrcode': {
+        // minWidth: '328px',
+        // maxWidth: '580px',
+        // margin: '0 auto',
+        display: 'inline-grid',
+        alignContent: 'space-around',
+      },
+      '&-border': {
+        margin: `0 ${token.marginXXL}px`,
+        borderRight: `1px solid ${token.colorBorder}`
       },
       '&-main': {
-        minWidth: '328px',
-        maxWidth: '580px',
-        margin: '0 auto',
+        minWidth: '320px',
         display: 'inline-grid',
         alignContent: 'space-around',
         '&-other': {
           marginBlockStart: '24px',
           lineHeight: '22px',
           textAlign: 'start',
+        },
+      },
+      '&-tabs': {
+        [`.ant-tabs-tab`]: {
+          padding: `${token.paddingXS}px 0`,
+          fontSize: token.fontSizeLG,
+        }
+      },
+      [`@media (max-width: ${token.screenMDMin}px)`]: {
+        [`&-container`]: {
+          padding: `${token.paddingLG}px`,
+          boxShadow: 'none',
+          borderRadius: '0px',
+          background: 'unset',
+          overflow: 'unset',
+          backdropFilter: 'unset',
+          display: 'flex',
+          justifyContent: 'center',
+        },
+        [`&-qrcode,&-border`]: {
+          display: 'none',
         },
       },
     },

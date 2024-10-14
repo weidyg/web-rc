@@ -1,6 +1,6 @@
 import { forwardRef, ReactNode, Ref, useImperativeHandle, useMemo, useRef, useState } from 'react';
-import { Alert, Avatar, Button, Divider, Dropdown, Form, FormInstance, FormProps, Image, Input, MenuProps, Popover, Space, Tabs, TabsProps, Typography } from 'antd';
-import { EyeOutlined, LockOutlined, MessageOutlined, MobileOutlined, PictureOutlined, UserOutlined } from '@ant-design/icons';
+import { Alert, Avatar, Button, Divider, Dropdown, Form, FormInstance, FormProps, Image, Input, MenuProps, Popover, QRCode, QRCodeProps, Space, Spin, Tabs, TabsProps, Typography } from 'antd';
+import { CheckCircleFilled, CloseCircleFilled, EyeOutlined, LockOutlined, MessageOutlined, MobileOutlined, PictureOutlined, ReloadOutlined, UserOutlined } from '@ant-design/icons';
 import { classNames, useMergedState } from '@web-react/biz-utils';
 import { useStyle } from './style';
 import CurrentAccount from './CurrentAccount';
@@ -71,13 +71,58 @@ const LoginForm = forwardRef(<Values extends { [k: string]: any } = any>(props: 
 
   }));
 
+  const customStatusRender: QRCodeProps['statusRender'] = (info) => {
+    switch (info.status) {
+      case 'expired':
+        return (
+          <div>
+            <CloseCircleFilled style={{ color: 'red' }} /> {info.locale?.expired}
+            <p>
+              <Button type="link" onClick={info.onRefresh}>
+                <ReloadOutlined /> {info.locale?.refresh}
+              </Button>
+            </p>
+          </div>
+        );
+      case 'loading':
+        return (
+          <Space direction="vertical">
+            <Spin />
+            <p>Loading...</p>
+          </Space>
+        );
+      case 'scanned':
+        return (
+          <div>
+            <CheckCircleFilled style={{ color: 'green' }} /> {info.locale?.scanned}
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
+
   const GrantTypeTabs = ({ value, onChange }: any) => {
-    return (<Tabs activeKey={value} items={grantTabs} onChange={onChange} />);
+    return (<Tabs activeKey={value} items={grantTabs} onChange={onChange}
+      className={classNames(`${prefixCls}-tabs`, hashId)}
+    />);
   };
   const formInstance = Form.useFormInstance();
   const formRef = useRef<FormInstance<any>>((form || formInstance) as any);
   return wrapSSR(<>
     <div className={classNames(`${prefixCls}-container`, hashId)}>
+      <div className={classNames(`${prefixCls}-qrcode`, hashId)} >
+        <QRCode
+          errorLevel="H"
+          value="https://ant.design/"
+          icon="https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg"
+
+          // status="expired"
+          onRefresh={() => console.log('refresh')}
+          statusRender={customStatusRender}
+        />
+      </div>
+      <div className={classNames(`${prefixCls}-border`, hashId)} />
       <div className={classNames(`${prefixCls}-main`, hashId)} >
         {confirmLogin ? (
           <CurrentAccount
@@ -102,26 +147,25 @@ const LoginForm = forwardRef(<Values extends { [k: string]: any } = any>(props: 
             </Form.Item>
 
             <Form.Item noStyle dependencies={['grantType']}>
-              {({ getFieldValue }) => ((getFieldValue('grantType') as GrantType == 'password')
-                ? (<>
-                  <Form.Item name="username" rules={[{ required: true, message: '请输入用户名' }]}>
-                    <Input prefix={<UserOutlined />} placeholder="请输入用户名" />
-                  </Form.Item>
-                  <Form.Item name="password" rules={[{ required: true, message: '请输入密码' }]}>
-                    <Input.Password prefix={<LockOutlined />} placeholder="请输入密码" />
-                  </Form.Item>
-                </>) : (<>
-                  <Form.Item name='mobile' rules={[{ required: true, message: '请输入手机号码' }]}>
-                    <Input prefix={<MobileOutlined />} placeholder="请输入手机号码" />
-                  </Form.Item>
-                  <Form.Item name='code' rules={[{ required: true, message: '请输入手机验证码' }]}>
-                    <InputCaptcha prefix={<MessageOutlined />} placeholder="请输入手机验证码"
-                      phoneName={'mobile'}
-                      countDown={5}
-                      onGetCaptcha={async (mobile) => { }}
-                    />
-                  </Form.Item>
-                </>)
+              {({ getFieldValue }) => ((getFieldValue('grantType') as GrantType == 'password') ? (<>
+                <Form.Item name="username" rules={[{ required: true, message: '请输入用户名' }]}>
+                  <Input prefix={<UserOutlined />} placeholder="请输入用户名" />
+                </Form.Item>
+                <Form.Item name="password" rules={[{ required: true, message: '请输入密码' }]}>
+                  <Input.Password prefix={<LockOutlined />} placeholder="请输入密码" />
+                </Form.Item>
+              </>) : (<>
+                <Form.Item name='mobile' rules={[{ required: true, message: '请输入手机号码' }]}>
+                  <Input prefix={<MobileOutlined />} placeholder="请输入手机号码" />
+                </Form.Item>
+                <Form.Item name='code' rules={[{ required: true, message: '请输入手机验证码' }]}>
+                  <InputCaptcha prefix={<MessageOutlined />} placeholder="请输入手机验证码"
+                    phoneName={'mobile'}
+                    countDown={5}
+                    onGetCaptcha={async (mobile) => { }}
+                  />
+                </Form.Item>
+              </>)
               )}
             </Form.Item>
 

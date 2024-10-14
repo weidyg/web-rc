@@ -13,8 +13,8 @@ export default () => {
         // backgroundImageUrl="https://srccdn.jushuitan.com/jst-login/assets/img/login_subimg_20230201-35a38a2251.png"
         // backgroundVideoUrl='https://gw.alipayobjects.com/v/huamei_gcee1x/afts/video/jXRBRK_VAwoAAAAAAAAAAAAAK4eUAQBr'
         grantTabs={[
-            { key: 'password', label: '账户密码登录' },
-            { key: 'smscode', label: '手机号登录' },
+            { key: 'password', label: '账户登录' },
+            { key: 'smscode', label: '短信登录' },
         ]}
         thirdPartyLogins={[
             { value: 'wechat', title: '微信', icon: <WechatOutlined />, style: { backgroundColor: 'rgb(135, 208, 104)' } },
