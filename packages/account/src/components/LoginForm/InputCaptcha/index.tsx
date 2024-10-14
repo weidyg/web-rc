@@ -107,14 +107,16 @@ const InputCaptcha = forwardRef((props: InputCaptchaProps, ref: Ref<InputCaptcha
                 {...restProps}
                 style={{
                     flex: 1,
-                    transition: 'width .3s',
                     marginRight: 4,
+                    transition: 'width .3s',
                     ...restProps?.style,
                 }}
             />
             <Button
                 style={{
                     display: 'block',
+                    minWidth: 100,
+                    ...captchaProps?.style,
                 }}
                 disabled={timing}
                 loading={loading}
@@ -122,10 +124,9 @@ const InputCaptcha = forwardRef((props: InputCaptchaProps, ref: Ref<InputCaptcha
                 onClick={async () => {
                     try {
                         if (phoneName) {
-                            await form.validateFields([phoneName].flat(1) as string[]);
-                            const mobile = form.getFieldValue(
-                                [phoneName].flat(1) as string[],
-                            );
+                            const phoneNameList = [phoneName].flat(1) as string[];
+                            await form.validateFields(phoneNameList);
+                            const mobile = form.getFieldValue(phoneNameList);
                             await onGetCaptcha(mobile);
                         } else {
                             await onGetCaptcha('');

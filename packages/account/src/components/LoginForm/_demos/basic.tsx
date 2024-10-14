@@ -11,7 +11,8 @@ export default () => {
       { label: '用户协议', link: "/Account/UserAgreement" },
       { label: '隐私政策', link: "/Account/PrivacyPolicy" }
     ]}
-    // onLogin={(values: Record<string, any>) => {
+     grantTabs={[]}  
+       // onLogin={(values: Record<string, any>) => {
     //   throw new Error("Function not implemented.");
     // }}
     // onGetCaptcha={(mobile: string) => {

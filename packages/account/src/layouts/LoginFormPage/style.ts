@@ -51,7 +51,7 @@ const genBizStyle: GenerateStyle<LoginFormPageToken> = (token) => {
         width: '100%',
         backdropFilter: 'blur(10px)',
         backgroundColor: token.colorBgBlur,
-        color: token.colorText,
+        color: token.colorTextSecondary,
         [`@media (max-width: ${token.screenMDMin}px)`]: {
           display: 'none',
         },

@@ -11,7 +11,7 @@ const genBizStyle: GenerateStyle<ExternalLoginsToken> = (token) => {
       '&-title': {
         color: token.colorTextPlaceholder,
         fontWeight: 'normal',
-        fontSize: 14,
+        fontSize: token.fontSize
       },
       '&-item': {
         width: 40,
@@ -22,6 +22,12 @@ const genBizStyle: GenerateStyle<ExternalLoginsToken> = (token) => {
         flexDirection: 'column',
         borderRadius: '50%',
         // border: '1px solid ' + token.colorPrimaryBorder,
+      },
+      '&-more': {
+        fontSize: token.fontSizeLG,
+        background: token.colorInfoBg,
+        color: token.colorInfoText,
+        border: `1px dashed ${token.colorInfoBorder}`,
       },
     },
   };

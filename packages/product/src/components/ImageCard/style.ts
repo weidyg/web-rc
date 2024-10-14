@@ -52,7 +52,7 @@ const genBizStyle: GenerateStyle<ImageCardToken> = (token) => {
       },
       [`&-mask-info`]: {
         padding: `0 ${unit(token.paddingXXS)}`,
-        [token.antCls]: {
+        [`.${token.antPrefixCls}`]: {
           marginInlineEnd: token.marginXXS,
           svg: {
             verticalAlign: 'baseline',
@@ -63,7 +63,7 @@ const genBizStyle: GenerateStyle<ImageCardToken> = (token) => {
   };
 };
 // repeating-linear-gradient(-45deg, transparent, transparent 6px, #f0f2f5 0, #f0f2f5 8px) !important;
-interface ImageCardToken extends BizAliasToken {}
+interface ImageCardToken extends BizAliasToken { }
 export function useStyle(prefixCls?: string) {
   return useAntdStyle(
     'ImageCard',

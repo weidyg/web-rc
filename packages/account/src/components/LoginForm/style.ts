@@ -34,6 +34,8 @@ const genBizStyle: GenerateStyle<LoginFormToken> = (token) => {
         minWidth: '328px',
         maxWidth: '580px',
         margin: '0 auto',
+        display: 'inline-grid',
+        alignContent: 'space-around',
         '&-other': {
           marginBlockStart: '24px',
           lineHeight: '22px',

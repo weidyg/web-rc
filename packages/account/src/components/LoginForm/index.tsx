@@ -4,8 +4,9 @@ import { EyeOutlined, LockOutlined, MessageOutlined, MobileOutlined, PictureOutl
 import { classNames, useMergedState } from '@web-react/biz-utils';
 import { useStyle } from './style';
 import CurrentAccount from './CurrentAccount';
-import ExternalLogins from './ExternalLogins';
+import ExternalLogins, { ThirdPartyLogin } from './ExternalLogins';
 import InputCaptcha from './InputCaptcha';
+import { promises } from 'fs';
 const initialValues = {
   grantType: 'password',
 };
@@ -15,7 +16,6 @@ type GrantType = 'password' | 'smscode';
 
 
 type Agreement = { link: string, label: string };
-type ThirdPartyLogin = { text: string, icon?: ReactNode, onClick?: () => void };
 type LoginFormProps<Values = any> = {
   // urlPath?: {
   //   register?: string,
@@ -32,6 +32,7 @@ type LoginFormProps<Values = any> = {
   },
   agreements?: Agreement[],
   thirdPartyLogins?: ThirdPartyLogin[],
+  onThirdPartyClick?: (key: string) => Promise<void> | void;
   isKeyPressSubmit?: boolean,
   form?: FormInstance<Values>;
   grantTabs: { key: string, label: ReactNode }[];
@@ -50,6 +51,7 @@ const LoginForm = forwardRef(<Values extends { [k: string]: any } = any>(props: 
     currentUser,
     agreements = [],
     thirdPartyLogins = [],
+    onThirdPartyClick,
     grantTabs = [],
     isKeyPressSubmit,
     form,
@@ -59,9 +61,9 @@ const LoginForm = forwardRef(<Values extends { [k: string]: any } = any>(props: 
     // allowRememberMe, onLogin, onGetCaptcha
   } = props;
 
-  const { isAuthenticated, userName, avatar } = currentUser || {};
   const { prefixCls, wrapSSR, hashId, token } = useStyle();
 
+  const { isAuthenticated, userName, avatar } = currentUser || {};
   const [confirmLogin, setConfirmLogin] = useState(isAuthenticated);
   const [userLoginState, setUserLoginState] = useState<UserLoginState>();
 
@@ -76,15 +78,6 @@ const LoginForm = forwardRef(<Values extends { [k: string]: any } = any>(props: 
   const formRef = useRef<FormInstance<any>>((form || formInstance) as any);
   return wrapSSR(<>
     <div className={classNames(`${prefixCls}-container`, hashId)}>
-      {/* <div className={`${getCls('top')} ${hashId}`.trim()}>
-        {title || logoDom ? (
-          <div className={`${getCls('header')}`}>
-            {logoDom ? <span className={getCls('logo')}>{logoDom}</span> : null}
-            {title ? <span className={getCls('title')}>{title}</span> : null}
-          </div>
-        ) : null}
-        {subTitle ? <div className={getCls('desc')}>{subTitle}</div> : null}
-      </div> */}
       <div className={classNames(`${prefixCls}-main`, hashId)} >
         {confirmLogin ? (
           <CurrentAccount
@@ -123,6 +116,8 @@ const LoginForm = forwardRef(<Values extends { [k: string]: any } = any>(props: 
                   </Form.Item>
                   <Form.Item name='code' rules={[{ required: true, message: '请输入手机验证码' }]}>
                     <InputCaptcha prefix={<MessageOutlined />} placeholder="请输入手机验证码"
+                      phoneName={'mobile'}
+                      countDown={5}
                       onGetCaptcha={async (mobile) => { }}
                     />
                   </Form.Item>
@@ -141,7 +136,7 @@ const LoginForm = forwardRef(<Values extends { [k: string]: any } = any>(props: 
         )}
         <div className={classNames(`${prefixCls}-main-other`, hashId)}>
           {!confirmLogin && thirdPartyLogins.length > 0 &&
-            <ExternalLogins actions={thirdPartyLogins} />
+            <ExternalLogins items={thirdPartyLogins} onClick={onThirdPartyClick} />
           }
           {agreements.length > 0 &&
             <div>
