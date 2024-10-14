@@ -16,15 +16,15 @@ const LoginFormPage = forwardRef((props: LoginFormPageProps, ref: Ref<LoginFormP
   const {
     // urlPath, 
     // currentUser,
-    footerNav = [],
-    copyright,
-    agreements = [],
     backgroundImageUrl,
     backgroundVideoUrl,
+    footerNav,
+    copyright,
     // thirdPartyLogins = [],
     // grantTypes = ['password'],
     // externalProviders = [],
-    // allowRememberMe, onLogin, onGetCaptcha
+    // allowRememberMe, onLogin, onGetCaptcha,
+    ...propRest
   } = props;
 
   const { prefixCls, wrapSSR, hashId, token } = useStyle();
@@ -84,12 +84,10 @@ const LoginFormPage = forwardRef((props: LoginFormPageProps, ref: Ref<LoginFormP
 
           </div>
           <div className={classNames(`${prefixCls}-loginbox`, hashId)}>
-            <LoginForm
-              agreements={agreements}
-            />
+            <LoginForm {...propRest} />
           </div>
         </div>
-        {(footerNav.length > 0 || copyright) && <Footer />}
+        {(footerNav || copyright) && <Footer />}
       </div>
     </div>
   </>);

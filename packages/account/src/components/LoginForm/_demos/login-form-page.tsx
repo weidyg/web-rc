@@ -11,6 +11,10 @@ export default () => {
         backgroundImageUrl="https://mdn.alipayobjects.com/yuyan_qk0oxh/afts/img/V-_oS6r-i7wAAAAAAAAAAAAAFl94AQBr"
         // backgroundImageUrl="https://srccdn.jushuitan.com/jst-login/assets/img/login_subimg_20230201-35a38a2251.png"
         // backgroundVideoUrl='https://gw.alipayobjects.com/v/huamei_gcee1x/afts/video/jXRBRK_VAwoAAAAAAAAAAAAAK4eUAQBr'
+        grantTabs={[
+            { key: 'password', label: '账户密码登录' },
+            { key: 'smscode', label: '手机号登录' },
+        ]}
         agreements={[
             { label: '用户协议', link: "/Account/UserAgreement" },
             { label: '隐私政策', link: "/Account/PrivacyPolicy" }
