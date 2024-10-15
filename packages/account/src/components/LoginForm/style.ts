@@ -21,24 +21,25 @@ const genBizStyle: GenerateStyle<LoginFormToken> = (token) => {
         justifyContent: 'space-around',
       },
       '&-qrcode': {
-        // minWidth: '328px',
-        // maxWidth: '580px',
-        // margin: '0 auto',
-        display: 'inline-grid',
-        alignContent: 'space-around',
+        display: 'flex',
+        justifyContent: 'center',
+        flexWrap: 'nowrap',
+        alignItems: 'center',
+        flexDirection: 'column'
       },
       '&-border': {
         margin: `0 ${token.marginXXL}px`,
         borderRight: `1px solid ${token.colorBorder}`
       },
       '&-main': {
+        height: '420px',
         minWidth: '320px',
         display: 'inline-grid',
         alignContent: 'space-around',
         '&-other': {
-          marginBlockStart: '24px',
-          lineHeight: '22px',
-          textAlign: 'start',
+          // marginBlockStart: '24px',
+          // lineHeight: '22px',
+          // textAlign: 'start',
         },
       },
       '&-tabs': {
@@ -47,7 +48,7 @@ const genBizStyle: GenerateStyle<LoginFormToken> = (token) => {
           fontSize: token.fontSizeLG,
         }
       },
-      
+
       [`@media (max-width: ${token.screenMDMin}px)`]: {
         [`&-container`]: {
           padding: `${token.paddingLG}px`,

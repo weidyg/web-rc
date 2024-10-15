@@ -80,9 +80,9 @@ const LoginFormPage = forwardRef((props: LoginFormPageProps, ref: Ref<LoginFormP
         {/* {showHeader && <Header />} */}
 
         <div className={classNames(`${prefixCls}-container`, hashId)}>
-          <div className={classNames(`${prefixCls}-notice`, hashId)}>
+          {/* <div className={classNames(`${prefixCls}-notice`, hashId)}>
 
-          </div>
+          </div> */}
           <div className={classNames(`${prefixCls}-loginbox`, hashId)}>
             <LoginForm {...propRest} />
           </div>

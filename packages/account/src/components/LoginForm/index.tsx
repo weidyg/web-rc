@@ -6,12 +6,11 @@ import { useStyle } from './style';
 import CurrentAccount from './CurrentAccount';
 import ExternalLogins, { ThirdPartyLogin } from './ExternalLogins';
 import InputCaptcha from './InputCaptcha';
-import { promises } from 'fs';
 const initialValues = {
   grantType: 'password',
 };
 
-type UserLoginState = { status: 'success' | 'error'; message: string };
+type UserLoginState = { status?: 'success' | 'error'; message?: string };
 type GrantType = 'password' | 'smscode';
 
 
@@ -65,7 +64,7 @@ const LoginForm = forwardRef(<Values extends { [k: string]: any } = any>(props: 
 
   const { isAuthenticated, userName, avatar } = currentUser || {};
   const [confirmLogin, setConfirmLogin] = useState(isAuthenticated);
-  const [userLoginState, setUserLoginState] = useState<UserLoginState>();
+  const [userLoginState, setUserLoginState] = useState<UserLoginState>({ status: 'success', message: '登录成功' });
 
   useImperativeHandle(ref, () => ({
 
@@ -105,6 +104,7 @@ const LoginForm = forwardRef(<Values extends { [k: string]: any } = any>(props: 
   const GrantTypeTabs = ({ value, onChange }: any) => {
     return (<Tabs activeKey={value} items={grantTabs} onChange={onChange}
       className={classNames(`${prefixCls}-tabs`, hashId)}
+      tabBarStyle={{ marginBottom: 0 }}
     />);
   };
   const formInstance = Form.useFormInstance();
@@ -112,18 +112,25 @@ const LoginForm = forwardRef(<Values extends { [k: string]: any } = any>(props: 
   return wrapSSR(<>
     <div className={classNames(`${prefixCls}-container`, hashId)}>
       <div className={classNames(`${prefixCls}-qrcode`, hashId)} >
+        <Typography.Title level={4} >扫码登录</Typography.Title>
+        <Typography.Paragraph>在「我的页」右上角打开扫一扫</Typography.Paragraph>
         <QRCode
+          size={200}
+          iconSize={200 / 4}
           errorLevel="H"
           value="https://ant.design/"
           icon="https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg"
-
-          // status="expired"
+          status="expired"
           onRefresh={() => console.log('refresh')}
           statusRender={customStatusRender}
         />
+        <Typography.Paragraph style={{ marginTop: '1em' }}>
+          使用<span>阿里云APP/支付宝/钉钉</span>
+        </Typography.Paragraph>
       </div>
       <div className={classNames(`${prefixCls}-border`, hashId)} />
       <div className={classNames(`${prefixCls}-main`, hashId)} >
+
         {confirmLogin ? (
           <CurrentAccount
             userName={userName}
@@ -142,7 +149,15 @@ const LoginForm = forwardRef(<Values extends { [k: string]: any } = any>(props: 
               }
             }}
           >
-            <Form.Item name="grantType" noStyle>
+            {userLoginState?.status &&
+              <Alert showIcon closable
+                type={userLoginState?.status}
+                message={userLoginState?.message}
+                onClose={() => setUserLoginState({})}
+              />
+            }
+
+            <Form.Item name="grantType">
               <GrantTypeTabs />
             </Form.Item>
 
@@ -178,26 +193,25 @@ const LoginForm = forwardRef(<Values extends { [k: string]: any } = any>(props: 
             </Form.Item>
           </Form>
         )}
-        <div className={classNames(`${prefixCls}-main-other`, hashId)}>
-          {!confirmLogin && thirdPartyLogins.length > 0 &&
-            <ExternalLogins items={thirdPartyLogins} onClick={onThirdPartyClick} />
-          }
-          {agreements.length > 0 &&
-            <div>
-              <Typography.Text type='secondary' style={{ fontSize: 12, }}>
-                登录即视为您已阅读并同意
-              </Typography.Text>
-              {agreements.map(({ link, label }, i) => {
-                return <Typography.Link key={i}
-                  href={link} target='_blank'
-                  style={{ fontSize: token.fontSizeSM, }}
-                >
-                  《{label}》
-                </Typography.Link>
-              })}
-            </div>
-          }
-        </div>
+
+        {!confirmLogin && thirdPartyLogins.length > 0 && <>
+          <ExternalLogins items={thirdPartyLogins} onClick={onThirdPartyClick} />
+        </>}
+
+        {agreements.length > 0 && <div>
+          <Typography.Text type='secondary' style={{ fontSize: 12, }}>
+            登录即视为您已阅读并同意
+          </Typography.Text>
+          {agreements.map(({ link, label }, i) => {
+            return <Typography.Link key={i}
+              href={link} target='_blank'
+              style={{ fontSize: token.fontSizeSM, }}
+            >
+              《{label}》
+            </Typography.Link>
+          })}
+        </div>}
+
       </div>
     </div>
   </>);
