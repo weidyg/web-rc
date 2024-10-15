@@ -9,7 +9,7 @@ import { LoginForm, LoginFormPage } from "@web-react/biz-components";
 
 export default () => {
     return (<LoginFormPage
-        backgroundImageUrl="https://mdn.alipayobjects.com/yuyan_qk0oxh/afts/img/V-_oS6r-i7wAAAAAAAAAAAAAFl94AQBr"
+        // backgroundImageUrl="https://mdn.alipayobjects.com/yuyan_qk0oxh/afts/img/V-_oS6r-i7wAAAAAAAAAAAAAFl94AQBr"
         // backgroundImageUrl="https://srccdn.jushuitan.com/jst-login/assets/img/login_subimg_20230201-35a38a2251.png"
         // backgroundVideoUrl='https://gw.alipayobjects.com/v/huamei_gcee1x/afts/video/jXRBRK_VAwoAAAAAAAAAAAAAK4eUAQBr'
         grantTabs={[

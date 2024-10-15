@@ -109,8 +109,8 @@ const LoginForm = forwardRef(<Values extends { [k: string]: any } = any>(props: 
   };
   const formInstance = Form.useFormInstance();
   const formRef = useRef<FormInstance<any>>((form || formInstance) as any);
-  return wrapSSR(<>
-    <div className={classNames(`${prefixCls}-container`, hashId)}>
+  return wrapSSR(<div className={classNames(`${prefixCls}-container`, hashId)}>
+    <div className={classNames(`${prefixCls}-body`, hashId)}>
       <div className={classNames(`${prefixCls}-qrcode`, hashId)} >
         <Typography.Title level={4} >扫码登录</Typography.Title>
         <Typography.Paragraph>在「我的页」右上角打开扫一扫</Typography.Paragraph>
@@ -194,24 +194,23 @@ const LoginForm = forwardRef(<Values extends { [k: string]: any } = any>(props: 
         {!confirmLogin && thirdPartyLogins.length > 0 && <>
           <ExternalLogins items={thirdPartyLogins} onClick={onThirdPartyClick} />
         </>}
-
-        {agreements.length > 0 && <div>
-          <Typography.Text type='secondary' style={{ fontSize: 12, }}>
-            登录即视为您已阅读并同意
-          </Typography.Text>
-          {agreements.map(({ link, label }, i) => {
-            return <Typography.Link key={i}
-              href={link} target='_blank'
-              style={{ fontSize: token.fontSizeSM, }}
-            >
-              《{label}》
-            </Typography.Link>
-          })}
-        </div>}
-
       </div>
     </div>
-  </>);
+    {agreements.length > 0 &&
+      <div className={classNames(`${prefixCls}-agreement`, hashId)} >
+        <Typography.Text type='secondary' style={{ fontSize: 12, }}>
+          登录即视为您已阅读并同意
+        </Typography.Text>
+        {agreements.map(({ link, label }, i) => {
+          return <Typography.Link key={i}
+            href={link} target='_blank'
+            style={{ fontSize: token.fontSizeSM, }}
+          >
+            《{label}》
+          </Typography.Link>
+        })}
+      </div>}
+  </div>);
 });
 
 export type { LoginFormProps, LoginFormRef };

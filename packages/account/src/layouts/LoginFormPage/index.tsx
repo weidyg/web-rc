@@ -62,11 +62,10 @@ const LoginFormPage = forwardRef((props: LoginFormPageProps, ref: Ref<LoginFormP
   }
   return wrapSSR(<>
     <div className={classNames(`${prefixCls}`, hashId)}>
-      <div style={{
-        position: 'relative',
-        backgroundImage: backgroundImageUrl && `url("${backgroundImageUrl}")`,
-      }}
-        className={classNames(`${prefixCls}-container`, hashId)}>
+      <div
+        style={{ position: 'relative', backgroundImage: backgroundImageUrl && `url("${backgroundImageUrl}")`, }}
+        className={classNames(`${prefixCls}-container`, hashId)}
+      >
         {backgroundVideoUrl ? (
           <div className={classNames(`${prefixCls}-bgVideo`, hashId)}>
             <video src={backgroundVideoUrl}
@@ -80,9 +79,9 @@ const LoginFormPage = forwardRef((props: LoginFormPageProps, ref: Ref<LoginFormP
         {/* {showHeader && <Header />} */}
 
         <div className={classNames(`${prefixCls}-container`, hashId)}>
-          {/* <div className={classNames(`${prefixCls}-notice`, hashId)}>
-
-          </div> */}
+          <div className={classNames(`${prefixCls}-ad`, hashId)}>
+           
+          </div>
           <div className={classNames(`${prefixCls}-loginbox`, hashId)}>
             <LoginForm {...propRest} />
           </div>

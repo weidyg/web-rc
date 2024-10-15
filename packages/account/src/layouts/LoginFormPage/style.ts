@@ -2,9 +2,9 @@
 import { useStyle as useAntdStyle } from '@web-react/biz-components';
 
 const genBizStyle: GenerateStyle<LoginFormPageToken> = (token) => {
-  const loginBoxBlur = true;
-  const isDarkMode = false;
-  const opacity = loginBoxBlur ? (isDarkMode ? 0.65 : 0.25) : 0.98;
+  // const loginBoxBlur = true;
+  // const isDarkMode = false;
+  // const opacity = loginBoxBlur ? (isDarkMode ? 0.65 : 0.25) : 0.98;
   return {
     [token.componentCls]: {
       height: '100vh',
@@ -26,22 +26,25 @@ const genBizStyle: GenerateStyle<LoginFormPageToken> = (token) => {
         }
       },
       '&-container': {
-        zIndex: 2,
-        display: 'flex',
+        zIndex: 99,
         width: '100%',
         height: '100%',
         overflow: 'auto',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
         backgroundAttachment: 'fixed',
-        [`@media (max-width: ${token.screenMDMin}px)`]: {
-          margin: 'auto',
-          backdropFilter: 'blur(10px)',
-          backgroundImage: 'radial-gradient(circle at 93% 1e+02%, rgba(22,119,255,0.17) 0%, rgba(255,255,255,0.05) 23%, rgba(255,255,255,0.03) 87%, rgba(22,119,255,0.12) 109%)',
-          backgroundColor: isDarkMode ? `rgba(0, 0, 0,${opacity})` : `rgba(255, 255,255,${opacity})`,
-          boxShadow: isDarkMode ? '0px 0px 24px 0px rgba(255,255,255,0.2)' : '0px 0px 24px 0px rgba(0,0,0,0.1)',
-        },
+      },
+      '&-ad': {
+
+        backgroundColor: token.colorWarning,
+      },
+      '&-loginbox': {
+
       },
       '&-footer': {
         zIndex: 199,
@@ -52,9 +55,6 @@ const genBizStyle: GenerateStyle<LoginFormPageToken> = (token) => {
         backdropFilter: 'blur(10px)',
         backgroundColor: token.colorBgBlur,
         color: token.colorTextSecondary,
-        [`@media (max-width: ${token.screenMDMin}px)`]: {
-          display: 'none',
-        },
         '&-nav': {
           margin: '8px 0 0',
           lineHeight: '24px',
@@ -89,28 +89,15 @@ const genBizStyle: GenerateStyle<LoginFormPageToken> = (token) => {
           backgroundSize: '100% 100%',
         }
       },
-      '&-notice': {
-        display: 'flex',
-        flex: '1',
-        zIndex: 99,
-        alignItems: 'flex-end',
-        [`@media (max-width: ${token.screenMDMin}px)`]: {
-          display: 'flex',
-          flex: 'none',
+      [`@media (max-width: ${token.screenMDMin}px)`]: {
+        '&-loginbox': {
+          width: '100%',
+          height: '100%',
+          paddingBlock: 0,
         },
-      },
-      '&-loginbox': {
-        display: 'flex',
-        flex: '1',
-        zIndex: 99,
-        flexDirection: 'column',
-        paddingInline: 0,
-        paddingBlock: 32,
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: 'max-content',
-        margin: 'auto',
-        overflow: 'hidden',
+        ['&-footer,&-ad']: {
+          display: 'none',
+        },
       },
     },
   };
