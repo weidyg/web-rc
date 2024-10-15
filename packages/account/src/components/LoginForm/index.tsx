@@ -110,7 +110,7 @@ const LoginForm = forwardRef(<Values extends { [k: string]: any } = any>(props: 
   const formInstance = Form.useFormInstance();
   const formRef = useRef<FormInstance<any>>((form || formInstance) as any);
   return wrapSSR(<div className={classNames(`${prefixCls}-container`, hashId)}>
-    <div className={classNames(`${prefixCls}-body`, hashId)}>
+    <div className={classNames(`${prefixCls}-main`, hashId)}>
       <div className={classNames(`${prefixCls}-qrcode`, hashId)} >
         <Typography.Title level={4} >扫码登录</Typography.Title>
         <Typography.Paragraph>在「我的页」右上角打开扫一扫</Typography.Paragraph>
@@ -129,7 +129,7 @@ const LoginForm = forwardRef(<Values extends { [k: string]: any } = any>(props: 
         </Typography.Paragraph>
       </div>
       <div className={classNames(`${prefixCls}-divider `, hashId)} />
-      <div className={classNames(`${prefixCls}-main`, hashId)} >
+      <div className={classNames(`${prefixCls}-form`, hashId)} >
         {confirmLogin ? (
           <CurrentAccount
             userName={userName}

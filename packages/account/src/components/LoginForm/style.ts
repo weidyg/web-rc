@@ -8,6 +8,10 @@ const genBizStyle: GenerateStyle<LoginFormToken> = (token) => {
   return {
     [token.componentCls]: {
       '&-container': {
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        width: 'fit-content',
         overflow: 'hidden',
         padding: `${token.paddingLG}px ${token.paddingLG * 2}px`,
         borderRadius: token.borderRadius,
@@ -17,12 +21,8 @@ const genBizStyle: GenerateStyle<LoginFormToken> = (token) => {
         backgroundImage: `radial-gradient(circle at 93% 1e+02%, ${setAlpha(token.colorPrimary, 0.17)} 0%, ${setAlpha(token.colorWhite, 0.05)} 23%, ${setAlpha(token.colorWhite, 0.03)} 87%, ${setAlpha(token.colorPrimary, 0.12)} 109%)`,
         backgroundColor: isDarkMode ? `${setAlpha('#000', opacity)}` : `${setAlpha('#fff', opacity)}`,
         boxShadow: `0px 0px 24px 0px ${isDarkMode ? `${setAlpha('#fff', 0.2)}` : `${setAlpha('#000', 0.1)}`}`,
-
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
       },
-      '&-body': {
+      '&-main': {
         display: 'flex',
         justifyContent: 'space-around',
       },
@@ -37,8 +37,7 @@ const genBizStyle: GenerateStyle<LoginFormToken> = (token) => {
         margin: `0 ${token.marginXXL}px`,
         borderRight: `1px solid ${token.colorBorder}`
       },
-      '&-main': {
-        // height: '420px',
+      '&-form': {
         minWidth: '320px',
         display: 'inline-grid',
         alignContent: 'space-around',
