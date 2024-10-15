@@ -128,9 +128,8 @@ const LoginForm = forwardRef(<Values extends { [k: string]: any } = any>(props: 
           使用<span>阿里云APP/支付宝/钉钉</span>
         </Typography.Paragraph>
       </div>
-      <div className={classNames(`${prefixCls}-border`, hashId)} />
+      <div className={classNames(`${prefixCls}-divider `, hashId)} />
       <div className={classNames(`${prefixCls}-main`, hashId)} >
-
         {confirmLogin ? (
           <CurrentAccount
             userName={userName}
@@ -183,8 +182,6 @@ const LoginForm = forwardRef(<Values extends { [k: string]: any } = any>(props: 
               </>)
               )}
             </Form.Item>
-
-
 
             <Form.Item >
               <Button type="primary" htmlType="submit" block>

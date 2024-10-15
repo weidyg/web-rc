@@ -27,7 +27,7 @@ const genBizStyle: GenerateStyle<LoginFormToken> = (token) => {
         alignItems: 'center',
         flexDirection: 'column'
       },
-      '&-border': {
+      '&-divider': {
         margin: `0 ${token.marginXXL}px`,
         borderRight: `1px solid ${token.colorBorder}`
       },
@@ -36,11 +36,6 @@ const genBizStyle: GenerateStyle<LoginFormToken> = (token) => {
         minWidth: '320px',
         display: 'inline-grid',
         alignContent: 'space-around',
-        '&-other': {
-          // marginBlockStart: '24px',
-          // lineHeight: '22px',
-          // textAlign: 'start',
-        },
       },
       '&-tabs': {
         [`.ant-tabs-tab`]: {
