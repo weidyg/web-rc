@@ -1,8 +1,7 @@
-﻿import type { GenerateStyle, BizAliasToken } from '@web-react/biz-components';
-import { setAlpha, useStyle as useAntdStyle } from '@web-react/biz-components';
-import { unit } from '@ant-design/cssinjs';
+﻿import { unit } from '@ant-design/cssinjs';
+import { generatStyles } from '@web-react/biz-components';
 
-const genBizStyle: GenerateStyle<ImageCardToken> = (token) => {
+const useStyles = generatStyles(({ token }) => {
   return {
     [token.componentCls]: {
       '&-wrap': {
@@ -61,18 +60,6 @@ const genBizStyle: GenerateStyle<ImageCardToken> = (token) => {
       },
     },
   };
-};
-// repeating-linear-gradient(-45deg, transparent, transparent 6px, #f0f2f5 0, #f0f2f5 8px) !important;
-interface ImageCardToken extends BizAliasToken { }
-export function useStyle(prefixCls?: string) {
-  return useAntdStyle(
-    'ImageCard',
-    (token) => {
-      const bizToken: ImageCardToken = {
-        ...token,
-      };
-      return [genBizStyle(bizToken)];
-    },
-    prefixCls,
-  );
-}
+}, 'ImageCard')
+export default useStyles;
+

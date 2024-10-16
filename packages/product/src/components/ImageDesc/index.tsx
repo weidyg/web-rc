@@ -1,7 +1,7 @@
 import { forwardRef, ReactNode, Ref } from 'react';
 import { Flex } from 'antd';
 import { classNames, useMergedState } from '@web-react/biz-utils';
-import { useStyle } from './style';
+import useStyle from './style';
 import ImageItem from './ImageItem';
 
 export const thumbnail = (url?: string, width?: number, height?: number) => {

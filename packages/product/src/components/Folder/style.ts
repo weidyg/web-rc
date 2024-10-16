@@ -1,11 +1,10 @@
-﻿import type { GenerateStyle, BizAliasToken } from '@web-react/biz-components';
-import { setAlpha, useStyle as useAntdStyle } from '@web-react/biz-components';
+﻿import { generatStyles } from '@web-react/biz-components';
 
-const genBizStyle: GenerateStyle<FolderToken> = (token) => {
+const useStyles = generatStyles(({ token }) => {
   return {
     [token.componentCls]: {
       height: '100%',
-      [`${token.antCls}-tree`]: {
+      [`.${token.antPrefixCls}-tree`]: {
         padding: '6px 0',
         [`&-switcher`]: {
           width: 'unset',
@@ -48,25 +47,13 @@ const genBizStyle: GenerateStyle<FolderToken> = (token) => {
         flex: 1,
         display: 'flex',
         overflow: 'hidden',
-        [`${token.antCls}-spin-container`]: {
+        [`.${token.antPrefixCls}-spin-container`]: {
           height: '100%',
           width: '100%',
         },
       },
     },
   };
-};
+}, 'Folder')
+export default useStyles;
 
-interface FolderToken extends BizAliasToken {}
-export function useStyle(prefixCls?: string) {
-  return useAntdStyle(
-    'Folder',
-    (token) => {
-      const bizToken: FolderToken = {
-        ...token,
-      };
-      return [genBizStyle(bizToken)];
-    },
-    prefixCls,
-  );
-}

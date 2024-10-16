@@ -1,7 +1,7 @@
 import React, { forwardRef, Ref, useEffect, useState } from 'react';
 import { Cascader, Empty, message, Select, Spin, Tree } from 'antd';
 import { classNames, useMergedState } from '@web-react/biz-utils';
-import { useStyle } from './style';
+import useStyle from './style';
 
 type FlatDataType = {
   value: string;

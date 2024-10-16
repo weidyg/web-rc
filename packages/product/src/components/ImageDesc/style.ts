@@ -1,7 +1,6 @@
-import type { GenerateStyle, BizAliasToken } from '@web-react/biz-components';
-import { useStyle as useAntdStyle } from '@web-react/biz-components';
+import { generatStyles } from '@web-react/biz-components';
 
-const genBizStyle: GenerateStyle<ImageDescToken> = (token) => {
+const useStyles = generatStyles(({ token }) => {
   return {
     [token.componentCls]: {
       width: '796px',
@@ -80,18 +79,6 @@ const genBizStyle: GenerateStyle<ImageDescToken> = (token) => {
       },
     },
   };
-};
+}, 'ImageDesc')
+export default useStyles;
 
-interface ImageDescToken extends BizAliasToken {}
-export function useStyle(prefixCls?: string) {
-  return useAntdStyle(
-    'ImageDesc',
-    (token) => {
-      const bizToken: ImageDescToken = {
-        ...token,
-      };
-      return [genBizStyle(bizToken)];
-    },
-    prefixCls,
-  );
-}

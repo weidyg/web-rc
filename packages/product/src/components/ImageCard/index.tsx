@@ -2,7 +2,7 @@ import { forwardRef, Ref, useImperativeHandle, useMemo } from 'react';
 import { Dropdown, Image, MenuProps } from 'antd';
 import { EyeOutlined, PictureOutlined } from '@ant-design/icons';
 import { classNames, useMergedState } from '@web-react/biz-utils';
-import { useStyle } from './style';
+import useStyle from './style';
 
 type ImageCardProps = {
   /** 类名 */
