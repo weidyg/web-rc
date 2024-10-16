@@ -1,6 +1,6 @@
 import { CSSProperties, ReactNode, useMemo, useState } from "react";
 import { Avatar, Divider, Popover, Space, Spin } from "antd";
-import { useStyle } from "./style";
+import useStyle  from "./style";
 import classNames from "classnames";
 import { LoadingOutlined } from "@ant-design/icons";
 

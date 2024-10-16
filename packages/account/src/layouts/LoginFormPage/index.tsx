@@ -1,7 +1,7 @@
 import { forwardRef, Ref, useImperativeHandle, useMemo, useState } from "react";
 import classNames from "classnames";
 import { LoginForm, LoginFormProps } from "../../components";
-import { useStyle } from "./style";
+import useStyle from "./style";
 
 type CopyrightProps = { year?: number, company?: string, icp?: string, beian?: string, };
 type LoginFormPageProps = LoginFormProps & {
@@ -80,7 +80,7 @@ const LoginFormPage = forwardRef((props: LoginFormPageProps, ref: Ref<LoginFormP
 
         <div className={classNames(`${prefixCls}-container`, hashId)}>
           <div className={classNames(`${prefixCls}-ad`, hashId)}>
-           
+
           </div>
           <div className={classNames(`${prefixCls}-loginbox`, hashId)}>
             <LoginForm {...propRest} />

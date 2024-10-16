@@ -1,7 +1,6 @@
-import type { GenerateStyle, BizAliasToken } from '@web-react/biz-components';
-import { useStyle as useAntdStyle } from '@web-react/biz-components';
+import { generatStyles } from "@web-react/biz-provider";
 
-const genBizStyle: GenerateStyle<ExternalLoginsToken> = (token) => {
+const useStyles = generatStyles(({ token }) => {
   return {
     [token.componentCls]: {
       display: 'flex',
@@ -31,13 +30,5 @@ const genBizStyle: GenerateStyle<ExternalLoginsToken> = (token) => {
       },
     },
   };
-};
-interface ExternalLoginsToken extends BizAliasToken { }
-export function useStyle(prefixCls?: string) {
-  return useAntdStyle('ExternalLogins', (token) => {
-    const bizToken: ExternalLoginsToken = {
-      ...token,
-    };
-    return [genBizStyle(bizToken)];
-  }, prefixCls);
-}
+}, 'ExternalLogins')
+export default useStyles;

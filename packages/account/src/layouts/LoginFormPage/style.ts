@@ -1,10 +1,6 @@
-﻿import type { GenerateStyle, BizAliasToken } from '@web-react/biz-components';
-import { useStyle as useAntdStyle } from '@web-react/biz-components';
+﻿import { generatStyles } from "@web-react/biz-provider";
 
-const genBizStyle: GenerateStyle<LoginFormPageToken> = (token) => {
-  // const loginBoxBlur = true;
-  // const isDarkMode = false;
-  // const opacity = loginBoxBlur ? (isDarkMode ? 0.65 : 0.25) : 0.98;
+const useStyles = generatStyles(({ token }) => {
   return {
     [token.componentCls]: {
       height: '100vh',
@@ -101,13 +97,5 @@ const genBizStyle: GenerateStyle<LoginFormPageToken> = (token) => {
       },
     },
   };
-};
-interface LoginFormPageToken extends BizAliasToken { }
-export function useStyle(prefixCls?: string) {
-  return useAntdStyle('LoginFormPage', (token) => {
-    const bizToken: LoginFormPageToken = {
-      ...token,
-    };
-    return [genBizStyle(bizToken)];
-  }, prefixCls);
-}
+}, 'LoginFormPage')
+export default useStyles;
