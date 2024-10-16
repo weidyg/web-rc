@@ -6,29 +6,6 @@ import { TinyColor } from '@ctrl/tinycolor';
 import * as batToken from './token';
 import { BizConfigContext } from '../index';
 
-/**
- * 把一个颜色设置一下透明度
- * @example (#fff, 0.5) => rgba(255, 255, 255, 0.5)
- * @param baseColor {string}
- * @param alpha {0-1}
- * @returns rgba {string}
- */
-export const setAlpha = (baseColor: string, alpha: number) => new TinyColor(baseColor).setAlpha(alpha).toRgbString();
-
-export type GenerateStyle<ComponentToken extends object = GlobalToken, ReturnType = CSSInterpolation> = (
-  token: ComponentToken,
-  ...rest: any[]
-) => ReturnType;
-
-const genTheme = (): any => {
-  if (typeof theme === 'undefined' || !theme) {
-    return batToken as any;
-  }
-  return theme;
-};
-export const bizTheme = genTheme() as typeof theme;
-export const useToken = bizTheme.useToken;
-
 export type BizAliasToken = GlobalToken & {
   themeId: number;
   antPrefixCls: string;
@@ -36,13 +13,26 @@ export type BizAliasToken = GlobalToken & {
   bizPrefixCls: string;
   componentCls: string;
 };
+export type GenerateStyleUtils<ComponentToken> = {
+  token: ComponentToken,
+  isDark: (baseColor: string) => Boolean,
+  setAlpha: (baseColor: string, alpha: number) => string,
+}
+export type GenerateStyleFn<ComponentToken extends BizAliasToken, Props, ReturnType = CSSInterpolation> =
+  (utils: GenerateStyleUtils<ComponentToken>, props: Props) => ReturnType;
 
-/**
- * 封装了一下 antd 的 useStyle，支持了一下antd@4
- * @param componentName {string} 组件的名字
- * @param styleFn {GenerateStyle} 生成样式的函数
- * @returns UseStyleResult
- */
+
+const setAlpha = (baseColor: string, alpha: number) => new TinyColor(baseColor).setAlpha(alpha).toRgbString();
+const isDark = (baseColor: string) => new TinyColor(baseColor).isDark();
+const genTheme = (): any => {
+  if (typeof theme === 'undefined' || !theme) {
+    return batToken as any;
+  }
+  return theme;
+};
+
+export const bizTheme = genTheme() as typeof theme;
+export const useToken = bizTheme.useToken;
 export function useStyle(
   componentName: string,
   styleFn: (token: BizAliasToken) => CSSInterpolation,
@@ -60,7 +50,6 @@ export function useStyle(
   token.antPrefixCls = token.antPrefixCls || getPrefixCls();
   token.iconPrefixCls = token.iconPrefixCls || iconPrefixCls;
   token.bizPrefixCls = token.bizPrefixCls || 'biz';
-
   token.componentCls = `.${(prefixCls ?? token.bizPrefixCls)?.replace(/^\./, '')}-${suffixCls}`;
   return {
     wrapSSR: useStyleRegister(
@@ -76,3 +65,21 @@ export function useStyle(
     prefixCls: token.componentCls?.replace(/^\./, ''),
   };
 }
+
+export function generatStyles<ComponentToken extends BizAliasToken, Props>(
+  genBizStyle: GenerateStyleFn<ComponentToken, Exclude<Props, "prefixCls">>,
+  componentName: string,
+) {
+  return (props: Props & { prefixCls?: string }) => {
+    const { prefixCls, ...restProps } = props as any;
+    return useStyle(componentName, (bizToken) => {
+      const token = { ...bizToken, } as ComponentToken;
+      return [genBizStyle({
+        token,
+        isDark,
+        setAlpha,
+      }, restProps)];
+    }, prefixCls);
+  }
+}
+

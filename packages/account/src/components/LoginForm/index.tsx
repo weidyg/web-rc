@@ -2,7 +2,7 @@ import { forwardRef, ReactNode, Ref, useImperativeHandle, useMemo, useRef, useSt
 import { Alert, Avatar, Button, Divider, Dropdown, Form, FormInstance, FormProps, Image, Input, MenuProps, Popover, QRCode, QRCodeProps, Space, Spin, Tabs, TabsProps, Typography } from 'antd';
 import { CheckCircleFilled, CloseCircleFilled, EyeOutlined, LockOutlined, MessageOutlined, MobileOutlined, PictureOutlined, ReloadOutlined, UserOutlined } from '@ant-design/icons';
 import { classNames, useMergedState } from '@web-react/biz-utils';
-import { useStyle } from './style';
+import useStyle from './style';
 import CurrentAccount from './CurrentAccount';
 import ExternalLogins, { ThirdPartyLogin } from './ExternalLogins';
 import InputCaptcha from './InputCaptcha';
@@ -35,6 +35,11 @@ type LoginFormProps<Values = any> = {
   isKeyPressSubmit?: boolean,
   form?: FormInstance<Values>;
   grantTabs: { key: string, label: ReactNode }[];
+  qrCode: {
+    title?: ReactNode,
+    subTitle?: ReactNode,
+    description?: ReactNode
+  }
   // allowRememberMe?: boolean,
   // loginBoxBlur?: boolean,
   // onLogin: (values: Record<string, any>) => Promise<any>
@@ -54,13 +59,13 @@ const LoginForm = forwardRef(<Values extends { [k: string]: any } = any>(props: 
     grantTabs = [],
     isKeyPressSubmit,
     form,
+    qrCode,
     ...propRest
     // grantTypes = ['password'],
     // externalProviders = [],
     // allowRememberMe, onLogin, onGetCaptcha
   } = props;
-
-  const { prefixCls, wrapSSR, hashId, token } = useStyle();
+  const { prefixCls, wrapSSR, hashId, token } = useStyle({ loginBoxBlur: false });
 
   const { isAuthenticated, userName, avatar } = currentUser || {};
   const [confirmLogin, setConfirmLogin] = useState(isAuthenticated);
@@ -70,36 +75,36 @@ const LoginForm = forwardRef(<Values extends { [k: string]: any } = any>(props: 
 
   }));
 
-  const customStatusRender: QRCodeProps['statusRender'] = (info) => {
-    switch (info.status) {
-      case 'expired':
-        return (
-          <div>
-            <CloseCircleFilled style={{ color: 'red' }} /> {info.locale?.expired}
-            <p>
-              <Button type="link" onClick={info.onRefresh}>
-                <ReloadOutlined /> {info.locale?.refresh}
-              </Button>
-            </p>
-          </div>
-        );
-      case 'loading':
-        return (
-          <Space direction="vertical">
-            <Spin />
-            <p>Loading...</p>
-          </Space>
-        );
-      case 'scanned':
-        return (
-          <div>
-            <CheckCircleFilled style={{ color: 'green' }} /> {info.locale?.scanned}
-          </div>
-        );
-      default:
-        return null;
-    }
-  };
+  // const customStatusRender: QRCodeProps['statusRender'] = (info) => {
+  //   switch (info.status) {
+  //     case 'expired':
+  //       return (
+  //         <div>
+  //           <CloseCircleFilled style={{ color: 'red' }} /> {info.locale?.expired}
+  //           <p>
+  //             <Button type="link" onClick={info.onRefresh}>
+  //               <ReloadOutlined /> {info.locale?.refresh}
+  //             </Button>
+  //           </p>
+  //         </div>
+  //       );
+  //     case 'loading':
+  //       return (
+  //         <Space direction="vertical">
+  //           <Spin />
+  //           <p>Loading...</p>
+  //         </Space>
+  //       );
+  //     case 'scanned':
+  //       return (
+  //         <div>
+  //           <CheckCircleFilled style={{ color: 'green' }} /> {info.locale?.scanned}
+  //         </div>
+  //       );
+  //     default:
+  //       return null;
+  //   }
+  // };
 
   const GrantTypeTabs = ({ value, onChange }: any) => {
     return (<Tabs activeKey={value} items={grantTabs} onChange={onChange}
@@ -111,24 +116,28 @@ const LoginForm = forwardRef(<Values extends { [k: string]: any } = any>(props: 
   const formRef = useRef<FormInstance<any>>((form || formInstance) as any);
   return wrapSSR(<div className={classNames(`${prefixCls}-container`, hashId)}>
     <div className={classNames(`${prefixCls}-main`, hashId)}>
-      <div className={classNames(`${prefixCls}-qrcode`, hashId)} >
-        <Typography.Title level={4} >扫码登录</Typography.Title>
-        <Typography.Paragraph>在「我的页」右上角打开扫一扫</Typography.Paragraph>
-        <QRCode
-          size={200}
-          iconSize={200 / 4}
-          errorLevel="H"
-          value="https://ant.design/"
-          icon="https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg"
-          status="expired"
-          onRefresh={() => console.log('refresh')}
-          statusRender={customStatusRender}
-        />
-        <Typography.Paragraph style={{ marginTop: '1em' }}>
-          使用<span>阿里云APP/支付宝/钉钉</span>
-        </Typography.Paragraph>
-      </div>
-      <div className={classNames(`${prefixCls}-divider `, hashId)} />
+      {qrCode && <>
+        <div className={classNames(`${prefixCls}-qrcode`, hashId)} >
+          {qrCode?.title && <Typography.Title level={4}>{qrCode?.title}</Typography.Title>}
+          {qrCode?.subTitle && <Typography.Paragraph>{qrCode?.subTitle}</Typography.Paragraph>}
+          <QRCode
+            size={200}
+            iconSize={200 / 4}
+            errorLevel="H"
+            value="https://ant.design/"
+            icon="https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg"
+            status="expired"
+            onRefresh={() => console.log('refresh')}
+          // statusRender={customStatusRender}
+          />
+          {qrCode?.description &&
+            <Typography.Paragraph style={{ marginTop: '1em' }}>
+              {qrCode?.description}
+            </Typography.Paragraph>
+          }
+        </div>
+        <div className={classNames(`${prefixCls}-divider `, hashId)} />
+      </>}
       <div className={classNames(`${prefixCls}-form`, hashId)} >
         {confirmLogin ? (
           <CurrentAccount
@@ -148,13 +157,13 @@ const LoginForm = forwardRef(<Values extends { [k: string]: any } = any>(props: 
               }
             }}
           >
-            {userLoginState?.status &&
+            {userLoginState?.status && <>
               <Alert showIcon closable
                 type={userLoginState?.status}
                 message={userLoginState?.message}
                 onClose={() => setUserLoginState({})}
               />
-            }
+            </>}
 
             <Form.Item name="grantType">
               <GrantTypeTabs />
@@ -196,7 +205,7 @@ const LoginForm = forwardRef(<Values extends { [k: string]: any } = any>(props: 
         </>}
       </div>
     </div>
-    {agreements.length > 0 &&
+    {agreements.length > 0 && <>
       <div className={classNames(`${prefixCls}-agreement`, hashId)} >
         <Typography.Text type='secondary' style={{ fontSize: 12, }}>
           登录即视为您已阅读并同意
@@ -209,7 +218,8 @@ const LoginForm = forwardRef(<Values extends { [k: string]: any } = any>(props: 
             《{label}》
           </Typography.Link>
         })}
-      </div>}
+      </div>
+    </>}
   </div>);
 });
 

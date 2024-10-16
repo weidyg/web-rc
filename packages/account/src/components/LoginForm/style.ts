@@ -1,10 +1,7 @@
-﻿import type { GenerateStyle, BizAliasToken } from '@web-react/biz-components';
-import { setAlpha, useStyle as useAntdStyle } from '@web-react/biz-components';
+﻿import { generatStyles } from '@web-react/biz-components';
 
-const genBizStyle: GenerateStyle<LoginFormToken> = (token) => {
-  const loginBoxBlur = false;
-  const isDarkMode = false;
-  const opacity = loginBoxBlur ? (isDarkMode ? 0.65 : 0.25) : 0.98;
+const useStyles = generatStyles(({ token, isDark, setAlpha }, props: { loginBoxBlur?: boolean }) => {
+  const opacity = props?.loginBoxBlur ? (isDark(token.colorBgBase) ? 0.65 : 0.25) : 0.98;
   return {
     [token.componentCls]: {
       '&-container': {
@@ -18,9 +15,13 @@ const genBizStyle: GenerateStyle<LoginFormToken> = (token) => {
         backgroundSize: '100%',
         backgroundPosition: 'top',
         backdropFilter: 'blur(10px)',
-        backgroundImage: `radial-gradient(circle at 93% 1e+02%, ${setAlpha(token.colorPrimary, 0.17)} 0%, ${setAlpha(token.colorWhite, 0.05)} 23%, ${setAlpha(token.colorWhite, 0.03)} 87%, ${setAlpha(token.colorPrimary, 0.12)} 109%)`,
-        backgroundColor: isDarkMode ? `${setAlpha('#000', opacity)}` : `${setAlpha('#fff', opacity)}`,
-        boxShadow: `0px 0px 24px 0px ${isDarkMode ? `${setAlpha('#fff', 0.2)}` : `${setAlpha('#000', 0.1)}`}`,
+        backgroundImage: `radial-gradient(circle at 93% 1e+02%, 
+        ${setAlpha(token.colorPrimary, 0.17)} 0%,
+        ${setAlpha(token.colorWhite, 0.05)} 23%,
+        ${setAlpha(token.colorWhite, 0.03)} 87%,
+        ${setAlpha(token.colorPrimary, 0.12)} 109%)`,
+        backgroundColor: `${setAlpha(token.colorBgBase, opacity)}`,
+        boxShadow: `0px 0px 24px 0px ${setAlpha(token.colorTextBase, 0.2)}`,
       },
       '&-main': {
         display: 'flex',
@@ -68,13 +69,8 @@ const genBizStyle: GenerateStyle<LoginFormToken> = (token) => {
       },
     },
   };
-};
-interface LoginFormToken extends BizAliasToken { }
-export function useStyle(prefixCls?: string) {
-  return useAntdStyle('LoginForm', (token) => {
-    const bizToken: LoginFormToken = {
-      ...token,
-    };
-    return [genBizStyle(bizToken)];
-  }, prefixCls);
-}
+}, 'LoginForm')
+export default useStyles;
+
+
+
