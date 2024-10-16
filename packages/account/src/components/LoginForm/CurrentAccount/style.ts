@@ -1,7 +1,6 @@
-﻿import type { GenerateStyle, BizAliasToken } from '@web-react/biz-components';
-import { useStyle as useAntdStyle } from '@web-react/biz-components';
+﻿import { generatStyles } from "@web-react/biz-provider";
 
-const genBizStyle: GenerateStyle<CurrentAccountToken> = (token) => {
+const useStyles = generatStyles(({ token }) => {
   return {
     [token.componentCls]: {
       display: 'flex',
@@ -12,13 +11,5 @@ const genBizStyle: GenerateStyle<CurrentAccountToken> = (token) => {
       height: 180,
     },
   };
-};
-interface CurrentAccountToken extends BizAliasToken { }
-export function useStyle(prefixCls?: string) {
-  return useAntdStyle('CurrentAccount', (token) => {
-    const bizToken: CurrentAccountToken = {
-      ...token,
-    };
-    return [genBizStyle(bizToken)];
-  }, prefixCls);
-}
+}, 'CurrentAccount')
+export default useStyles;

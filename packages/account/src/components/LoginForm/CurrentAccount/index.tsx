@@ -1,8 +1,8 @@
-import { UserOutlined } from "@ant-design/icons";
-import { Avatar, Typography } from "antd";
 import { ReactNode } from "react";
-import { useStyle } from "./style";
+import { Avatar, Typography } from "antd";
+import { UserOutlined } from "@ant-design/icons";
 import classNames from "classnames";
+import useStyles from "../style";
 
 type ConfirmCurrentAccountProps = {
     userName?: ReactNode,
@@ -11,7 +11,7 @@ type ConfirmCurrentAccountProps = {
 }
 const ConfirmCurrentAccount = (props: ConfirmCurrentAccountProps) => {
     const { userName, avatar, onClick } = props;
-    const { prefixCls, hashId } = useStyle();
+    const { prefixCls, hashId } = useStyles();
     return (<>
         <Typography.Text>{'请确认继续用以下账号登录'}</Typography.Text>
         <div className={classNames(`${prefixCls}`, hashId)} >

@@ -66,11 +66,11 @@ export function useStyle(
   };
 }
 
-export function generatStyles<ComponentToken extends BizAliasToken, Props>(
+export function generatStyles<ComponentToken extends BizAliasToken, Props = any>(
   genBizStyle: GenerateStyleFn<ComponentToken, Exclude<Props, "prefixCls">>,
   componentName: string,
 ) {
-  return (props: Props & { prefixCls?: string }) => {
+  return (props?: Props & { prefixCls?: string }) => {
     const { prefixCls, ...restProps } = props as any;
     return useStyle(componentName, (bizToken) => {
       const token = { ...bizToken, } as ComponentToken;
