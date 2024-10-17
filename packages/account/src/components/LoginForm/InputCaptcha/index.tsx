@@ -1,3 +1,4 @@
+import { useCountdown } from "@web-react/biz-utils";
 import { Button, ButtonProps, Flex, Form, Input, InputProps } from "antd";
 import { NamePath } from "antd/es/form/interface";
 import { forwardRef, Ref, useEffect, useImperativeHandle, useState } from "react";
@@ -40,24 +41,23 @@ const InputCaptcha = forwardRef((props: InputCaptchaProps, ref: Ref<InputCaptcha
             return paramsTiming ? `${paramsCount} 秒后重新获取` : '获取验证码';
         },
         captchaProps,
+        countDown = 60,
         ...restProps
     } = props;
 
     const form = Form.useFormInstance();
-    const [count, setCount] = useState<number>(props.countDown || 60);
-    const [timing, setTiming] = useState(false);
     const [loading, setLoading] = useState<boolean>();
+    const { count, timing, start, stop } = useCountdown({ initialCount: countDown || 60, onTiming });
 
     const onGetCaptcha = async (mobile: string) => {
         try {
             setLoading(true);
             await restProps.onGetCaptcha(mobile);
             setLoading(false);
-            setTiming(true);
+            start();
         } catch (error) {
-            setTiming(false);
+            stop();
             setLoading(false);
-            // eslint-disable-next-line no-console
             console.log(error);
         }
     };
@@ -65,35 +65,9 @@ const InputCaptcha = forwardRef((props: InputCaptchaProps, ref: Ref<InputCaptcha
      * 暴露ref方法
      */
     useImperativeHandle(ref, () => ({
-        startTiming: () => setTiming(true),
-        endTiming: () => setTiming(false),
+        startTiming: () => start(),
+        endTiming: () => stop(),
     }));
-
-    useEffect(() => {
-        let interval: number = 0;
-        const { countDown } = props;
-        if (timing) {
-            interval = window.setInterval(() => {
-                setCount((preSecond) => {
-                    if (preSecond <= 1) {
-                        setTiming(false);
-                        clearInterval(interval);
-                        // 重置秒数
-                        return countDown || 60;
-                    }
-                    return preSecond - 1;
-                });
-            }, 1000);
-        }
-        return () => clearInterval(interval);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [timing]);
-
-    useEffect(() => {
-        if (onTiming) {
-            onTiming(count);
-        }
-    }, [count, onTiming]);
 
     return (
         <div

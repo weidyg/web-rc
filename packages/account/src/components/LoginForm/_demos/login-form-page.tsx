@@ -4,10 +4,11 @@
  * description: 登录表单页面
  */
 
-import { AlipayCircleOutlined, AlipayOutlined, DingdingOutlined, GithubOutlined, WechatOutlined, WeiboOutlined } from "@ant-design/icons";
-import { LoginForm, LoginFormPage } from "@web-react/biz-components";
+import { AlipayOutlined, DingdingOutlined, GithubOutlined, WechatOutlined, WeiboOutlined } from "@ant-design/icons";
+import { useToken, LoginFormPage } from "@web-react/biz-components";
 
 export default () => {
+    const { token } = useToken();
     return (<LoginFormPage
         // backgroundImageUrl="https://mdn.alipayobjects.com/yuyan_qk0oxh/afts/img/V-_oS6r-i7wAAAAAAAAAAAAAFl94AQBr"
         // backgroundImageUrl="https://srccdn.jushuitan.com/jst-login/assets/img/login_subimg_20230201-35a38a2251.png"
@@ -46,6 +47,33 @@ export default () => {
             company: "福建省不想上班有限公司",
             icp: "闽ICP备000000000000号-1",
             beian: "闽公网安备000000000000号"
+        }}
+        qrCodeProps={{
+            title: '扫码登录',
+            subTitle: '打开淘宝APP—点击左上角扫一扫',
+            description: <>
+                <div style={{ color: token.colorTextDescription }} >使用<span style={{ color: token.colorText }} >阿里云APP/支付宝/钉钉</span></div>
+                <a style={{ color: token.colorTextDescription }}
+                    onMouseOver={(e) => { e.currentTarget.style.color = token.colorLinkHover; }}
+                >
+                    下载阿里云APP，上云更轻松
+                </a>
+            </>
+        }}
+        onQrCodeRefresh={() => {
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    resolve("https://img.alicdn.com/imgextra/i4/O1CN01KqhJjG1JzKzk5b")
+                }, 1000)
+            })
+        }}
+        onQrCodeValidate={() => {
+            console.log('validate')
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    resolve('expired')
+                }, 1000)
+            })
         }}
     />);
 };

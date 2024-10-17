@@ -1,7 +1,7 @@
-import { forwardRef, ReactNode, Ref, useImperativeHandle, useMemo, useRef, useState } from 'react';
-import { Alert, Avatar, Button, Divider, Dropdown, Form, FormInstance, FormProps, Image, Input, MenuProps, Popover, QRCode, QRCodeProps, Space, Spin, Tabs, TabsProps, Typography } from 'antd';
-import { CheckCircleFilled, CloseCircleFilled, EyeOutlined, LockOutlined, MessageOutlined, MobileOutlined, PictureOutlined, ReloadOutlined, UserOutlined } from '@ant-design/icons';
-import { classNames, useMergedState } from '@web-react/biz-utils';
+import { forwardRef, ReactNode, Ref, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import { Alert, Button, Form, FormInstance, Input, QRCode, QRCodeProps, Space, Spin, Tabs, Typography } from 'antd';
+import { CheckCircleFilled, CloseCircleFilled, LockOutlined, MessageOutlined, MobileOutlined, ReloadOutlined, UserOutlined } from '@ant-design/icons';
+import { classNames, useInterval } from '@web-react/biz-utils';
 import { useStyles } from './style';
 import CurrentAccount from './CurrentAccount';
 import ExternalLogins, { ThirdPartyLogin } from './ExternalLogins';
@@ -35,16 +35,19 @@ type LoginFormProps<Values = any> = {
   isKeyPressSubmit?: boolean,
   form?: FormInstance<Values>;
   grantTabs: { key: string, label: ReactNode }[];
-  qrCode: {
+  qrCodeProps?: Omit<QRCodeProps, 'value' | 'status' | 'onRefresh'> & {
     title?: ReactNode,
     subTitle?: ReactNode,
     description?: ReactNode
-  }
+  },
+  onQrCodeRefresh?: () => Promise<string> | string;
+  onQrCodeValidate?: () => Promise<QRCodeValidateStatus> | QRCodeValidateStatus;
   // allowRememberMe?: boolean,
   // loginBoxBlur?: boolean,
   // onLogin: (values: Record<string, any>) => Promise<any>
   // onGetCaptcha: (mobile: string) => Promise<any>
 };
+type QRCodeValidateStatus = Exclude<QRCodeProps['status'], 'loading'>;
 
 type LoginFormRef = {
 };
@@ -59,7 +62,9 @@ const LoginForm = forwardRef(<Values extends { [k: string]: any } = any>(props: 
     grantTabs = [],
     isKeyPressSubmit,
     form,
-    qrCode,
+    qrCodeProps,
+    onQrCodeRefresh,
+    onQrCodeValidate,
     ...propRest
     // grantTypes = ['password'],
     // externalProviders = [],
@@ -114,28 +119,72 @@ const LoginForm = forwardRef(<Values extends { [k: string]: any } = any>(props: 
   };
   const formInstance = Form.useFormInstance();
   const formRef = useRef<FormInstance<any>>((form || formInstance) as any);
+
+  const QRCodeBox = () => {
+    const { title, subTitle, description, ...rest } = qrCodeProps || {};
+    const [value, setValue] = useState('loading...');
+    const [status, setStatus] = useState<QRCodeProps['status']>('loading');
+
+    const { start, stop } = useInterval(async () => {
+      try {
+        const qrCodeStatus = await onQrCodeValidate?.();
+        setStatus(qrCodeStatus);
+        if (qrCodeStatus != 'active') {
+          stop();
+        }
+      } catch (error) {
+        setStatus('expired');
+        stop();
+      }
+    }, 1000);
+
+    useEffect(() => {
+      handleRefresh();
+    }, []);
+
+    useEffect(() => {
+      if (status == 'active') {
+        start();
+      }
+    }, [status]);
+
+    const handleRefresh = async () => {
+      setStatus('loading');
+      try {
+        const qrCodeText = await onQrCodeRefresh?.();
+        if (qrCodeText) { setValue(qrCodeText); }
+        setStatus('active');
+      } catch (error) {
+        setStatus('expired');
+      }
+    }
+
+    return <div className={classNames(`${prefixCls}-qrcode`, hashId)} >
+      {title && <Typography.Title level={4}>{title}</Typography.Title>}
+      {subTitle && <Typography.Paragraph>{subTitle}</Typography.Paragraph>}
+      <QRCode
+        size={200}
+        iconSize={200 / 4}
+        errorLevel="H"
+        icon="https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg"
+
+        value={value}
+        status={status}
+        onRefresh={handleRefresh}
+        {...rest}
+      />
+      {description &&
+        <Typography.Paragraph style={{ marginTop: '1em' }}>
+          {description}
+        </Typography.Paragraph>
+      }
+    </div>
+  }
+
   return wrapSSR(<div className={classNames(`${prefixCls}-container`, hashId)}>
     <div className={classNames(`${prefixCls}-main`, hashId)}>
-      {qrCode && <>
-        <div className={classNames(`${prefixCls}-qrcode`, hashId)} >
-          {qrCode?.title && <Typography.Title level={4}>{qrCode?.title}</Typography.Title>}
-          {qrCode?.subTitle && <Typography.Paragraph>{qrCode?.subTitle}</Typography.Paragraph>}
-          <QRCode
-            size={200}
-            iconSize={200 / 4}
-            errorLevel="H"
-            value="https://ant.design/"
-            icon="https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg"
-            status="expired"
-            onRefresh={() => console.log('refresh')}
-          // statusRender={customStatusRender}
-          />
-          {qrCode?.description &&
-            <Typography.Paragraph style={{ marginTop: '1em' }}>
-              {qrCode?.description}
-            </Typography.Paragraph>
-          }
-        </div>
+      {qrCodeProps && <>
+        <QRCodeBox />
         <div className={classNames(`${prefixCls}-divider `, hashId)} />
       </>}
       <div className={classNames(`${prefixCls}-form`, hashId)} >
@@ -225,3 +274,4 @@ const LoginForm = forwardRef(<Values extends { [k: string]: any } = any>(props: 
 
 export type { LoginFormProps, LoginFormRef };
 export default LoginForm;
+
