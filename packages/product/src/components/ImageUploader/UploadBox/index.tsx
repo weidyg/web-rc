@@ -3,7 +3,7 @@ import { Button, message, Upload, UploadFile, UploadProps } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import { classNames } from '@web-react/biz-utils';
 import { UploadResponse, CustomUploadProps } from '../typing';
-import { useStyle } from './style';
+import { useStyles } from './style';
 import uploadRequest from '../_utils/request';
 
 const fillRespUrl = <T extends UploadResponse>(file: UploadFile<T>) => {
@@ -36,7 +36,7 @@ const InternalDraggerUpload = <T extends UploadResponse = UploadResponse>(props:
     ...restUploadProps
   } = props;
 
-  const { prefixCls, wrapSSR, hashId, token } = useStyle();
+  const { prefixCls, wrapSSR, hashId, token } = useStyles();
 
   const checkFile = (file: UploadFile, accept: string) => {
     const types = accept.split(',') || [];

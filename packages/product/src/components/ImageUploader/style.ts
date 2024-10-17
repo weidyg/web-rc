@@ -1,7 +1,6 @@
-﻿import type { GenerateStyle, BizAliasToken } from '@web-react/biz-components';
-import { setAlpha, useStyle as useAntdStyle } from '@web-react/biz-components';
+﻿import { generatStyles } from "@web-react/biz-provider";
 
-const genBizStyle: GenerateStyle<PicUploaderToken> = (token) => {
+export const useStyles = generatStyles(({ token }) => {
   return {
     [token.componentCls]: {
       overflow: 'hidden',
@@ -23,7 +22,7 @@ const genBizStyle: GenerateStyle<PicUploaderToken> = (token) => {
           alignItems: 'center',
           flexWrap: 'wrap',
           marginBottom: token.marginXXS,
-          [`${token.antCls}-form-item`]: {
+          [`.${token.antPrefixCls}-form-item`]: {
             padding: '4px 0',
             display: 'flex',
             flexWrap: 'nowrap',
@@ -133,18 +132,4 @@ const genBizStyle: GenerateStyle<PicUploaderToken> = (token) => {
       },
     },
   };
-};
-
-interface PicUploaderToken extends BizAliasToken {}
-export function useStyle(prefixCls?: string) {
-  return useAntdStyle(
-    'PicUploader',
-    (token) => {
-      const bizToken: PicUploaderToken = {
-        ...token,
-      };
-      return [genBizStyle(bizToken)];
-    },
-    prefixCls,
-  );
-}
+}, 'PicUploader');

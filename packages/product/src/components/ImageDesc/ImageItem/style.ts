@@ -1,18 +1,6 @@
-import { Keyframes } from '@ant-design/cssinjs';
-import type { GenerateStyle, BizAliasToken } from '@web-react/biz-components';
-import { useStyle as useAntdStyle } from '@web-react/biz-components';
+import { generatStyles } from "@web-react/biz-provider";
 
-const genBizStyle: GenerateStyle<ImageItemToken> = (token) => {
-  // const downOut = new Keyframes('card-loading', {
-  //   'from': {
-  //     transform: 'translate(0, 0)',
-  //     opacity: 1
-  //   },
-  //   'to': {
-  //     transform: 'translate(0, 100%)',
-  //     opacity: 0
-  //   },
-  // });
+export const useStyles = generatStyles(({ token }) => {
   return {
     [token.componentCls]: {
       width: 88,
@@ -72,18 +60,4 @@ const genBizStyle: GenerateStyle<ImageItemToken> = (token) => {
       // }
     },
   };
-};
-
-interface ImageItemToken extends BizAliasToken {}
-export function useStyle(prefixCls?: string) {
-  return useAntdStyle(
-    'ImageItem',
-    (token) => {
-      const bizToken: ImageItemToken = {
-        ...token,
-      };
-      return [genBizStyle(bizToken)];
-    },
-    prefixCls,
-  );
-}
+}, 'ImageItem')

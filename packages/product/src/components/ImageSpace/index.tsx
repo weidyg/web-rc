@@ -2,7 +2,7 @@ import { CSSProperties, forwardRef, Key, ReactNode, Ref, useEffect, useImperativ
 import { Image, Button, Checkbox, Divider, message, Radio, Segmented, Space, Spin, Empty } from 'antd';
 import { AppstoreOutlined, BarsOutlined } from '@ant-design/icons';
 import { classNames, convertByteUnit, useMergedState } from '@web-react/biz-utils';
-import { useStyle } from './style';
+import { useStyles } from './style';
 
 import PicCard from './PicCard';
 import { Folder, FolderProps } from '@web-react/biz-components';
@@ -55,7 +55,7 @@ const InternalImageSpace = forwardRef((props: ImageSpaceProps, ref: Ref<ImageSpa
     actionsRender,
     footerRender,
   } = props;
-  const { prefixCls, wrapSSR, hashId, token } = useStyle();
+  const { prefixCls, wrapSSR, hashId, token } = useStyles();
   const [loading, setLoading] = useState(false);
   const [curPage, setCurPage] = useState(0);
   const [totalCount, setTotalCount] = useState(0);

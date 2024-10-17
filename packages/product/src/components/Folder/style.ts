@@ -1,6 +1,6 @@
 ﻿import { generatStyles } from '@web-react/biz-components';
 
-const useStyles = generatStyles(({ token }) => {
+export const useStyles = generatStyles(({ token }) => {
   return {
     [token.componentCls]: {
       height: '100%',
@@ -54,6 +54,5 @@ const useStyles = generatStyles(({ token }) => {
       },
     },
   };
-}, 'Folder')
-export default useStyles;
+}, 'Folder');
 

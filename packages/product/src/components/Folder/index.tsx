@@ -1,7 +1,7 @@
 import React, { forwardRef, Ref, useEffect, useState } from 'react';
 import { Cascader, Empty, message, Select, Spin, Tree } from 'antd';
 import { classNames, useMergedState } from '@web-react/biz-utils';
-import useStyle from './style';
+import { useStyles } from './style';
 
 type FlatDataType = {
   value: string;
@@ -37,7 +37,7 @@ type FolderProps = {
 interface FolderRef { }
 const InternalFolder = forwardRef((props: FolderProps, ref: Ref<FolderRef>) => {
   const { data = [], type = 'defalut', loading: propLoading = false } = props;
-  const { prefixCls, wrapSSR, hashId, token } = useStyle();
+  const { prefixCls, wrapSSR, hashId, token } = useStyles();
 
   const [value, setValue] = useMergedState<string>('', {
     defaultValue: props?.defaultValue,

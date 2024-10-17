@@ -1,7 +1,7 @@
 import { DragEvent, useRef, ReactNode } from 'react';
 import { Flex } from 'antd';
 import { classNames } from '@web-react/biz-utils';
-import { useStyle } from './style';
+import { useStyles } from './style';
 
 type ImageItemProps = {
   prefixCls?: string;
@@ -17,7 +17,7 @@ type ImageItemProps = {
 };
 const ImageItem = (props: ImageItemProps) => {
   const { index, imgUrl, showNo, draggable, onDragEnd, renderActions } = props;
-  const { prefixCls, wrapSSR, hashId, token } = useStyle(props.prefixCls);
+  const { prefixCls, wrapSSR, hashId, token } = useStyles(props.prefixCls);
   const animateWrap = useRef<HTMLSpanElement>(null);
 
   const handleDragStart = (ev: DragEvent<HTMLSpanElement>) => {

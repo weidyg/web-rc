@@ -1,7 +1,7 @@
 import { forwardRef, ReactNode, Ref } from 'react';
 import { Flex } from 'antd';
 import { classNames, useMergedState } from '@web-react/biz-utils';
-import useStyle from './style';
+import { useStyles } from './style';
 import ImageItem from './ImageItem';
 
 export const thumbnail = (url?: string, width?: number, height?: number) => {
@@ -25,7 +25,7 @@ type ImageDescProps = {
 const ImageDesc = forwardRef((props: ImageDescProps, ref: Ref<ImageDescRef>) => {
   const { actionsRender } = props;
   const { add, edit, remove } = actionsRender || {};
-  const { prefixCls, wrapSSR, hashId, token } = useStyle();
+  const { prefixCls, wrapSSR, hashId, token } = useStyles();
 
   const [value, setValue] = useMergedState<string[]>([], {
     defaultValue: props.defaultValue,

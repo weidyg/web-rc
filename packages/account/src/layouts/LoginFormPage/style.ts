@@ -1,6 +1,6 @@
 ﻿import { generatStyles } from "@web-react/biz-provider";
 
-const useStyles = generatStyles(({ token }) => {
+export const useStyles = generatStyles(({ token }) => {
   return {
     [token.componentCls]: {
       height: '100vh',
@@ -97,5 +97,4 @@ const useStyles = generatStyles(({ token }) => {
       },
     },
   };
-}, 'LoginFormPage')
-export default useStyles;
+}, 'LoginFormPage');

@@ -1,7 +1,17 @@
-﻿import type { GenerateStyle, BizAliasToken } from '@web-react/biz-components';
-import { setAlpha, useStyle as useAntdStyle } from '@web-react/biz-components';
+﻿
+import { BizAliasToken, generatStyles } from "@web-react/biz-provider";
 
-const genBizStyle: GenerateStyle<ImageSpaceToken> = (token) => {
+interface ImageSpaceToken extends BizAliasToken {
+  colorBgPage: string;
+  colorBgFooter: string;
+  colorBgSide: string;
+}
+
+export const useStyles = generatStyles<ImageSpaceToken>(({ token }) => {
+  token.colorBgPage = token.colorBgElevated;
+  token.colorBgSide = token.colorBgLayout;
+  token.colorBgFooter = token.colorBgElevated;
+
   return {
     [token.componentCls]: {
       display: 'flex',
@@ -162,25 +172,4 @@ const genBizStyle: GenerateStyle<ImageSpaceToken> = (token) => {
       },
     },
   };
-};
-
-interface ImageSpaceToken extends BizAliasToken {
-  colorBgPage: string;
-  colorBgFooter: string;
-  colorBgSide: string;
-}
-export function useStyle(prefixCls?: string) {
-  return useAntdStyle(
-    'ImageSpace',
-    (token) => {
-      const bizToken: ImageSpaceToken = {
-        ...token,
-        colorBgPage: token.colorBgElevated,
-        colorBgSide: token.colorBgLayout,
-        colorBgFooter: token.colorBgElevated,
-      };
-      return [genBizStyle(bizToken)];
-    },
-    prefixCls,
-  );
-}
+}, 'ImageSpace');

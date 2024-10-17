@@ -1,7 +1,6 @@
-﻿import type { GenerateStyle, BizAliasToken } from '@web-react/biz-components';
-import { setAlpha, useStyle as useAntdStyle } from '@web-react/biz-components';
+﻿import { generatStyles } from "@web-react/biz-provider";
 
-const genBizStyle: GenerateStyle<DraggerUploadToken> = (token) => {
+export const useStyles = generatStyles(({ token }) => {
   return {
     [token.componentCls]: {
       display: 'flex',
@@ -12,7 +11,7 @@ const genBizStyle: GenerateStyle<DraggerUploadToken> = (token) => {
         alignItems: 'center',
         flexWrap: 'wrap',
         marginBottom: token.marginXXS,
-        [`${token.antCls}-form-item`]: {
+        [`.${token.antPrefixCls}-form-item`]: {
           padding: '4px 0',
           display: 'flex',
           flexWrap: 'nowrap',
@@ -46,18 +45,4 @@ const genBizStyle: GenerateStyle<DraggerUploadToken> = (token) => {
       },
     },
   };
-};
-
-interface DraggerUploadToken extends BizAliasToken {}
-export function useStyle(prefixCls?: string) {
-  return useAntdStyle(
-    'DraggerUpload',
-    (token) => {
-      const bizToken: DraggerUploadToken = {
-        ...token,
-      };
-      return [genBizStyle(bizToken)];
-    },
-    prefixCls,
-  );
-}
+}, 'DraggerUpload');

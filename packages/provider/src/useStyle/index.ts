@@ -18,7 +18,7 @@ export type GenerateStyleUtils<ComponentToken> = {
   isDark: (baseColor: string) => Boolean,
   setAlpha: (baseColor: string, alpha: number) => string,
 }
-export type GenerateStyleFn<ComponentToken extends BizAliasToken, Props, ReturnType = CSSInterpolation> =
+export type GenerateStyleFn<ComponentToken extends BizAliasToken, Props = any, ReturnType = CSSInterpolation> =
   (utils: GenerateStyleUtils<ComponentToken>, props: Props) => ReturnType;
 
 
@@ -71,14 +71,10 @@ export function generatStyles<ComponentToken extends BizAliasToken, Props = any>
   componentName: string,
 ) {
   return (props?: Props & { prefixCls?: string }) => {
-    const { prefixCls, ...restProps } = props as any;
-    return useStyle(componentName, (bizToken) => {
-      const token = { ...bizToken, } as ComponentToken;
-      return [genBizStyle({
-        token,
-        isDark,
-        setAlpha,
-      }, restProps)];
+    const { prefixCls, ...restProps } = props as any || {};
+    return useStyle(componentName, (_token) => {
+      const token = { ..._token, } as ComponentToken;
+      return [genBizStyle({ token, isDark, setAlpha }, restProps)];
     }, prefixCls);
   }
 }

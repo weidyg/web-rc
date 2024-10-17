@@ -1,6 +1,6 @@
 import { generatStyles } from '@web-react/biz-components';
 
-const useStyles = generatStyles(({ token }) => {
+export const useStyles = generatStyles(({ token }) => {
   return {
     [token.componentCls]: {
       width: '796px',
@@ -79,6 +79,5 @@ const useStyles = generatStyles(({ token }) => {
       },
     },
   };
-}, 'ImageDesc')
-export default useStyles;
+}, 'ImageDesc');
 

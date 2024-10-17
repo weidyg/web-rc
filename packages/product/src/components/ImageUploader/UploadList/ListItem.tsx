@@ -1,10 +1,10 @@
 import { classNames, convertByteUnit } from '@web-react/biz-utils';
-import { useStyle } from './style';
+import { useStyles } from './style';
 import { Progress, Typography } from 'antd';
 
 const ListItem = (props: any) => {
   const { name, url, thumbUrl, size, crossOrigin, percent = 0, status, error } = props;
-  const { prefixCls, wrapSSR, hashId, token } = useStyle();
+  const { prefixCls, wrapSSR, hashId, token } = useStyles();
 
   let _percent = parseFloat(
     (status === 'uploading' && percent >= 100 ? 99 : status === 'error' ? 100 : percent).toFixed(2),

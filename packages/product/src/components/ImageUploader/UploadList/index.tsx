@@ -2,7 +2,7 @@ import { CSSProperties, ReactNode, useEffect, useMemo } from 'react';
 import { Alert, Progress, Typography, UploadFile, UploadProps } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 import { classNames, convertByteUnit, previewImage, useForceUpdate } from '@web-react/biz-utils';
-import { useStyle } from './style';
+import { useStyles } from './style';
 import ListItem from './ListItem';
 
 type UploadListProps = {
@@ -13,7 +13,7 @@ type UploadListProps = {
 };
 const UploadList = (props: UploadListProps) => {
   const { style, fileList = [], previewFile = previewImage, actionsRender } = props;
-  const { prefixCls, wrapSSR, hashId, token } = useStyle();
+  const { prefixCls, wrapSSR, hashId, token } = useStyles();
 
   const forceUpdate = useForceUpdate();
   useEffect(() => {

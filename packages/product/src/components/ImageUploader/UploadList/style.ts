@@ -1,7 +1,6 @@
-﻿import type { GenerateStyle, BizAliasToken } from '@web-react/biz-components';
-import { setAlpha, useStyle as useAntdStyle } from '@web-react/biz-components';
+﻿import { generatStyles } from "@web-react/biz-provider";
 
-const genBizStyle: GenerateStyle<UploadListToken> = (token) => {
+export const useStyles = generatStyles(({ token }) => {
   return {
     [token.componentCls]: {
       display: 'flex',
@@ -66,18 +65,4 @@ const genBizStyle: GenerateStyle<UploadListToken> = (token) => {
       },
     },
   };
-};
-
-interface UploadListToken extends BizAliasToken {}
-export function useStyle(prefixCls?: string) {
-  return useAntdStyle(
-    'UploadList',
-    (token) => {
-      const bizToken: UploadListToken = {
-        ...token,
-      };
-      return [genBizStyle(bizToken)];
-    },
-    prefixCls,
-  );
-}
+}, 'UploadList');

@@ -2,7 +2,7 @@ import { forwardRef, ReactNode, Ref, useImperativeHandle, useMemo, useRef, useSt
 import { Alert, Avatar, Button, Divider, Dropdown, Form, FormInstance, FormProps, Image, Input, MenuProps, Popover, QRCode, QRCodeProps, Space, Spin, Tabs, TabsProps, Typography } from 'antd';
 import { CheckCircleFilled, CloseCircleFilled, EyeOutlined, LockOutlined, MessageOutlined, MobileOutlined, PictureOutlined, ReloadOutlined, UserOutlined } from '@ant-design/icons';
 import { classNames, useMergedState } from '@web-react/biz-utils';
-import useStyle from './style';
+import { useStyles } from './style';
 import CurrentAccount from './CurrentAccount';
 import ExternalLogins, { ThirdPartyLogin } from './ExternalLogins';
 import InputCaptcha from './InputCaptcha';
@@ -65,7 +65,7 @@ const LoginForm = forwardRef(<Values extends { [k: string]: any } = any>(props: 
     // externalProviders = [],
     // allowRememberMe, onLogin, onGetCaptcha
   } = props;
-  const { prefixCls, wrapSSR, hashId, token } = useStyle({ loginBoxBlur: false });
+  const { prefixCls, wrapSSR, hashId, token } = useStyles({ loginBoxBlur: false });
 
   const { isAuthenticated, userName, avatar } = currentUser || {};
   const [confirmLogin, setConfirmLogin] = useState(isAuthenticated);

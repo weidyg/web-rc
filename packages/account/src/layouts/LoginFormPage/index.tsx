@@ -1,7 +1,7 @@
 import { forwardRef, Ref, useImperativeHandle, useMemo, useState } from "react";
 import classNames from "classnames";
 import { LoginForm, LoginFormProps } from "../../components";
-import useStyle from "./style";
+import { useStyles } from './style';
 
 type CopyrightProps = { year?: number, company?: string, icp?: string, beian?: string, };
 type LoginFormPageProps = LoginFormProps & {
@@ -27,7 +27,7 @@ const LoginFormPage = forwardRef((props: LoginFormPageProps, ref: Ref<LoginFormP
     ...propRest
   } = props;
 
-  const { prefixCls, wrapSSR, hashId, token } = useStyle();
+  const { prefixCls, wrapSSR, hashId, token } = useStyles();
 
 
   useImperativeHandle(ref, () => ({

@@ -1,6 +1,6 @@
 ﻿import { generatStyles } from "@web-react/biz-provider";
 
-const useStyles = generatStyles(({ token }) => {
+export const useStyles = generatStyles(({ token }) => {
   return {
     [token.componentCls]: {
       display: 'flex',
@@ -11,5 +11,4 @@ const useStyles = generatStyles(({ token }) => {
       height: 180,
     },
   };
-}, 'CurrentAccount')
-export default useStyles;
+}, 'CurrentAccount');

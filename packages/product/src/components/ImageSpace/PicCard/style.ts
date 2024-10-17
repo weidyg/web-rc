@@ -1,7 +1,12 @@
-﻿import type { GenerateStyle, BizAliasToken } from '@web-react/biz-components';
-import { setAlpha, useStyle as useAntdStyle } from '@web-react/biz-components';
+﻿import { BizAliasToken, generatStyles } from "@web-react/biz-provider";
 
-const genBizStyle: GenerateStyle<PicCardToken> = (token) => {
+interface PicCardToken extends BizAliasToken {
+  colorBgPicCard: string;
+  colorControlText: string;
+}
+export const useStyles = generatStyles<PicCardToken>(({ token, setAlpha }) => {
+  token.colorBgPicCard = token.colorBgLayout;
+  token.colorControlText = token.colorWhite;
   return {
     [token.componentCls]: {
       position: 'relative',
@@ -146,23 +151,4 @@ const genBizStyle: GenerateStyle<PicCardToken> = (token) => {
       },
     },
   };
-};
-
-interface PicCardToken extends BizAliasToken {
-  colorBgPicCard: string;
-  colorControlText: string;
-}
-export function useStyle(prefixCls?: string) {
-  return useAntdStyle(
-    'PicCard',
-    (token) => {
-      const bizToken: PicCardToken = {
-        ...token,
-        colorBgPicCard: token.colorBgLayout,
-        colorControlText: token.colorWhite,
-      };
-      return [genBizStyle(bizToken)];
-    },
-    prefixCls,
-  );
-}
+}, 'PicCard');

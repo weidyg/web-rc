@@ -2,7 +2,7 @@ import { forwardRef, Ref, useImperativeHandle, useMemo } from 'react';
 import { Dropdown, Image, MenuProps } from 'antd';
 import { EyeOutlined, PictureOutlined } from '@ant-design/icons';
 import { classNames, useMergedState } from '@web-react/biz-utils';
-import useStyle from './style';
+import { useStyles } from './style';
 
 type ImageCardProps = {
   /** 类名 */
@@ -25,7 +25,7 @@ type ImageCardRef = {
 
 const ImageCard = forwardRef<ImageCardRef, ImageCardProps>((props: ImageCardProps, ref: Ref<ImageCardRef>) => {
   const { className, style, placeholder, menus, children } = props;
-  const { prefixCls, wrapSSR, hashId, token } = useStyle(props.prefixCls);
+  const { prefixCls, wrapSSR, hashId, token } = useStyles(props.prefixCls);
   const [imgUrl, setImgUrl] = useMergedState(undefined, {
     defaultValue: props?.defaultValue,
     value: props?.value,

@@ -1,6 +1,6 @@
 ﻿import { generatStyles } from '@web-react/biz-components';
 
-const useStyles = generatStyles(({ token, isDark, setAlpha }, props: { loginBoxBlur?: boolean }) => {
+export const useStyles = generatStyles(({ token, isDark, setAlpha }, props: { loginBoxBlur?: boolean }) => {
   const opacity = props?.loginBoxBlur ? (isDark(token.colorBgBase) ? 0.65 : 0.25) : 0.98;
   return {
     [token.componentCls]: {
@@ -69,8 +69,6 @@ const useStyles = generatStyles(({ token, isDark, setAlpha }, props: { loginBoxB
       },
     },
   };
-}, 'LoginForm')
-export default useStyles;
-
+}, 'LoginForm');
 
 

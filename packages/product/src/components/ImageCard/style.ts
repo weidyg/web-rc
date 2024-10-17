@@ -1,7 +1,7 @@
 ﻿import { unit } from '@ant-design/cssinjs';
 import { generatStyles } from '@web-react/biz-components';
 
-const useStyles = generatStyles(({ token }) => {
+export const useStyles = generatStyles(({ token }) => {
   return {
     [token.componentCls]: {
       '&-wrap': {
@@ -60,6 +60,4 @@ const useStyles = generatStyles(({ token }) => {
       },
     },
   };
-}, 'ImageCard')
-export default useStyles;
-
+}, 'ImageCard');

@@ -2,7 +2,7 @@ import React, { forwardRef, Ref, useImperativeHandle } from 'react';
 import { Button, Checkbox, Form, InputNumber, Select, UploadFile, UploadProps } from 'antd';
 import { classNames, drawImage, previewImage, useMergedState } from '@web-react/biz-utils';
 import { UploadResponse, ImageUploaderProps } from './typing';
-import { useStyle } from './style';
+import { useStyles } from './style';
 import InternalUploadBox from './UploadBox';
 import InternalUploadList from './UploadList';
 import { Folder } from '@web-react/biz-components';
@@ -30,7 +30,7 @@ const InternalUploader = forwardRef(<Type extends UploadResponse = UploadRespons
     } = props;
     const { data: uploadData, ...restUpload } = upload;
 
-    const { prefixCls, wrapSSR, hashId, token } = useStyle();
+    const { prefixCls, wrapSSR, hashId, token } = useStyles();
     const [form] = Form.useForm<ConfigFormValueType>();
 
     const [showUploadList, setShowUploadList] = useMergedState<boolean>(false, {

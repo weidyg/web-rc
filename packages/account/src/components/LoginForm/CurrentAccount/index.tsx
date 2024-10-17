@@ -2,7 +2,7 @@ import { ReactNode } from "react";
 import { Avatar, Typography } from "antd";
 import { UserOutlined } from "@ant-design/icons";
 import classNames from "classnames";
-import useStyles from "../style";
+import {useStyles} from "./style";
 
 type ConfirmCurrentAccountProps = {
     userName?: ReactNode,

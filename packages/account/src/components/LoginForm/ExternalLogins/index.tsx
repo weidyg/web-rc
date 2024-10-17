@@ -1,6 +1,6 @@
 import { CSSProperties, ReactNode, useMemo, useState } from "react";
 import { Avatar, Divider, Popover, Space, Spin } from "antd";
-import useStyle  from "./style";
+import { useStyles } from "./style";
 import classNames from "classnames";
 import { LoadingOutlined } from "@ant-design/icons";
 
@@ -68,7 +68,7 @@ export type ExternalLoginsProps = {
 }
 const ExternalLogins = (props: ExternalLoginsProps) => {
     const { maxCount = 4, items = [], onClick } = props;
-    const { prefixCls, hashId, token } = useStyle();
+    const { prefixCls, hashId, token } = useStyles();
     const { show, more } = useMemo(() => {
         const all = items || [];
         const allCount = all?.length || 0;
