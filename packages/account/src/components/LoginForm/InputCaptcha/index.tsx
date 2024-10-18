@@ -1,18 +1,17 @@
+import { forwardRef, Ref, useImperativeHandle, useState } from "react";
+import { Button, ButtonProps, Form, FormItemProps, Input, InputProps } from "antd";
 import { useCountdown } from "@web-react/biz-utils";
-import { Button, ButtonProps, Flex, Form, Input, InputProps } from "antd";
-import { NamePath } from "antd/es/form/interface";
-import { forwardRef, Ref, useEffect, useImperativeHandle, useState } from "react";
 
 export type InputCaptchaProps = InputProps & {
 
     /** @name 手机号的 name */
-    phoneName?: NamePath;
+    phoneName?: FormItemProps['name'];
 
     /** @name 倒计时的秒数 */
     countDown?: number;
 
     /** @name 获取验证码的方法 */
-    onGetCaptcha: (mobile: string) => Promise<void>;
+    onGetCaptcha: (mobile: string) => Promise<void> | void;
 
     /** @name 计时回调 */
     onTiming?: (count: number) => void;

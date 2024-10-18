@@ -58,20 +58,21 @@ export default () => {
                 >
                     下载阿里云APP，上云更轻松
                 </a>
-            </>
+            </>,
         }}
-        onQrCodeRefresh={() => {
+        onGetQrCode={() => {
             return new Promise((resolve) => {
                 setTimeout(() => {
                     resolve("https://img.alicdn.com/imgextra/i4/O1CN01KqhJjG1JzKzk5b")
                 }, 1000)
             })
         }}
-        onQrCodeValidate={() => {
-            console.log('validate')
+        onVerifyQrCode={() => {
             return new Promise((resolve) => {
                 setTimeout(() => {
-                    resolve('expired')
+                    var statusArry = ['active', 'expired', 'scanned', 'successed'];
+                    var status = statusArry[Math.floor(Math.random() * statusArry.length)];
+                    resolve(status as any)
                 }, 1000)
             })
         }}

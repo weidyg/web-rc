@@ -1,11 +1,12 @@
-import { forwardRef, ReactNode, Ref, useEffect, useImperativeHandle, useRef, useState } from 'react';
-import { Alert, Button, Form, FormInstance, Input, QRCode, QRCodeProps, Space, Spin, Tabs, Typography } from 'antd';
-import { CheckCircleFilled, CloseCircleFilled, LockOutlined, MessageOutlined, MobileOutlined, ReloadOutlined, UserOutlined } from '@ant-design/icons';
-import { classNames, useInterval } from '@web-react/biz-utils';
+import { forwardRef, ReactNode, Ref, useImperativeHandle, useRef, useState } from 'react';
+import { Alert, Button, Form, FormInstance, Input, QRCodeProps, Tabs, Typography } from 'antd';
+import { LockOutlined, MessageOutlined, MobileOutlined, UserOutlined } from '@ant-design/icons';
+import { classNames } from '@web-react/biz-utils';
 import { useStyles } from './style';
 import CurrentAccount from './CurrentAccount';
 import ExternalLogins, { ThirdPartyLogin } from './ExternalLogins';
-import InputCaptcha from './InputCaptcha';
+import InputCaptcha, { InputCaptchaProps } from './InputCaptcha';
+import QRCodeLogin, { QRCodeLoginProps, QRCodeValidateResult } from './QRCodeLogin';
 const initialValues = {
   grantType: 'password',
 };
@@ -14,6 +15,7 @@ type UserLoginState = { status?: 'success' | 'error'; message?: string };
 type GrantType = 'password' | 'smscode';
 
 
+type QRCodeStatus = Exclude<QRCodeProps['status'], 'loading'> & 'successed';
 type Agreement = { link: string, label: string };
 type LoginFormProps<Values = any> = {
   // urlPath?: {
@@ -31,23 +33,21 @@ type LoginFormProps<Values = any> = {
   },
   agreements?: Agreement[],
   thirdPartyLogins?: ThirdPartyLogin[],
-  onThirdPartyClick?: (key: string) => Promise<void> | void;
+  onThirdPartyClick?: (key: string) => Promise<void> | void,
   isKeyPressSubmit?: boolean,
-  form?: FormInstance<Values>;
-  grantTabs: { key: string, label: ReactNode }[];
-  qrCodeProps?: Omit<QRCodeProps, 'value' | 'status' | 'onRefresh'> & {
-    title?: ReactNode,
-    subTitle?: ReactNode,
-    description?: ReactNode
-  },
-  onQrCodeRefresh?: () => Promise<string> | string;
-  onQrCodeValidate?: () => Promise<QRCodeValidateStatus> | QRCodeValidateStatus;
+  form?: FormInstance<Values>,
+  grantTabs: { key: string, label: ReactNode }[],
+  captchaProps?: InputCaptchaProps['captchaProps'] & Pick<InputCaptchaProps, 'countDown' | 'captchaTextRender'>,
+  onGetCaptcha?: InputCaptchaProps['onGetCaptcha'],
+  qrCodeProps?: Omit<QRCodeLoginProps, 'onRefresh' | 'onValidate'>,
+  onGetQrCode?: QRCodeLoginProps['onRefresh'],
+  onVerifyQrCode?: () => Promise<QRCodeStatus> | QRCodeStatus,
+
   // allowRememberMe?: boolean,
   // loginBoxBlur?: boolean,
   // onLogin: (values: Record<string, any>) => Promise<any>
   // onGetCaptcha: (mobile: string) => Promise<any>
 };
-type QRCodeValidateStatus = Exclude<QRCodeProps['status'], 'loading'>;
 
 type LoginFormRef = {
 };
@@ -62,13 +62,16 @@ const LoginForm = forwardRef(<Values extends { [k: string]: any } = any>(props: 
     grantTabs = [],
     isKeyPressSubmit,
     form,
+    captchaProps,
+    onGetCaptcha = () => { },
+
     qrCodeProps,
-    onQrCodeRefresh,
-    onQrCodeValidate,
+    onGetQrCode,
+    onVerifyQrCode,
     ...propRest
     // grantTypes = ['password'],
     // externalProviders = [],
-    // allowRememberMe, onLogin, onGetCaptcha
+    // allowRememberMe, onLogin, 
   } = props;
   const { prefixCls, wrapSSR, hashId, token } = useStyles({ loginBoxBlur: false });
 
@@ -80,36 +83,20 @@ const LoginForm = forwardRef(<Values extends { [k: string]: any } = any>(props: 
 
   }));
 
-  // const customStatusRender: QRCodeProps['statusRender'] = (info) => {
-  //   switch (info.status) {
-  //     case 'expired':
-  //       return (
-  //         <div>
-  //           <CloseCircleFilled style={{ color: 'red' }} /> {info.locale?.expired}
-  //           <p>
-  //             <Button type="link" onClick={info.onRefresh}>
-  //               <ReloadOutlined /> {info.locale?.refresh}
-  //             </Button>
-  //           </p>
-  //         </div>
-  //       );
-  //     case 'loading':
-  //       return (
-  //         <Space direction="vertical">
-  //           <Spin />
-  //           <p>Loading...</p>
-  //         </Space>
-  //       );
-  //     case 'scanned':
-  //       return (
-  //         <div>
-  //           <CheckCircleFilled style={{ color: 'green' }} /> {info.locale?.scanned}
-  //         </div>
-  //       );
-  //     default:
-  //       return null;
-  //   }
-  // };
+  const handleVerifyQrCode = async () => {
+    let status = await onVerifyQrCode!();
+    const successed = status === 'successed';
+    if (successed) { handleLoginSuccess(); }
+    const result: QRCodeValidateResult = {
+      status: successed ? 'scanned' : status,
+      isStop: successed
+    };
+    return result;
+  }
+
+  const handleLoginSuccess = () => {
+    setUserLoginState({ status: 'success', message: '登录成功' });
+  };
 
   const GrantTypeTabs = ({ value, onChange }: any) => {
     return (<Tabs activeKey={value} items={grantTabs} onChange={onChange}
@@ -119,72 +106,14 @@ const LoginForm = forwardRef(<Values extends { [k: string]: any } = any>(props: 
   };
   const formInstance = Form.useFormInstance();
   const formRef = useRef<FormInstance<any>>((form || formInstance) as any);
-
-  const QRCodeBox = () => {
-    const { title, subTitle, description, ...rest } = qrCodeProps || {};
-    const [value, setValue] = useState('loading...');
-    const [status, setStatus] = useState<QRCodeProps['status']>('loading');
-
-    const { start, stop } = useInterval(async () => {
-      try {
-        const qrCodeStatus = await onQrCodeValidate?.();
-        setStatus(qrCodeStatus);
-        if (qrCodeStatus != 'active') {
-          stop();
-        }
-      } catch (error) {
-        setStatus('expired');
-        stop();
-      }
-    }, 1000);
-
-    useEffect(() => {
-      handleRefresh();
-    }, []);
-
-    useEffect(() => {
-      if (status == 'active') {
-        start();
-      }
-    }, [status]);
-
-    const handleRefresh = async () => {
-      setStatus('loading');
-      try {
-        const qrCodeText = await onQrCodeRefresh?.();
-        if (qrCodeText) { setValue(qrCodeText); }
-        setStatus('active');
-      } catch (error) {
-        setStatus('expired');
-      }
-    }
-
-    return <div className={classNames(`${prefixCls}-qrcode`, hashId)} >
-      {title && <Typography.Title level={4}>{title}</Typography.Title>}
-      {subTitle && <Typography.Paragraph>{subTitle}</Typography.Paragraph>}
-      <QRCode
-        size={200}
-        iconSize={200 / 4}
-        errorLevel="H"
-        icon="https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg"
-
-        value={value}
-        status={status}
-        onRefresh={handleRefresh}
-        {...rest}
-      />
-      {description &&
-        <Typography.Paragraph style={{ marginTop: '1em' }}>
-          {description}
-        </Typography.Paragraph>
-      }
-    </div>
-  }
-
   return wrapSSR(<div className={classNames(`${prefixCls}-container`, hashId)}>
     <div className={classNames(`${prefixCls}-main`, hashId)}>
-      {qrCodeProps && <>
-        <QRCodeBox />
+      {onGetQrCode && onVerifyQrCode && <>
+        <QRCodeLogin
+          onRefresh={onGetQrCode}
+          onValidate={handleVerifyQrCode}
+          {...qrCodeProps}
+        />
         <div className={classNames(`${prefixCls}-divider `, hashId)} />
       </>}
       <div className={classNames(`${prefixCls}-form`, hashId)} >
@@ -233,8 +162,10 @@ const LoginForm = forwardRef(<Values extends { [k: string]: any } = any>(props: 
                 <Form.Item name='code' rules={[{ required: true, message: '请输入手机验证码' }]}>
                   <InputCaptcha prefix={<MessageOutlined />} placeholder="请输入手机验证码"
                     phoneName={'mobile'}
-                    countDown={5}
-                    onGetCaptcha={async (mobile) => { }}
+                    captchaProps={captchaProps}
+                    countDown={captchaProps?.countDown}
+                    captchaTextRender={captchaProps?.captchaTextRender}
+                    onGetCaptcha={onGetCaptcha}
                   />
                 </Form.Item>
               </>)

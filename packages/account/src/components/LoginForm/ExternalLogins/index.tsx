@@ -68,7 +68,7 @@ export type ExternalLoginsProps = {
 }
 const ExternalLogins = (props: ExternalLoginsProps) => {
     const { maxCount = 4, items = [], onClick } = props;
-    const { prefixCls, hashId, token } = useStyles();
+    const { prefixCls, hashId, token, wrapSSR } = useStyles();
     const { show, more } = useMemo(() => {
         const all = items || [];
         const allCount = all?.length || 0;
@@ -78,39 +78,41 @@ const ExternalLogins = (props: ExternalLoginsProps) => {
         return { show, more };
     }, [items, maxCount]);
 
-    return (items.length > 0 &&
-        <div className={classNames(`${prefixCls}`, hashId)} >
-            <Divider plain style={{ margin: 0 }}>
-                <span className={classNames(`${prefixCls}-title`, hashId)} >
-                    第三方登录
-                </span>
-            </Divider>
-            <Space align="center" style={{ margin: `${token.marginXS}px 0 ${token.marginSM}px` }}>
-                {show?.map((item, index: number) => (
-                    <ActionItem key={index}
-                        onClick={onClick}  {...item}
-                        className={classNames(`${prefixCls}-item`, hashId)}
-                    />
-                ))}
-                {more?.length > 0 && (
-                    <Popover content={
-                        <Space>
-                            {more?.map((item, index: number) => (
-                                <ActionItem key={index}
-                                    onClick={onClick} {...item}
-                                    className={classNames(`${prefixCls}-item`, hashId)}
-                                />
-                            ))}
-                        </Space>
-                    }>
-                        <div className={classNames(`${prefixCls}-item`, hashId)} >
-                            <DefaultIcon text={`+${more?.length}`}
-                                className={classNames(`${prefixCls}-more`, hashId)} />
-                        </div>
-                    </Popover>
-                )}
-            </Space>
-        </div>
-    );
+    return wrapSSR(<>
+        {items.length > 0 &&
+            <div className={classNames(`${prefixCls}`, hashId)} >
+                <Divider plain style={{ margin: 0 }}>
+                    <span className={classNames(`${prefixCls}-title`, hashId)} >
+                        第三方登录
+                    </span>
+                </Divider>
+                <Space align="center" style={{ margin: `${token.marginXS}px 0 ${token.marginSM}px` }}>
+                    {show?.map((item, index: number) => (
+                        <ActionItem key={index}
+                            onClick={onClick}  {...item}
+                            className={classNames(`${prefixCls}-item`, hashId)}
+                        />
+                    ))}
+                    {more?.length > 0 && (
+                        <Popover content={
+                            <Space>
+                                {more?.map((item, index: number) => (
+                                    <ActionItem key={index}
+                                        onClick={onClick} {...item}
+                                        className={classNames(`${prefixCls}-item`, hashId)}
+                                    />
+                                ))}
+                            </Space>
+                        }>
+                            <div className={classNames(`${prefixCls}-item`, hashId)} >
+                                <DefaultIcon text={`+${more?.length}`}
+                                    className={classNames(`${prefixCls}-more`, hashId)} />
+                            </div>
+                        </Popover>
+                    )}
+                </Space>
+            </div>
+        }
+    </>);
 };
 export default ExternalLogins;
