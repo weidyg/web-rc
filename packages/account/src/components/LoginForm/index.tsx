@@ -99,7 +99,7 @@ const LoginForm = forwardRef(<Values extends { [k: string]: any } = any>(
     if (successed) { afterSuccessfulLogin(); }
     const result: QRCodeValidateResult = {
       status: successed ? 'scanned' : status,
-      isStop: successed
+      isStop: successed || status === 'expired'
     };
     return result;
   }

@@ -6,9 +6,11 @@
 
 import { AlipayOutlined, DingdingOutlined, GithubOutlined, WechatOutlined, WeiboOutlined } from "@ant-design/icons";
 import { useToken, LoginFormPage } from "@web-react/biz-components";
+import { useState } from "react";
 
 export default () => {
     const { token } = useToken();
+    const [qrStatus, setQrStatus] = useState<string>();
     return (<LoginFormPage
         // redirectUrl=""
         // restPasswordUrl="/"
@@ -74,9 +76,13 @@ export default () => {
         onVerifyQrCode={() => {
             return new Promise((resolve) => {
                 setTimeout(() => {
-                    var statusArry = ['active', 'expired', 'scanned', 'successed'];
+                    const statusArry = ['active', 'expired', 'scanned', 'successed'];
                     const index = Math.floor(Math.random() * statusArry.length);
-                    var status = statusArry[index];
+                    let status = statusArry[index];
+                    if (status == 'active' && qrStatus == 'scanned') {
+                        status = 'scanned';
+                    }
+                    setQrStatus(status);
                     resolve(status as any)
                 }, 1000)
             })
