@@ -26,6 +26,7 @@ type LoginFormProps<Values = any> = {
   //   userAgreement?: string,
   //   privacyPolicy?: string,
   // },
+  loginBoxBlur?: boolean,
   currentUser?: {
     isAuthenticated?: boolean,
     userName?: string,
@@ -42,9 +43,9 @@ type LoginFormProps<Values = any> = {
   qrCodeProps?: Omit<QRCodeLoginProps, 'onRefresh' | 'onValidate'>,
   onGetQrCode?: QRCodeLoginProps['onRefresh'],
   onVerifyQrCode?: () => Promise<QRCodeStatus> | QRCodeStatus,
-
+  onSubmit?: (values: Record<string, any>) => Promise<any>,
+  redirectUrl?: string,
   // allowRememberMe?: boolean,
-  // loginBoxBlur?: boolean,
   // onLogin: (values: Record<string, any>) => Promise<any>
   // onGetCaptcha: (mobile: string) => Promise<any>
 };
@@ -52,9 +53,13 @@ type LoginFormProps<Values = any> = {
 type LoginFormRef = {
 };
 
-const LoginForm = forwardRef(<Values extends { [k: string]: any } = any>(props: LoginFormProps<Values>, ref: Ref<LoginFormRef>) => {
+const LoginForm = forwardRef(<Values extends { [k: string]: any } = any>(
+  props: LoginFormProps<Values>,
+  ref: Ref<LoginFormRef>
+) => {
   const {
     // urlPath, 
+    loginBoxBlur = true,
     currentUser,
     agreements = [],
     thirdPartyLogins = [],
@@ -64,38 +69,69 @@ const LoginForm = forwardRef(<Values extends { [k: string]: any } = any>(props: 
     form,
     captchaProps,
     onGetCaptcha = () => { },
-
     qrCodeProps,
     onGetQrCode,
     onVerifyQrCode,
-    ...propRest
+    onSubmit,
+    redirectUrl,
     // grantTypes = ['password'],
     // externalProviders = [],
     // allowRememberMe, onLogin, 
+    ...restProps
   } = props;
-  const { prefixCls, wrapSSR, hashId, token } = useStyles({ loginBoxBlur: false });
+  const { prefixCls, wrapSSR, hashId, token } = useStyles({ loginBoxBlur: loginBoxBlur });
 
   const { isAuthenticated, userName, avatar } = currentUser || {};
   const [confirmLogin, setConfirmLogin] = useState(isAuthenticated);
-  const [userLoginState, setUserLoginState] = useState<UserLoginState>({ status: 'success', message: '登录成功' });
+  const [userLoginState, setUserLoginState] = useState<UserLoginState>();
 
   useImperativeHandle(ref, () => ({
 
   }));
 
   const handleVerifyQrCode = async () => {
-    let status = await onVerifyQrCode!();
+    clearLoginState();
+    const status = await onVerifyQrCode!();
     const successed = status === 'successed';
-    if (successed) { handleLoginSuccess(); }
+    if (successed) { afterSuccessfulLogin(); }
     const result: QRCodeValidateResult = {
       status: successed ? 'scanned' : status,
       isStop: successed
     };
     return result;
   }
+  const handleGetCaptcha = async (mobile: string) => {
+    clearLoginState();
+    await onGetCaptcha?.(mobile);
+  };
+  const handleSubmit = async (values: Record<string, any>) => {
+    clearLoginState();
+    try {
+      if (!confirmLogin) {
+        // if (values.password) { values.password = aes.encrypt(values.password); }
+        await onSubmit?.(values);
+      }
+      afterSuccessfulLogin();
+    } catch (error: any) {
+      setUserLoginState({ status: 'error', message: error.message });
+    }
+  };
 
-  const handleLoginSuccess = () => {
-    setUserLoginState({ status: 'success', message: '登录成功' });
+  const handleExternalLogin = async (provider: string) => {
+    clearLoginState();
+    await onThirdPartyClick?.(provider);
+    // if (urlPath?.externalLogin) {
+    //   const url = toOauthCallbackUrl(urlPath?.externalLogin, { provider, returnUrl, returnUrlHash });
+    //   await openWindow(url);
+    // }
+  };
+
+  const clearLoginState = () => {
+    setUserLoginState(undefined);
+  };
+  const afterSuccessfulLogin = () => {
+    // setUserLoginState({ status: 'success', message: '登录成功' });
+    if (redirectUrl) { window.location.href = redirectUrl; }
   };
 
   const GrantTypeTabs = ({ value, onChange }: any) => {
@@ -134,6 +170,8 @@ const LoginForm = forwardRef(<Values extends { [k: string]: any } = any>(props: 
                 formRef.current?.submit();
               }
             }}
+            onValuesChange={clearLoginState}
+            onFinish={handleSubmit}
           >
             {userLoginState?.status && <>
               <Alert showIcon closable
@@ -165,7 +203,7 @@ const LoginForm = forwardRef(<Values extends { [k: string]: any } = any>(props: 
                     captchaProps={captchaProps}
                     countDown={captchaProps?.countDown}
                     captchaTextRender={captchaProps?.captchaTextRender}
-                    onGetCaptcha={onGetCaptcha}
+                    onGetCaptcha={handleGetCaptcha}
                   />
                 </Form.Item>
               </>)
@@ -181,7 +219,7 @@ const LoginForm = forwardRef(<Values extends { [k: string]: any } = any>(props: 
         )}
 
         {!confirmLogin && thirdPartyLogins.length > 0 && <>
-          <ExternalLogins items={thirdPartyLogins} onClick={onThirdPartyClick} />
+          <ExternalLogins items={thirdPartyLogins} onClick={handleExternalLogin} />
         </>}
       </div>
     </div>
