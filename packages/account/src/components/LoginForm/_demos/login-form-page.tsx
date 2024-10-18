@@ -75,7 +75,8 @@ export default () => {
             return new Promise((resolve) => {
                 setTimeout(() => {
                     var statusArry = ['active', 'expired', 'scanned', 'successed'];
-                    var status = statusArry[Math.floor(Math.random() * statusArry.length)];
+                    const index = Math.floor(Math.random() * statusArry.length);
+                    var status = statusArry[index];
                     resolve(status as any)
                 }, 1000)
             })
