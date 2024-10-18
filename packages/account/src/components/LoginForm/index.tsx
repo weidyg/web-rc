@@ -1,5 +1,5 @@
 import { forwardRef, ReactNode, Ref, useImperativeHandle, useRef, useState } from 'react';
-import { Alert, Button, Form, FormInstance, Input, QRCodeProps, Tabs, Typography } from 'antd';
+import { Alert, Button, Checkbox, Form, FormInstance, Input, QRCodeProps, Space, Tabs, Typography } from 'antd';
 import { LockOutlined, MessageOutlined, MobileOutlined, UserOutlined } from '@ant-design/icons';
 import { classNames } from '@web-react/biz-utils';
 import { useStyles } from './style';
@@ -43,11 +43,11 @@ type LoginFormProps<Values = any> = {
   qrCodeProps?: Omit<QRCodeLoginProps, 'onRefresh' | 'onValidate'>,
   onGetQrCode?: QRCodeLoginProps['onRefresh'],
   onVerifyQrCode?: () => Promise<QRCodeStatus> | QRCodeStatus,
-  onSubmit?: (values: Record<string, any>) => Promise<any>,
+  onSubmit?: (values: Values) => Promise<any>,
   redirectUrl?: string,
-  // allowRememberMe?: boolean,
-  // onLogin: (values: Record<string, any>) => Promise<any>
-  // onGetCaptcha: (mobile: string) => Promise<any>
+  restPasswordUrl?: string;
+  registerUrl?: string;
+  allowRememberMe?: boolean,
 };
 
 type LoginFormRef = {
@@ -74,6 +74,9 @@ const LoginForm = forwardRef(<Values extends { [k: string]: any } = any>(
     onVerifyQrCode,
     onSubmit,
     redirectUrl,
+    restPasswordUrl,
+    registerUrl,
+    allowRememberMe,
     // grantTypes = ['password'],
     // externalProviders = [],
     // allowRememberMe, onLogin, 
@@ -104,7 +107,7 @@ const LoginForm = forwardRef(<Values extends { [k: string]: any } = any>(
     clearLoginState();
     await onGetCaptcha?.(mobile);
   };
-  const handleSubmit = async (values: Record<string, any>) => {
+  const handleSubmit = async (values: Values) => {
     clearLoginState();
     try {
       if (!confirmLogin) {
@@ -130,7 +133,7 @@ const LoginForm = forwardRef(<Values extends { [k: string]: any } = any>(
     setUserLoginState(undefined);
   };
   const afterSuccessfulLogin = () => {
-    // setUserLoginState({ status: 'success', message: '登录成功' });
+    setUserLoginState({ status: 'success', message: '登录成功' });
     if (redirectUrl) { window.location.href = redirectUrl; }
   };
 
@@ -209,12 +212,43 @@ const LoginForm = forwardRef(<Values extends { [k: string]: any } = any>(
               </>)
               )}
             </Form.Item>
-
-            <Form.Item >
+            <Form.Item noStyle>
               <Button type="primary" htmlType="submit" block>
                 登录
               </Button>
             </Form.Item>
+            {(allowRememberMe || restPasswordUrl || registerUrl) &&
+              <div style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                marginBlockStart: 8,
+                marginBlockEnd: 12
+              }}>
+                <div>
+                  {allowRememberMe &&
+                    <Form.Item noStyle name="rememberMe">
+                      <Checkbox>记住我</Checkbox>
+                    </Form.Item>
+                  }
+                </div>
+                <Space>
+                  <Form.Item noStyle dependencies={['grantType']}>
+                    {({ getFieldValue }) => ((getFieldValue('grantType') as GrantType == 'password')
+                      && restPasswordUrl && (<>
+                        <Typography.Link href={restPasswordUrl}>
+                          忘记密码
+                        </Typography.Link>
+                      </>))}
+                  </Form.Item>
+                  {registerUrl &&
+                    <Typography.Link href={registerUrl}>
+                      注册
+                    </Typography.Link>
+                  }
+                </Space>
+              </div>
+            }
+
           </Form>
         )}
 
