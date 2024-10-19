@@ -58,9 +58,7 @@ export type ConfigContextPropsType = {
 };
 
 /* Creating a context object with the default values. */
-export const BizConfigContext = React.createContext<ConfigContextPropsType>({
-  hashed: true,
-});
+export const BizConfigContext = React.createContext<ConfigContextPropsType>({});
 
 export const { Consumer: ConfigConsumer } = BizConfigContext;
 
@@ -225,6 +223,7 @@ export const BizConfigProvider: React.FC<{
     locale: locale || zh_CN,
     theme: omitUndefined({
       ...theme,
+      hashed: props.hashed ?? bizProvide.hashed ?? theme?.hashed,
       algorithm: mergeAlgorithm(),
     }),
   } as typeof theme;

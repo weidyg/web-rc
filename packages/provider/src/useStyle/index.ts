@@ -38,9 +38,12 @@ export function useStyle(
   styleFn: (token: BizAliasToken) => CSSInterpolation,
   prefixCls?: string,
 ) {
+
   let { token, hashed, theme: provideTheme } = useContext(BizConfigContext);
-  const { iconPrefixCls, getPrefixCls } = useContext(AntdConfigProvider.ConfigContext);
+  const { iconPrefixCls, getPrefixCls, theme } = useContext(AntdConfigProvider.ConfigContext);
   const { token: antdToken, hashId } = useToken();
+
+  hashed = hashed ?? theme?.hashed;
   const suffixCls = componentName
     ?.replace(/([A-Z])/g, (_, g) => '-' + g.toLowerCase())
     ?.replace(/^\-/, '')
