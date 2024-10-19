@@ -27,13 +27,13 @@ export const useStyles = generatStyles(({ token, isDark, setAlpha }, props: { lo
         display: 'flex',
         justifyContent: 'space-around',
       },
-      // '&-qrcode': {
-      //   display: 'flex',
-      //   justifyContent: 'center',
-      //   flexWrap: 'nowrap',
-      //   alignItems: 'center',
-      //   flexDirection: 'column'
-      // },
+      '&-qrcode': {
+        // display: 'flex',
+        // justifyContent: 'center',
+        // flexWrap: 'nowrap',
+        // alignItems: 'center',
+        // flexDirection: 'column'
+      },
       '&-divider': {
         margin: `0 ${token.marginXXL}px`,
         borderRight: `1px solid ${token.colorBorder}`

@@ -10,4 +10,4 @@ export const useStyles = generatStyles(({ token }) => {
       flexDirection: 'column'
     },
   };
-}, 'QRCodeLogin');
+}, 'QrcodeLogin');

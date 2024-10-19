@@ -110,11 +110,11 @@ const LoginForm = forwardRef(<Values extends { [k: string]: any } = any>(
   const handleSubmit = async (values: Values) => {
     clearLoginState();
     try {
-      if (!confirmLogin) {
+      if (!confirmLogin && onSubmit) {
         // if (values.password) { values.password = aes.encrypt(values.password); }
-        await onSubmit?.(values);
+        await onSubmit(values);
+        afterSuccessfulLogin();
       }
-      afterSuccessfulLogin();
     } catch (error: any) {
       setUserLoginState({ status: 'error', message: error.message });
     }
@@ -149,9 +149,10 @@ const LoginForm = forwardRef(<Values extends { [k: string]: any } = any>(
     <div className={classNames(`${prefixCls}-main`, hashId)}>
       {onGetQrCode && onVerifyQrCode && <>
         <QRCodeLogin
+          {...qrCodeProps}
           onRefresh={onGetQrCode}
           onValidate={handleVerifyQrCode}
-          {...qrCodeProps}
+          rootClassName={classNames(`${prefixCls}-qrcode `, hashId)}
         />
         <div className={classNames(`${prefixCls}-divider `, hashId)} />
       </>}

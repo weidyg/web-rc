@@ -97,7 +97,6 @@ const QRCodeLogin = forwardRef((props: QRCodeLoginProps, ref: Ref<QRCodeLoginRef
         }
     };
 
-
     return wrapSSR(
         <div className={classNames(`${prefixCls}`, rootClassName, hashId)} >
             {title && <Typography.Title level={4}>{title}</Typography.Title>}

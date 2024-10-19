@@ -87,5 +87,11 @@ export default () => {
                 }, 1000)
             })
         }}
+        onGetCaptcha={async (mobile) => {
+            console.log('获取验证码', mobile);
+        }}
+        onSubmit={async (values) => {
+            console.log('登录', values);
+        }}
     />);
 };

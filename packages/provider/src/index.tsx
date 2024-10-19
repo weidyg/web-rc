@@ -58,7 +58,9 @@ export type ConfigContextPropsType = {
 };
 
 /* Creating a context object with the default values. */
-export const BizConfigContext = React.createContext<ConfigContextPropsType>({});
+export const BizConfigContext = React.createContext<ConfigContextPropsType>({
+  hashed: true,
+});
 
 export const { Consumer: ConfigConsumer } = BizConfigContext;
 
