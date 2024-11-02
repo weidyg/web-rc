@@ -1,5 +1,5 @@
 import { forwardRef, ReactNode, Ref, useImperativeHandle, useRef, useState } from 'react';
-import { Alert, Button, Checkbox, Form, FormInstance, Input, QRCodeProps, Space, Tabs, Typography } from 'antd';
+import { Alert, Button, Checkbox, ConfigProvider, Form, FormInstance, Input, QRCodeProps, Space, Tabs, Typography } from 'antd';
 import { LockOutlined, MessageOutlined, MobileOutlined, UserOutlined } from '@ant-design/icons';
 import { classNames } from '@web-react/biz-utils';
 import { useStyles } from './style';
@@ -8,6 +8,8 @@ import ExternalLogins, { ThirdPartyLogin } from './ExternalLogins';
 import InputCaptcha, { InputCaptchaProps } from './InputCaptcha';
 import QRCodeLogin, { QRCodeLoginProps, QRCodeValidateResult } from './QRCodeLogin';
 import { useIntl } from '@web-react/biz-provider';
+import zhCN from 'antd/locale/zh_CN';
+
 const initialValues = {
   grantType: 'password',
 };
@@ -135,7 +137,10 @@ const LoginForm = forwardRef(<Values extends { [k: string]: any } = any>(
     setUserLoginState(undefined);
   };
   const afterSuccessfulLogin = () => {
-    setUserLoginState({ status: 'success', message: '登录成功' });
+    setUserLoginState({
+      status: 'success',
+      message: intl.getMessage('loginForm.loginSuccessful', '登录成功')
+    });
     if (redirectUrl) { window.location.href = redirectUrl; }
   };
 
@@ -147,135 +152,145 @@ const LoginForm = forwardRef(<Values extends { [k: string]: any } = any>(
   };
   const formInstance = Form.useFormInstance();
   const formRef = useRef<FormInstance<any>>((form || formInstance) as any);
-  return wrapSSR(<div className={classNames(`${prefixCls}-container`, hashId)}>
-    <div className={classNames(`${prefixCls}-main`, hashId)}>
-      {onGetQrCode && onVerifyQrCode && <>
-        <QRCodeLogin
-          {...qrCodeProps}
-          onRefresh={onGetQrCode}
-          onValidate={handleVerifyQrCode}
-          rootClassName={classNames(`${prefixCls}-qrcode `, hashId)}
-        />
-        <div className={classNames(`${prefixCls}-divider `, hashId)} />
-      </>}
-      <div className={classNames(`${prefixCls}-form`, hashId)} >
-        {confirmLogin ? (
-          <CurrentAccount
-            userName={userName}
-            avatar={avatar}
-            onClick={() => setConfirmLogin(false)}
+
+  const L = (type: 'required' | 'placeholder', nane: string, label: string) => {
+    return type == 'required'
+      ? intl.getMessage(`loginForm.${type}`, '请输入${label}', { label: intl.getMessage(`loginForm.label.${nane}`, label) })
+      : intl.getMessage(`loginForm.label.${nane}`, label);
+  }
+  return wrapSSR(<>
+    <div className={classNames(`${prefixCls}-container`, hashId)}>
+      <div className={classNames(`${prefixCls}-main`, hashId)}>
+        {onGetQrCode && onVerifyQrCode && <>
+          <QRCodeLogin
+            {...qrCodeProps}
+            onRefresh={onGetQrCode}
+            onValidate={handleVerifyQrCode}
+            rootClassName={classNames(`${prefixCls}-qrcode `, hashId)}
           />
-        ) : (
-          <Form
-            autoComplete="off"
-            form={form}
-            initialValues={initialValues}
-            onKeyUp={(event) => {
-              if (!isKeyPressSubmit) return;
-              if (event.key === 'Enter') {
-                formRef.current?.submit();
-              }
-            }}
-            onValuesChange={clearLoginState}
-            onFinish={handleSubmit}
-          >
-            {userLoginState?.status && <>
-              <Alert showIcon closable
-                type={userLoginState?.status}
-                message={userLoginState?.message}
-                onClose={() => setUserLoginState({})}
-              />
-            </>}
-
-            <Form.Item name="grantType">
-              <GrantTypeTabs />
-            </Form.Item>
-
-            <Form.Item noStyle dependencies={['grantType']}>
-              {({ getFieldValue }) => ((getFieldValue('grantType') as GrantType == 'password') ? (<>
-                <Form.Item name="username" rules={[{ required: true, message: '请输入用户名' }]}>
-                  <Input prefix={<UserOutlined />} placeholder="请输入用户名" />
-                </Form.Item>
-                <Form.Item name="password" rules={[{ required: true, message: '请输入密码' }]}>
-                  <Input.Password prefix={<LockOutlined />} placeholder="请输入密码" />
-                </Form.Item>
-              </>) : (<>
-                <Form.Item name='mobile' rules={[{ required: true, message: '请输入手机号码' }]}>
-                  <Input prefix={<MobileOutlined />} placeholder="请输入手机号码" />
-                </Form.Item>
-                <Form.Item name='code' rules={[{ required: true, message: '请输入手机验证码' }]}>
-                  <InputCaptcha prefix={<MessageOutlined />} placeholder="请输入手机验证码"
-                    phoneName={'mobile'}
-                    captchaProps={captchaProps}
-                    countDown={captchaProps?.countDown}
-                    captchaTextRender={captchaProps?.captchaTextRender}
-                    onGetCaptcha={handleGetCaptcha}
-                  />
-                </Form.Item>
-              </>)
-              )}
-            </Form.Item>
-            <Form.Item noStyle>
-              <Button type="primary" htmlType="submit" block>
-                {intl.getMessage('loginForm.submitText', '登录')}
-              </Button>
-            </Form.Item>
-            {(allowRememberMe || restPasswordUrl || registerUrl) &&
-              <div style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                marginBlockStart: 8,
-                marginBlockEnd: 12
-              }}>
-                <div>
-                  {allowRememberMe &&
-                    <Form.Item noStyle name="rememberMe">
-                      <Checkbox>记住我</Checkbox>
-                    </Form.Item>
-                  }
-                </div>
-                <Space>
-                  <Form.Item noStyle dependencies={['grantType']}>
-                    {({ getFieldValue }) => ((getFieldValue('grantType') as GrantType == 'password')
-                      && restPasswordUrl && (<>
-                        <Typography.Link href={restPasswordUrl}>
-                          忘记密码
-                        </Typography.Link>
-                      </>))}
-                  </Form.Item>
-                  {registerUrl &&
-                    <Typography.Link href={registerUrl}>
-                      注册
-                    </Typography.Link>
-                  }
-                </Space>
-              </div>
-            }
-
-          </Form>
-        )}
-
-        {!confirmLogin && thirdPartyLogins.length > 0 && <>
-          <ExternalLogins items={thirdPartyLogins} onClick={handleExternalLogin} />
+          <div className={classNames(`${prefixCls}-divider `, hashId)} />
         </>}
+        <div className={classNames(`${prefixCls}-form`, hashId)} >
+          {confirmLogin ? (
+            <CurrentAccount
+              userName={userName}
+              avatar={avatar}
+              onClick={() => setConfirmLogin(false)}
+            />
+          ) : (
+            <Form
+              autoComplete="off"
+              form={form}
+              initialValues={initialValues}
+              onKeyUp={(event) => {
+                if (!isKeyPressSubmit) return;
+                if (event.key === 'Enter') {
+                  formRef.current?.submit();
+                }
+              }}
+              onValuesChange={clearLoginState}
+              onFinish={handleSubmit}
+            >
+              {userLoginState?.status && <>
+                <Alert showIcon closable
+                  type={userLoginState?.status}
+                  message={userLoginState?.message}
+                  onClose={() => setUserLoginState({})}
+                />
+              </>}
+
+              <Form.Item name="grantType">
+                <GrantTypeTabs />
+              </Form.Item>
+
+              <Form.Item noStyle dependencies={['grantType']}>
+                {({ getFieldValue }) => ((getFieldValue('grantType') as GrantType == 'password') ? (<>
+                  <Form.Item name="username" rules={[{ required: true, message: L('required', 'username', '用户名/手机号/邮箱') }]}>
+                    <Input prefix={<UserOutlined />} placeholder={L('placeholder', 'username', '用户名/手机号/邮箱')} />
+                  </Form.Item>
+                  <Form.Item name="password" rules={[{ required: true, message: L('required', 'password', '密码') }]}>
+                    <Input.Password prefix={<LockOutlined />} placeholder={L('placeholder', 'password', '密码')} />
+                  </Form.Item>
+                </>) : (<>
+                  <Form.Item name='mobile' rules={[{ required: true, message: L('required', 'mobile', '手机号') }]}>
+                    <Input prefix={<MobileOutlined />} placeholder={L('placeholder', 'mobile', '手机号')} />
+                  </Form.Item>
+                  <Form.Item name='code' rules={[{ required: true, message: L('required', 'captcha', '验证码') }]}>
+                    <InputCaptcha prefix={<MessageOutlined />} placeholder={L('placeholder', 'captcha', '验证码')}
+                      phoneName={'mobile'}
+                      captchaProps={captchaProps}
+                      countDown={captchaProps?.countDown}
+                      captchaTextRender={captchaProps?.captchaTextRender}
+                      onGetCaptcha={handleGetCaptcha}
+                    />
+                  </Form.Item>
+                </>)
+                )}
+              </Form.Item>
+              <Form.Item noStyle>
+                <Button type="primary" htmlType="submit" block>
+                  {intl.getMessage('loginForm.submitText', '登录')}
+                </Button>
+              </Form.Item>
+              {(allowRememberMe || restPasswordUrl || registerUrl) &&
+                <div style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  marginBlockStart: 8,
+                  marginBlockEnd: 12
+                }}>
+                  <div>
+                    {allowRememberMe &&
+                      <Form.Item noStyle name="rememberMe">
+                        <Checkbox>
+                          {intl.getMessage('loginForm.rememberMe', '记住我')}
+                        </Checkbox>
+                      </Form.Item>
+                    }
+                  </div>
+                  <Space>
+                    <Form.Item noStyle dependencies={['grantType']}>
+                      {({ getFieldValue }) => ((getFieldValue('grantType') as GrantType == 'password')
+                        && restPasswordUrl && (<>
+                          <Typography.Link href={restPasswordUrl}>
+                            {intl.getMessage('loginForm.forgotPassword', '忘记密码')}
+                          </Typography.Link>
+                        </>))}
+                    </Form.Item>
+                    {registerUrl &&
+                      <Typography.Link href={registerUrl}>
+                        {intl.getMessage('loginForm.forgotPassword', '注册')}
+                      </Typography.Link>
+                    }
+                  </Space>
+                </div>
+              }
+
+            </Form>
+          )}
+
+          {!confirmLogin && thirdPartyLogins.length > 0 && <>
+            <ExternalLogins items={thirdPartyLogins} onClick={handleExternalLogin} />
+          </>}
+        </div>
       </div>
+      {agreements.length > 0 && <>
+        <div className={classNames(`${prefixCls}-agreement`, hashId)} >
+          <Typography.Text type='secondary' style={{ fontSize: 12, }}>
+            {intl.getMessage('loginForm.agreement', '登录即视为您已阅读并同意')}
+          </Typography.Text>
+          {agreements.map(({ link, label }, i) => {
+            return <Typography.Link key={i}
+              href={link} target='_blank'
+              style={{ fontSize: token.fontSizeSM, }}
+            >
+              《{label}》
+            </Typography.Link>
+          })}
+        </div>
+      </>}
     </div>
-    {agreements.length > 0 && <>
-      <div className={classNames(`${prefixCls}-agreement`, hashId)} >
-        <Typography.Text type='secondary' style={{ fontSize: 12, }}>
-          登录即视为您已阅读并同意
-        </Typography.Text>
-        {agreements.map(({ link, label }, i) => {
-          return <Typography.Link key={i}
-            href={link} target='_blank'
-            style={{ fontSize: token.fontSizeSM, }}
-          >
-            《{label}》
-          </Typography.Link>
-        })}
-      </div>
-    </>}
-  </div>);
+  </>);
 });
 
 export type { LoginFormProps, LoginFormRef };

@@ -31,7 +31,7 @@ import zhTW from './locale/zh_TW';
 
 export type IntlType = {
   locale: string;
-  getMessage: (id: string, defaultMessage: string) => string;
+  getMessage: (id: string, defaultMessage: string, data?: Record<string, string>) => string;
 };
 
 /**
@@ -44,17 +44,19 @@ export const createIntl = (
   locale: string,
   localeMap: Record<string, any>,
 ): IntlType => ({
-  getMessage: (id: string, defaultMessage: string) => {
-    const msg =
-      get(localeMap, id.replace(/\[(\d+)\]/g, '.$1').split('.')) || '';
-    if (msg) return msg;
-    const localKey = locale.replace('_', '-');
-    if (localKey === 'zh-CN') {
-      return defaultMessage;
+  getMessage: (id: string, defaultMessage: string, data: Record<string, string> = {}) => {
+    let msg = get(localeMap, id.replace(/\[(\d+)\]/g, '.$1').split('.')) || '';
+    if (!msg) {
+      const localKey = locale.replace('_', '-');
+      if (localKey === 'zh-CN') {
+        msg = defaultMessage;
+      } else {
+        const intl = intlMap['zh-CN'];
+        msg = intl ? intl.getMessage(id, defaultMessage, data) : defaultMessage;
+      }
     }
-    // eslint-disable-next-line @typescript-eslint/no-use-before-define
-    const intl = intlMap['zh-CN'];
-    return intl ? intl.getMessage(id, defaultMessage) : defaultMessage;
+    Object.keys(data).forEach((key) => { msg = msg.replace(`\${${key}}`, data[key]); });
+    return msg;
   },
   locale,
 });

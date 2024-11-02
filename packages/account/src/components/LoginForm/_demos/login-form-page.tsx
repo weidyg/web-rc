@@ -5,7 +5,7 @@
  */
 
 import { AlipayOutlined, DingdingOutlined, GithubOutlined, WechatOutlined, WeiboOutlined } from "@ant-design/icons";
-import { useToken, LoginFormPage, BizConfigProvider } from "@web-react/biz-components";
+import { useToken, LoginFormPage } from "@web-react/biz-components";
 import { ConfigProvider } from "antd";
 import { useState } from "react";
 import zhCN from 'antd/locale/zh_CN';
@@ -14,7 +14,7 @@ import enUS from 'antd/locale/en_US';
 export default () => {
     const { token } = useToken();
     const [qrStatus, setQrStatus] = useState<string>();
-    return (<ConfigProvider locale={enUS}>
+    return (<ConfigProvider locale={zhCN}>
         <LoginFormPage
             // redirectUrl=""
             // restPasswordUrl="/"
