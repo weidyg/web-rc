@@ -7,6 +7,7 @@ import CurrentAccount from './CurrentAccount';
 import ExternalLogins, { ThirdPartyLogin } from './ExternalLogins';
 import InputCaptcha, { InputCaptchaProps } from './InputCaptcha';
 import QRCodeLogin, { QRCodeLoginProps, QRCodeValidateResult } from './QRCodeLogin';
+import { useIntl } from '@web-react/biz-provider';
 const initialValues = {
   grantType: 'password',
 };
@@ -82,6 +83,7 @@ const LoginForm = forwardRef(<Values extends { [k: string]: any } = any>(
     // allowRememberMe, onLogin, 
     ...restProps
   } = props;
+  const intl = useIntl();
   const { prefixCls, wrapSSR, hashId, token } = useStyles({ loginBoxBlur: loginBoxBlur });
 
   const { isAuthenticated, userName, avatar } = currentUser || {};
@@ -215,7 +217,7 @@ const LoginForm = forwardRef(<Values extends { [k: string]: any } = any>(
             </Form.Item>
             <Form.Item noStyle>
               <Button type="primary" htmlType="submit" block>
-                登录
+                {intl.getMessage('loginForm.submitText', '登录')}
               </Button>
             </Form.Item>
             {(allowRememberMe || restPasswordUrl || registerUrl) &&

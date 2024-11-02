@@ -19,7 +19,7 @@ const ConfirmCurrentAccount = (props: ConfirmCurrentAccountProps) => {
             <Typography.Text style={{ margin: '8px 0 20px', }}>
                 <span style={{ fontWeight: 'bold', fontSize: 18, }}>{userName}</span>
                 <Typography.Link onClick={onClick}>
-                    （切换）
+                    {`（切换）`}
                 </Typography.Link >
             </Typography.Text>
         </div>

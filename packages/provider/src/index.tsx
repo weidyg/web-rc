@@ -5,9 +5,11 @@ import zh_CN from 'antd/lib/locale/zh_CN';
 import type { Theme } from '@ant-design/cssinjs';
 import { useCacheToken } from '@ant-design/cssinjs';
 import { merge } from './utils/merge';
+// import dayjs from 'dayjs';
 
 import { bizTheme } from './useStyle';
 import type { BizAliasToken } from './useStyle';
+import { findIntlKeyByAntdLocaleKey, intlMap, IntlType, zhCNIntl } from './intl';
 export * from './useStyle';
 
 type OmitUndefined<T> = {
@@ -50,6 +52,7 @@ export type DeepPartial<T> = T extends object ? { [P in keyof T]?: DeepPartial<T
  * 自带的token 配置
  */
 export type ConfigContextPropsType = {
+  intl?: IntlType;
   hashId?: string;
   hashed?: boolean;
   dark?: boolean;
@@ -58,7 +61,12 @@ export type ConfigContextPropsType = {
 };
 
 /* Creating a context object with the default values. */
-export const BizConfigContext = React.createContext<ConfigContextPropsType>({});
+export const BizConfigContext = React.createContext<ConfigContextPropsType>({
+  intl: {
+    ...zhCNIntl,
+    locale: 'default',
+  },
+});
 
 export const { Consumer: ConfigConsumer } = BizConfigContext;
 
@@ -94,8 +102,9 @@ const ConfigProviderContainer: React.FC<{
   antPrefixCls?: string;
   iconPrefixCls?: string;
   bizPrefixCls?: string;
+  intl?: IntlType;
 }> = (props) => {
-  const { children, dark, autoClearCache = false } = props;
+  const { children, dark, autoClearCache = false, intl } = props;
   const bizProvide = useContext(BizConfigContext);
   const {
     locale, theme: antTheme,
@@ -109,6 +118,15 @@ const ConfigProviderContainer: React.FC<{
   const bizPrefixCls: string = props.bizPrefixCls || `${antPrefixCls}-biz`;
 
   const bizProvideValue = useMemo(() => {
+    const localeName = locale?.locale;
+    const key = findIntlKeyByAntdLocaleKey(localeName);
+    // antd 的 key 存在的时候以 antd 的为主
+    const resolvedIntl =
+      intl ??
+      (localeName && bizProvide.intl?.locale === 'default'
+        ? intlMap[key! as 'zh-CN']
+        : bizProvide.intl || intlMap[key! as 'zh-CN']);
+
     return {
       ...bizProvide,
       dark: dark ?? bizProvide.dark,
@@ -116,6 +134,7 @@ const ConfigProviderContainer: React.FC<{
         themeId: tokenContext.theme.id,
         antPrefixCls, iconPrefixCls, bizPrefixCls,
       }),
+      intl: resolvedIntl || zhCNIntl,
     };
   }, [
     locale?.locale, bizProvide, dark,
@@ -148,6 +167,16 @@ const ConfigProviderContainer: React.FC<{
     }
   }, [nativeHashId, bizProvide.hashed, props.hashed]);
 
+  // useEffect(() => {
+  //   dayjs.locale(locale?.locale || 'zh-cn');
+  // }, [locale?.locale]);
+
+  const themeConfig = useMemo(() => {
+    return {
+      ...antTheme, hashId, hashed,
+    };
+  }, [dark, antTheme, hashId, hashed]);
+
   const bizConfigContextValue = useMemo(() => {
     return {
       ...bizProvideValue!,
@@ -155,13 +184,6 @@ const ConfigProviderContainer: React.FC<{
       token, hashed, hashId,
     };
   }, [bizProvideValue, tokenContext.theme, token, hashed, hashId]);
-
-
-  const themeConfig = useMemo(() => {
-    return {
-      ...antTheme, hashId, hashed,
-    };
-  }, [dark, antTheme, hashId, hashed]);
 
   const configProviderDom = useMemo(() => {
     return (
@@ -185,7 +207,11 @@ const ConfigProviderContainer: React.FC<{
 
   if (!autoClearCache) return configProviderDom;
 
-  return <SWRConfig value={{ provider: () => new Map() }}>{configProviderDom}</SWRConfig>;
+  return (
+    <SWRConfig value={{ provider: () => new Map() }}>
+      {configProviderDom}
+    </SWRConfig>
+  );
 };
 
 /**
@@ -202,6 +228,7 @@ export const BizConfigProvider: React.FC<{
   antPrefixCls?: string;
   iconPrefixCls?: string;
   bizPrefixCls?: string;
+  intl?: IntlType;
 }> = (props) => {
   const { needDeps, dark } = props;
   const bizProvide = useContext(BizConfigContext);
@@ -234,3 +261,28 @@ export const BizConfigProvider: React.FC<{
     </AntdConfigProvider>
   );
 };
+
+/**
+ * It returns the intl object from the context if it exists, otherwise it returns the intl object for
+ * 获取国际化的方法
+ * @param locale
+ * @param localeMap
+ * the current locale
+ * @returns The return value of the function is the intl object.
+ */
+export function useIntl(): IntlType {
+  const { locale } = useContext(AntdConfigProvider.ConfigContext);
+  const { intl } = useContext(BizConfigContext);
+
+  if (intl && intl.locale !== 'default') {
+    return intl || zhCNIntl;
+  }
+
+  if (locale?.locale) {
+    return (
+      intlMap[findIntlKeyByAntdLocaleKey(locale.locale) as 'zh-CN'] || zhCNIntl
+    );
+  }
+
+  return zhCNIntl;
+}
