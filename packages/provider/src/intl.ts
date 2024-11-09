@@ -40,10 +40,7 @@ export type IntlType = {
  * @param locale
  * @param localeMap
  */
-export const createIntl = (
-  locale: string,
-  localeMap: Record<string, any>,
-): IntlType => ({
+export const createIntl = (locale: string, localeMap: Record<string, any>): IntlType => ({
   getMessage: (id: string, defaultMessage: string, data: Record<string, string> = {}) => {
     let msg = get(localeMap, id.replace(/\[(\d+)\]/g, '.$1').split('.')) || '';
     if (!msg) {
@@ -55,7 +52,9 @@ export const createIntl = (
         msg = intl ? intl.getMessage(id, defaultMessage, data) : defaultMessage;
       }
     }
-    Object.keys(data).forEach((key) => { msg = msg.replace(`\${${key}}`, data[key]); });
+    Object.keys(data).forEach((key) => {
+      msg = msg.replace(`\${${key}}`, data[key]);
+    });
     return msg;
   },
   locale,

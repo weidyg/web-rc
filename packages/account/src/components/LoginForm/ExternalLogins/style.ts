@@ -1,4 +1,4 @@
-import { generatStyles } from "@web-react/biz-provider";
+import { generatStyles } from '@web-react/biz-provider';
 
 export const useStyles = generatStyles(({ token }) => {
   return {
@@ -10,7 +10,7 @@ export const useStyles = generatStyles(({ token }) => {
       '&-title': {
         color: token.colorTextPlaceholder,
         fontWeight: 'normal',
-        fontSize: token.fontSize
+        fontSize: token.fontSize,
       },
       '&-item': {
         width: 40,

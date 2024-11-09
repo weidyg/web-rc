@@ -1,4 +1,4 @@
-import { generatStyles } from "@web-react/biz-provider";
+import { generatStyles } from '@web-react/biz-provider';
 
 export const useStyles = generatStyles(({ token }) => {
   return {
@@ -7,7 +7,7 @@ export const useStyles = generatStyles(({ token }) => {
       justifyContent: 'center',
       flexWrap: 'nowrap',
       alignItems: 'center',
-      flexDirection: 'column'
+      flexDirection: 'column',
     },
   };
 }, 'QrcodeLogin');

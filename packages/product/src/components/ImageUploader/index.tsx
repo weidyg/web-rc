@@ -16,7 +16,8 @@ type ConfigFormValueType = {
 };
 
 type ImageUploaderRef = {};
-const InternalUploader = forwardRef(<Type extends UploadResponse = UploadResponse>(props: ImageUploaderProps<Type>, ref: Ref<ImageUploaderRef>) => {
+const InternalUploader = forwardRef(
+  <Type extends UploadResponse = UploadResponse>(props: ImageUploaderProps<Type>, ref: Ref<ImageUploaderRef>) => {
     const {
       className,
       style,

@@ -1,5 +1,4 @@
-﻿
-import { BizAliasToken, generatStyles } from "@web-react/biz-provider";
+﻿import { BizAliasToken, generatStyles } from '@web-react/biz-provider';
 
 interface ImageSpaceToken extends BizAliasToken {
   colorBgPage: string;

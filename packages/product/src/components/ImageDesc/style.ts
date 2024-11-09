@@ -80,4 +80,3 @@ export const useStyles = generatStyles(({ token }) => {
     },
   };
 }, 'ImageDesc');
-

@@ -1,4 +1,4 @@
-﻿import { generatStyles } from "@web-react/biz-provider";
+﻿import { generatStyles } from '@web-react/biz-provider';
 
 export const useStyles = generatStyles(({ token }) => {
   return {

@@ -36,7 +36,7 @@ export const useStyles = generatStyles(({ token, isDark, setAlpha }, props: { lo
       },
       '&-divider': {
         margin: `0 ${token.marginXXL}px`,
-        borderRight: `1px solid ${token.colorBorder}`
+        borderRight: `1px solid ${token.colorBorder}`,
       },
       '&-form': {
         minWidth: '320px',
@@ -47,7 +47,7 @@ export const useStyles = generatStyles(({ token, isDark, setAlpha }, props: { lo
         [`.${token.antPrefixCls}-tabs-tab`]: {
           padding: `${token.paddingXS}px 0`,
           fontSize: token.fontSizeLG,
-        }
+        },
       },
       '&-agreement': {
         padding: `${token.marginXS}px 0 0 0`,
@@ -70,5 +70,3 @@ export const useStyles = generatStyles(({ token, isDark, setAlpha }, props: { lo
     },
   };
 }, 'LoginForm');
-
-

@@ -107,9 +107,11 @@ const ConfigProviderContainer: React.FC<{
   const { children, dark, autoClearCache = false, intl } = props;
   const bizProvide = useContext(BizConfigContext);
   const {
-    locale, theme: antTheme,
+    locale,
+    theme: antTheme,
     iconPrefixCls: antIconPrefixCls,
-    getPrefixCls, ...restConfig
+    getPrefixCls,
+    ...restConfig
   } = useContext(AntdConfigProvider.ConfigContext);
   const tokenContext = bizTheme.useToken?.();
 
@@ -132,14 +134,21 @@ const ConfigProviderContainer: React.FC<{
       dark: dark ?? bizProvide.dark,
       token: merge(bizProvide.token, tokenContext.token, {
         themeId: tokenContext.theme.id,
-        antPrefixCls, iconPrefixCls, bizPrefixCls,
+        antPrefixCls,
+        iconPrefixCls,
+        bizPrefixCls,
       }),
       intl: resolvedIntl || zhCNIntl,
     };
   }, [
-    locale?.locale, bizProvide, dark,
-    tokenContext.token, tokenContext.theme.id,
-    bizPrefixCls, antPrefixCls, iconPrefixCls
+    locale?.locale,
+    bizProvide,
+    dark,
+    tokenContext.token,
+    tokenContext.theme.id,
+    bizPrefixCls,
+    antPrefixCls,
+    iconPrefixCls,
   ]);
 
   const finalToken = {
@@ -147,17 +156,14 @@ const ConfigProviderContainer: React.FC<{
     bizPrefixCls,
   };
 
-
   const [token, nativeHashId] = useCacheToken<BizAliasToken>(
     tokenContext.theme as unknown as Theme<any, any>,
     [tokenContext.token, finalToken ?? {}],
-    { salt: bizPrefixCls, override: finalToken, },
+    { salt: bizPrefixCls, override: finalToken },
   );
 
   const [hashed, hashId] = useMemo(() => {
-    if (props.hashed === false
-      || bizProvide.hashed === false
-      || isNeedOpenHash() === false) {
+    if (props.hashed === false || bizProvide.hashed === false || isNeedOpenHash() === false) {
       return [false, ''];
     } else if (tokenContext.hashId) {
       return [true, tokenContext.hashId];
@@ -173,7 +179,9 @@ const ConfigProviderContainer: React.FC<{
 
   const themeConfig = useMemo(() => {
     return {
-      ...antTheme, hashId, hashed,
+      ...antTheme,
+      hashId,
+      hashed,
     };
   }, [dark, antTheme, hashId, hashed]);
 
@@ -181,18 +189,15 @@ const ConfigProviderContainer: React.FC<{
     return {
       ...bizProvideValue!,
       theme: tokenContext.theme as unknown as Theme<any, any>,
-      token, hashed, hashId,
+      token,
+      hashed,
+      hashId,
     };
   }, [bizProvideValue, tokenContext.theme, token, hashed, hashId]);
 
   const configProviderDom = useMemo(() => {
     return (
-      <AntdConfigProvider
-        {...restConfig}
-        prefixCls={antPrefixCls}
-        iconPrefixCls={iconPrefixCls}
-        theme={themeConfig}
-      >
+      <AntdConfigProvider {...restConfig} prefixCls={antPrefixCls} iconPrefixCls={iconPrefixCls} theme={themeConfig}>
         <BizConfigContext.Provider value={bizConfigContextValue}>
           <>
             {autoClearCache && <CacheClean />}
@@ -207,11 +212,7 @@ const ConfigProviderContainer: React.FC<{
 
   if (!autoClearCache) return configProviderDom;
 
-  return (
-    <SWRConfig value={{ provider: () => new Map() }}>
-      {configProviderDom}
-    </SWRConfig>
-  );
+  return <SWRConfig value={{ provider: () => new Map() }}>{configProviderDom}</SWRConfig>;
 };
 
 /**
@@ -235,10 +236,12 @@ export const BizConfigProvider: React.FC<{
   const { locale, theme, ...rest } = useContext(AntdConfigProvider.ConfigContext);
 
   // 是不是不需要渲染 provide
-  const isNullProvide = needDeps && bizProvide.hashId !== undefined
-    && Object.keys(props).sort().join('-') === 'children-needDeps';
+  const isNullProvide =
+    needDeps && bizProvide.hashId !== undefined && Object.keys(props).sort().join('-') === 'children-needDeps';
 
-  if (isNullProvide) { return <>{props.children}</>; }
+  if (isNullProvide) {
+    return <>{props.children}</>;
+  }
 
   const mergeAlgorithm = () => {
     const isDark = dark ?? bizProvide.dark;
@@ -279,9 +282,7 @@ export function useIntl(): IntlType {
   }
 
   if (locale?.locale) {
-    return (
-      intlMap[findIntlKeyByAntdLocaleKey(locale.locale) as 'zh-CN'] || zhCNIntl
-    );
+    return intlMap[findIntlKeyByAntdLocaleKey(locale.locale) as 'zh-CN'] || zhCNIntl;
   }
 
   return zhCNIntl;

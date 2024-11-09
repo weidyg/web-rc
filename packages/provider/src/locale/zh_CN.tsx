@@ -13,6 +13,6 @@ export default {
       password: '密码',
       mobile: '手机号',
       captcha: '验证码',
-    }
-  }
+    },
+  },
 };

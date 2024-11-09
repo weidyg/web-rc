@@ -14,13 +14,14 @@ export type BizAliasToken = GlobalToken & {
   componentCls: string;
 };
 export type GenerateStyleUtils<ComponentToken> = {
-  token: ComponentToken,
-  isDark: (baseColor: string) => Boolean,
-  setAlpha: (baseColor: string, alpha: number) => string,
-}
-export type GenerateStyleFn<ComponentToken extends BizAliasToken, Props = any, ReturnType = CSSInterpolation> =
-  (utils: GenerateStyleUtils<ComponentToken>, props: Props) => ReturnType;
-
+  token: ComponentToken;
+  isDark: (baseColor: string) => Boolean;
+  setAlpha: (baseColor: string, alpha: number) => string;
+};
+export type GenerateStyleFn<ComponentToken extends BizAliasToken, Props = any, ReturnType = CSSInterpolation> = (
+  utils: GenerateStyleUtils<ComponentToken>,
+  props: Props,
+) => ReturnType;
 
 const setAlpha = (baseColor: string, alpha: number) => new TinyColor(baseColor).setAlpha(alpha).toRgbString();
 const isDark = (baseColor: string) => new TinyColor(baseColor).isDark();
@@ -38,7 +39,6 @@ export function useStyle(
   styleFn: (token: BizAliasToken) => CSSInterpolation,
   prefixCls?: string,
 ) {
-
   let { token, hashed, theme: provideTheme } = useContext(BizConfigContext);
   const { iconPrefixCls, getPrefixCls, theme } = useContext(AntdConfigProvider.ConfigContext);
   const { token: antdToken, hashId } = useToken();
@@ -49,7 +49,9 @@ export function useStyle(
     ?.replace(/^\-/, '')
     ?.replace(/^biz\-/, '');
 
-  if (!token) { token = { ...antdToken } as BizAliasToken; }
+  if (!token) {
+    token = { ...antdToken } as BizAliasToken;
+  }
   token.antPrefixCls = token.antPrefixCls || getPrefixCls();
   token.iconPrefixCls = token.iconPrefixCls || iconPrefixCls;
   token.bizPrefixCls = token.bizPrefixCls || 'biz';
@@ -61,7 +63,7 @@ export function useStyle(
         theme: provideTheme!,
         path: [componentName],
       },
-      () => styleFn(token!)
+      () => styleFn(token!),
     ),
     token,
     hashId: hashed ? hashId : '',
@@ -70,15 +72,18 @@ export function useStyle(
 }
 
 export function generatStyles<ComponentToken extends BizAliasToken, Props = any>(
-  genBizStyle: GenerateStyleFn<ComponentToken, Exclude<Props, "prefixCls">>,
+  genBizStyle: GenerateStyleFn<ComponentToken, Exclude<Props, 'prefixCls'>>,
   componentName: string,
 ) {
   return (props?: Props & { prefixCls?: string }) => {
-    const { prefixCls, ...restProps } = props as any || {};
-    return useStyle(componentName, (_token) => {
-      const token = { ..._token } as ComponentToken;
-      return [genBizStyle({ token, isDark, setAlpha }, restProps)];
-    }, prefixCls);
-  }
+    const { prefixCls, ...restProps } = (props as any) || {};
+    return useStyle(
+      componentName,
+      (_token) => {
+        const token = { ..._token } as ComponentToken;
+        return [genBizStyle({ token, isDark, setAlpha }, restProps)];
+      },
+      prefixCls,
+    );
+  };
 }
-

@@ -7,7 +7,6 @@ import useForceUpdate from './hooks/useForceUpdate';
 import useCountdown from './hooks/useCountdown';
 import useInterval from './hooks/useInterval';
 
-
 const convertByteUnit = (bytes: number, digits?: number): string => {
   const units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
   let unitIndex = 0;
@@ -19,11 +18,12 @@ const convertByteUnit = (bytes: number, digits?: number): string => {
 };
 
 export {
-  classNames, TransButton,
+  classNames,
+  TransButton,
   convertByteUnit,
   useMergedState,
   useForceUpdate,
   useCopyClick,
   useCountdown,
-  useInterval
+  useInterval,
 };

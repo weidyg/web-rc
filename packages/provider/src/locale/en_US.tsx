@@ -1,5 +1,5 @@
 export default {
-    loginForm: {
-        submitText: 'Login',
-    },
+  loginForm: {
+    submitText: 'Login',
+  },
 };
