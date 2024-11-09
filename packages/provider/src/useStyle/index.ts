@@ -61,7 +61,7 @@ export function useStyle(
         theme: provideTheme!,
         path: [componentName],
       },
-      () => styleFn(token)
+      () => styleFn(token!)
     ),
     token,
     hashId: hashed ? hashId : '',
@@ -76,7 +76,7 @@ export function generatStyles<ComponentToken extends BizAliasToken, Props = any>
   return (props?: Props & { prefixCls?: string }) => {
     const { prefixCls, ...restProps } = props as any || {};
     return useStyle(componentName, (_token) => {
-      const token = { ..._token, } as ComponentToken;
+      const token = { ..._token } as ComponentToken;
       return [genBizStyle({ token, isDark, setAlpha }, restProps)];
     }, prefixCls);
   }
