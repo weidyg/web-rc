@@ -26,7 +26,7 @@ const pkgList = pkgPathList.map((pkg) => {
 const pkgVers = pkgList
   .filter((f) => f !== undefined)
   .map((pak) => {
-    return `"${pak.name}": '${pak.version}'`;
+    return `"${pak.name}": "${pak.version}"`;
   })
 
 const file_content = `
@@ -34,17 +34,18 @@ export const version = {
     ${pkgVers.join(',\n    ')}    
 }
 `;
-
 writeFileSync(
   join(packagesPath, 'components', '/src/version.ts'),
   prettier.format(file_content, { parser: 'typescript' }).toString(),
 );
 
+
 if (componentsPackageJson) {
+  const _pkgVers = pkgVers.filter(f => f.indexOf('-components') == -1);
   const packageJson = {
     ...componentsPackageJson,
     dependencies: JSON.parse(`{
-          ${pkgVers.join(',\n    ')}    
+          ${_pkgVers.join(',\n    ')}    
     }`),
   }
   const pkgJSONPath = join(packagesPath, 'components', 'package.json');

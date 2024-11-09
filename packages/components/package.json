@@ -33,11 +33,11 @@
     "weidyg <weidyg@163.com> (https://github.com/weidyg)"
   ],
   "dependencies": {
-    "@babel/runtime": "^7.26.0",
-    "@web-react/biz-provider": ">=1.0.0-beta.8",
-    "@web-react/biz-utils": ">=1.0.0-beta.8",
-    "@web-react/biz-layout": ">=1.0.0-beta.8",
-    "@web-react/biz-product": ">=1.0.0-beta.8",
-    "@web-react/biz-account": ">=1.0.0-beta.8"
+    "@web-react/biz-account": "1.0.0-beta.8",
+    "@web-react/biz-components": "1.0.0-beta.8",
+    "@web-react/biz-layout": "1.0.0-beta.8",
+    "@web-react/biz-product": "1.0.0-beta.8",
+    "@web-react/biz-provider": "1.0.0-beta.8",
+    "@web-react/biz-utils": "1.0.0-beta.8"
   }
 }
