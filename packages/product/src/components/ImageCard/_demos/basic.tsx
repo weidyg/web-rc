@@ -3,12 +3,28 @@
  * description: 基本的图片卡片
  */
 
-import { Key, ReactNode, useEffect, useRef, useState } from 'react';
+import {  ReactNode, useEffect, useRef, useState } from 'react';
 import { DirType, ImageFile, ImageCard, ImageSpace, ImageSpaceRef, ImageUploader } from '@web-react/biz-components';
 import { Button, Flex, Input, MenuProps, Popover, Segmented, Select, Space } from 'antd';
-
-import dataJson from './_data.json';
 import { SearchOutlined } from '@ant-design/icons';
+
+const dirs: DirType[] = Array.from({ length: 10 }, (_, i) => ({
+  value: `${i}`,
+  label: i == 0 ? '全部图片' : `目录${i}`,
+  children: i / 3 == 0 ? [{
+    value: `sub${i}`,
+    label: `子目录${i}`,
+    children: []
+  }] : []
+}));
+
+const files: ImageFile[] = Array.from({ length: 100 }, (_, i) => ({
+  id: i,
+  name: `图片${i}`,
+  size: 8000,
+  pixel: '220*220',
+  fullUrl: `https://picsum.photos/id/${i}/220/220`,
+}));
 
 export default () => {
   const [value, setValue] = useState<string>();
@@ -41,7 +57,7 @@ export default () => {
   const loadDirs = async () => {
     setFolderLoading(true);
     setTimeout(() => {
-      setFolders(dataJson.dirs);
+      setFolders(dirs);
       setFolderLoading(false);
     }, 1000);
   };
@@ -178,10 +194,10 @@ export default () => {
                       // console.log('queryParam', queryParam);
                       return new Promise<{ items: ImageFile[]; total: number }>((resolve, reject) => {
                         setTimeout(() => {
-                          let newData: ImageFile[] = dataJson.files
+                          let newData: ImageFile[] = files
                             .slice((page - 1) * size, page * size)
                             .map((file) => ({ ...file, id: file.id + '_' + page }));
-                          resolve({ items: newData, total: dataJson.files.length });
+                          resolve({ items: newData, total: files.length });
                         }, 1000);
                       });
                     }}

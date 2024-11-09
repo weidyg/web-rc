@@ -1,4 +1,4 @@
-import React, { forwardRef, Ref, useEffect, useState } from 'react';
+import React, { forwardRef, Ref, useEffect, useMemo, useState } from 'react';
 import { Cascader, Empty, message, Select, Spin, Tree } from 'antd';
 import { classNames, useMergedState } from '@web-react/biz-utils';
 import { useStyles } from './style';
@@ -34,10 +34,10 @@ type FolderProps = {
   type?: 'defalut' | 'select';
 };
 
-interface FolderRef {}
+interface FolderRef { }
 const InternalFolder = forwardRef((props: FolderProps, ref: Ref<FolderRef>) => {
   const { data = [], type = 'defalut', loading: propLoading = false } = props;
-  const { prefixCls, wrapSSR, hashId, token } = useStyles();
+  const { prefixCls, wrapSSR, hashId } = useStyles();
 
   const [value, setValue] = useMergedState<string>('', {
     defaultValue: props?.defaultValue,
@@ -48,15 +48,15 @@ const InternalFolder = forwardRef((props: FolderProps, ref: Ref<FolderRef>) => {
   const [loading, setLoading] = useState(false);
   const [treeData, setTreeData] = useState<DirType[]>([]);
   const [flatData, setFlatData] = useState<FlatDataType[]>([]);
-  const [selectKeys, setSelectKeys] = useState<string[]>([]);
+  const [expandedKeys, setExpandedKeys] = useState<string[]>([]);
 
   useEffect(() => {
     loadDirs();
   }, [data]);
 
   useEffect(() => {
-    const opt = flatData.find((m) => m.value === value);
-    setSelectKeys([...(opt?.pValues || []), value]);
+    const pValues = flatData.find((m) => m.value == value)?.pValues || [];
+    setExpandedKeys([...expandedKeys, ...pValues]);
   }, [value]);
 
   const loadDirs = async () => {
@@ -82,7 +82,7 @@ const InternalFolder = forwardRef((props: FolderProps, ref: Ref<FolderRef>) => {
           style={{ minWidth: '148px' }}
           changeOnSelect
           options={treeData}
-          value={selectKeys}
+          value={[...expandedKeys, value]}
           onChange={(value: string[]) => {
             setValue(value?.pop() || '');
           }}
@@ -114,13 +114,17 @@ const InternalFolder = forwardRef((props: FolderProps, ref: Ref<FolderRef>) => {
                 blockNode
                 showIcon={true}
                 treeData={treeData as any}
-                expandedKeys={selectKeys}
+                autoExpandParent={true}
+                expandedKeys={[...expandedKeys, value]}
                 onExpand={(keys) => {
-                  setSelectKeys(keys as string[]);
+                  const newValue = keys.filter(f => f !== value);
+                  setExpandedKeys(newValue as string[]);
                 }}
                 selectedKeys={[value]}
                 onSelect={(value) => {
-                  setValue(value[0] as string);
+                  if (value?.length > 0) {
+                    setValue(value[0] as string);
+                  }
                 }}
                 fieldNames={{
                   key: 'value',

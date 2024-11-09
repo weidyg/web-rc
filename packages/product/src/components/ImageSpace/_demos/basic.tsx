@@ -6,8 +6,25 @@
 import { useEffect, useRef, useState } from 'react';
 import { Button, Flex, Input, Select, Space } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
-import { ImageFile, ImageSpace, ImageSpaceRef, ImageUploader } from '@web-react/biz-components';
-import dataJson from './_data.json';
+import { DirType, ImageFile, ImageSpace, ImageSpaceRef, ImageUploader } from '@web-react/biz-components';
+
+const dirs: DirType[] = Array.from({ length: 10 }, (_, i) => ({
+  value: `${i}`,
+  label: i == 0 ? '全部图片' : `目录${i}`,
+  children: i % 3 == 1 ? [{
+    value: `sub${i}`,
+    label: `子目录${i}`,
+    children: []
+  }] : []
+}));
+
+const files: ImageFile[] = Array.from({ length: 100 }, (_, i) => ({
+  id: i,
+  name: `图片${i}`,
+  size: 8000,
+  pixel: '220*220',
+  fullUrl: `https://picsum.photos/id/${i}/220/220`,
+}));
 
 export default () => {
   const _ref = useRef<ImageSpaceRef>(null);
@@ -48,7 +65,7 @@ export default () => {
           folders={() => {
             return new Promise<any[]>((resolve, reject) => {
               setTimeout(() => {
-                resolve(dataJson.dirs);
+                resolve(dirs);
               }, 1000);
             });
           }}
@@ -59,7 +76,6 @@ export default () => {
                 const error = res.Error;
                 const result = res.Result || {};
                 const data = { ...result, error };
-                // console.log('uploadResponse', data);
                 return data;
               },
             },
@@ -136,7 +152,7 @@ export default () => {
           folders={() => {
             return new Promise<any[]>((resolve, reject) => {
               setTimeout(() => {
-                resolve(dataJson.dirs);
+                resolve(dirs);
               }, 1000);
             });
           }}
@@ -145,10 +161,10 @@ export default () => {
             const { page, size } = queryParam;
             return new Promise<{ items: ImageFile[]; total: number }>((resolve, reject) => {
               setTimeout(() => {
-                const newData: ImageFile[] = dataJson.files
+                const newData: ImageFile[] = files
                   .slice((page - 1) * size, page * size)
                   .map((file) => ({ ...file, id: file.id + '_' + page }));
-                resolve({ items: newData, total: dataJson.files.length });
+                resolve({ items: newData, total: files.length });
               }, 1000);
             });
           }}

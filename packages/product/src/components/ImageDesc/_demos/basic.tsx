@@ -2,8 +2,8 @@
  * title: 基本使用
  * description: 基本的描述图编辑器
  */
-import { forwardRef, ReactNode, Ref, useContext, useEffect, useImperativeHandle, useRef, useState } from 'react';
-import { Button, ConfigProvider, Flex, Input, Modal, Popover, Select, Space } from 'antd';
+import { forwardRef, ReactNode, Ref, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import { Button, Flex, Input, Modal, Popover, Select, Space } from 'antd';
 import { DeleteOutlined, EditOutlined, FileImageOutlined, SearchOutlined } from '@ant-design/icons';
 import {
   BizConfigProvider,
@@ -14,17 +14,24 @@ import {
   ImageSpaceRef,
   ImageUploader,
 } from '@web-react/biz-components';
-import dataJson from './_data.json';
 
-const imgList = [
-  'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-  'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-  'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-  'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-  'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-  'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-  'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-];
+const dirs: DirType[] = Array.from({ length: 10 }, (_, i) => ({
+  value: `${i}`,
+  label: i == 0 ? '全部图片' : `目录${i}`,
+  children: i / 3 == 0 ? [{
+    value: `sub${i}`,
+    label: `子目录${i}`,
+    children: []
+  }] : []
+}));
+
+const files: ImageFile[] = Array.from({ length: 100 }, (_, i) => ({
+  id: i,
+  name: `图片${i}`,
+  size: 8000,
+  pixel: '220*220',
+  fullUrl: `https://picsum.photos/id/${i}/220/220`,
+}));
 
 const Add = ({ onOk }: { onOk: (url: string[]) => void }) => {
   const _imageSpaceRef = useRef<ImageSpaceRef>(null);
@@ -155,7 +162,7 @@ const ImageSpaceDom = forwardRef(
     const loadDirs = async () => {
       setFolderLoading(true);
       setTimeout(() => {
-        setFolders(dataJson.dirs);
+        setFolders(dirs);
         setFolderLoading(false);
       }, 1000);
     };
@@ -236,10 +243,10 @@ const ImageSpaceDom = forwardRef(
             // console.log('queryParam', queryParam);
             return new Promise<{ items: ImageFile[]; total: number }>((resolve, reject) => {
               setTimeout(() => {
-                let newData: ImageFile[] = dataJson.files
+                let newData: ImageFile[] = files
                   .slice((page - 1) * size, page * size)
                   .map((file) => ({ ...file, id: file.id + '_' + page }));
-                resolve({ items: newData, total: dataJson.files.length });
+                resolve({ items: newData, total: files.length });
               }, 1000);
             });
           }}
@@ -286,7 +293,7 @@ const ImageSpaceDom = forwardRef(
   },
 );
 export default () => {
-  const [value, setValue] = useState<string[]>(imgList);
+  const [value, setValue] = useState<string[]>([]);
   function handleRemove(index: number) {
     const newImgList = [...value];
     newImgList.splice(index, 1);
