@@ -1,6 +1,6 @@
 {
   "name": "@web-react/biz-account",
-  "version": "1.0.0-beta.3",
+  "version": "1.0.0-beta.8",
   "description": "@web-react/biz-account",
   "main": "lib/index.js",
   "module": "es/index.js",

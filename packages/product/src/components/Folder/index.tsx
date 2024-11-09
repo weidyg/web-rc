@@ -34,7 +34,7 @@ type FolderProps = {
   type?: 'defalut' | 'select';
 };
 
-interface FolderRef { }
+interface FolderRef {}
 const InternalFolder = forwardRef((props: FolderProps, ref: Ref<FolderRef>) => {
   const { data = [], type = 'defalut', loading: propLoading = false } = props;
   const { prefixCls, wrapSSR, hashId } = useStyles();
@@ -117,7 +117,7 @@ const InternalFolder = forwardRef((props: FolderProps, ref: Ref<FolderRef>) => {
                 autoExpandParent={true}
                 expandedKeys={[...expandedKeys, value]}
                 onExpand={(keys) => {
-                  const newValue = keys.filter(f => f !== value);
+                  const newValue = keys.filter((f) => f !== value);
                   setExpandedKeys(newValue as string[]);
                 }}
                 selectedKeys={[value]}
