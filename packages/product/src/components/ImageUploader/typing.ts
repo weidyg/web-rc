@@ -1,6 +1,6 @@
 import { CSSProperties, ReactNode } from 'react';
 import { ButtonProps, UploadFile, UploadProps } from 'antd';
-import { FolderProps } from '@web-react/biz-components';
+import { FolderProps } from '..';
 
 export interface UploadProgressEvent extends Partial<ProgressEvent> {
   percent?: number;

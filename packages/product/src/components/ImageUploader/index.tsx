@@ -5,7 +5,7 @@ import { UploadResponse, ImageUploaderProps } from './typing';
 import { useStyles } from './style';
 import InternalUploadBox from './UploadBox';
 import InternalUploadList from './UploadList';
-import { Folder } from '@web-react/biz-components';
+import Folder from '../Folder';
 
 type ConfigFormValueType = {
   folderId: string;

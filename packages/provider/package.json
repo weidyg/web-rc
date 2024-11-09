@@ -28,10 +28,10 @@
     "weidyg <weidyg@163.com> (https://github.com/weidyg)"
   ],
   "license": "MIT",
-  "dependencies": {
-    "swr": "^2.2.5"
-  },
   "publishConfig": {
     "access": "public"
+  },
+  "dependencies": {
+    "swr": "^2.2.5"
   }
 }

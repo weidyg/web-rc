@@ -1,7 +1,7 @@
 export * from './images';
 import classNames from 'classnames';
-import useCopyClick from 'antd/es/typography/hooks/useCopyClick';
-import TransButton from 'antd/es/_util/transButton';
+import useCopyClick from 'antd/lib/typography/hooks/useCopyClick';
+import TransButton from 'antd/lib/_util/transButton';
 import useMergedState from './hooks/useMergedState';
 import useForceUpdate from './hooks/useForceUpdate';
 import useCountdown from './hooks/useCountdown';
@@ -20,10 +20,10 @@ const convertByteUnit = (bytes: number, digits?: number): string => {
 export {
   classNames,
   TransButton,
+  useCopyClick,
   convertByteUnit,
   useMergedState,
   useForceUpdate,
-  useCopyClick,
   useCountdown,
   useInterval,
 };

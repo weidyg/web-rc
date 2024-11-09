@@ -32,7 +32,9 @@
     "weidyg <weidyg@163.com> (https://github.com/weidyg)"
   ],
   "peerDependencies": {
-    "antd": "^5.19.1",
-    "react": ">=18.0.0"
+    "react": ">=18.0.0",
+    "antd": ">=5.20.0",
+    "@web-react/biz-provider": ">=1.0.0-beta.8",
+    "@web-react/biz-utils": ">=1.0.0-beta.8"
   }
 }

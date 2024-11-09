@@ -3,9 +3,7 @@
  * title: 基本使用
  * description: 图片上传器
  */
-import { useState } from 'react';
-import { UploadFile } from 'antd';
-import { ImageUploader, DirType, UploadResponse } from '@web-react/biz-components';
+import { ImageUploader, DirType } from '@web-react/biz-components';
 
 const dirs: DirType[] = Array.from({ length: 10 }, (_, i) => ({
   value: `${i}`,
@@ -29,7 +27,7 @@ export default () => {
         defaultFolder={'0'}
         folders={dirs}
         upload={{
-          action: 'http://localhost:49007/api/services/app/ProductPublish/UploadImages',
+          action: '/',
           normalize: {
             uploadResponse: (res) => {
               const error = res.Error;
