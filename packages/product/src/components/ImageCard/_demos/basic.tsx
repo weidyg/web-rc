@@ -3,7 +3,7 @@
  * description: 基本的图片卡片
  */
 
-import {  ReactNode, useEffect, useRef, useState } from 'react';
+import { ReactNode, useEffect, useRef, useState } from 'react';
 import { DirType, ImageFile, ImageCard, ImageSpace, ImageSpaceRef, ImageUploader } from '@web-react/biz-components';
 import { Button, Flex, Input, MenuProps, Popover, Segmented, Select, Space } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
@@ -80,16 +80,14 @@ export default () => {
     {
       key: '3',
       label: '裁剪',
-      onClick: () => {},
+      onClick: () => { },
     },
   ];
   return (
     <div style={{ margin: 20 }}>
       <Button
         onClick={() => {
-          setValue(
-            'https://img.alicdn.com/imgextra/i3/1035339340/O1CN01e6wCqc2IrmErsQuYd_!!1035339340.jpg_320x320q80_.webp',
-          );
+          setValue(files[0].fullUrl);
         }}
       >
         重置
@@ -227,13 +225,12 @@ export default () => {
                     defaultFolder={defaultFolder}
                     folders={folders}
                     upload={{
-                      action: 'http://localhost:49007/api/services/app/ProductPublish/UploadImages',
+                      action: '/',
                       normalize: {
                         uploadResponse: (res: { Error: any; Result: {} }) => {
                           const error = res.Error;
                           const result = res.Result || {};
                           const data = { ...result, error };
-                          // console.log('uploadResponse', data);
                           return data;
                         },
                       },
