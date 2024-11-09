@@ -15,24 +15,15 @@ import {
   ImageUploader,
 } from '@web-react/biz-components';
 import dataJson from './_data.json';
-import { theme } from 'antd';
 
 const imgList = [
-  'https://pics.17qcc.com/imgextra/product/202408/20/15656633466472.jpg',
-  'https://pics.17qcc.com/imgextra/product/202408/20/10453139457026.jpg',
-  'https://pics.17qcc.com/imgextra/product/202408/20/10453141053334.jpg',
-  'https://pics.17qcc.com/imgextra/product/202408/20/15656633466472.jpg',
-  'https://pics.17qcc.com/imgextra/product/202408/20/10453139457026.jpg',
-  'https://pics.17qcc.com/imgextra/product/202408/20/10453141053334.jpg',
-  'https://pics.17qcc.com/imgextra/product/202408/20/15656633466472.jpg',
-  'https://pics.17qcc.com/imgextra/product/202408/20/10453139457026.jpg',
-  'https://pics.17qcc.com/imgextra/product/202408/20/10453141053334.jpg',
-  'https://pics.17qcc.com/imgextra/product/202408/20/15656633466472.jpg',
-  'https://pics.17qcc.com/imgextra/product/202408/20/10453139457026.jpg',
-  'https://pics.17qcc.com/imgextra/product/202408/20/10453141053334.jpg',
-  'https://pics.17qcc.com/imgextra/product/202408/20/15656633466472.jpg',
-  'https://pics.17qcc.com/imgextra/product/202408/20/10453139457026.jpg',
-  'https://pics.17qcc.com/imgextra/product/202408/20/10453141053334.jpg',
+  'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+  'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+  'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+  'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+  'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+  'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+  'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
 ];
 
 const Add = ({ onOk }: { onOk: (url: string[]) => void }) => {
@@ -273,7 +264,7 @@ const ImageSpaceDom = forwardRef(
           defaultFolder={defaultFolder}
           folders={folders}
           upload={{
-            action: 'http://localhost:49007/api/services/app/ProductPublish/UploadImages',
+            action: '/',
             normalize: {
               uploadResponse: (res: { Error: any; Result: {} }) => {
                 const error = res.Error;
