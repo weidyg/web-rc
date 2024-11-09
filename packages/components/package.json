@@ -34,7 +34,6 @@
   ],
   "dependencies": {
     "@web-react/biz-account": "1.0.0-beta.8",
-    "@web-react/biz-components": "1.0.0-beta.8",
     "@web-react/biz-layout": "1.0.0-beta.8",
     "@web-react/biz-product": "1.0.0-beta.8",
     "@web-react/biz-provider": "1.0.0-beta.8",
