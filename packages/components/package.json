@@ -1,6 +1,6 @@
 {
   "name": "@web-react/biz-components",
-  "version": "1.0.0-beta.7",
+  "version": "1.0.0-beta.8",
   "description": "",
   "keywords": [],
   "repository": {
@@ -30,8 +30,8 @@
     "@babel/runtime": "^7.22.5",
     "@web-react/biz-form": "1.0.0-beta.5",
     "@web-react/biz-layout": "1.0.0-beta.2",
-    "@web-react/biz-provider": "1.0.0-beta.3",
-    "@web-react/biz-utils": "1.0.0-beta.3"
+    "@web-react/biz-provider": "1.0.0-beta.4",
+    "@web-react/biz-utils": "1.0.0-beta.4"
   },
   "publishConfig": {
     "access": "public"
