@@ -7,10 +7,6 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 **Note:** Version bump only for package @web-react/biz-provider
 
-
-
-
-
 # 1.0.0-beta.2 (2024-09-29)
 
 ### Features
