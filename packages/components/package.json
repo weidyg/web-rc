@@ -1,7 +1,7 @@
 {
+  "version": "0.0.1",
   "name": "@web-react/biz-components",
-  "version": "0.0.2",
-  "description": "",
+  "description": "@web-react/biz-components",
   "keywords": [],
   "repository": {
     "type": "git",
