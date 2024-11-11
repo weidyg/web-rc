@@ -145,7 +145,7 @@ async function release() {
     }
 
     if (!args.publishOnly || !isPackageExist) {
-      let tag = args.tag ? args.tag : isNext ? 'next' : 'beta';
+      let tag = args.tag ? args.tag : isNext ? 'next' : 'latest';
       console.log(` Publish package ${name} with ${tag} tag`);
       let cliArgs = ['publish', '--tag', tag];
       await execa('npm', cliArgs, { cwd: pkgPath });
