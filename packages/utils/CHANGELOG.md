@@ -7,10 +7,6 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 **Note:** Version bump only for package @web-react/biz-utils
 
-
-
-
-
 ## [0.0.2](https://github.com/weidyg/web-react/compare/@web-react/biz-utils@0.0.2...@web-react/biz-utils@0.0.2) (2024-11-11)
 
 **Note:** Version bump only for package @web-react/biz-utils

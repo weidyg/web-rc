@@ -7,10 +7,6 @@ settings:
 importers:
 
   .:
-    dependencies:
-      copy-to-clipboard:
-        specifier: ^3.3.3
-        version: 3.3.3
     devDependencies:
       '@ant-design/cssinjs':
         specifier: ^1.21.1
@@ -39,6 +35,9 @@ importers:
       classnames:
         specifier: ^2.5.1
         version: 2.5.1
+      copy-to-clipboard:
+        specifier: ^3.3.3
+        version: 3.3.3
       cross-env:
         specifier: ^7.0.3
         version: 7.0.3
