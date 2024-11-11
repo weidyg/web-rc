@@ -33,10 +33,10 @@
     "weidyg <weidyg@163.com> (https://github.com/weidyg)"
   ],
   "dependencies": {
-    "@web-react/biz-account": "0.0.2",
-    "@web-react/biz-layout": "0.0.2",
-    "@web-react/biz-product": "0.0.2",
-    "@web-react/biz-provider": "0.0.2",
-    "@web-react/biz-utils": "0.0.2"
+    "@web-react/biz-account": "1.0.0",
+    "@web-react/biz-layout": "1.0.0",
+    "@web-react/biz-product": "1.0.0",
+    "@web-react/biz-provider": "1.0.0",
+    "@web-react/biz-utils": "1.0.0"
   }
 }
