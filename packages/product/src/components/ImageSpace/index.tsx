@@ -5,7 +5,7 @@ import { classNames, convertByteUnit, useMergedState } from '@web-react/biz-util
 import { useStyles } from './style';
 
 import PicCard from './PicCard';
-import { Folder, FolderProps } from '@web-react/biz-components';
+import Folder, { FolderProps } from '../Folder';
 
 type RequestParam = {
   page: number;
