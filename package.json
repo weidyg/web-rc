@@ -2,6 +2,9 @@
   "name": "web-react",
   "version": "1.0.0",
   "license": "MIT",
+  "authors": [
+    "weidyg@163.com"
+  ],
   "scripts": {
     "bootstrap": "node ./scripts/bootstrap.js",
     "build": "npm run version && npm run build-components",
@@ -23,6 +26,7 @@
     ]
   },
   "devDependencies": {
+    "copy-to-clipboard": "^3.3.3",
     "@ant-design/cssinjs": "^1.21.1",
     "@ant-design/icons": "^5.4.0",
     "@ctrl/tinycolor": "^4.1.0",
@@ -45,11 +49,5 @@
     "rc-util": "^5.43.0",
     "react": "^18.3.1",
     "swr": "^2.2.5"
-  },
-  "authors": [
-    "weidyg@163.com"
-  ],
-  "dependencies": {
-    "copy-to-clipboard": "^3.3.3"
   }
 }
