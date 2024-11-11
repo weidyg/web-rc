@@ -11,7 +11,7 @@
     "build-components": "pnpm --filter \"@web-react/**\" build",
     "dev": "npm run version && dumi dev",
     "prettier": "prettier --write \"**/**.{js,jsx,tsx,ts,less,md,yaml,json}\" --loglevel warn",
-    "ryelease": "node ./scripts/release.js",
+    "release": "node ./scripts/release.js",
     "release:latest": "node ./scripts/release.js --tag latest",
     "publish:only": "node ./scripts/release.js --publishOnly --tag latest",
     "start": "npm run dev",
