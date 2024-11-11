@@ -85,13 +85,13 @@ async function release() {
 
     const conventionalGraduate = args.conventionalGraduate
       ? ['--conventional-graduate'].concat(
-          Array.isArray(args.conventionalGraduate) ? args.conventionalGraduate.join(',') : [],
-        )
+        Array.isArray(args.conventionalGraduate) ? args.conventionalGraduate.join(',') : [],
+      )
       : [];
     const conventionalPrerelease = args.conventionalPrerelease
       ? ['--conventional-prerelease'].concat(
-          Array.isArray(args.conventionalPrerelease) ? args.conventionalPrerelease.join(',') : [],
-        )
+        Array.isArray(args.conventionalPrerelease) ? args.conventionalPrerelease.join(',') : [],
+      )
       : [];
 
     const major = args.major ? ['major'] : [];
@@ -145,8 +145,8 @@ async function release() {
     }
 
     if (!args.publishOnly || !isPackageExist) {
-      console.log(` Publish package ${name} ${isNext ? 'with next tag' : ''}`);
       let tag = args.tag ? args.tag : isNext ? 'next' : 'beta';
+      console.log(` Publish package ${name} with ${tag} tag`);
       let cliArgs = ['publish', '--tag', tag];
       await execa('npm', cliArgs, { cwd: pkgPath });
     }
