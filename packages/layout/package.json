@@ -1,5 +1,5 @@
 {
-  "version": "0.0.2",
+  "version": "1.0.0",
   "name": "@web-react/biz-layout",
   "description": "@web-react/biz-layout",
   "main": "lib/index.js",
