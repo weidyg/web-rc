@@ -1,6 +1,6 @@
 {
   "name": "@web-react/biz-utils",
-  "version": "1.0.0-beta.8",
+  "version": "1.0.0-beta.9",
   "description": "@web-react/biz-utils",
   "main": "lib/index.js",
   "module": "es/index.js",
@@ -32,7 +32,7 @@
     "access": "public"
   },
   "peerDependencies": {
-    "react": ">=18.0.0",
-    "antd": ">=5.20.0"
+    "antd": ">=5.20.0",
+    "react": ">=18.0.0"
   }
 }

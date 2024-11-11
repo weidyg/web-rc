@@ -1,6 +1,6 @@
 {
   "name": "@web-react/biz-layout",
-  "version": "1.0.0-beta.8",
+  "version": "1.0.0-beta.9",
   "description": "@web-react/biz-layout",
   "main": "lib/index.js",
   "module": "es/index.js",

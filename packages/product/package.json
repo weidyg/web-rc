@@ -1,6 +1,6 @@
 {
   "name": "@web-react/biz-product",
-  "version": "1.0.0-beta.8",
+  "version": "1.0.0-beta.9",
   "description": "@web-react/biz-product",
   "keywords": [],
   "repository": {
@@ -32,9 +32,9 @@
     "weidyg <weidyg@163.com> (https://github.com/weidyg)"
   ],
   "peerDependencies": {
-    "react": ">=18.0.0",
-    "antd": ">=5.20.0",
     "@web-react/biz-provider": ">=1.0.0-beta.8",
-    "@web-react/biz-utils": ">=1.0.0-beta.8"
+    "@web-react/biz-utils": ">=1.0.0-beta.8",
+    "antd": ">=5.20.0",
+    "react": ">=18.0.0"
   }
 }
