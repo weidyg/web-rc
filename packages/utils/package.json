@@ -1,5 +1,5 @@
 {
-  "version": "1.0.0",
+  "version": "1.0.1",
   "name": "@web-react/biz-utils",
   "description": "@web-react/biz-utils",
   "main": "lib/index.js",
