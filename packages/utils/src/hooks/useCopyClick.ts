@@ -3,21 +3,15 @@ import copy from 'copy-to-clipboard';
 import { useEvent } from 'rc-util';
 
 export interface CopyConfig {
-    text?: string | (() => string | Promise<string>);
-    onCopy?: (event?: React.MouseEvent<HTMLDivElement>) => void;
-    icon?: React.ReactNode;
-    tooltips?: React.ReactNode;
-    format?: 'text/plain' | 'text/html';
-    tabIndex?: number;
-  }
-  
-const useCopyClick = ({
-  copyConfig,
-  children,
-}: {
-  copyConfig: CopyConfig;
-  children?: React.ReactNode;
-}) => {
+  text?: string | (() => string | Promise<string>);
+  onCopy?: (event?: React.MouseEvent<HTMLDivElement>) => void;
+  icon?: React.ReactNode;
+  tooltips?: React.ReactNode;
+  format?: 'text/plain' | 'text/html';
+  tabIndex?: number;
+}
+
+const useCopyClick = ({ copyConfig, children }: { copyConfig: CopyConfig; children?: React.ReactNode }) => {
   const [copied, setCopied] = React.useState(false);
 
   const [copyLoading, setCopyLoading] = React.useState(false);
@@ -43,8 +37,7 @@ const useCopyClick = ({
     e?.stopPropagation();
     setCopyLoading(true);
     try {
-      const text =
-        typeof copyConfig.text === 'function' ? await copyConfig.text() : copyConfig.text;
+      const text = typeof copyConfig.text === 'function' ? await copyConfig.text() : copyConfig.text;
       copy(text || String(children) || '', copyOptions);
       setCopyLoading(false);
 

@@ -7,7 +7,7 @@ export default defineConfig({
     extraBabelPlugins: [[require.resolve('./scripts/replaceLib'), {}]],
     platform: 'browser',
     transformer: 'babel',
-    ignores: ['src/**/_demos/*']
+    ignores: ['src/**/_demos/*'],
   },
   cjs: {
     extraBabelPlugins: [[require.resolve('./scripts/replaceEs'), {}]],
@@ -15,6 +15,6 @@ export default defineConfig({
     output: 'lib',
     platform: 'browser',
     transformer: 'babel',
-    ignores: ['src/**/_demos/*']
+    ignores: ['src/**/_demos/*'],
   },
 });
