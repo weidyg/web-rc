@@ -1,6 +1,6 @@
 {
   "name": "@web-react/biz-provider",
-  "version": "1.0.0-beta.9",
+  "version": "1.0.0.0",
   "description": "@web-react/biz-provider",
   "main": "lib/index.js",
   "module": "es/index.js",
