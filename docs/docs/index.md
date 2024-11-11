@@ -11,19 +11,21 @@ nav:
 
 Using npm:
 
-  ```bash
-  npm install --save @web-react/biz-components
-  ```
+```bash
+npm install --save @web-react/biz-components
+```
+
 or using yarn:
 
-  ```bash
-  $ yarn add @web-react/biz-components
-  ```
+```bash
+$ yarn add @web-react/biz-components
+```
+
 or using pnpm:
 
-  ```bash
-   pnpm add @web-react/biz-components
-  ```
+```bash
+ pnpm add @web-react/biz-components
+```
 
 ## 在项目中使用
 
