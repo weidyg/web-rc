@@ -137,19 +137,20 @@ async function release() {
     const { name, version } = require(join(pkgPath, 'package.json'));
     const isNext = isNextVersion(version);
     let isPackageExist = null;
+
     if (args.publishOnly) {
       isPackageExist = packageExists({ name, version });
       if (isPackageExist) {
         console.log(`package ${name}@${version} is already exists on npm, skip.`);
       }
     }
-
     if (!args.publishOnly || !isPackageExist) {
-      let tag = args.tag ? args.tag : isNext ? 'next' : 'latest';
+      let tag = args.tag ? args.tag : isNext ? 'next' : 'beta';
       console.log(` Publish package ${name} with ${tag} tag`);
       let cliArgs = ['publish', '--tag', tag];
       await execa('npm', cliArgs, { cwd: pkgPath });
     }
+    
   }
   console.log('发布成功！');
   await exec('npm', ['run', 'prettier']);

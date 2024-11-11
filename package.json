@@ -9,6 +9,7 @@
     "dev": "npm run version && dumi dev",
     "prettier": "prettier --write \"**/**.{js,jsx,tsx,ts,less,md,yaml,json}\" --loglevel warn",
     "release": "node ./scripts/release.js",
+    "release:latest": "node ./scripts/release.js --tag latest",
     "publishOnly": "node ./scripts/release.js --publishOnly",
     "start": "npm run dev",
     "version": "node ./scripts/gen_version.js",
