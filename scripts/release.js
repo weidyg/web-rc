@@ -144,6 +144,7 @@ async function release() {
         console.log(`package ${name}@${version} is already exists on npm, skip.`);
       }
     }
+    
     if (!args.publishOnly || !isPackageExist) {
       let tag = args.tag ? args.tag : isNext ? 'next' : 'beta';
       console.log(` Publish package ${name} with ${tag} tag`);
