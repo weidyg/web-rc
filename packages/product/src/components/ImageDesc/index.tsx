@@ -56,7 +56,7 @@ const ImageDesc = forwardRef((props: ImageDescProps, ref: Ref<ImageDescRef>) => 
             </div>
             <div style={{ height: '612px', overflow: 'auto', border: 'none' }}>
               {value?.map((m, i) => {
-                return <img key={i} style={{ maxWidth: '360px' }} src={thumbnail(m, 360)} />;
+                return <img key={i} style={{ width: '-webkit-fill-available', maxWidth: '360px' }} src={thumbnail(m, 360)} />;
               })}
             </div>
           </div>
