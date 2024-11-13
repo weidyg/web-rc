@@ -14,7 +14,7 @@ const pkgList = readdirSync(join(__dirname, 'packages')).filter(
 );
 
 const alias = pkgList.reduce((pre, pkg) => {
-  pre[`@web-react/biz-${pkg}`] = join(__dirname, 'packages', pkg, 'src');
+  pre[`@web-biz/rc-${pkg}`] = join(__dirname, 'packages', pkg, 'src');
   return { ...pre };
 }, {} as Record<string, string>);
 
@@ -23,8 +23,8 @@ const alias = pkgList.reduce((pre, pkg) => {
 const tailPkgList = pkgList.map((path) => `packages/${path}/src/components`);
 
 const config: IDumiConfig = {
-  base: '/web-react/',
-  publicPath: '/web-react/',
+  base: '/web-biz/',
+  publicPath: '/web-biz/',
   codeSplitting: {
     jsStrategy: 'granularChunks',
   },
@@ -43,7 +43,7 @@ const config: IDumiConfig = {
     lastUpdated: true,
     name: 'biz-components',
     logo: 'https://gw.alipayobjects.com/zos/antfincdn/upvrAjAPQX/Logo_Tech%252520UI.svg',
-    github: 'https://github.com/weidyg/web-react',
+    github: 'https://github.com/weidyg/web-biz',
     siteToken: { demoInheritSiteTheme: true },
     nav: {
       'zh-CN': [
@@ -63,7 +63,7 @@ const config: IDumiConfig = {
       bottom: 'Powered by weidyg',
     },
     apiHeader: {
-      pkg: '@web-react/biz-components',
+      pkg: '@web-rc/biz-components',
       match: ['/api', '/components'],
     },
     prefersColor: {

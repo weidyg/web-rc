@@ -3,7 +3,7 @@
  * title: 基本使用
  * description: 图片上传器
  */
-import { ImageUploader, DirType } from '@web-react/biz-components';
+import { ImageUploader, DirType } from '@web-rc/biz-components';
 
 const dirs: DirType[] = Array.from({ length: 10 }, (_, i) => ({
   value: `${i}`,

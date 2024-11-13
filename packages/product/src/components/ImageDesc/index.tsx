@@ -1,6 +1,6 @@
 import { forwardRef, ReactNode, Ref } from 'react';
 import { Flex } from 'antd';
-import { classNames, useMergedState } from '@web-react/biz-utils';
+import { classNames, useMergedState } from '@web-rc/biz-utils';
 import { useStyles } from './style';
 import ImageItem from './ImageItem';
 

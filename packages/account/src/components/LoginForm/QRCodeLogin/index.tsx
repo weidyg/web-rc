@@ -1,6 +1,6 @@
 import { forwardRef, Ref, useEffect, useImperativeHandle, useState } from 'react';
 import { Button, QRCode, QRCodeProps, Space, Spin, Typography } from 'antd';
-import { useInterval } from '@web-react/biz-utils';
+import { useInterval } from '@web-rc/biz-utils';
 import { useStyles } from './style';
 import classNames from 'classnames';
 import { CheckCircleFilled, CloseCircleFilled, ReloadOutlined } from '@ant-design/icons';

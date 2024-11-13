@@ -1,7 +1,7 @@
 {
   "version": "1.0.1",
-  "name": "@web-react/biz-account",
-  "description": "@web-react/biz-account",
+  "name": "@web-rc/biz-account",
+  "description": "@web-rc/biz-account",
   "main": "lib/index.js",
   "module": "es/index.js",
   "types": "es/index.d.ts",
@@ -15,7 +15,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/weidyg/web-react"
+    "url": "https://github.com/weidyg/web-rc"
   },
   "browserslist": [
     "last 2 versions",
@@ -32,8 +32,8 @@
     "access": "public"
   },
   "peerDependencies": {
-    "@web-react/biz-provider": ">=1.0.0-beta.8",
-    "@web-react/biz-utils": ">=1.0.0-beta.8",
+    "@web-rc/biz-provider": ">=1.0.0-beta.8",
+    "@web-rc/biz-utils": ">=1.0.0-beta.8",
     "antd": ">=5.20.0",
     "react": ">=18.0.0"
   }

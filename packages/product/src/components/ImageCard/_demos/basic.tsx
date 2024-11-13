@@ -4,7 +4,7 @@
  */
 
 import { ReactNode, useEffect, useRef, useState } from 'react';
-import { DirType, ImageFile, ImageCard, ImageSpace, ImageSpaceRef, ImageUploader } from '@web-react/biz-components';
+import { DirType, ImageFile, ImageCard, ImageSpace, ImageSpaceRef, ImageUploader } from '@web-rc/biz-components';
 import { Button, Flex, Input, MenuProps, Popover, Segmented, Select, Space } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 

@@ -1,7 +1,7 @@
 import { CSSProperties, forwardRef, Key, ReactNode, Ref, useEffect, useImperativeHandle, useState } from 'react';
 import { Image, Button, Checkbox, Divider, message, Radio, Segmented, Space, Spin, Empty } from 'antd';
 import { AppstoreOutlined, BarsOutlined } from '@ant-design/icons';
-import { classNames, convertByteUnit, useMergedState } from '@web-react/biz-utils';
+import { classNames, convertByteUnit, useMergedState } from '@web-rc/biz-utils';
 import { useStyles } from './style';
 
 import PicCard from './PicCard';

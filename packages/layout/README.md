@@ -1,17 +1,17 @@
-# @web-react/biz-layout
+# @web-rc/biz-layout
 
-      > @web-react/biz-layout.
+      > @web-rc/biz-layout.
 
       ## Install
 
       Using npm:
 
       ```bash
-      $ npm install --save @web-react/biz-layout
+      $ npm install --save @web-rc/biz-layout
       ```
 
       or using yarn:
 
       ```bash
-      $ yarn add @web-react/biz-layout
+      $ yarn add @web-rc/biz-layout
       ```

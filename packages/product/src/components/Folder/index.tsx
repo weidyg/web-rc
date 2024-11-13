@@ -1,6 +1,6 @@
 import React, { forwardRef, Ref, useEffect, useMemo, useState } from 'react';
 import { Cascader, Empty, message, Select, Spin, Tree } from 'antd';
-import { classNames, useMergedState } from '@web-react/biz-utils';
+import { classNames, useMergedState } from '@web-rc/biz-utils';
 import { useStyles } from './style';
 
 type FlatDataType = {

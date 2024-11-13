@@ -4,7 +4,7 @@
  */
 
 import { AlipayOutlined, DingdingOutlined, GithubOutlined, WechatOutlined, WeiboOutlined } from '@ant-design/icons';
-import { LoginForm } from '@web-react/biz-components';
+import { LoginForm } from '@web-rc/biz-components';
 import { ConfigProvider } from 'antd';
 import zhCN from 'antd/locale/zh_CN';
 import enUS from 'antd/locale/en_US';

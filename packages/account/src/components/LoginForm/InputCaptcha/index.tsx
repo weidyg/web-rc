@@ -1,6 +1,6 @@
 import { forwardRef, Ref, useImperativeHandle, useState } from 'react';
 import { Button, ButtonProps, Form, FormItemProps, Input, InputProps } from 'antd';
-import { useCountdown } from '@web-react/biz-utils';
+import { useCountdown } from '@web-rc/biz-utils';
 
 export type InputCaptchaProps = InputProps & {
   /** @name 手机号的 name */

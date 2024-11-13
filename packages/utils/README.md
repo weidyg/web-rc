@@ -1,17 +1,17 @@
-# @web-react/biz-utils
+# @web-rc/biz-utils
 
-      > @web-react/biz-utils.
+      > @web-rc/biz-utils.
 
       ## Install
 
       Using npm:
 
       ```bash
-      $ npm install --save @web-react/biz-utils
+      $ npm install --save @web-rc/biz-utils
       ```
 
       or using yarn:
 
       ```bash
-      $ yarn add @web-react/biz-utils
+      $ yarn add @web-rc/biz-utils
       ```

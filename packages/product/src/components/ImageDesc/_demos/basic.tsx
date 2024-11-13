@@ -13,7 +13,7 @@ import {
   ImageSpace,
   ImageSpaceRef,
   ImageUploader,
-} from '@web-react/biz-components';
+} from '@web-rc/biz-components';
 
 const dirs: DirType[] = Array.from({ length: 10 }, (_, i) => ({
   value: `${i}`,

@@ -13,13 +13,13 @@ import {
   Typography,
 } from 'antd';
 import { LockOutlined, MessageOutlined, MobileOutlined, UserOutlined } from '@ant-design/icons';
-import { classNames } from '@web-react/biz-utils';
+import { classNames } from '@web-rc/biz-utils';
 import { useStyles } from './style';
 import CurrentAccount from './CurrentAccount';
 import ExternalLogins, { ThirdPartyLogin } from './ExternalLogins';
 import InputCaptcha, { InputCaptchaProps } from './InputCaptcha';
 import QRCodeLogin, { QRCodeLoginProps, QRCodeValidateResult } from './QRCodeLogin';
-import { useIntl } from '@web-react/biz-provider';
+import { useIntl } from '@web-rc/biz-provider';
 import zhCN from 'antd/locale/zh_CN';
 
 const initialValues = {

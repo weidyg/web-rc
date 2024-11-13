@@ -1,7 +1,7 @@
 import { CSSProperties, ReactNode, useMemo } from 'react';
 import { Button, message, Upload, UploadFile, UploadProps } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
-import { classNames } from '@web-react/biz-utils';
+import { classNames } from '@web-rc/biz-utils';
 import { UploadResponse, CustomUploadProps } from '../typing';
 import { useStyles } from './style';
 import uploadRequest from '../_utils/request';

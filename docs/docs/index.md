@@ -12,19 +12,19 @@ nav:
 Using npm:
 
 ```bash
-npm install --save @web-react/biz-components
+npm install --save @web-rc/biz-components
 ```
 
 or using yarn:
 
 ```bash
-$ yarn add @web-react/biz-components
+$ yarn add @web-rc/biz-components
 ```
 
 or using pnpm:
 
 ```bash
- pnpm add @web-react/biz-components
+ pnpm add @web-rc/biz-components
 ```
 
 ## 在项目中使用
@@ -35,7 +35,7 @@ or using pnpm:
 
 ```jsx
 import React from 'react';
-import { ImageCard } from '@web-react/biz-components';
+import { ImageCard } from '@web-rc/biz-components';
 
 export default () => {
   return <ImageCard />;

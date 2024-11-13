@@ -1,5 +1,5 @@
 ﻿import { unit } from '@ant-design/cssinjs';
-import { generatStyles } from '@web-react/biz-provider';
+import { generatStyles } from '@web-rc/biz-provider';
 
 export const useStyles = generatStyles(({ token }) => {
   return {

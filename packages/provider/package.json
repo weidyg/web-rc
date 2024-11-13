@@ -1,7 +1,7 @@
 {
   "version": "1.0.1",
-  "name": "@web-react/biz-provider",
-  "description": "@web-react/biz-provider",
+  "name": "@web-rc/biz-provider",
+  "description": "@web-rc/biz-provider",
   "main": "lib/index.js",
   "module": "es/index.js",
   "types": "es/index.d.ts",
@@ -15,7 +15,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/weidyg/web-react"
+    "url": "https://github.com/weidyg/web-rc"
   },
   "browserslist": [
     "last 2 versions",

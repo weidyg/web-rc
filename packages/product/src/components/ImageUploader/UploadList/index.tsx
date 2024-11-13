@@ -1,7 +1,7 @@
 import { CSSProperties, ReactNode, useEffect, useMemo } from 'react';
 import { Alert, Progress, Typography, UploadFile, UploadProps } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
-import { classNames, convertByteUnit, previewImage, useForceUpdate } from '@web-react/biz-utils';
+import { classNames, convertByteUnit, previewImage, useForceUpdate } from '@web-rc/biz-utils';
 import { useStyles } from './style';
 import ListItem from './ListItem';
 

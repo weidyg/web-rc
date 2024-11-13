@@ -6,7 +6,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Button, Flex, Input, Select, Space } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
-import { DirType, ImageFile, ImageSpace, ImageSpaceRef, ImageUploader } from '@web-react/biz-components';
+import { DirType, ImageFile, ImageSpace, ImageSpaceRef, ImageUploader } from '@web-rc/biz-components';
 
 const dirs: DirType[] = Array.from({ length: 10 }, (_, i) => ({
   value: `${i}`,

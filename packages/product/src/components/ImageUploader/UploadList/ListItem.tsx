@@ -1,4 +1,4 @@
-import { classNames, convertByteUnit } from '@web-react/biz-utils';
+import { classNames, convertByteUnit } from '@web-rc/biz-utils';
 import { useStyles } from './style';
 import { Progress, Typography } from 'antd';
 

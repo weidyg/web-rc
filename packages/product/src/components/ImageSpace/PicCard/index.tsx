@@ -1,7 +1,7 @@
 import { Key, useEffect, useState } from 'react';
 import { Checkbox, Image, message, Radio } from 'antd';
 import { CheckOutlined, CopyOutlined, ExpandOutlined, LoadingOutlined } from '@ant-design/icons';
-import { classNames, TransButton, useCopyClick, useMergedState } from '@web-react/biz-utils';
+import { classNames, TransButton, useCopyClick, useMergedState } from '@web-rc/biz-utils';
 import { useStyles } from './style';
 
 const refImage =

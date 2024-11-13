@@ -9,7 +9,7 @@ const { yParser } = require('@umijs/utils');
   const pkgs = readdirSync(join(__dirname, '../packages')).filter((pkg) => pkg.charAt(0) !== '.');
 
   pkgs.forEach((shortName) => {
-    const name = `@web-react/biz-${shortName}`;
+    const name = `@web-rc/biz-${shortName}`;
     const pkgPath = join(__dirname, '..', 'packages', shortName);
 
     let json = {};
@@ -29,7 +29,7 @@ const { yParser } = require('@umijs/utils');
         },
         repository: {
           type: 'git',
-          url: 'https://github.com/weidyg/web-react',
+          url: 'https://github.com/weidyg/web-rc',
         },
         browserslist: ['last 2 versions', 'Firefox ESR', '> 1%', 'ie >= 11'],
         keywords: [],

@@ -1,5 +1,5 @@
 {
-  "name": "web-react",
+  "name": "web-biz",
   "version": "1.0.0",
   "license": "MIT",
   "authors": [
@@ -8,7 +8,7 @@
   "scripts": {
     "bootstrap": "node ./scripts/bootstrap.js",
     "build": "npm run version && npm run build-components",
-    "build-components": "pnpm --filter \"@web-react/**\" build",
+    "build-components": "pnpm --filter \"@web-biz/**\" build",
     "dev": "npm run version && dumi dev",
     "prettier": "prettier --write \"**/**.{js,jsx,tsx,ts,less,md,yaml,json}\" --loglevel warn",
     "release": "node ./scripts/release.js",

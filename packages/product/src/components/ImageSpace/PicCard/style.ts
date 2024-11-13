@@ -1,4 +1,4 @@
-﻿import { BizAliasToken, generatStyles } from '@web-react/biz-provider';
+﻿import { BizAliasToken, generatStyles } from '@web-rc/biz-provider';
 
 interface PicCardToken extends BizAliasToken {
   colorBgPicCard: string;

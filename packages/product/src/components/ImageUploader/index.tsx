@@ -1,6 +1,6 @@
 import React, { forwardRef, Ref, useImperativeHandle } from 'react';
 import { Button, Checkbox, Form, InputNumber, Select, UploadFile, UploadProps } from 'antd';
-import { classNames, drawImage, previewImage, useMergedState } from '@web-react/biz-utils';
+import { classNames, drawImage, previewImage, useMergedState } from '@web-rc/biz-utils';
 import { UploadResponse, ImageUploaderProps } from './typing';
 import { useStyles } from './style';
 import InternalUploadBox from './UploadBox';

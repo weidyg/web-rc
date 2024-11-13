@@ -1,11 +1,11 @@
 {
   "version": "1.0.1",
-  "name": "@web-react/biz-components",
-  "description": "@web-react/biz-components",
+  "name": "@web-rc/biz-components",
+  "description": "@web-rc/biz-components",
   "keywords": [],
   "repository": {
     "type": "git",
-    "url": "https://github.com/weidyg/web-react"
+    "url": "https://github.com/weidyg/web-rc"
   },
   "license": "MIT",
   "main": "lib/index.js",
@@ -33,10 +33,10 @@
     "weidyg <weidyg@163.com> (https://github.com/weidyg)"
   ],
   "dependencies": {
-    "@web-react/biz-account": "1.0.1",
-    "@web-react/biz-layout": "1.0.1",
-    "@web-react/biz-product": "1.0.1",
-    "@web-react/biz-provider": "1.0.1",
-    "@web-react/biz-utils": "1.0.1"
+    "@web-rc/biz-account": "1.0.1",
+    "@web-rc/biz-layout": "1.0.1",
+    "@web-rc/biz-product": "1.0.1",
+    "@web-rc/biz-provider": "1.0.1",
+    "@web-rc/biz-utils": "1.0.1"
   }
 }

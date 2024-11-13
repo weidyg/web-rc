@@ -1,6 +1,6 @@
 import { DragEvent, useRef, ReactNode } from 'react';
 import { Flex } from 'antd';
-import { classNames } from '@web-react/biz-utils';
+import { classNames } from '@web-rc/biz-utils';
 import { useStyles } from './style';
 
 type ImageItemProps = {

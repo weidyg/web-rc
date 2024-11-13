@@ -1,17 +1,17 @@
-# @web-react/biz-account
+# @web-rc/biz-account
 
-      > @web-react/biz-account.
+      > @web-rc/biz-account.
 
       ## Install
 
       Using npm:
 
       ```bash
-      $ npm install --save @web-react/biz-account
+      $ npm install --save @web-rc/biz-account
       ```
 
       or using yarn:
 
       ```bash
-      $ yarn add @web-react/biz-account
+      $ yarn add @web-rc/biz-account
       ```
