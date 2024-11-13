@@ -14,7 +14,7 @@ const pkgList = readdirSync(join(__dirname, 'packages')).filter(
 );
 
 const alias = pkgList.reduce((pre, pkg) => {
-  pre[`@web-biz/rc-${pkg}`] = join(__dirname, 'packages', pkg, 'src');
+  pre[`@web-rc/biz-${pkg}`] = join(__dirname, 'packages', pkg, 'src');
   return { ...pre };
 }, {} as Record<string, string>);
 
@@ -23,8 +23,8 @@ const alias = pkgList.reduce((pre, pkg) => {
 const tailPkgList = pkgList.map((path) => `packages/${path}/src/components`);
 
 const config: IDumiConfig = {
-  base: '/web-biz/',
-  publicPath: '/web-biz/',
+  base: '/web-rc/',
+  publicPath: '/web-rc/',
   codeSplitting: {
     jsStrategy: 'granularChunks',
   },
@@ -43,7 +43,7 @@ const config: IDumiConfig = {
     lastUpdated: true,
     name: 'biz-components',
     logo: 'https://gw.alipayobjects.com/zos/antfincdn/upvrAjAPQX/Logo_Tech%252520UI.svg',
-    github: 'https://github.com/weidyg/web-biz',
+    github: 'https://github.com/weidyg/web-rc',
     siteToken: { demoInheritSiteTheme: true },
     nav: {
       'zh-CN': [
