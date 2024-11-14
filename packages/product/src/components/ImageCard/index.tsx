@@ -1,8 +1,9 @@
 import { forwardRef, Ref, useImperativeHandle, useMemo } from 'react';
-import { Dropdown, Image, MenuProps } from 'antd';
+import { Dropdown, Form, FormItemProps, Image, MenuProps } from 'antd';
 import { EyeOutlined, PictureOutlined } from '@ant-design/icons';
 import { classNames, useMergedState } from '@web-rc/biz-utils';
 import { useStyles } from './style';
+import { FormProps } from 'antd';
 
 type ImageCardProps = {
   /** 类名 */
@@ -17,6 +18,7 @@ type ImageCardProps = {
   onChange?: (value?: string) => void;
   menus?: MenuProps['items'];
   children?: (node: React.ReactNode) => React.ReactNode;
+  status?: FormItemProps['validateStatus'];
 };
 
 type ImageCardRef = {
@@ -24,7 +26,7 @@ type ImageCardRef = {
 };
 
 const ImageCard = forwardRef<ImageCardRef, ImageCardProps>((props: ImageCardProps, ref: Ref<ImageCardRef>) => {
-  const { className, style, placeholder, menus, children } = props;
+  const { status, className, style, placeholder, menus, children } = props;
   const { prefixCls, wrapSSR, hashId, token } = useStyles(props.prefixCls);
   const [imgUrl, setImgUrl] = useMergedState(undefined, {
     defaultValue: props?.defaultValue,
@@ -63,9 +65,14 @@ const ImageCard = forwardRef<ImageCardRef, ImageCardProps>((props: ImageCardProp
   }, [imgUrl, menus]);
 
   return wrapSSR(
-    <div
-      style={style}
-      className={classNames(`${prefixCls}-wrap`, className, { [`${prefixCls}-empty`]: !!!imgUrl }, hashId)}
+    <div style={style}
+      className={classNames(`${prefixCls}-wrap`, className, {
+        [`${prefixCls}-empty`]: !!!imgUrl,
+        [`${prefixCls}-status-success`]: status === 'success',
+        [`${prefixCls}-status-warning`]: status === 'warning',
+        [`${prefixCls}-status-error`]: status === 'error',
+        [`${prefixCls}-status-validating`]: status === 'validating',
+      }, hashId)}
     >
       {children?.(_children) || _children}
     </div>,

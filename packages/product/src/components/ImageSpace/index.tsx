@@ -1,7 +1,7 @@
 import { CSSProperties, forwardRef, Key, ReactNode, Ref, useEffect, useImperativeHandle, useState } from 'react';
 import { Image, Button, Checkbox, Divider, message, Radio, Segmented, Space, Spin, Empty } from 'antd';
 import { AppstoreOutlined, BarsOutlined } from '@ant-design/icons';
-import { classNames, convertByteUnit, useMergedState } from '@web-rc/biz-utils';
+import { classNames,  convertByteUnit, useMergedState } from '@web-rc/biz-utils';
 import { useStyles } from './style';
 
 import PicCard from './PicCard';
@@ -105,7 +105,7 @@ const InternalImageSpace = forwardRef((props: ImageSpaceProps, ref: Ref<ImageSpa
       }
     }
   };
-  const loadData = async (param: { page: number; fist?: boolean; [key: string]: any }) => {
+  const loadData = async (param: { page: number; fist?: boolean;[key: string]: any }) => {
     const { page, fist, ...rest } = param;
     const totalPage = fist ? 1 : Math.ceil(totalCount / pageSize);
     // console.log("loadData", param, page, totalPage);
@@ -137,12 +137,12 @@ const InternalImageSpace = forwardRef((props: ImageSpaceProps, ref: Ref<ImageSpa
         ? [id]
         : []
       : selectKeys.includes(id)
-      ? checked
-        ? selectKeys
-        : selectKeys.filter((k) => k !== id)
-      : checked
-      ? [...selectKeys, id]
-      : selectKeys;
+        ? checked
+          ? selectKeys
+          : selectKeys.filter((k) => k !== id)
+        : checked
+          ? [...selectKeys, id]
+          : selectKeys;
     setSelectKeys(keys);
   };
 
@@ -327,7 +327,7 @@ const InternalImageSpace = forwardRef((props: ImageSpaceProps, ref: Ref<ImageSpa
         </div>
       </div>
       {footerRender && <div className={classNames(`${prefixCls}-footer`, hashId)}>{footerRender?.()}</div>}
-    </div>,
+    </div>
   );
 });
 

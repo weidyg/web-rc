@@ -5,7 +5,7 @@
 
 import { ReactNode, useEffect, useRef, useState } from 'react';
 import { DirType, ImageFile, ImageCard, ImageSpace, ImageSpaceRef, ImageUploader } from '@web-rc/biz-components';
-import { Button, Flex, Input, MenuProps, Popover, Segmented, Select, Space } from 'antd';
+import { Button, Flex, Form, FormItemProps, Input, MenuProps, Popover, Segmented, Select, Space } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 
 const dirs: DirType[] = Array.from({ length: 10 }, (_, i) => ({
@@ -14,12 +14,12 @@ const dirs: DirType[] = Array.from({ length: 10 }, (_, i) => ({
   children:
     i / 3 == 0
       ? [
-          {
-            value: `sub${i}`,
-            label: `子目录${i}`,
-            children: [],
-          },
-        ]
+        {
+          value: `sub${i}`,
+          label: `子目录${i}`,
+          children: [],
+        },
+      ]
       : [],
 }));
 
@@ -85,9 +85,11 @@ export default () => {
     {
       key: '3',
       label: '裁剪',
-      onClick: () => {},
+      onClick: () => { },
     },
   ];
+
+  const { status } = Form.Item.useStatus();
   return (
     <div style={{ margin: 20 }}>
       <Button
@@ -106,6 +108,7 @@ export default () => {
       />
 
       <ImageCard
+        status={status}
         menus={items}
         value={value}
         onChange={(value) => {

@@ -58,6 +58,14 @@ export const useStyles = generatStyles(({ token }) => {
           },
         },
       },
+      '&-status': {
+        '&-warning': {
+          border: `1px solid ${token.colorWarning}`,
+        },
+        '&-error': {
+          border: `1px solid ${token.colorError}`,
+        },
+      },
     },
   };
 }, 'ImageCard');
