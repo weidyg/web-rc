@@ -3,33 +3,11 @@
  * description: 基本的图片卡片
  */
 
-import { ReactNode, useEffect, useRef, useState } from 'react';
-import { DirType, ImageFile, ImageCard, ImageSpace, ImageSpaceRef, ImageUploader } from '@web-rc/biz-components';
-import { Button, Flex, Form, FormItemProps, Input, MenuProps, Popover, Segmented, Select, Space } from 'antd';
+import { ReactNode,  useEffect, useRef, useState } from 'react';
+import { DirType, ImageFile, ImageCard, ImageSpace, ImageSpaceRef, ImageUploader, BizConfigProvider } from '@web-rc/biz-components';
+import { Button, Flex, Form, Input, MenuProps, Popover, Segmented, Select, Space, theme } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
-
-const dirs: DirType[] = Array.from({ length: 10 }, (_, i) => ({
-  value: `${i}`,
-  label: i == 0 ? '全部图片' : `目录${i}`,
-  children:
-    i / 3 == 0
-      ? [
-        {
-          value: `sub${i}`,
-          label: `子目录${i}`,
-          children: [],
-        },
-      ]
-      : [],
-}));
-
-const files: ImageFile[] = Array.from({ length: 100 }, (_, i) => ({
-  id: i,
-  name: `图片${i}`,
-  size: 8000,
-  pixel: '220*220',
-  fullUrl: `https://picsum.photos/id/${i}/220/220`,
-}));
+import { dirs, files } from './_data';
 
 export default () => {
   const [value, setValue] = useState<string>();
@@ -92,21 +70,14 @@ export default () => {
   const { status } = Form.Item.useStatus();
   return (
     <div style={{ margin: 20 }}>
-      <Button
-        onClick={() => {
-          setValue(files[0].fullUrl);
-        }}
-      >
-        重置
-      </Button>
-
       <Segmented<string>
         options={['mini', '1_1', '3_4']}
         onChange={(value) => {
           setType(value as any);
         }}
+        style={{ marginBottom: 8 }}
       />
-
+      
       <ImageCard
         status={status}
         menus={items}

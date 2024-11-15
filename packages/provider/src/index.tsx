@@ -197,7 +197,10 @@ const ConfigProviderContainer: React.FC<{
 
   const configProviderDom = useMemo(() => {
     return (
-      <AntdConfigProvider {...restConfig} prefixCls={antPrefixCls} iconPrefixCls={iconPrefixCls} theme={themeConfig}>
+      <AntdConfigProvider {...restConfig}
+        prefixCls={antPrefixCls}
+        iconPrefixCls={iconPrefixCls}
+        theme={themeConfig}>
         <BizConfigContext.Provider value={bizConfigContextValue}>
           <>
             {autoClearCache && <CacheClean />}

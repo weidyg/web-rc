@@ -8,7 +8,7 @@ title: ImageCard - 图片卡片
 
 <code src="./_demos/basic.tsx" ></code>
 
-<code src="./_demos/form-item.tsx" ></code>
+<!-- <code src="./_demos/form-item.tsx" ></code> -->
 
 ## API
 

@@ -1,8 +1,9 @@
 import { CSSProperties, forwardRef, Key, ReactNode, Ref, useEffect, useImperativeHandle, useState } from 'react';
 import { Image, Button, Checkbox, Divider, message, Radio, Segmented, Space, Spin, Empty } from 'antd';
 import { AppstoreOutlined, BarsOutlined } from '@ant-design/icons';
-import { classNames,  convertByteUnit, useMergedState } from '@web-rc/biz-utils';
+import { classNames, convertByteUnit, useMergedState } from '@web-rc/biz-utils';
 import { useStyles } from './style';
+import { debounce } from "lodash";
 
 import PicCard from './PicCard';
 import Folder, { FolderProps } from '../Folder';
@@ -35,6 +36,8 @@ type ImageSpaceProps = {
   value?: Key[];
   onChange?: (value: { ids: Key[]; files: ImageFile[] }) => void | Promise<void>;
   fetchData?: (param: RequestParam) => Promise<{ items: ImageFile[]; total: number }>;
+  /** @name request防抖动时间 默认10 单位ms */
+  debounceTime?: number;
 };
 
 interface ImageSpaceRef {
@@ -46,6 +49,7 @@ const InternalImageSpace = forwardRef((props: ImageSpaceProps, ref: Ref<ImageSpa
   const {
     className,
     style,
+    debounceTime = 10,
     pageSize = 20,
     mutiple = true,
     folderLoading,
@@ -82,20 +86,14 @@ const InternalImageSpace = forwardRef((props: ImageSpaceProps, ref: Ref<ImageSpa
   }));
 
   useEffect(() => {
-    handleLoadMore(true);
-  }, []);
-
-  useEffect(() => {
-    if (folderId) {
-      handleRefresh();
-    }
+    handleRefresh();
   }, [folderId]);
 
   const handleRefresh = async () => {
     await loadData({ page: 1 });
   };
-  const handleLoadMore = async (fist?: boolean) => {
-    loadData({ page: curPage + 1, fist: fist });
+  const handleLoadMore = async () => {
+    await loadData({ page: curPage + 1 });
   };
   const handleScroll = async (event: React.SyntheticEvent<HTMLDivElement>) => {
     const { scrollTop, clientHeight, scrollHeight } = event.target as HTMLDivElement;
@@ -105,13 +103,11 @@ const InternalImageSpace = forwardRef((props: ImageSpaceProps, ref: Ref<ImageSpa
       }
     }
   };
-  const loadData = async (param: { page: number; fist?: boolean;[key: string]: any }) => {
-    const { page, fist, ...rest } = param;
-    const totalPage = fist ? 1 : Math.ceil(totalCount / pageSize);
-    // console.log("loadData", param, page, totalPage);
-    if (page > totalPage) {
-      return;
-    }
+
+  const loadData = debounce(async (param: { page: number;[key: string]: any }) => {
+    const { page, ...rest } = param;
+    const totalPage = page == 1 ? 1 : Math.ceil(totalCount / pageSize);
+    if (page > totalPage) { return; }
     setLoading(true);
     try {
       const param: RequestParam = { ...rest, page, size: pageSize, folderId } as any;
@@ -127,7 +123,8 @@ const InternalImageSpace = forwardRef((props: ImageSpaceProps, ref: Ref<ImageSpa
     } finally {
       setLoading(false);
     }
-  };
+  }, debounceTime);
+
   const isChecked = (id: Key): boolean => {
     return selectKeys?.includes(id) ?? false;
   };
@@ -251,7 +248,7 @@ const InternalImageSpace = forwardRef((props: ImageSpaceProps, ref: Ref<ImageSpa
           {showType == 'list' && (
             <Spin spinning={loading} wrapperClassName={classNames(`${prefixCls}-spin`, hashId)}>
               <div onScroll={handleScroll} className={classNames(`${prefixCls}-list-container`, hashId)}>
-                {imageFiles?.length == 0 ? (
+                {imageFiles?.length > 0 ? (
                   <div className={classNames(`${prefixCls}-empty`, hashId)}>
                     <Empty />
                   </div>
