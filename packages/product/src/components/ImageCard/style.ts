@@ -24,9 +24,9 @@ export const useStyles = generatStyles(({ token }) => {
         alignItems: 'center',
         justifyContent: 'center',
         color: token.colorTextPlaceholder,
-        '&:hover': {
-          color: token.colorPrimaryHover,
-        },
+        // '&:hover': {
+        //   color: token.colorPrimaryHover,
+        // },
         '&-icon': {
           fontSize: token.fontSizeLG,
         },
