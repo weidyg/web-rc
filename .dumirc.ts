@@ -40,11 +40,9 @@ const config: IDumiConfig = {
     { id: 'en-US', name: 'English' },
   ],
   themeConfig: {
-    lastUpdated: true,
     name: 'biz-components',
     logo: 'https://gw.alipayobjects.com/zos/antfincdn/upvrAjAPQX/Logo_Tech%252520UI.svg',
     github: 'https://github.com/weidyg/web-rc',
-    siteToken: { demoInheritSiteTheme: true },
     nav: {
       'zh-CN': [
         { title: '文档', link: '/docs' },
@@ -70,6 +68,8 @@ const config: IDumiConfig = {
       default: 'auto',
       switch: true,
     },
+    // lastUpdated: true,
+    // siteToken: { demoInheritSiteTheme: true },
   },
 };
 
