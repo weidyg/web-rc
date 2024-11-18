@@ -1,9 +1,8 @@
 import { forwardRef, Ref, useImperativeHandle, useMemo } from 'react';
-import { Dropdown, Form, FormItemProps, Image, MenuProps } from 'antd';
+import { Dropdown, FormItemProps, Image, MenuProps } from 'antd';
 import { EyeOutlined, PictureOutlined } from '@ant-design/icons';
 import { classNames, useMergedState } from '@web-rc/biz-utils';
 import { useStyles } from './style';
-import { FormProps } from 'antd';
 
 type ImageCardProps = {
   /** 类名 */
@@ -45,13 +44,7 @@ const ImageCard = forwardRef<ImageCardRef, ImageCardProps>((props: ImageCardProp
       <Dropdown menu={{ items: menus }} arrow={false} placement="bottom">
         <Image
           src={imgUrl}
-          preview={{
-            mask: (
-              <div className={`${prefixCls}-mask-info`}>
-                <EyeOutlined />
-              </div>
-            ),
-          }}
+          preview={{ maskClassName: `${prefixCls}-mask`, }}
           wrapperClassName={classNames(`${prefixCls}-content`, hashId)}
           className={classNames(`${prefixCls}-img`, hashId)}
         />

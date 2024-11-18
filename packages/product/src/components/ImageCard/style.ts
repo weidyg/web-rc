@@ -9,12 +9,14 @@ export const useStyles = generatStyles(({ token }) => {
         width: token.controlHeight,
         height: token.controlHeight,
         borderRadius: token.borderRadius,
+        boxSizing: 'border-box',
         border: `1px solid ${token.colorBorder}`,
       },
       '&-content': {
         width: 'inherit',
         height: 'inherit',
         borderRadius: 'inherit',
+        overflow: 'hidden',
       },
       '&-placeholder': {
         width: 'inherit',
@@ -37,19 +39,20 @@ export const useStyles = generatStyles(({ token }) => {
         },
       },
       '&-empty': {
+        boxSizing: 'border-box',
         border: `1px dashed ${token.colorBorder}`,
         '&:hover': {
           border: `1px dashed ${token.colorPrimaryHover}`,
         },
       },
       '&-img': {
+        borderRadius: 'inherit',
         width: 'inherit !important',
         height: 'inherit !important',
-        borderRadius: 'inherit',
         objectFit: 'contain',
-        // backgroundColor: token.colorBgLayout,
       },
-      [`&-mask-info`]: {
+      [`&-mask`]: {
+        borderRadius: 'inherit',
         padding: `0 ${unit(token.paddingXXS)}`,
         [`.${token.antPrefixCls}`]: {
           marginInlineEnd: token.marginXXS,
