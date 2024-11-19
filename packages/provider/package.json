@@ -1,5 +1,5 @@
 {
-  "version": "0.0.2",
+  "version": "0.0.3",
   "name": "@web-rc/biz-provider",
   "description": "@web-rc/biz-provider",
   "main": "lib/index.js",
