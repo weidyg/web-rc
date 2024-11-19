@@ -14,21 +14,20 @@ export default () => {
   const [value, setValue] = useState<any>([]);
   return (
     <>
-      <Switch value={uniqueGroup}
+      <Switch
+        value={uniqueGroup}
         onChange={(val) => {
           setUniqueGroup(val);
           setCurrentValue(undefined);
           setValue([]);
-        }} />
+        }}
+      />
 
       <SalePropCard
         single={!!currentValue?.value}
         current={currentValue}
         uniqueGroup={uniqueGroup}
-        options={uniqueGroup
-          ? dataJson.size
-          : dataJson.color
-        }
+        options={uniqueGroup ? dataJson.size : dataJson.color}
         value={value}
         onOk={({ all, current, adds }) => {
           setValue(all);
@@ -39,13 +38,12 @@ export default () => {
         }}
       />
 
-
-      <Typography.Text title='当前值'>
+      <Typography.Text title="当前值">
         <pre>
           <code>{JSON.stringify(currentValue, null, 2)}</code>
         </pre>
       </Typography.Text>
-      <Typography.Text title='所有值'>
+      <Typography.Text title="所有值">
         <pre>
           <code>{JSON.stringify(value, null, 2)}</code>
         </pre>

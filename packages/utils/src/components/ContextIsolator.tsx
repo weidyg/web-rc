@@ -22,11 +22,7 @@ export const NoFormStyle: React.FC<NoFormStyleProps> = ({ children, status, over
     return newContext;
   }, [status, override, formItemInputContext]);
 
-  return (
-    <FormItemInputContext.Provider value={newFormItemInputContext}>
-      {children}
-    </FormItemInputContext.Provider>
-  );
+  return <FormItemInputContext.Provider value={newFormItemInputContext}>{children}</FormItemInputContext.Provider>;
 };
 
 // export const NoCompactStyle: React.FC<React.PropsWithChildren<unknown>> = ({ children }) => (
@@ -53,4 +49,3 @@ export const ContextIsolator: React.FC<
   // }
   return result;
 };
-

@@ -34,7 +34,7 @@ type FolderProps = {
   type?: 'defalut' | 'select';
 };
 
-interface FolderRef { }
+interface FolderRef {}
 const InternalFolder = forwardRef((props: FolderProps, ref: Ref<FolderRef>) => {
   const { data = [], type = 'defalut', loading: propLoading = false } = props;
   const { prefixCls, wrapSSR, hashId } = useStyles();
@@ -73,70 +73,72 @@ const InternalFolder = forwardRef((props: FolderProps, ref: Ref<FolderRef>) => {
   };
 
   const _loading = loading || propLoading;
-  return wrapSSR(<>
-    {type == 'select' ? (
-      <Cascader
-        loading={_loading}
-        allowClear={false}
-        style={{ minWidth: '148px' }}
-        changeOnSelect
-        options={treeData}
-        value={[...expandedKeys, value]}
-        onChange={(value: string[]) => {
-          setValue(value?.pop() || '');
-        }}
-      />
-    ) : (
-      <Spin spinning={_loading} wrapperClassName={classNames(`${prefixCls}-spin`, hashId)}>
-        <div className={classNames(`${prefixCls}`, hashId)}>
-          <Select
-            showSearch
-            options={flatData}
-            placeholder="请选择文件夹"
-            value={_loading ? undefined : value}
-            onChange={(val) => {
-              setValue(val);
-            }}
-            filterOption={(input, option) => {
-              const _label = option?.label?.toLowerCase() ?? '';
-              const _input = input?.toLowerCase() ?? '';
-              return _label.includes(_input);
-            }}
-            className={classNames(`${prefixCls}-select`, hashId)}
-          />
-          {treeData.length > 0 ? (
-            <div className={classNames(`${prefixCls}-empty`, hashId)}>
-              <Empty />
-            </div>
-          ) : (
-            <Tree
-              blockNode
-              showIcon={true}
-              treeData={treeData as any}
-              autoExpandParent={true}
-              expandedKeys={[...expandedKeys, value]}
-              onExpand={(keys) => {
-                const newValue = keys.filter((f) => f !== value);
-                setExpandedKeys(newValue as string[]);
+  return wrapSSR(
+    <>
+      {type == 'select' ? (
+        <Cascader
+          loading={_loading}
+          allowClear={false}
+          style={{ minWidth: '148px' }}
+          changeOnSelect
+          options={treeData}
+          value={[...expandedKeys, value]}
+          onChange={(value: string[]) => {
+            setValue(value?.pop() || '');
+          }}
+        />
+      ) : (
+        <Spin spinning={_loading} wrapperClassName={classNames(`${prefixCls}-spin`, hashId)}>
+          <div className={classNames(`${prefixCls}`, hashId)}>
+            <Select
+              showSearch
+              options={flatData}
+              placeholder="请选择文件夹"
+              value={_loading ? undefined : value}
+              onChange={(val) => {
+                setValue(val);
               }}
-              selectedKeys={[value]}
-              onSelect={(value) => {
-                if (value?.length > 0) {
-                  setValue(value[0] as string);
-                }
+              filterOption={(input, option) => {
+                const _label = option?.label?.toLowerCase() ?? '';
+                const _input = input?.toLowerCase() ?? '';
+                return _label.includes(_input);
               }}
-              fieldNames={{
-                key: 'value',
-                title: 'label',
-                children: 'children',
-              }}
-              rootClassName={classNames(`${prefixCls}-tree`, hashId)}
+              className={classNames(`${prefixCls}-select`, hashId)}
             />
-          )}
-        </div>
-      </Spin>
-    )}
-  </>);
+            {treeData.length > 0 ? (
+              <div className={classNames(`${prefixCls}-empty`, hashId)}>
+                <Empty />
+              </div>
+            ) : (
+              <Tree
+                blockNode
+                showIcon={true}
+                treeData={treeData as any}
+                autoExpandParent={true}
+                expandedKeys={[...expandedKeys, value]}
+                onExpand={(keys) => {
+                  const newValue = keys.filter((f) => f !== value);
+                  setExpandedKeys(newValue as string[]);
+                }}
+                selectedKeys={[value]}
+                onSelect={(value) => {
+                  if (value?.length > 0) {
+                    setValue(value[0] as string);
+                  }
+                }}
+                fieldNames={{
+                  key: 'value',
+                  title: 'label',
+                  children: 'children',
+                }}
+                rootClassName={classNames(`${prefixCls}-tree`, hashId)}
+              />
+            )}
+          </div>
+        </Spin>
+      )}
+    </>,
+  );
 });
 
 type CompoundedComponent = typeof InternalFolder & {};

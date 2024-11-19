@@ -14,12 +14,12 @@ export const useStyles = generatStyles(({ token }) => {
         '&-selected': {
           display: 'inline-flex',
           width: '80px',
-        }
+        },
       },
       '&-body': {
         overflow: 'hidden',
         padding: '0 !important',
-        flex: 1
+        flex: 1,
       },
       '&-group': {
         '&-wrapper': {
@@ -60,7 +60,7 @@ export const useStyles = generatStyles(({ token }) => {
         '&-text': {
           width: '56px',
         },
-      }
-    }
+      },
+    },
   };
 }, 'SelectCard');

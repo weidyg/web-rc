@@ -49,7 +49,9 @@ export function useStyle(
     ?.replace(/^\-/, '')
     ?.replace(/^biz\-/, '');
 
-  if (!token) { token = { ...antdToken } as BizAliasToken; }
+  if (!token) {
+    token = { ...antdToken } as BizAliasToken;
+  }
   token.antPrefixCls = token.antPrefixCls || getPrefixCls();
   token.iconPrefixCls = token.iconPrefixCls || iconPrefixCls;
   token.bizPrefixCls = token.bizPrefixCls || 'biz';

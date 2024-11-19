@@ -42,7 +42,7 @@ const ImageCard = forwardRef<ImageCardRef, ImageCardProps>((props: ImageCardProp
       <Dropdown menu={{ items: menus }} arrow={false} placement="bottom">
         <Image
           src={imgUrl}
-          preview={{ maskClassName: `${prefixCls}-mask`, }}
+          preview={{ maskClassName: `${prefixCls}-mask` }}
           wrapperClassName={classNames(`${prefixCls}-content`, hashId)}
           className={classNames(`${prefixCls}-img`, hashId)}
         />
@@ -56,14 +56,20 @@ const ImageCard = forwardRef<ImageCardRef, ImageCardProps>((props: ImageCardProp
   }, [imgUrl, menus]);
 
   return wrapSSR(
-    <div style={style}
-      className={classNames(`${prefixCls}-wrap`, className, {
-        [`${prefixCls}-empty`]: !!!imgUrl,
-        [`${prefixCls}-status-success`]: status === 'success',
-        [`${prefixCls}-status-warning`]: status === 'warning',
-        [`${prefixCls}-status-error`]: status === 'error',
-        [`${prefixCls}-status-validating`]: status === 'validating',
-      }, hashId)}
+    <div
+      style={style}
+      className={classNames(
+        `${prefixCls}-wrap`,
+        className,
+        {
+          [`${prefixCls}-empty`]: !!!imgUrl,
+          [`${prefixCls}-status-success`]: status === 'success',
+          [`${prefixCls}-status-warning`]: status === 'warning',
+          [`${prefixCls}-status-error`]: status === 'error',
+          [`${prefixCls}-status-validating`]: status === 'validating',
+        },
+        hashId,
+      )}
     >
       {children?.(_children) || _children}
     </div>,

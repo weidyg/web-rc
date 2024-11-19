@@ -14,12 +14,12 @@ const dirs: DirType[] = Array.from({ length: 10 }, (_, i) => ({
   children:
     i % 3 == 1
       ? [
-        {
-          value: `sub${i}`,
-          label: `子目录${i}`,
-          children: [],
-        },
-      ]
+          {
+            value: `sub${i}`,
+            label: `子目录${i}`,
+            children: [],
+          },
+        ]
       : [],
 }));
 
@@ -38,19 +38,19 @@ export default () => {
   const [folders, setFolders] = useState<DirType[]>();
   const [isUpload, setIsUpload] = useState(false);
   const [searchParam, setSearchParam] = useState({ type: 'picture', value: '', order: 'timeDes' });
-  
+
   useEffect(() => {
     loadDirs();
   }, []);
-  
+
   useEffect(() => {
     handleRefresh();
   }, [searchParam.order]);
-  
+
   const handleRefresh = () => {
     _imageSpaceRef?.current?.refresh();
   };
-  
+
   const loadDirs = async () => {
     setFolderLoading(true);
     setTimeout(() => {
@@ -58,7 +58,7 @@ export default () => {
       setFolderLoading(false);
     }, 1000);
   };
-  
+
   return (
     <div style={{ width: '760px', height: '400px' }}>
       <ImageSpace

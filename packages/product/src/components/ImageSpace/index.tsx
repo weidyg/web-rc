@@ -3,7 +3,7 @@ import { Image, Button, Checkbox, Divider, message, Radio, Segmented, Space, Spi
 import { AppstoreOutlined, BarsOutlined } from '@ant-design/icons';
 import { classNames, convertByteUnit, useMergedState } from '@web-rc/biz-utils';
 import { useStyles } from './style';
-import { debounce } from "lodash";
+import { debounce } from 'lodash';
 
 import PicCard from './PicCard';
 import Folder, { FolderProps } from '../Folder';
@@ -104,10 +104,12 @@ const InternalImageSpace = forwardRef((props: ImageSpaceProps, ref: Ref<ImageSpa
     }
   };
 
-  const loadData = debounce(async (param: { page: number;[key: string]: any }) => {
+  const loadData = debounce(async (param: { page: number; [key: string]: any }) => {
     const { page, ...rest } = param;
     const totalPage = page == 1 ? 1 : Math.ceil(totalCount / pageSize);
-    if (page > totalPage) { return; }
+    if (page > totalPage) {
+      return;
+    }
     setLoading(true);
     try {
       const param: RequestParam = { ...rest, page, size: pageSize, folderId } as any;
@@ -134,12 +136,12 @@ const InternalImageSpace = forwardRef((props: ImageSpaceProps, ref: Ref<ImageSpa
         ? [id]
         : []
       : selectKeys.includes(id)
-        ? checked
-          ? selectKeys
-          : selectKeys.filter((k) => k !== id)
-        : checked
-          ? [...selectKeys, id]
-          : selectKeys;
+      ? checked
+        ? selectKeys
+        : selectKeys.filter((k) => k !== id)
+      : checked
+      ? [...selectKeys, id]
+      : selectKeys;
     setSelectKeys(keys);
   };
 
@@ -324,7 +326,7 @@ const InternalImageSpace = forwardRef((props: ImageSpaceProps, ref: Ref<ImageSpa
         </div>
       </div>
       {footerRender && <div className={classNames(`${prefixCls}-footer`, hashId)}>{footerRender?.()}</div>}
-    </div>
+    </div>,
   );
 });
 

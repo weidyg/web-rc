@@ -3,8 +3,16 @@
  * description: 基本的图片卡片
  */
 
-import { ReactNode,  useEffect, useRef, useState } from 'react';
-import { DirType, ImageFile, ImageCard, ImageSpace, ImageSpaceRef, ImageUploader, BizConfigProvider } from '@web-rc/biz-components';
+import { ReactNode, useEffect, useRef, useState } from 'react';
+import {
+  DirType,
+  ImageFile,
+  ImageCard,
+  ImageSpace,
+  ImageSpaceRef,
+  ImageUploader,
+  BizConfigProvider,
+} from '@web-rc/biz-components';
 import { Button, Flex, Form, Input, MenuProps, Popover, Segmented, Select, Space, theme } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import { dirs, files } from './_data';
@@ -63,7 +71,7 @@ export default () => {
     {
       key: '3',
       label: '裁剪',
-      onClick: () => { },
+      onClick: () => {},
     },
   ];
 
@@ -77,7 +85,7 @@ export default () => {
         }}
         style={{ marginBottom: 8 }}
       />
-      
+
       <ImageCard
         status={status}
         menus={items}

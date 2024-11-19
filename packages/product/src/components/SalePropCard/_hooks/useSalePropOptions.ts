@@ -1,11 +1,11 @@
-import { OptionGroupType, OptionItemType, ValueType } from "@web-rc/biz-product";
-import { Dispatch, useCallback, useEffect, useMemo, useState } from "react";
+import { OptionGroupType, OptionItemType, ValueType } from '@web-rc/biz-product';
+import { Dispatch, useCallback, useEffect, useMemo, useState } from 'react';
 
-export type OptionFlatType = OptionItemType & { group?: OptionItemType }
+export type OptionFlatType = OptionItemType & { group?: OptionItemType };
 export type UseSalePropOptionType = {
-  isGroup: boolean,
-  flatOptions: OptionFlatType[],
-  getItemOptions: (groupValue?: string) => OptionItemType[]
+  isGroup: boolean;
+  flatOptions: OptionFlatType[];
+  getItemOptions: (groupValue?: string) => OptionItemType[];
 };
 export default function useSalePropOptions(options: OptionGroupType[] | OptionItemType[]): UseSalePropOptionType {
   const [isGroup, flatOptions] = useMemo(() => {
@@ -17,19 +17,22 @@ export default function useSalePropOptions(options: OptionGroupType[] | OptionIt
         const children = (m as OptionGroupType).children || [];
         const _opts = children.map((c) => ({ label: c?.label, value: c?.value, group }));
         _flattenOptions.push(..._opts);
-      })
+      });
     } else {
       _flattenOptions = options.map((m) => ({ label: m?.label, value: m?.value }));
     }
     return [_isGroup, _flattenOptions];
   }, [options]);
 
-  const getItemOptions = useCallback((groupValue?: string) => {
-    const itemOpts: OptionItemType[] = isGroup
-      ? (options as OptionGroupType[]).find((f) => f.value === groupValue)?.children || []
-      : (options as OptionItemType[]) || [];
-    return itemOpts;
-  }, [isGroup, options]);
+  const getItemOptions = useCallback(
+    (groupValue?: string) => {
+      const itemOpts: OptionItemType[] = isGroup
+        ? (options as OptionGroupType[]).find((f) => f.value === groupValue)?.children || []
+        : (options as OptionItemType[]) || [];
+      return itemOpts;
+    },
+    [isGroup, options],
+  );
 
   return { isGroup, flatOptions, getItemOptions };
 }
