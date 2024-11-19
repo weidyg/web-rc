@@ -45,7 +45,7 @@ importers:
         specifier: ^7.0.3
         version: 7.0.3
       dumi:
-        specifier: ^2.4.12
+        specifier: ^2.4.13
         version: 2.4.13(@babel/core@7.25.2)(@swc/helpers@0.5.1)(@types/node@20.16.5)(@types/react@18.3.8)(eslint@8.57.1)(lightningcss@1.22.1)(prettier@2.8.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rollup@3.29.5)(stylelint@14.16.1)(terser@5.33.0)(type-fest@1.4.0)(typescript@5.6.2)(webpack@5.94.0(@swc/core@1.4.2(@swc/helpers@0.5.1)))
       dumi-theme-antd-style:
         specifier: ^0.31.1
