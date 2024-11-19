@@ -1,6 +1,6 @@
 import { forwardRef, Ref, useImperativeHandle, useMemo } from 'react';
 import { Dropdown, FormItemProps, Image, MenuProps } from 'antd';
-import { EyeOutlined, PictureOutlined } from '@ant-design/icons';
+import { PictureOutlined } from '@ant-design/icons';
 import { classNames, useMergedState } from '@web-rc/biz-utils';
 import { useStyles } from './style';
 
@@ -9,8 +9,6 @@ type ImageCardProps = {
   className?: string;
   /** 样式 */
   style?: React.CSSProperties;
-  /** 自定义样式前缀 */
-  prefixCls?: string;
   placeholder?: string;
   defaultValue?: string;
   value?: string;
@@ -26,7 +24,7 @@ type ImageCardRef = {
 
 const ImageCard = forwardRef<ImageCardRef, ImageCardProps>((props: ImageCardProps, ref: Ref<ImageCardRef>) => {
   const { status, className, style, placeholder, menus, children } = props;
-  const { prefixCls, wrapSSR, hashId, token } = useStyles(props.prefixCls);
+  const { prefixCls, wrapSSR, hashId, token } = useStyles();
   const [imgUrl, setImgUrl] = useMergedState(undefined, {
     defaultValue: props?.defaultValue,
     value: props?.value,
