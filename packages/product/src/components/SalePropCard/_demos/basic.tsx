@@ -27,7 +27,7 @@ export default () => {
         single={!!currentValue?.value}
         current={currentValue}
         uniqueGroup={uniqueGroup}
-        options={uniqueGroup ? dataJson.size : dataJson.bigSize}
+        options={uniqueGroup ? dataJson.size : dataJson.size}
         value={value}
         onOk={({ all, current, adds }) => {
           setValue(all);
