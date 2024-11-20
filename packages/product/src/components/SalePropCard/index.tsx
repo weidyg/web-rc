@@ -192,15 +192,10 @@ const SalePropCard = forwardRef<SalePropCardRef, SalePropCardProps>(
                 <Menu
                   className={classNames(`${prefixCls}-group-menu`, hashId)}
                   selectedKeys={[currentGroupValue || '']}
-                  onClick={({ key }) => {
-                    handleGroupChange(key);
-                    //  uniqueGroup ?  handleGroupChange(key) : undefined;
-                  }}
+                  onClick={({ key }) => { handleGroupChange(key); }}
                   items={options?.map(({ value: key, label }, _i) => ({
-                    key,
-                    label,
+                    key, label,
                     className: classNames(`${prefixCls}-group-item`, hashId),
-                    // onMouseEnter: () => { !uniqueGroup ? handleGroupChange(key) : undefined; },
                   }))}
                 />
               </div>
@@ -219,6 +214,7 @@ const SalePropCard = forwardRef<SalePropCardRef, SalePropCardProps>(
                     return (
                       <ItemComponent
                         key={i}
+                        value={val}
                         disabled={disabled}
                         checked={checked}
                         onChange={(e) => {

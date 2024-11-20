@@ -17,7 +17,7 @@ export const useStyles = generatStyles(({ token }) => {
         },
       },
       '&-body': {
-        overflow: 'hidden',
+        overflow: 'auto',
         padding: '0 !important',
         flex: 1,
       },

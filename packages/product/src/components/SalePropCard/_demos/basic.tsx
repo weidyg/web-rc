@@ -9,7 +9,7 @@ import { message, Switch, Typography } from 'antd';
 import dataJson from './_data.json';
 
 export default () => {
-  const [uniqueGroup, setUniqueGroup] = useState<boolean>(true);
+  const [uniqueGroup, setUniqueGroup] = useState<boolean>(false);
   const [currentValue, setCurrentValue] = useState<any>();
   const [value, setValue] = useState<any>([]);
   return (
@@ -27,7 +27,7 @@ export default () => {
         single={!!currentValue?.value}
         current={currentValue}
         uniqueGroup={uniqueGroup}
-        options={uniqueGroup ? dataJson.size : dataJson.color}
+        options={uniqueGroup ? dataJson.size : dataJson.bigSize}
         value={value}
         onOk={({ all, current, adds }) => {
           setValue(all);
@@ -36,6 +36,7 @@ export default () => {
         onCancel={() => {
           message.info('click cancel');
         }}
+        style={{ maxWidth: 580, maxHeight: 400 }}
       />
 
       <Typography.Text title="当前值">
