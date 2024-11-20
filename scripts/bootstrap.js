@@ -109,18 +109,14 @@ export default defineConfig({
     const srcIndexPath = join(pkgPath, 'src', 'index.tsx');
     if (args.force || !existsSync(srcIndexPath)) {
       const srcDir = join(pkgPath, 'src');
-      if (!existsSync(srcDir)) {
-        mkdirSync(srcDir);
-      }
+      if (!existsSync(srcDir)) { mkdirSync(srcDir); }
       writeFileSync(srcIndexPath, `export * from './components';`);
     }
 
     const componentsIndexPath = join(pkgPath, 'src', 'components', 'index.tsx');
     if (!existsSync(componentsIndexPath)) {
       const srcDir = join(pkgPath, 'src', 'components');
-      if (!existsSync(srcDir)) {
-        mkdirSync(srcDir);
-      }
+      if (!existsSync(srcDir)) { mkdirSync(srcDir); }
       writeFileSync(srcIndexPath, `export { };`);
     }
   });

@@ -1,0 +1,35 @@
+{
+  "name": "@web-rc/biz-product",
+  "version": "1.0.0-beta.1",
+  "description": "@web-rc/biz-product",
+  "main": "lib/index.js",
+  "module": "es/index.js",
+  "types": "es/index.d.ts",
+  "files": [
+    "dist",
+    "lib",
+    "es"
+  ],
+  "scripts": {
+    "build": "father build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/weidyg/web-rc"
+  },
+  "browserslist": [
+    "last 2 versions",
+    "Firefox ESR",
+    "> 1%",
+    "ie >= 11"
+  ],
+  "keywords": [],
+  "authors": [
+    "weidyg <weidyg@163.com> (https://github.com/weidyg)"
+  ],
+  "license": "MIT",
+  "peerDependencies": {},
+  "publishConfig": {
+    "access": "public"
+  }
+}
