@@ -3,7 +3,6 @@ import {
   Alert,
   Button,
   Checkbox,
-  ConfigProvider,
   Form,
   FormInstance,
   Input,
@@ -20,7 +19,6 @@ import ExternalLogins, { ThirdPartyLogin } from './ExternalLogins';
 import InputCaptcha, { InputCaptchaProps } from './InputCaptcha';
 import QRCodeLogin, { QRCodeLoginProps, QRCodeValidateResult } from './QRCodeLogin';
 import { useIntl } from '@web-rc/biz-provider';
-import zhCN from 'antd/locale/zh_CN';
 
 const initialValues = {
   grantType: 'password',

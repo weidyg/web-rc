@@ -70,7 +70,6 @@ const { Console } = require('console');
     }
 
     const readmePath = join(pkgPath, 'README.md');
-    console.log(`${existsSync(readmePath)} ${readmePath}`);
     if (args.force || !existsSync(readmePath)) {
       const readmeText = `# ${name}
 
@@ -94,7 +93,6 @@ const { Console } = require('console');
     }
 
     const tsconfigPath = join(pkgPath, 'tsconfig.json');
-    console.log(`${existsSync(tsconfigPath)} ${tsconfigPath}`);
     if (args.force || !existsSync(tsconfigPath)) {
       const tsconfigJson = {
         extends: '../../tsconfig.json',
@@ -104,7 +102,6 @@ const { Console } = require('console');
     }
 
     const fatherrcPath = join(pkgPath, '.fatherrc.ts');
-    console.log(`${existsSync(fatherrcPath)} ${fatherrcPath}`);
     if (args.force || !existsSync(fatherrcPath)) {
       const fatherrcConfig = `import { defineConfig } from 'father';
 
@@ -116,7 +113,6 @@ export default defineConfig({
     }
 
     const srcIndexPath = join(pkgPath, 'src', 'index.tsx');
-    console.log(`${existsSync(srcIndexPath)} ${srcIndexPath}`);
     if (args.force || !existsSync(srcIndexPath)) {
       const srcDir = join(pkgPath, 'src');
       if (!existsSync(srcDir)) { mkdirSync(srcDir); }
