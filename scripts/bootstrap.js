@@ -1,6 +1,7 @@
 const { existsSync, mkdirSync, writeFileSync, readdirSync } = require('fs');
 const { join } = require('path');
 const { yParser } = require('@umijs/utils');
+const { Console } = require('console');
 
 (async () => {
   const args = yParser(process.argv);
@@ -35,10 +36,15 @@ const { yParser } = require('@umijs/utils');
         keywords: [],
         authors: ['weidyg <weidyg@163.com> (https://github.com/weidyg)'],
         license: 'MIT',
-        peerDependencies: {},
         publishConfig: {
           access: 'public',
         },
+        peerDependencies: {
+          "@web-rc/biz-provider": ">=0.0.1",
+          "@web-rc/biz-utils": ">=0.0.1",
+          "antd": ">=5.20.0",
+          "react": ">=18.0.0"
+        }
       };
       writeFileSync(pkgJSONPath, `${JSON.stringify(json, null, 2)}\n`);
     } else if (pkgJSONExists) {
@@ -64,6 +70,7 @@ const { yParser } = require('@umijs/utils');
     }
 
     const readmePath = join(pkgPath, 'README.md');
+    console.log(`${existsSync(readmePath)} ${readmePath}`);
     if (args.force || !existsSync(readmePath)) {
       const readmeText = `# ${name}
 
@@ -87,6 +94,7 @@ const { yParser } = require('@umijs/utils');
     }
 
     const tsconfigPath = join(pkgPath, 'tsconfig.json');
+    console.log(`${existsSync(tsconfigPath)} ${tsconfigPath}`);
     if (args.force || !existsSync(tsconfigPath)) {
       const tsconfigJson = {
         extends: '../../tsconfig.json',
@@ -96,6 +104,7 @@ const { yParser } = require('@umijs/utils');
     }
 
     const fatherrcPath = join(pkgPath, '.fatherrc.ts');
+    console.log(`${existsSync(fatherrcPath)} ${fatherrcPath}`);
     if (args.force || !existsSync(fatherrcPath)) {
       const fatherrcConfig = `import { defineConfig } from 'father';
 
@@ -107,6 +116,7 @@ export default defineConfig({
     }
 
     const srcIndexPath = join(pkgPath, 'src', 'index.tsx');
+    console.log(`${existsSync(srcIndexPath)} ${srcIndexPath}`);
     if (args.force || !existsSync(srcIndexPath)) {
       const srcDir = join(pkgPath, 'src');
       if (!existsSync(srcDir)) { mkdirSync(srcDir); }
@@ -114,10 +124,11 @@ export default defineConfig({
     }
 
     const componentsIndexPath = join(pkgPath, 'src', 'components', 'index.tsx');
-    if (!existsSync(componentsIndexPath)) {
-      const srcDir = join(pkgPath, 'src', 'components');
-      if (!existsSync(srcDir)) { mkdirSync(srcDir); }
-      writeFileSync(srcIndexPath, `export { };`);
-    }
+    console.log(`${existsSync(componentsIndexPath)} ${componentsIndexPath}`);
+    // if (!existsSync(componentsIndexPath)) {
+    //   const srcDir = join(pkgPath, 'src', 'components');
+    //   if (!existsSync(srcDir)) { mkdirSync(srcDir); }
+    //   writeFileSync(srcIndexPath, `export { };`);
+    // }
   });
 })();
