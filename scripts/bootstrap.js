@@ -116,7 +116,7 @@ export default defineConfig({
     }
 
     const componentsIndexPath = join(pkgPath, 'src', 'components', 'index.tsx');
-    if (args.force || !existsSync(componentsIndexPath)) {
+    if (!existsSync(componentsIndexPath)) {
       const srcDir = join(pkgPath, 'src', 'components');
       if (!existsSync(srcDir)) {
         mkdirSync(srcDir);
