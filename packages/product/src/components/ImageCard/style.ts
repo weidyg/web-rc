@@ -18,7 +18,7 @@ export const useStyles = generatStyles(({ token }) => {
         overflow: 'hidden',
       },
       '&-placeholder': {
-        width: 'inherit',
+        // width: 'inherit',
         height: 'inherit',
         display: 'flex',
         flexDirection: 'column',
