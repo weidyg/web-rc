@@ -68,8 +68,8 @@ const config: IDumiConfig = {
       default: 'auto',
       switch: true,
     },
-    // lastUpdated: true,
-    // siteToken: { demoInheritSiteTheme: true },
+    lastUpdated: true,
+    siteToken: { demoInheritSiteTheme: true },
   },
 };
 
