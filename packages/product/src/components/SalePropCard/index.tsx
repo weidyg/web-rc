@@ -211,6 +211,7 @@ const SalePropCard = forwardRef<SalePropCardRef, SalePropCardProps>(
                     const disabled = vaildDisabled(item);
                     const checked = vaildChecked(item);
                     const hidden = searchKeyword && text.indexOf(searchKeyword) == -1;
+                    if (hidden || (!checked && onlyShowChecked)) { return; }
                     return (
                       <ItemComponent
                         key={i}
