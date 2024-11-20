@@ -1,20 +1,7 @@
 import { CSSProperties, forwardRef, memo, Ref, useImperativeHandle, useMemo, useState } from 'react';
-import {
-  Alert,
-  Button,
-  Card,
-  Checkbox,
-  Flex,
-  Input,
-  Menu,
-  Modal,
-  Radio,
-  Space,
-  Switch,
-  Typography,
-} from 'antd';
+import { Alert, Button, Card, Checkbox, Flex, Input, Menu, Modal, Radio, Space, Switch, Typography } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
-import { classNames, } from '@web-rc/biz-utils';
+import { classNames } from '@web-rc/biz-utils';
 import { useStyles } from './style';
 import useSalePropValue from './_hooks/useSalePropValue';
 import useSalePropOptions from './_hooks/useSalePropOptions';
@@ -188,9 +175,12 @@ const SalePropCard = forwardRef<SalePropCardRef, SalePropCardProps>(
                 <Menu
                   className={classNames(`${prefixCls}-group-menu`, hashId)}
                   selectedKeys={[currentGroupValue || '']}
-                  onClick={({ key }) => { handleGroupChange(key); }}
+                  onClick={({ key }) => {
+                    handleGroupChange(key);
+                  }}
                   items={options?.map(({ value: key, label }, _i) => ({
-                    key, label,
+                    key,
+                    label,
                     className: classNames(`${prefixCls}-group-item`, hashId),
                   }))}
                 />
@@ -207,7 +197,9 @@ const SalePropCard = forwardRef<SalePropCardRef, SalePropCardProps>(
                     const disabled = vaildDisabled(val);
                     const checked = vaildChecked(val);
                     const hidden = searchKeyword && text.indexOf(searchKeyword) == -1;
-                    if (hidden || (!checked && onlyShowChecked)) { return; }
+                    if (hidden || (!checked && onlyShowChecked)) {
+                      return;
+                    }
                     return (
                       <CheckComponent
                         key={i}
