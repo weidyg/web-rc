@@ -1,4 +1,4 @@
-import { CSSProperties, forwardRef, Ref, useImperativeHandle, useMemo, useState } from 'react';
+import { CSSProperties, forwardRef, memo, Ref, useImperativeHandle, useMemo, useState } from 'react';
 import {
   Alert,
   Button,
@@ -97,17 +97,17 @@ const SalePropCard = forwardRef<SalePropCardRef, SalePropCardProps>(
       return initValues.filter((f) => !(f.group?.value == current?.group?.value && f.value == current?.value));
     }, [initValues, current]);
 
-    function vaildDisabled(opt: OptionItemType) {
+    function vaildDisabled(value: string) {
       for (const f of disabledValues) {
-        if (f.group?.value == currentGroupValue && f.value == opt?.value) {
+        if (f.group?.value == currentGroupValue && f.value == value) {
           return true;
         }
       }
       return false;
     }
-    function vaildChecked(item: OptionItemType) {
+    function vaildChecked(value: string) {
       for (const f of currentValues) {
-        if (f.group?.value == currentGroupValue && f.value == item?.value) {
+        if (f.group?.value == currentGroupValue && f.value == value) {
           return true;
         }
       }
@@ -140,7 +140,7 @@ const SalePropCard = forwardRef<SalePropCardRef, SalePropCardProps>(
       onCancel?.();
     }
 
-    const ItemComponent = single ? Radio : Checkbox;
+    const CheckComponent = single ? Radio : Checkbox;
     return wrapSSR(
       <>
         <Card
@@ -208,14 +208,13 @@ const SalePropCard = forwardRef<SalePropCardRef, SalePropCardProps>(
                 <Flex wrap gap="small" justify="space-around">
                   {itemOpts?.map((item, i) => {
                     const { value: val, label: text = '' } = item;
-                    const disabled = vaildDisabled(item);
-                    const checked = vaildChecked(item);
+                    const disabled = vaildDisabled(val);
+                    const checked = vaildChecked(val);
                     const hidden = searchKeyword && text.indexOf(searchKeyword) == -1;
                     if (hidden || (!checked && onlyShowChecked)) { return; }
                     return (
-                      <ItemComponent
+                      <CheckComponent
                         key={i}
-                        value={val}
                         disabled={disabled}
                         checked={checked}
                         onChange={(e) => {
@@ -235,7 +234,7 @@ const SalePropCard = forwardRef<SalePropCardRef, SalePropCardProps>(
                         >
                           {text}
                         </Typography.Text>
-                      </ItemComponent>
+                      </CheckComponent>
                     );
                   })}
                   {Array.from({ length: 20 }, (_, i) => (
