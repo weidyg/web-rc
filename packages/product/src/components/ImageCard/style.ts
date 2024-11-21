@@ -12,14 +12,14 @@ export const useStyles = generatStyles(({ token }) => {
         border: `1px solid ${token.colorBorder}`,
       },
       '&-content': {
-        width:'-webkit-fill-available',
-        height: '-webkit-fill-available',
+        width:'inherit',
+        height: 'inherit',
         borderRadius: 'inherit',
         overflow: 'hidden',
       },
       '&-img': {
-        width: '100% !important',
-        height: '100% !important',
+        width: 'calc(100% - 2px) !important',
+        height: 'calc(100% - 2px) !important',
         borderRadius: 'inherit',
         objectFit: 'contain',
       },
