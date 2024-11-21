@@ -45,8 +45,8 @@ export const useStyles = generatStyles(({ token }) => {
         },
       },
       '&-img': {
-        width: 'inherit',
-        height: 'inherit',
+        width: '100% !important',
+        height: '100% !important',
         borderRadius: 'inherit',
         objectFit: 'contain',
       },

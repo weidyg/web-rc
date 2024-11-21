@@ -1,4 +1,4 @@
-import React, { forwardRef, Ref, useEffect, useMemo, useState } from 'react';
+import { forwardRef, Ref, useEffect, useState } from 'react';
 import { Cascader, Empty, message, Select, Spin, Tree } from 'antd';
 import { classNames, useMergedState } from '@web-rc/biz-utils';
 import { useStyles } from './style';
@@ -34,7 +34,7 @@ type FolderProps = {
   type?: 'defalut' | 'select';
 };
 
-interface FolderRef {}
+interface FolderRef { }
 const InternalFolder = forwardRef((props: FolderProps, ref: Ref<FolderRef>) => {
   const { data = [], type = 'defalut', loading: propLoading = false } = props;
   const { prefixCls, wrapSSR, hashId } = useStyles();
@@ -107,7 +107,7 @@ const InternalFolder = forwardRef((props: FolderProps, ref: Ref<FolderRef>) => {
             />
             {treeData.length == 0 ? (
               <div className={classNames(`${prefixCls}-empty`, hashId)}>
-                <Empty />
+                <Empty description={_loading ? `加载中...` : '暂无文件夹'} />
               </div>
             ) : (
               <Tree

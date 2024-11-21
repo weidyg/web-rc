@@ -21,6 +21,11 @@ type ImageFile = {
   fullUrl?: string;
   isRef?: boolean;
 };
+type DataType = {
+  curPage: number,
+  totalCount: number,
+  imageFiles: ImageFile[]
+};
 
 type ImageSpaceProps = {
   className?: string;
@@ -61,17 +66,19 @@ const InternalImageSpace = forwardRef((props: ImageSpaceProps, ref: Ref<ImageSpa
   } = props;
   const { prefixCls, wrapSSR, hashId, token } = useStyles();
   const [loading, setLoading] = useState(false);
-  const [curPage, setCurPage] = useState(0);
-  const [totalCount, setTotalCount] = useState(0);
   const [folderId, setFolderId] = useState(defaultFolder);
-  const [imageFiles, setImageFiles] = useState<ImageFile[]>([]);
+  const [data, setData] = useState<DataType>({ curPage: 0, totalCount: 0, imageFiles: [] });
+
+  // const [curPage, setCurPage] = useState(0);
+  // const [totalCount, setTotalCount] = useState(0);
+  // const [imageFiles, setImageFiles] = useState<ImageFile[]>([]);
   const [showType, setShowType] = useState<'list' | 'table'>('list');
 
   const [selectKeys, setSelectKeys] = useMergedState<Key[]>([], {
     defaultValue: props?.defaultValue,
     value: props?.value,
     onChange: (value) => {
-      const selectFiles = imageFiles.filter((item) => value.includes(item.id));
+      const selectFiles = data?.imageFiles.filter((item) => value.includes(item.id));
       props?.onChange?.({ ids: value, files: selectFiles });
     },
   });
@@ -86,6 +93,7 @@ const InternalImageSpace = forwardRef((props: ImageSpaceProps, ref: Ref<ImageSpa
   }));
 
   useEffect(() => {
+    setData({ curPage: 1, totalCount: 0, imageFiles: [] });
     handleRefresh();
   }, [folderId]);
 
@@ -93,7 +101,7 @@ const InternalImageSpace = forwardRef((props: ImageSpaceProps, ref: Ref<ImageSpa
     await loadData({ page: 1 });
   };
   const handleLoadMore = async () => {
-    await loadData({ page: curPage + 1 });
+    await loadData({ page: data.curPage + 1 });
   };
   const handleScroll = async (event: React.SyntheticEvent<HTMLDivElement>) => {
     const { scrollTop, clientHeight, scrollHeight } = event.target as HTMLDivElement;
@@ -104,21 +112,18 @@ const InternalImageSpace = forwardRef((props: ImageSpaceProps, ref: Ref<ImageSpa
     }
   };
 
-  const loadData = debounce(async (param: { page: number; [key: string]: any }) => {
+  const loadData = debounce(async (param: { page: number;[key: string]: any }) => {
     const { page, ...rest } = param;
-    const totalPage = page == 1 ? 1 : Math.ceil(totalCount / pageSize);
+    const totalPage = page == 1 ? 1 : Math.ceil(data.totalCount / pageSize);
     if (page > totalPage) {
       return;
     }
     setLoading(true);
     try {
       const param: RequestParam = { ...rest, page, size: pageSize, folderId } as any;
-      const data = (await fetchData?.(param)) || { items: [], total: 0 };
-      const newData = data?.items || [];
-      const newImageFiles = page > 1 ? [...imageFiles, ...newData] : newData;
-      setCurPage(page);
-      setTotalCount(data.total || 0);
-      setImageFiles(newImageFiles);
+      const { items = [], total } = (await fetchData?.(param)) || { items: [], total: 0 };
+      const newImageFiles = page > 1 ? [...data.imageFiles, ...items] : items;
+      setData({ curPage: page, totalCount: total, imageFiles: newImageFiles });
       // console.log("loadData1", param, page, data.total);
     } catch (error: any) {
       message.error(error?.message || '加载失败');
@@ -136,12 +141,12 @@ const InternalImageSpace = forwardRef((props: ImageSpaceProps, ref: Ref<ImageSpa
         ? [id]
         : []
       : selectKeys.includes(id)
-      ? checked
-        ? selectKeys
-        : selectKeys.filter((k) => k !== id)
-      : checked
-      ? [...selectKeys, id]
-      : selectKeys;
+        ? checked
+          ? selectKeys
+          : selectKeys.filter((k) => k !== id)
+        : checked
+          ? [...selectKeys, id]
+          : selectKeys;
     setSelectKeys(keys);
   };
 
@@ -164,7 +169,7 @@ const InternalImageSpace = forwardRef((props: ImageSpaceProps, ref: Ref<ImageSpa
   );
 
   const LoadMore = (props: { wrapper?: (node: React.ReactNode) => React.ReactNode }) => {
-    const hasMore = curPage * pageSize >= totalCount;
+    const hasMore = data.curPage * pageSize >= data.totalCount;
     if (loading || hasMore) {
       return <></>;
     }
@@ -250,13 +255,13 @@ const InternalImageSpace = forwardRef((props: ImageSpaceProps, ref: Ref<ImageSpa
           {showType == 'list' && (
             <Spin spinning={loading} wrapperClassName={classNames(`${prefixCls}-spin`, hashId)}>
               <div onScroll={handleScroll} className={classNames(`${prefixCls}-list-container`, hashId)}>
-                {imageFiles?.length == 0 ? (
+                {data?.imageFiles?.length == 0 ? (
                   <div className={classNames(`${prefixCls}-empty`, hashId)}>
-                    <Empty />
+                    <Empty description={loading ? `加载中...` : '暂无图片'} />
                   </div>
                 ) : (
                   <div className={classNames(`${prefixCls}-list`, hashId)}>
-                    {imageFiles.map((item, index) => (
+                    {data.imageFiles.map((item, index) => (
                       <PicCard
                         mutiple={mutiple}
                         key={index}
@@ -295,14 +300,14 @@ const InternalImageSpace = forwardRef((props: ImageSpaceProps, ref: Ref<ImageSpa
                   </table>
                 </div>
                 <div onScroll={handleScroll} className={classNames(`${prefixCls}-table-body`, hashId)}>
-                  {imageFiles?.length == 0 ? (
+                  {data.imageFiles?.length == 0 ? (
                     <div className={classNames(`${prefixCls}-empty`, hashId)}>
                       <Empty />
                     </div>
                   ) : (
                     <table>
                       <tbody>
-                        {imageFiles.map((record, index) => (
+                        {data.imageFiles.map((record, index) => (
                           <tr key={index}>
                             <td>
                               <RenderFileName file={record} />

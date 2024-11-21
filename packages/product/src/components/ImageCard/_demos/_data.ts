@@ -4,14 +4,14 @@ export const dirs: DirType[] = Array.from({ length: 10 }, (_, i) => ({
   value: `${i}`,
   label: i == 0 ? '全部图片' : `目录${i}`,
   children:
-    i >= 0 && i % 3 == 0
+    i > 0 && i % 3 == 0
       ? [
-          {
-            value: `sub${i}`,
-            label: `子目录${i}`,
-            children: [],
-          },
-        ]
+        {
+          value: `sub${i}`,
+          label: `子目录${i}`,
+          children: [],
+        },
+      ]
       : [],
 }));
 
