@@ -1,16 +1,5 @@
 import { forwardRef, ReactNode, Ref, useImperativeHandle, useRef, useState } from 'react';
-import {
-  Alert,
-  Button,
-  Checkbox,
-  Form,
-  FormInstance,
-  Input,
-  QRCodeProps,
-  Space,
-  Tabs,
-  Typography,
-} from 'antd';
+import { Alert, Button, Checkbox, Form, FormInstance, Input, QRCodeProps, Space, Tabs, Typography } from 'antd';
 import { LockOutlined, MessageOutlined, MobileOutlined, UserOutlined } from '@ant-design/icons';
 import { classNames } from '@web-rc/biz-utils';
 import { useStyles } from './style';

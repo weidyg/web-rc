@@ -1,4 +1,4 @@
-import {  useCallback, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { OptionGroupType, OptionItemType } from '..';
 
 export type OptionFlatType = OptionItemType & { group?: OptionItemType };

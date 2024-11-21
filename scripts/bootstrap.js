@@ -40,11 +40,11 @@ const { Console } = require('console');
           access: 'public',
         },
         peerDependencies: {
-          "@web-rc/biz-provider": ">=0.0.1",
-          "@web-rc/biz-utils": ">=0.0.1",
-          "antd": ">=5.20.0",
-          "react": ">=18.0.0"
-        }
+          '@web-rc/biz-provider': '>=0.0.1',
+          '@web-rc/biz-utils': '>=0.0.1',
+          antd: '>=5.20.0',
+          react: '>=18.0.0',
+        },
       };
       writeFileSync(pkgJSONPath, `${JSON.stringify(json, null, 2)}\n`);
     } else if (pkgJSONExists) {
@@ -115,7 +115,9 @@ export default defineConfig({
     const srcIndexPath = join(pkgPath, 'src', 'index.tsx');
     if (args.force || !existsSync(srcIndexPath)) {
       const srcDir = join(pkgPath, 'src');
-      if (!existsSync(srcDir)) { mkdirSync(srcDir); }
+      if (!existsSync(srcDir)) {
+        mkdirSync(srcDir);
+      }
       writeFileSync(srcIndexPath, `export * from './components';`);
     }
 

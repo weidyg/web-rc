@@ -10,7 +10,12 @@ import { compareValue } from './_utils';
 export type OptionItemType = { label: string; value: string };
 export type OptionGroupType = OptionItemType & { children: OptionItemType[] };
 export type SalePropValueType = { value: string; text?: string; group?: { value: string; text?: string } };
-export type SalePropValueFunType = { all: SalePropValueType[]; current?: SalePropValueType; adds?: SalePropValueType[], isGroupChanged?: boolean };
+export type SalePropValueFunType = {
+  all: SalePropValueType[];
+  current?: SalePropValueType;
+  adds?: SalePropValueType[];
+  isGroupChanged?: boolean;
+};
 type SalePropCardProps = {
   /** 类名 */
   className?: string;
@@ -36,11 +41,8 @@ const SalePropCard = forwardRef<SalePropCardRef, SalePropCardProps>(
     const [onlyShowChecked, setOnlyShowChecked] = useState(false);
 
     const { isGroup, flatOptions, getItemOptions } = useSalePropOptions(options);
-    const {
-      initGroupValue, initValues,
-      currentGroupValue, currentValues,
-      setCurrentGroupValue, setCurrentValues
-    } = useSalePropValue(current, value, uniqueGroup, isGroup, flatOptions);
+    const { initGroupValue, initValues, currentGroupValue, currentValues, setCurrentGroupValue, setCurrentValues } =
+      useSalePropValue(current, value, uniqueGroup, isGroup, flatOptions);
 
     const itemOpts = useMemo(() => getItemOptions(currentGroupValue), [currentGroupValue]);
 
@@ -77,7 +79,9 @@ const SalePropCard = forwardRef<SalePropCardRef, SalePropCardProps>(
     }
 
     const disabledValues = useMemo(() => {
-      if (!current) { return initValues; }
+      if (!current) {
+        return initValues;
+      }
       return initValues.filter((f) => !(f.group?.value == current?.group?.value && f.value == current?.value));
     }, [initValues, current]);
 

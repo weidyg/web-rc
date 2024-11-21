@@ -13,20 +13,20 @@ import { findIntlKeyByAntdLocaleKey, intlMap, IntlType, zhCNIntl } from './intl'
 export * from './useStyle';
 
 type OmitUndefined<T> = {
-    [P in keyof T]: NonNullable<T[P]>;
+  [P in keyof T]: NonNullable<T[P]>;
 };
 
 const omitUndefined = <T extends Record<string, any>>(obj: T): OmitUndefined<T> => {
-    const newObj = {} as Record<string, any> as T;
-    Object.keys(obj || {}).forEach((key) => {
-        if (obj[key] !== undefined) {
-            (newObj as any)[key] = obj[key];
-        }
-    });
-    if (Object.keys(newObj as Record<string, any>).length < 1) {
-        return undefined as any;
+  const newObj = {} as Record<string, any> as T;
+  Object.keys(obj || {}).forEach((key) => {
+    if (obj[key] !== undefined) {
+      (newObj as any)[key] = obj[key];
     }
-    return newObj as OmitUndefined<T>;
+  });
+  if (Object.keys(newObj as Record<string, any>).length < 1) {
+    return undefined as any;
+  }
+  return newObj as OmitUndefined<T>;
 };
 
 /**
@@ -36,13 +36,13 @@ const omitUndefined = <T extends Record<string, any>>(obj: T): OmitUndefined<T> 
  * @returns
  */
 export const isNeedOpenHash = () => {
-    if (
-        typeof process !== 'undefined' &&
-        (process.env.NODE_ENV?.toUpperCase() === 'TEST' || process.env.NODE_ENV?.toUpperCase() === 'DEV')
-    ) {
-        return false;
-    }
-    return true;
+  if (
+    typeof process !== 'undefined' &&
+    (process.env.NODE_ENV?.toUpperCase() === 'TEST' || process.env.NODE_ENV?.toUpperCase() === 'DEV')
+  ) {
+    return false;
+  }
+  return true;
 };
 
 export type ParamsType = Record<string, any>;
@@ -52,20 +52,20 @@ export type DeepPartial<T> = T extends object ? { [P in keyof T]?: DeepPartial<T
  * 自带的token 配置
  */
 export type ConfigContextPropsType = {
-    intl?: IntlType;
-    hashId?: string;
-    hashed?: boolean;
-    dark?: boolean;
-    token?: BizAliasToken;
-    theme?: Theme<any, any>;
+  intl?: IntlType;
+  hashId?: string;
+  hashed?: boolean;
+  dark?: boolean;
+  token?: BizAliasToken;
+  theme?: Theme<any, any>;
 };
 
 /* Creating a context object with the default values. */
 export const BizConfigContext = React.createContext<ConfigContextPropsType>({
-    intl: {
-        ...zhCNIntl,
-        locale: 'default',
-    },
+  intl: {
+    ...zhCNIntl,
+    locale: 'default',
+  },
 });
 
 export const { Consumer: ConfigConsumer } = BizConfigContext;
@@ -76,17 +76,17 @@ export const { Consumer: ConfigConsumer } = BizConfigContext;
  * @returns null
  */
 const CacheClean = () => {
-    const { cache } = useSWRConfig();
+  const { cache } = useSWRConfig();
 
-    useEffect(() => {
-        return () => {
-            // is a map
-            // @ts-ignore
-            cache.clear();
-        };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-    return null;
+  useEffect(() => {
+    return () => {
+      // is a map
+      // @ts-ignore
+      cache.clear();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  return null;
 };
 
 /**
@@ -95,124 +95,124 @@ const CacheClean = () => {
  * @returns
  */
 const ConfigProviderContainer: React.FC<{
-    children: React.ReactNode;
-    autoClearCache?: boolean;
-    hashed?: boolean;
-    dark?: boolean;
-    antPrefixCls?: string;
-    iconPrefixCls?: string;
-    bizPrefixCls?: string;
-    intl?: IntlType;
+  children: React.ReactNode;
+  autoClearCache?: boolean;
+  hashed?: boolean;
+  dark?: boolean;
+  antPrefixCls?: string;
+  iconPrefixCls?: string;
+  bizPrefixCls?: string;
+  intl?: IntlType;
 }> = (props) => {
-    const { children, dark, autoClearCache = false, intl } = props;
-    const bizProvide = useContext(BizConfigContext);
-    const {
-        locale,
-        theme: antTheme,
-        iconPrefixCls: antIconPrefixCls,
-        getPrefixCls,
-        ...restConfig
-    } = useContext(AntdConfigProvider.ConfigContext);
-    const tokenContext = bizTheme.useToken?.();
+  const { children, dark, autoClearCache = false, intl } = props;
+  const bizProvide = useContext(BizConfigContext);
+  const {
+    locale,
+    theme: antTheme,
+    iconPrefixCls: antIconPrefixCls,
+    getPrefixCls,
+    ...restConfig
+  } = useContext(AntdConfigProvider.ConfigContext);
+  const tokenContext = bizTheme.useToken?.();
 
-    const antPrefixCls: string = props.antPrefixCls || getPrefixCls();
-    const iconPrefixCls: string = props.iconPrefixCls || antIconPrefixCls;
-    const bizPrefixCls: string = props.bizPrefixCls || `${antPrefixCls}-biz`;
+  const antPrefixCls: string = props.antPrefixCls || getPrefixCls();
+  const iconPrefixCls: string = props.iconPrefixCls || antIconPrefixCls;
+  const bizPrefixCls: string = props.bizPrefixCls || `${antPrefixCls}-biz`;
 
-    const bizProvideValue = useMemo(() => {
-        const localeName = locale?.locale;
-        const key = findIntlKeyByAntdLocaleKey(localeName);
-        // antd 的 key 存在的时候以 antd 的为主
-        const resolvedIntl =
-            intl ??
-            (localeName && bizProvide.intl?.locale === 'default'
-                ? intlMap[key! as 'zh-CN']
-                : bizProvide.intl || intlMap[key! as 'zh-CN']);
+  const bizProvideValue = useMemo(() => {
+    const localeName = locale?.locale;
+    const key = findIntlKeyByAntdLocaleKey(localeName);
+    // antd 的 key 存在的时候以 antd 的为主
+    const resolvedIntl =
+      intl ??
+      (localeName && bizProvide.intl?.locale === 'default'
+        ? intlMap[key! as 'zh-CN']
+        : bizProvide.intl || intlMap[key! as 'zh-CN']);
 
-        return {
-            ...bizProvide,
-            dark: dark ?? bizProvide.dark,
-            token: merge(bizProvide.token, tokenContext.token, {
-                themeId: tokenContext.theme.id,
-                antPrefixCls,
-                iconPrefixCls,
-                bizPrefixCls,
-            }),
-            intl: resolvedIntl || zhCNIntl,
-        };
-    }, [
-        locale?.locale,
-        bizProvide,
-        dark,
-        tokenContext.token,
-        tokenContext.theme.id,
-        bizPrefixCls,
+    return {
+      ...bizProvide,
+      dark: dark ?? bizProvide.dark,
+      token: merge(bizProvide.token, tokenContext.token, {
+        themeId: tokenContext.theme.id,
         antPrefixCls,
         iconPrefixCls,
-    ]);
-
-    const finalToken = {
-        ...(bizProvideValue.token || {}),
         bizPrefixCls,
+      }),
+      intl: resolvedIntl || zhCNIntl,
     };
+  }, [
+    locale?.locale,
+    bizProvide,
+    dark,
+    tokenContext.token,
+    tokenContext.theme.id,
+    bizPrefixCls,
+    antPrefixCls,
+    iconPrefixCls,
+  ]);
 
-    const [token, nativeHashId] = useCacheToken<BizAliasToken>(
-        tokenContext.theme as unknown as Theme<any, any>,
-        [tokenContext.token, finalToken ?? {}],
-        { salt: bizPrefixCls, override: finalToken },
+  const finalToken = {
+    ...(bizProvideValue.token || {}),
+    bizPrefixCls,
+  };
+
+  const [token, nativeHashId] = useCacheToken<BizAliasToken>(
+    tokenContext.theme as unknown as Theme<any, any>,
+    [tokenContext.token, finalToken ?? {}],
+    { salt: bizPrefixCls, override: finalToken },
+  );
+
+  const [hashed, hashId] = useMemo(() => {
+    if (props.hashed === false || bizProvide.hashed === false || isNeedOpenHash() === false) {
+      return [false, ''];
+    } else if (tokenContext.hashId) {
+      return [true, tokenContext.hashId];
+    } else {
+      // 生产环境或其他环境
+      return [true, nativeHashId];
+    }
+  }, [nativeHashId, bizProvide.hashed, props.hashed]);
+
+  // useEffect(() => {
+  //   dayjs.locale(locale?.locale || 'zh-cn');
+  // }, [locale?.locale]);
+
+  const themeConfig = useMemo(() => {
+    return {
+      ...antTheme,
+      hashId,
+      hashed,
+    };
+  }, [dark, antTheme, hashId, hashed]);
+
+  const bizConfigContextValue = useMemo(() => {
+    return {
+      ...bizProvideValue!,
+      theme: tokenContext.theme as unknown as Theme<any, any>,
+      token,
+      hashed,
+      hashId,
+    };
+  }, [bizProvideValue, tokenContext.theme, token, hashed, hashId]);
+
+  const configProviderDom = useMemo(() => {
+    return (
+      <AntdConfigProvider {...restConfig} prefixCls={antPrefixCls} iconPrefixCls={iconPrefixCls} theme={themeConfig}>
+        <BizConfigContext.Provider value={bizConfigContextValue}>
+          <>
+            {autoClearCache && <CacheClean />}
+            {children}
+          </>
+        </BizConfigContext.Provider>
+      </AntdConfigProvider>
     );
 
-    const [hashed, hashId] = useMemo(() => {
-        if (props.hashed === false || bizProvide.hashed === false || isNeedOpenHash() === false) {
-            return [false, ''];
-        } else if (tokenContext.hashId) {
-            return [true, tokenContext.hashId];
-        } else {
-            // 生产环境或其他环境
-            return [true, nativeHashId];
-        }
-    }, [nativeHashId, bizProvide.hashed, props.hashed]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [restConfig, themeConfig, bizConfigContextValue, autoClearCache, children]);
 
-    // useEffect(() => {
-    //   dayjs.locale(locale?.locale || 'zh-cn');
-    // }, [locale?.locale]);
+  if (!autoClearCache) return configProviderDom;
 
-    const themeConfig = useMemo(() => {
-        return {
-            ...antTheme,
-            hashId,
-            hashed,
-        };
-    }, [dark, antTheme, hashId, hashed]);
-
-    const bizConfigContextValue = useMemo(() => {
-        return {
-            ...bizProvideValue!,
-            theme: tokenContext.theme as unknown as Theme<any, any>,
-            token,
-            hashed,
-            hashId,
-        };
-    }, [bizProvideValue, tokenContext.theme, token, hashed, hashId]);
-
-    const configProviderDom = useMemo(() => {
-        return (
-            <AntdConfigProvider {...restConfig} prefixCls={antPrefixCls} iconPrefixCls={iconPrefixCls} theme={themeConfig}>
-                <BizConfigContext.Provider value={bizConfigContextValue}>
-                    <>
-                        {autoClearCache && <CacheClean />}
-                        {children}
-                    </>
-                </BizConfigContext.Provider>
-            </AntdConfigProvider>
-        );
-
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [restConfig, themeConfig, bizConfigContextValue, autoClearCache, children]);
-
-    if (!autoClearCache) return configProviderDom;
-
-    return <SWRConfig value={{ provider: () => new Map() }}>{configProviderDom}</SWRConfig>;
+  return <SWRConfig value={{ provider: () => new Map() }}>{configProviderDom}</SWRConfig>;
 };
 
 /**
@@ -221,48 +221,48 @@ const ConfigProviderContainer: React.FC<{
  * @returns
  */
 export const BizConfigProvider: React.FC<{
-    children: React.ReactNode;
-    autoClearCache?: boolean;
-    needDeps?: boolean;
-    dark?: boolean;
-    hashed?: boolean;
-    antPrefixCls?: string;
-    iconPrefixCls?: string;
-    bizPrefixCls?: string;
-    intl?: IntlType;
+  children: React.ReactNode;
+  autoClearCache?: boolean;
+  needDeps?: boolean;
+  dark?: boolean;
+  hashed?: boolean;
+  antPrefixCls?: string;
+  iconPrefixCls?: string;
+  bizPrefixCls?: string;
+  intl?: IntlType;
 }> = (props) => {
-    const { needDeps, dark } = props;
-    const bizProvide = useContext(BizConfigContext);
-    const { locale, theme, ...rest } = useContext(AntdConfigProvider.ConfigContext);
+  const { needDeps, dark } = props;
+  const bizProvide = useContext(BizConfigContext);
+  const { locale, theme, ...rest } = useContext(AntdConfigProvider.ConfigContext);
 
-    // 是不是不需要渲染 provide
-    const isNullProvide =
-        needDeps && bizProvide.hashId !== undefined && Object.keys(props).sort().join('-') === 'children-needDeps';
+  // 是不是不需要渲染 provide
+  const isNullProvide =
+    needDeps && bizProvide.hashId !== undefined && Object.keys(props).sort().join('-') === 'children-needDeps';
 
-    if (isNullProvide) {
-        return <>{props.children}</>;
-    }
+  if (isNullProvide) {
+    return <>{props.children}</>;
+  }
 
-    const mergeAlgorithm = () => {
-        const isDark = dark ?? bizProvide.dark;
-        return isDark ? bizTheme.darkAlgorithm : theme?.algorithm;
-    };
-    // 自动注入 antd 的配置
-    const configProvider = {
-        ...rest,
-        locale: locale || zh_CN,
-        theme: omitUndefined({
-            ...theme,
-            hashed: props.hashed ?? bizProvide.hashed ?? theme?.hashed,
-            algorithm: mergeAlgorithm(),
-        }),
-    } as typeof theme;
+  const mergeAlgorithm = () => {
+    const isDark = dark ?? bizProvide.dark;
+    return isDark ? bizTheme.darkAlgorithm : theme?.algorithm;
+  };
+  // 自动注入 antd 的配置
+  const configProvider = {
+    ...rest,
+    locale: locale || zh_CN,
+    theme: omitUndefined({
+      ...theme,
+      hashed: props.hashed ?? bizProvide.hashed ?? theme?.hashed,
+      algorithm: mergeAlgorithm(),
+    }),
+  } as typeof theme;
 
-    return (
-        <AntdConfigProvider {...configProvider}>
-            <ConfigProviderContainer {...props} dark={dark} />
-        </AntdConfigProvider>
-    );
+  return (
+    <AntdConfigProvider {...configProvider}>
+      <ConfigProviderContainer {...props} dark={dark} />
+    </AntdConfigProvider>
+  );
 };
 
 /**
@@ -274,16 +274,16 @@ export const BizConfigProvider: React.FC<{
  * @returns The return value of the function is the intl object.
  */
 export function useIntl(): IntlType {
-    const { locale } = useContext(AntdConfigProvider.ConfigContext);
-    const { intl } = useContext(BizConfigContext);
+  const { locale } = useContext(AntdConfigProvider.ConfigContext);
+  const { intl } = useContext(BizConfigContext);
 
-    if (intl && intl.locale !== 'default') {
-        return intl || zhCNIntl;
-    }
+  if (intl && intl.locale !== 'default') {
+    return intl || zhCNIntl;
+  }
 
-    if (locale?.locale) {
-        return intlMap[findIntlKeyByAntdLocaleKey(locale.locale) as 'zh-CN'] || zhCNIntl;
-    }
+  if (locale?.locale) {
+    return intlMap[findIntlKeyByAntdLocaleKey(locale.locale) as 'zh-CN'] || zhCNIntl;
+  }
 
-    return zhCNIntl;
+  return zhCNIntl;
 }

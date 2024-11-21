@@ -104,7 +104,7 @@ const InternalImageSpace = forwardRef((props: ImageSpaceProps, ref: Ref<ImageSpa
     }
   };
 
-  const loadData = debounce(async (param: { page: number;[key: string]: any }) => {
+  const loadData = debounce(async (param: { page: number; [key: string]: any }) => {
     const { page, ...rest } = param;
     const totalPage = page == 1 ? 1 : Math.ceil(totalCount / pageSize);
     if (page > totalPage) {
@@ -136,12 +136,12 @@ const InternalImageSpace = forwardRef((props: ImageSpaceProps, ref: Ref<ImageSpa
         ? [id]
         : []
       : selectKeys.includes(id)
-        ? checked
-          ? selectKeys
-          : selectKeys.filter((k) => k !== id)
-        : checked
-          ? [...selectKeys, id]
-          : selectKeys;
+      ? checked
+        ? selectKeys
+        : selectKeys.filter((k) => k !== id)
+      : checked
+      ? [...selectKeys, id]
+      : selectKeys;
     setSelectKeys(keys);
   };
 
