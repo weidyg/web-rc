@@ -12,10 +12,16 @@ export const useStyles = generatStyles(({ token }) => {
         border: `1px solid ${token.colorBorder}`,
       },
       '&-content': {
-        width: 'inherit',
-        height: 'inherit',
+        width:'-webkit-fill-available',
+        height: '-webkit-fill-available',
         borderRadius: 'inherit',
         overflow: 'hidden',
+      },
+      '&-img': {
+        width: '100% !important',
+        height: '100% !important',
+        borderRadius: 'inherit',
+        objectFit: 'contain',
       },
       '&-placeholder': {
         // width: 'inherit',
@@ -43,12 +49,6 @@ export const useStyles = generatStyles(({ token }) => {
         '&:hover': {
           border: `1px dashed ${token.colorPrimaryHover}`,
         },
-      },
-      '&-img': {
-        width: '100% !important',
-        height: '100% !important',
-        borderRadius: 'inherit',
-        objectFit: 'contain',
       },
       [`&-mask`]: {
         borderRadius: 'inherit',

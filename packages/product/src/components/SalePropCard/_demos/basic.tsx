@@ -5,29 +5,40 @@
 
 import { useState } from 'react';
 import { SalePropCard } from '@web-rc/biz-components';
-import { message, Switch, Typography } from 'antd';
+import { message, Segmented, Space, Switch, Typography } from 'antd';
 import dataJson from './_data.json';
 
 export default () => {
   const [uniqueGroup, setUniqueGroup] = useState<boolean>(false);
+  const [isSize, setIsSize] = useState<boolean>(false);
   const [currentValue, setCurrentValue] = useState<any>();
   const [value, setValue] = useState<any>([]);
   return (
     <>
-      <Switch
-        value={uniqueGroup}
-        onChange={(val) => {
-          setUniqueGroup(val);
-          setCurrentValue(undefined);
-          setValue([]);
-        }}
-      />
+      <Space style={{ marginBottom: 16 }}>
+        <Segmented<string>
+          options={['颜色', '尺码']}
+          onChange={(value) => {
+            setIsSize(value == '尺码' ? true : false);
+          }}
+        />
+        {isSize && <Switch
+          value={uniqueGroup}
+          checkedChildren="唯一组"
+          unCheckedChildren="可重复组"
+          onChange={(val) => {
+            setUniqueGroup(val);
+            setCurrentValue(undefined);
+            setValue([]);
+          }}
+        />}
+      </Space>
 
       <SalePropCard
         single={!!currentValue?.value}
         current={currentValue}
         uniqueGroup={uniqueGroup}
-        options={uniqueGroup ? dataJson.size : dataJson.size}
+        options={isSize ? dataJson.size : dataJson.color}
         value={value}
         onOk={({ all, current, adds }) => {
           setValue(all);
