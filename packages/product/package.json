@@ -1,6 +1,6 @@
 {
   "name": "@web-rc/biz-product",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "@web-rc/biz-product",
   "main": "lib/index.js",
   "module": "es/index.js",
@@ -28,7 +28,6 @@
     "weidyg <weidyg@163.com> (https://github.com/weidyg)"
   ],
   "license": "MIT",
-  "peerDependencies": {},
   "publishConfig": {
     "access": "public"
   }

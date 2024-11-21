@@ -1,5 +1,5 @@
 {
-  "version": "0.1.1",
+  "version": "0.1.2",
   "name": "@web-rc/biz-components",
   "description": "@web-rc/biz-components",
   "keywords": [],
@@ -33,9 +33,9 @@
     "weidyg <weidyg@163.com> (https://github.com/weidyg)"
   ],
   "dependencies": {
-    "@web-rc/biz-account": "0.0.2",
-    "@web-rc/biz-product": "0.1.1",
-    "@web-rc/biz-provider": "0.0.4",
+    "@web-rc/biz-account": "0.0.3",
+    "@web-rc/biz-product": "0.1.2",
+    "@web-rc/biz-provider": "0.0.5",
     "@web-rc/biz-utils": "0.0.4"
   }
 }
