@@ -1,5 +1,5 @@
-import { CSSProperties, forwardRef, memo, Ref, useImperativeHandle, useMemo, useState } from 'react';
-import { Alert, Button, Card, Checkbox, Flex, Input, Menu, Modal, Radio, Space, Switch, Typography } from 'antd';
+import { CSSProperties, forwardRef, Ref, useMemo, useState } from 'react';
+import { Alert, Button, Card, Checkbox, Flex, Input, Menu, Modal, Radio, Space, Switch } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import { classNames } from '@web-rc/biz-utils';
 import { useStyles } from './style';
@@ -7,9 +7,10 @@ import useSalePropValue from './_hooks/useSalePropValue';
 import useSalePropOptions from './_hooks/useSalePropOptions';
 import { compareValue } from './_utils';
 
-export type ValueType = { value: string; text?: string; group?: { value: string; text?: string } };
 export type OptionItemType = { label: string; value: string };
 export type OptionGroupType = OptionItemType & { children: OptionItemType[] };
+export type SalePropValueType = { value: string; text?: string; group?: { value: string; text?: string } };
+export type SalePropValueFunType = { all: SalePropValueType[]; current?: SalePropValueType; adds?: SalePropValueType[], isGroupChanged?: boolean };
 type SalePropCardProps = {
   /** 类名 */
   className?: string;
@@ -18,9 +19,9 @@ type SalePropCardProps = {
   single?: boolean;
   uniqueGroup?: boolean;
   options?: OptionGroupType[] | OptionItemType[];
-  current?: ValueType;
-  value?: ValueType[];
-  onOk?: (value: { all: ValueType[]; current?: ValueType; adds?: ValueType[] }) => Promise<void> | void;
+  current?: SalePropValueType;
+  value?: SalePropValueType[];
+  onOk?: (value: SalePropValueFunType) => Promise<void> | void;
   onCancel?: () => void;
 };
 
@@ -35,13 +36,15 @@ const SalePropCard = forwardRef<SalePropCardRef, SalePropCardProps>(
     const [onlyShowChecked, setOnlyShowChecked] = useState(false);
 
     const { isGroup, flatOptions, getItemOptions } = useSalePropOptions(options);
-
-    const { initGroupValue, initValues, currentGroupValue, currentValues, setCurrentGroupValue, setCurrentValues } =
-      useSalePropValue(current, value, uniqueGroup, isGroup, flatOptions);
+    const {
+      initGroupValue, initValues,
+      currentGroupValue, currentValues,
+      setCurrentGroupValue, setCurrentValues
+    } = useSalePropValue(current, value, uniqueGroup, isGroup, flatOptions);
 
     const itemOpts = useMemo(() => getItemOptions(currentGroupValue), [currentGroupValue]);
 
-    async function changeValue() {
+    async function changeValue(isGroupChanged?: boolean) {
       const _all =
         uniqueGroup && currentGroupValue
           ? currentValues.filter((f) => f.group?.value == currentGroupValue)
@@ -58,7 +61,7 @@ const SalePropCard = forwardRef<SalePropCardRef, SalePropCardProps>(
       const _new = _all.filter((f) => !disabledValues.find((v) => compareValue(f, v)));
       const _current = _new.find((f) => compareValue(f, current)) || _new?.shift();
       const _adds = _new.filter((f) => !compareValue(f, _current));
-      await onOk?.({ all: _all, current: _current, adds: _adds });
+      await onOk?.({ all: _all, current: _current, adds: _adds, isGroupChanged });
     }
 
     function handleGroupChange(groupValue: string): void {
@@ -74,9 +77,7 @@ const SalePropCard = forwardRef<SalePropCardRef, SalePropCardProps>(
     }
 
     const disabledValues = useMemo(() => {
-      if (!current) {
-        return initValues;
-      }
+      if (!current) { return initValues; }
       return initValues.filter((f) => !(f.group?.value == current?.group?.value && f.value == current?.value));
     }, [initValues, current]);
 
@@ -98,7 +99,7 @@ const SalePropCard = forwardRef<SalePropCardRef, SalePropCardProps>(
             title: '操作确认',
             content: `“${oldGroup}”将更换成“${newGroup}”，${oldGroup}及sku数据将被清空，确认更换？`,
             onOk: async () => {
-              await changeValue();
+              await changeValue(true);
               setLoading(false);
             },
             onCancel: () => {
