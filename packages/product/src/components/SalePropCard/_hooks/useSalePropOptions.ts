@@ -1,5 +1,5 @@
-import { OptionGroupType, OptionItemType, ValueType } from '@web-rc/biz-product';
-import { Dispatch, useCallback, useEffect, useMemo, useState } from 'react';
+import {  useCallback, useMemo } from 'react';
+import { OptionGroupType, OptionItemType } from '..';
 
 export type OptionFlatType = OptionItemType & { group?: OptionItemType };
 export type UseSalePropOptionType = {

@@ -1,28 +1,28 @@
 import { Dispatch, useEffect, useState } from 'react';
-import { OptionItemType, ValueType } from '@web-rc/biz-product';
+import { OptionItemType, SalePropValueType } from '..';
 
 export default function useSalePropValue(
-  current?: ValueType,
-  value?: ValueType[],
+  current?: SalePropValueType,
+  value?: SalePropValueType[],
   uniqueGroup?: boolean,
   isGroup?: boolean,
   options?: (OptionItemType & { group?: OptionItemType })[],
 ): {
   initGroupValue?: string;
-  initValues: ValueType[];
+  initValues: SalePropValueType[];
 
   currentGroupValue?: string;
-  currentValues: ValueType[];
+  currentValues: SalePropValueType[];
   setCurrentGroupValue: Dispatch<React.SetStateAction<string | undefined>>;
-  setCurrentValues: Dispatch<React.SetStateAction<ValueType[]>>;
+  setCurrentValues: Dispatch<React.SetStateAction<SalePropValueType[]>>;
 } {
-  const [initValues, setInitValues] = useState<ValueType[]>([]);
+  const [initValues, setInitValues] = useState<SalePropValueType[]>([]);
   const [initGroupValue, setInitGroupValue] = useState<string>();
-  const [currentValues, setCurrentValues] = useState<ValueType[]>([]);
+  const [currentValues, setCurrentValues] = useState<SalePropValueType[]>([]);
   const [currentGroupValue, setCurrentGroupValue] = useState<string>();
 
   useEffect(() => {
-    let _intValue: ValueType[] = [];
+    let _intValue: SalePropValueType[] = [];
     let _groupValue: string | undefined;
     let _currentGroupValue: string | undefined;
     if (isGroup) {
@@ -57,6 +57,6 @@ export default function useSalePropValue(
   };
 }
 
-function unique(list: ValueType[]) {
+function unique(list: SalePropValueType[]) {
   return list.filter((item, index) => list.indexOf(item) === index);
 }
