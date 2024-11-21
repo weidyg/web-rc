@@ -1,6 +1,6 @@
 {
   "name": "@web-rc/biz-product",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "@web-rc/biz-product",
   "main": "lib/index.js",
   "module": "es/index.js",
