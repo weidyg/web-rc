@@ -15,4 +15,3 @@
       ```bash
       $ yarn add @web-rc/biz-product
       ```
-
