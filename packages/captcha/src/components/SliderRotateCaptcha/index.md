@@ -1,9 +1,9 @@
 ---
 order: 0
-atomId: ImageUploader
-title: ImageUploader 图片上传器
+atomId: SliderRotateCaptcha
+title: SliderRotateCaptcha 滑块旋转验证码
 group:
-  title: 商品编辑
+  title: 验证码
 ---
 
 ## 代码演示

@@ -1,7 +1,9 @@
 ---
 order: 0
 atomId: SalePropCard
-title: SalePropCard - 销售属性卡片
+title: SalePropCard 销售属性卡片
+group:
+  title: 商品编辑
 ---
 
 ## 代码演示

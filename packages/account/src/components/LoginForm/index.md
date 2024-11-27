@@ -1,7 +1,9 @@
 ---
 order: 0
 atomId: LoginForm
-title: LoginForm - 登录
+title: LoginForm 登录
+group:
+  title: 账号
 ---
 
 ## 代码演示

@@ -1,7 +1,9 @@
 ---
 order: 0
 atomId: ImageSpace
-title: ImageSpace - 图片空间
+title: ImageSpace 图片空间
+group:
+  title: 商品编辑
 ---
 
 ## 代码演示

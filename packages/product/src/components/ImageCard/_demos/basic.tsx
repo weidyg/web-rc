@@ -11,7 +11,6 @@ import {
   ImageSpace,
   ImageSpaceRef,
   ImageUploader,
-  BizConfigProvider,
 } from '@web-rc/biz-components';
 import { Button, Flex, Form, Input, MenuProps, Popover, Segmented, Select, Space, theme } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';

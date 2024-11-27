@@ -1,7 +1,9 @@
 ---
 order: 0
 atomId: ImageDesc
-title: ImageDesc - 描述图编辑器
+title: ImageDesc 描述图编辑器
+group:
+  title: 商品编辑
 ---
 
 ## 代码演示

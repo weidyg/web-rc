@@ -14,14 +14,15 @@
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "paths": {
-      "@@/*": [".dumi/tmp/*"],
-      "@web-rc/biz-components": ["./packages/components/src/index.tsx"],
-      "@web-rc/biz-utils": ["./packages/utils/src/index.tsx"],
-      "@web-rc/biz-provider": ["./packages/provider/src/index.tsx"],
-      "@web-rc/biz-layout": ["./packages/layout/src/index.tsx"],
-      "@web-rc/biz-product": ["./packages/product/src/index.tsx"],
-      "@web-rc/biz-account": ["./packages/account/src/index.tsx"]
+      "@@/*": [
+        ".dumi/tmp/*"
+      ],
+      "@web-rc/biz-*": [
+        "./packages/*/src/index.tsx"
+      ],
     }
   },
-  "include": [".dumirc.ts"]
+  "include": [
+    ".dumirc.ts"
+  ]
 }

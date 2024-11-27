@@ -1,7 +1,9 @@
 ---
 order: 0
 atomId: ImageCard
-title: ImageCard - 图片卡片
+title: ImageCard 图片卡片
+group:
+  title: 商品编辑
 ---
 
 ## 代码演示
