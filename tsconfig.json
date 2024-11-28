@@ -15,12 +15,12 @@
     "resolveJsonModule": true,
     "paths": {
       "@@/*": [".dumi/tmp/*"],
-      "@web-react/biz-utils": ["./packages/utils/src/index.tsx"],
-      "@web-react/biz-provider": ["./packages/provider/src/index.tsx"],
-      "@web-react/biz-product": ["./packages/product/src/index.tsx"],
-      "@web-react/biz-account": ["./packages/account/src/index.tsx"],
-      "@web-react/biz-captcha": ["./packages/captcha/src/index.tsx"],
-      "@web-react/biz-components": ["./packages/components/src/index.tsx"]
+      "@web-rc/biz-utils": ["./packages/utils/src/index.tsx"],
+      "@web-rc/biz-provider": ["./packages/provider/src/index.tsx"],
+      "@web-rc/biz-product": ["./packages/product/src/index.tsx"],
+      "@web-rc/biz-account": ["./packages/account/src/index.tsx"],
+      "@web-rc/biz-captcha": ["./packages/captcha/src/index.tsx"],
+      "@web-rc/biz-components": ["./packages/components/src/index.tsx"]
     }
   },
   "include": [".dumirc.ts"]
