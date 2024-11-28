@@ -12,7 +12,7 @@ export const useStyles = generatStyles(({ token }) => {
         border: `1px solid ${token.colorBorder}`,
       },
       '&-content': {
-        width:'inherit',
+        width: 'inherit',
         height: 'inherit',
         borderRadius: 'inherit',
         overflow: 'hidden',

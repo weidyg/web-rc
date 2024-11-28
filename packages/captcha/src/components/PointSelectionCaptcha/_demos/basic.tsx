@@ -4,11 +4,11 @@
  */
 
 import { ReactNode, useEffect, useRef, useState } from 'react';
-import {
-    PointSelectionCaptcha,
-} from '@web-rc/biz-components';
+import { PointSelectionCaptcha } from '@web-rc/biz-components';
 export default () => {
-    return (<>
-        <PointSelectionCaptcha />
-    </>);
+  return (
+    <>
+      <PointSelectionCaptcha />
+    </>
+  );
 };

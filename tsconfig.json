@@ -14,15 +14,14 @@
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "paths": {
-      "@@/*": [
-        ".dumi/tmp/*"
-      ],
-      "@web-rc/biz-*": [
-        "./packages/*/src/index.tsx"
-      ],
+      "@@/*": [".dumi/tmp/*"],
+      "@web-react/biz-utils": ["./packages/utils/src/index.tsx"],
+      "@web-react/biz-provider": ["./packages/provider/src/index.tsx"],
+      "@web-react/biz-product": ["./packages/product/src/index.tsx"],
+      "@web-react/biz-account": ["./packages/account/src/index.tsx"],
+      "@web-react/biz-captcha": ["./packages/captcha/src/index.tsx"],
+      "@web-react/biz-components": ["./packages/components/src/index.tsx"]
     }
   },
-  "include": [
-    ".dumirc.ts"
-  ]
+  "include": [".dumirc.ts"]
 }

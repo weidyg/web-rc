@@ -2,8 +2,6 @@
 
 export const useStyles = generatStyles(({ token, isDark, setAlpha }) => {
   return {
-    [token.componentCls]: {
-
-    },
+    [token.componentCls]: {},
   };
 }, 'SliderRotateCaptcha');

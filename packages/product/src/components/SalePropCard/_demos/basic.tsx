@@ -22,16 +22,18 @@ export default () => {
             setIsSize(value == '尺码' ? true : false);
           }}
         />
-        {isSize && <Switch
-          value={uniqueGroup}
-          checkedChildren="唯一组"
-          unCheckedChildren="可重复组"
-          onChange={(val) => {
-            setUniqueGroup(val);
-            setCurrentValue(undefined);
-            setValue([]);
-          }}
-        />}
+        {isSize && (
+          <Switch
+            value={uniqueGroup}
+            checkedChildren="唯一组"
+            unCheckedChildren="可重复组"
+            onChange={(val) => {
+              setUniqueGroup(val);
+              setCurrentValue(undefined);
+              setValue([]);
+            }}
+          />
+        )}
       </Space>
 
       <SalePropCard

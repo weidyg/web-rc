@@ -39,24 +39,28 @@ const ImageCard = forwardRef<ImageCardRef, ImageCardProps>((props: ImageCardProp
 
   const _children = useMemo(() => {
     if (imgUrl) {
-      const dom = <Image
-        src={imgUrl}
-        preview={{ maskClassName: `${prefixCls}-mask` }}
-        wrapperClassName={classNames(`${prefixCls}-content`, hashId)}
-        className={classNames(`${prefixCls}-img`, hashId)}
-      />
-      return (menus?.length ?? 0) > 0
-        ? <Dropdown menu={{ items: menus }} arrow={false} placement="bottom">
+      const dom = (
+        <Image
+          src={imgUrl}
+          preview={{ maskClassName: `${prefixCls}-mask` }}
+          wrapperClassName={classNames(`${prefixCls}-content`, hashId)}
+          className={classNames(`${prefixCls}-img`, hashId)}
+        />
+      );
+      return (menus?.length ?? 0) > 0 ? (
+        <Dropdown menu={{ items: menus }} arrow={false} placement="bottom">
           {dom}
         </Dropdown>
-        : dom;
+      ) : (
+        dom
+      );
     }
     return (
       <div className={classNames(`${prefixCls}-placeholder`, hashId)}>
         <PictureOutlined className={classNames(`${prefixCls}-placeholder-icon`, hashId)} />
         {placeholder && <span className={classNames(`${prefixCls}-placeholder-text`, hashId)}>{placeholder}</span>}
       </div>
-    )
+    );
   }, [imgUrl, menus]);
 
   return wrapSSR(

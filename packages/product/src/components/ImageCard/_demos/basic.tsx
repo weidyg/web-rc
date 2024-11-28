@@ -4,20 +4,15 @@
  */
 
 import { ReactNode, useEffect, useRef, useState } from 'react';
-import {
-  DirType,
-  ImageFile,
-  ImageCard,
-  ImageSpace,
-  ImageSpaceRef,
-  ImageUploader,
-} from '@web-rc/biz-components';
+import { DirType, ImageFile, ImageCard, ImageSpace, ImageSpaceRef, ImageUploader } from '@web-rc/biz-components';
 import { Button, Flex, Form, Input, MenuProps, Popover, Segmented, Select, Space, theme } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import { dirs, files } from './_data';
 
 export default () => {
-  const [value, setValue] = useState<string | undefined>('https://pics.17qcc.com/imgextra/product/202411/19/17785059676117.jpg');
+  const [value, setValue] = useState<string | undefined>(
+    'https://pics.17qcc.com/imgextra/product/202411/19/17785059676117.jpg',
+  );
   const [type, setType] = useState<'mini' | '1_1' | '3_4'>('mini');
   const [searchParam, setSearchParam] = useState({ type: 'picture', value: '', order: 'timeDes' });
 
@@ -70,7 +65,7 @@ export default () => {
     {
       key: '3',
       label: '裁剪',
-      onClick: () => { },
+      onClick: () => {},
     },
   ];
 
@@ -93,7 +88,13 @@ export default () => {
           setValue(value);
         }}
         placeholder={type == 'mini' ? undefined : '上传图片'}
-        style={type == '1_1' ? { width: 90, height: 90 } : type == '3_4' ? { width: 90, height: 120 } : { width: 32, height: 32 }}
+        style={
+          type == '1_1'
+            ? { width: 90, height: 90 }
+            : type == '3_4'
+            ? { width: 90, height: 120 }
+            : { width: 32, height: 32 }
+        }
       >
         {(children) => {
           return (
