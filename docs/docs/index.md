@@ -42,4 +42,21 @@ export default () => {
 };
 ```
 
-我们所有的包都使用 CSS-in-JS 管理样式，只需引入 js 即可。
+直接引入
+
+``` html
+<script src="https://unpkg.com/react@latest/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@latest/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@web-rc/biz-components@latest/dist/biz-components.min.js"></script>
+<div id="root"></div>
+<script type="text/javascript">
+    const { ImageCard } = BizComponents;
+    const imageCardDom = React.createElement(ImageCard, {
+        style: { width: 90, height: 90 }
+    })
+    const domNode = document.getElementById('root');
+    const root = ReactDOM.createRoot(domNode);
+    root.render(imageCardDom);
+</script>
+```
+

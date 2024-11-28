@@ -1,9 +1,9 @@
-export type * from './PointSelectionCaptcha';
-export type * from './SliderPuzzleCaptcha';
-export type * from './SliderRotateCaptcha';
+export type * from './PointSelection';
+export type * from './SliderPuzzle';
+export type * from './SliderRotate';
 
-import PointSelectionCaptcha from './PointSelectionCaptcha';
-import SliderPuzzleCaptcha from './SliderPuzzleCaptcha';
-import SliderRotateCaptcha from './SliderRotateCaptcha';
+import PointSelectionCaptcha from './PointSelection';
+import SliderPuzzleCaptcha from './SliderPuzzle';
+import SliderRotateCaptcha from './SliderRotate';
 
 export { PointSelectionCaptcha, SliderPuzzleCaptcha, SliderRotateCaptcha };
