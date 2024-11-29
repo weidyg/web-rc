@@ -1,9 +1,16 @@
-export type * from './PointSelection';
+export type * from './SliderButton';
 export type * from './SliderPuzzle';
 export type * from './SliderRotate';
+export type * from './PointSelection';
 
-import PointSelectionCaptcha from './PointSelection';
+import SliderButtonCaptcha from './SliderButton';
 import SliderPuzzleCaptcha from './SliderPuzzle';
 import SliderRotateCaptcha from './SliderRotate';
+import PointSelectionCaptcha from './PointSelection';
 
-export { PointSelectionCaptcha, SliderPuzzleCaptcha, SliderRotateCaptcha };
+export {
+    SliderButtonCaptcha,
+    SliderPuzzleCaptcha,
+    SliderRotateCaptcha,
+    PointSelectionCaptcha
+};

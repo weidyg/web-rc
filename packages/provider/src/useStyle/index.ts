@@ -81,7 +81,7 @@ export function generatStyles<ComponentToken extends BizAliasToken, Props = any>
       componentName,
       (_token) => {
         const token = { ..._token } as ComponentToken;
-        return [genBizStyle({ token, isDark, setAlpha }, restProps)];
+        return [genBizStyle({token, isDark, setAlpha }, restProps)];
       },
       prefixCls,
     );

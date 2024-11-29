@@ -8,7 +8,12 @@ import { SliderRotateCaptcha } from '@web-rc/biz-components';
 export default () => {
   return (
     <>
-      <SliderRotateCaptcha />
+      <SliderRotateCaptcha
+        src={'https://unpkg.com/@vbenjs/static-source@0.1.7/source/avatar-v1.webp'}
+        // onSuccess={() => {
+        //   console.log('success');
+        // }}
+      />
     </>
   );
 };
