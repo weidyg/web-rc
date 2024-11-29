@@ -150,10 +150,14 @@ const SliderButtonCaptcha = forwardRef((props: SliderButtonCaptchaProps, ref: Re
     if (!actionEl || !barEl || !contentEl) { return; }
     contentEl.style.width = '100%';
     setToLeft(true);
+    actionEl.style.transition= 'left .3s cubic-bezier(.4,0,.2,1)';
+    barEl.style.transition= 'left .3s cubic-bezier(.4,0,.2,1)';
+    actionEl.style.left = '0px';
+    barEl.style.width = '0px';
     setTimeout(() => {
       setToLeft(false);
-      actionEl.style.left = '0px';
-      barEl.style.width = '0px';
+      actionEl.style.transition= '';
+      barEl.style.transition= '';
     }, 300);
   }
 
@@ -176,7 +180,7 @@ const SliderButtonCaptcha = forwardRef((props: SliderButtonCaptchaProps, ref: Re
       <div ref={barRef}
         style={barStyle}
         className={classNames(`${prefixCls}-bar`, hashId, {
-          [`transition-to-left`]: toLeft,
+          // [`transition-to-left`]: toLeft,
         })}>
       </div>
 
@@ -194,7 +198,7 @@ const SliderButtonCaptcha = forwardRef((props: SliderButtonCaptchaProps, ref: Re
         ref={actionRef}
         style={actionStyle}
         className={classNames(`${prefixCls}-action`, hashId, {
-          [`transition-to-left`]: toLeft,
+          // [`transition-to-left`]: toLeft,
           [`dragging`]: true,
         })}
         onMouseDown={handleDragStart}

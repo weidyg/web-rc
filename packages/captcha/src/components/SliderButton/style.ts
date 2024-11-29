@@ -68,10 +68,11 @@ export const useStyles = generatStyles(({ token, isDark, setAlpha }) => {
         boxShadow: '0 0 transpare,0 0 transparent,0 4px 6px -1px rgba(0,0,0,.1),0 2px 4px -2px rgba(0,0,0,.1)',
       },
       [`.transition-to-left`]: {
-        animationDirection: '.3s',
-        transitionProperty: 'width,transform',
-        animationTimingFunction: 'cubic-bezier(.4,0,.2,1)',
-        left: '0 !important',
+        transition: 'left .3s cubic-bezier(.4,0,.2,1)',
+        // transitionDuration: '0.3s',
+        // transitionProperty: 'width,transform',
+        // animationTimingFunction: 'cubic-bezier(.4,0,.2,1)',
+        // left: '0 !important',
       },
       [`.dragging`]: {
         borderRadius: token.borderRadius,
