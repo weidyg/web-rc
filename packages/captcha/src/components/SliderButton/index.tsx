@@ -2,6 +2,7 @@ import { CSSProperties, forwardRef, Ref, useEffect, useImperativeHandle, useMemo
 import { CheckOutlined, DoubleRightOutlined } from '@ant-design/icons';
 import { classNames, useMergedState } from '@web-rc/biz-utils';
 import { useStyles } from './style';
+import { getOffset } from './_utils';
 
 type DragEvent = React.MouseEvent<HTMLDivElement, MouseEvent> | React.TouchEvent<HTMLDivElement>;
 export type SliderButtonCaptchaProps = {
@@ -62,11 +63,13 @@ const SliderButtonCaptcha = forwardRef((props: SliderButtonCaptchaProps, ref: Re
   }
   function handleDragMoving(event: DragEvent): void {
     if (isMoving) {
+      const wrapperEl = wrapperRef?.current;
       const actionEl = actionRef?.current;
       const barEl = barRef?.current;
-      if (!actionEl || !barEl) { return; }
-      const { actionWidth, offset, wrapperWidth } = getOffset(actionEl);
+      if (!actionEl || !barEl || !wrapperEl) { return; }
+      const { actionWidth, offset, wrapperWidth } = getOffset(wrapperEl, actionEl);
       const moveX = getEventPageX(event) - moveDistance;
+
       onMove?.({ event, moveDistance, moveX });
       if (moveX > 0 && moveX <= offset) {
         actionEl.style.left = `${moveX}px`;
@@ -83,11 +86,14 @@ const SliderButtonCaptcha = forwardRef((props: SliderButtonCaptchaProps, ref: Re
   function handleDragOver(event: DragEvent): void {
     if (isMoving && !isPassing) {
       onEnd?.(event);
-      const actionEl = actionRef.current;
-      const barEl = barRef.current;
-      if (!actionEl || !barEl) return;
+      
+      const wrapperEl = wrapperRef?.current;
+      const actionEl = actionRef?.current;
+      const barEl = barRef?.current;
+      if (!actionEl || !barEl || !wrapperEl) { return; }
+      const { actionWidth, offset, wrapperWidth } = getOffset(wrapperEl, actionEl);
       const moveX = getEventPageX(event) - moveDistance;
-      const { actionWidth, offset, wrapperWidth } = getOffset(actionEl);
+
       if (moveX < offset) {
         if (isSlot) {
           setTimeout(() => {
@@ -122,7 +128,7 @@ const SliderButtonCaptcha = forwardRef((props: SliderButtonCaptchaProps, ref: Re
     setIsMoving(false);
   }
 
-  
+
   function resume() {
     setIsMoving(false);
     setIsPassing(false);
@@ -158,14 +164,6 @@ const SliderButtonCaptcha = forwardRef((props: SliderButtonCaptchaProps, ref: Re
     }
     return 0;
   }
-  function getOffset(actionEl: HTMLDivElement) {
-    const wrapperWidth = wrapperRef.current?.offsetWidth ?? 220;
-    const actionWidth = actionEl?.offsetWidth ?? 40;
-    const offset = wrapperWidth - actionWidth - 6;
-    return { actionWidth, offset, wrapperWidth };
-  }
-
-
 
   return wrapSSR(<>
     startTime：{startTime}<br />
@@ -182,12 +180,10 @@ const SliderButtonCaptcha = forwardRef((props: SliderButtonCaptchaProps, ref: Re
       onTouchMove={handleDragMoving}
       onTouchEnd={handleDragOver}
     >
-      <div ref={barRef}
+      <div
+        ref={barRef}
         style={barStyle}
-        className={classNames(`${prefixCls}-bar`, hashId, {
-          // [`transition-width`]: toLeft,
-        })}>
-      </div>
+        className={classNames(`${prefixCls}-bar`, hashId)} />
 
       <div ref={contentRef}
         style={contentStyle}
@@ -203,7 +199,6 @@ const SliderButtonCaptcha = forwardRef((props: SliderButtonCaptchaProps, ref: Re
         ref={actionRef}
         style={actionStyle}
         className={classNames(`${prefixCls}-action`, hashId, {
-          // [`transition-left`]: toLeft,
           [`dragging`]: true,
         })}
         onMouseDown={handleDragStart}
