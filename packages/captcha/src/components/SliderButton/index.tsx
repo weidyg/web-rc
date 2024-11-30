@@ -32,7 +32,7 @@ const SliderButtonCaptcha = forwardRef((props: SliderButtonCaptchaProps, ref: Re
   const contentRef = useRef<HTMLDivElement>(null);
   const actionRef = useRef<HTMLDivElement>(null);
 
-  const [toLeft, setToLeft] = useState(false);
+  // const [toLeft, setToLeft] = useState(false);
   const [isMoving, setIsMoving] = useState(false);
   const [isPassing, setIsPassing] = useState(false);
   const [moveDistance, setMoveDistance] = useState(0);
@@ -48,21 +48,6 @@ const SliderButtonCaptcha = forwardRef((props: SliderButtonCaptchaProps, ref: Re
       modelValue.current = isPassing;
     }
   }, [isPassing]);
-
-  function getEventPageX(e: DragEvent): number {
-    if ('pageX' in e) {
-      return e.pageX;
-    } else if ('touches' in e && e.touches[0]) {
-      return e.touches[0].pageX;
-    }
-    return 0;
-  }
-  function getOffset(actionEl: HTMLDivElement) {
-    const wrapperWidth = wrapperRef.current?.offsetWidth ?? 220;
-    const actionWidth = actionEl?.offsetWidth ?? 40;
-    const offset = wrapperWidth - actionWidth - 6;
-    return { actionWidth, offset, wrapperWidth };
-  }
 
   function handleDragStart(event: DragEvent) {
     console.log('handleDragStart', event);
@@ -137,11 +122,12 @@ const SliderButtonCaptcha = forwardRef((props: SliderButtonCaptchaProps, ref: Re
     setIsMoving(false);
   }
 
+  
   function resume() {
     setIsMoving(false);
     setIsPassing(false);
     setMoveDistance(0);
-    setToLeft(false);
+    toggleTransitionCls(false);
     setStartTime(0);
     setEndTime(0);
     const actionEl = actionRef?.current;
@@ -149,17 +135,36 @@ const SliderButtonCaptcha = forwardRef((props: SliderButtonCaptchaProps, ref: Re
     const contentEl = contentRef?.current;
     if (!actionEl || !barEl || !contentEl) { return; }
     contentEl.style.width = '100%';
-    setToLeft(true);
-    actionEl.style.transition= 'left .3s cubic-bezier(.4,0,.2,1)';
-    barEl.style.transition= 'left .3s cubic-bezier(.4,0,.2,1)';
-    actionEl.style.left = '0px';
-    barEl.style.width = '0px';
+    toggleTransitionCls(true);
     setTimeout(() => {
-      setToLeft(false);
-      actionEl.style.transition= '';
-      barEl.style.transition= '';
-    }, 300);
+      toggleTransitionCls(false);
+      actionEl.style.left = '0px';
+      barEl.style.width = '0px';
+    }, 500);
   }
+  function toggleTransitionCls(value: boolean) {
+    const actionEl = actionRef?.current;
+    const barEl = barRef?.current;
+    if (!actionEl || !barEl) { return; }
+    actionEl.classList[value ? 'add' : 'remove'](`transition-left`);
+    barEl.classList[value ? 'add' : 'remove'](`transition-width`);
+  }
+
+  function getEventPageX(e: DragEvent): number {
+    if ('pageX' in e) {
+      return e.pageX;
+    } else if ('touches' in e && e.touches[0]) {
+      return e.touches[0].pageX;
+    }
+    return 0;
+  }
+  function getOffset(actionEl: HTMLDivElement) {
+    const wrapperWidth = wrapperRef.current?.offsetWidth ?? 220;
+    const actionWidth = actionEl?.offsetWidth ?? 40;
+    const offset = wrapperWidth - actionWidth - 6;
+    return { actionWidth, offset, wrapperWidth };
+  }
+
 
 
   return wrapSSR(<>
@@ -171,16 +176,16 @@ const SliderButtonCaptcha = forwardRef((props: SliderButtonCaptchaProps, ref: Re
     <div ref={wrapperRef}
       style={wrapperStyle}
       className={classNames(`${prefixCls}-wrapper`, prefixCls, className, hashId)}
-      onMouseLeave={handleDragOver}
       onMouseUp={handleDragOver}
-      onTouchEnd={handleDragOver}
+      onMouseLeave={handleDragOver}
       onMouseMove={handleDragMoving}
       onTouchMove={handleDragMoving}
+      onTouchEnd={handleDragOver}
     >
       <div ref={barRef}
         style={barStyle}
         className={classNames(`${prefixCls}-bar`, hashId, {
-          // [`transition-to-left`]: toLeft,
+          // [`transition-width`]: toLeft,
         })}>
       </div>
 
@@ -198,7 +203,7 @@ const SliderButtonCaptcha = forwardRef((props: SliderButtonCaptchaProps, ref: Re
         ref={actionRef}
         style={actionStyle}
         className={classNames(`${prefixCls}-action`, hashId, {
-          // [`transition-to-left`]: toLeft,
+          // [`transition-left`]: toLeft,
           [`dragging`]: true,
         })}
         onMouseDown={handleDragStart}

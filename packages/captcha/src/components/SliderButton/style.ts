@@ -67,12 +67,17 @@ export const useStyles = generatStyles(({ token, isDark, setAlpha }) => {
         paddingRight: '.875rem',
         boxShadow: '0 0 transpare,0 0 transparent,0 4px 6px -1px rgba(0,0,0,.1),0 2px 4px -2px rgba(0,0,0,.1)',
       },
-      [`.transition-to-left`]: {
-        transition: 'left .3s cubic-bezier(.4,0,.2,1)',
-        // transitionDuration: '0.3s',
-        // transitionProperty: 'width,transform',
-        // animationTimingFunction: 'cubic-bezier(.4,0,.2,1)',
-        // left: '0 !important',
+      [`.transition-left`]: {
+        left: '0 !important',
+        transitionDuration: '.3s',
+        transitionProperty: 'left',
+        transitionTimingFunction: 'cubic-bezier(.4,0,.2,1)',
+      },
+      [`.transition-width`]: {
+        width: '0 !important',
+        transitionDuration: '.3s',
+        transitionProperty: 'width',
+        transitionTimingFunction: 'cubic-bezier(.4,0,.2,1)',
       },
       [`.dragging`]: {
         borderRadius: token.borderRadius,
