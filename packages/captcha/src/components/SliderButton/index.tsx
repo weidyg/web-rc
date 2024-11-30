@@ -179,7 +179,7 @@ const SliderButtonCaptcha = forwardRef((props: SliderButtonCaptchaProps, ref: Re
         ref={actionRef}
         style={actionStyle}
         className={classNames(`${prefixCls}-action`, hashId, {
-          [`dragging`]: true,
+          [`dragging`]: isMoving,
         })}
         onMouseDown={handleDragStart}
         onTouchStart={handleDragStart}
