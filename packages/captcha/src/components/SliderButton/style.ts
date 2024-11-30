@@ -21,6 +21,7 @@ export const useStyles = generatStyles(({ token, isDark, setAlpha }) => {
         overflow: 'hidden',
       },
       [`&-content`]: {
+        zIndex: 1,
         position: 'absolute',
         display: 'flex',
         alignItems: 'center',
@@ -48,12 +49,14 @@ export const useStyles = generatStyles(({ token, isDark, setAlpha }) => {
         }
       },
       [`&-bar`]: {
+        zIndex: 0,
         width: 0,
         height: '100%',
         position: 'absolute',
-        backgroundColor: token.colorSuccessBgHover,
+        backgroundColor: token.colorSuccess,
       },
       [`&-action`]: {
+        zIndex: 2,
         background: token.colorBgContainer,
         position: 'absolute',
         left: '0',
@@ -65,7 +68,12 @@ export const useStyles = generatStyles(({ token, isDark, setAlpha }) => {
         justifyContent: 'center',
         paddingLeft: '.875rem',
         paddingRight: '.875rem',
-        boxShadow: '0 0 transpare,0 0 transparent,0 4px 6px -1px rgba(0,0,0,.1),0 2px 4px -2px rgba(0,0,0,.1)',
+        boxShadow: `
+        0 0 transparent,
+        0 0 transparent,
+        0 4px 6px -1px rgba(0,0,0,.1),
+        0 2px 4px -2px rgba(0,0,0,.1)
+        `,
       },
       [`.transition-left`]: {
         left: '0 !important',

@@ -1,10 +1,11 @@
 import { CSSProperties, forwardRef, Ref, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
-import { CheckOutlined, DoubleRightOutlined } from '@ant-design/icons';
-import { classNames, useMergedState } from '@web-rc/biz-utils';
+import { CheckOutlined, CloseOutlined, DoubleRightOutlined, LoadingOutlined } from '@ant-design/icons';
+import { classNames } from '@web-rc/biz-utils';
 import { useStyles } from './style';
-import { getOffset } from './_utils';
+import { getEventPageCoordinate, getOffset } from './_utils';
 
-type DragEvent = React.MouseEvent<HTMLDivElement, MouseEvent> | React.TouchEvent<HTMLDivElement>;
+export type SliderCaptchaData = {};
+export type SliderEvent = React.MouseEvent<HTMLDivElement, MouseEvent> | React.TouchEvent<HTMLDivElement>;
 export type SliderButtonCaptchaProps = {
   className?: string;
   wrapperStyle?: CSSProperties;
@@ -13,157 +14,135 @@ export type SliderButtonCaptchaProps = {
   actionStyle?: CSSProperties;
   successText?: string;
   text?: string;
-  onStart?: (event: DragEvent) => void;
-  onMove?: (obj: { event: DragEvent, moveDistance: number, moveX: number }) => void;
-  onEnd?: (event: DragEvent) => void;
+  onStart?: (event: SliderEvent) => void;
+  onMove?: (obj: { event: SliderEvent, moveDistance: number, moveX: number }) => void;
+  onEnd?: (event: SliderEvent) => void;
+
+  /**
+ * @zh 滑动结束回调
+ * @en Slider End Callback
+ */
+  onVerify: (data: SliderCaptchaData) => boolean | Promise<boolean>;
 };
 export type SliderButtonCaptchaRef = {};
 const SliderButtonCaptcha = forwardRef((props: SliderButtonCaptchaProps, ref: Ref<SliderButtonCaptchaRef>) => {
   const { className, wrapperStyle, barStyle, contentStyle, actionStyle,
     successText = '验证通过', text = '请按住滑块拖动',
-    onStart, onMove, onEnd,
+    onStart, onMove, onEnd, onVerify,
     ...restProps } = props;
 
   const { prefixCls, wrapSSR, hashId, token } = useStyles();
-
-  useImperativeHandle(ref, () => ({}));
 
   const wrapperRef = useRef<HTMLDivElement>(null);
   const barRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const actionRef = useRef<HTMLDivElement>(null);
-
-  // const [toLeft, setToLeft] = useState(false);
-  const [isMoving, setIsMoving] = useState(false);
-  const [isPassing, setIsPassing] = useState(false);
+  const isSlideToTheEnd = useRef<boolean>(false);
+  const [isMoving, setIsMoving] = useState<boolean | undefined>(undefined);
+  const [verifying, setVerifying] = useState<boolean | undefined>(undefined);
+  const [isPassed, setIsPassed] = useState<boolean | undefined>(undefined);
   const [moveDistance, setMoveDistance] = useState(0);
+
   const [startTime, setStartTime] = useState(0);
   const [endTime, setEndTime] = useState(0);
+  const [tracks, setTracks] = useState<any[]>([]);
 
-  const modelValue = useRef<boolean>(false);
-  const isSlot = true;
-  useEffect(() => {
-    if (isPassing) {
-      const time = (endTime - startTime) / 1000;
-      // emit('success', { isPassing, time: time.toFixed(1) });
-      modelValue.current = isPassing;
-    }
-  }, [isPassing]);
-
-  function handleDragStart(event: DragEvent) {
-    console.log('handleDragStart', event);
-    if (isPassing) { return; }
+  const onlySliderButton = false;
+  function handleDragStart(event: SliderEvent) {
+    if (isPassed) { return; }
     if (!actionRef.current) { return; }
     onStart?.(event);
-    const eventPageX = getEventPageX(event);
+    const [eventPageX, _] = getEventPageCoordinate(event);
     const actionLeft = Number.parseInt(actionRef.current.style.left.replace('px', '') || '0', 10,);
     setIsMoving(true);
     setStartTime(Date.now());
     setMoveDistance(eventPageX - actionLeft);
   }
-  function handleDragMoving(event: DragEvent): void {
+  function handleDragMoving(event: SliderEvent): void {
     if (isMoving) {
       const wrapperEl = wrapperRef?.current;
       const actionEl = actionRef?.current;
       const barEl = barRef?.current;
       if (!actionEl || !barEl || !wrapperEl) { return; }
       const { actionWidth, offset, wrapperWidth } = getOffset(wrapperEl, actionEl);
-      const moveX = getEventPageX(event) - moveDistance;
-
+      const [eventPageX, _] = getEventPageCoordinate(event);
+      const moveX = eventPageX - moveDistance;
       onMove?.({ event, moveDistance, moveX });
+      isSlideToTheEnd.current = false;
       if (moveX > 0 && moveX <= offset) {
         actionEl.style.left = `${moveX}px`;
         barEl.style.width = `${moveX + actionWidth / 2}px`;
       } else if (moveX > offset) {
         actionEl.style.left = `${wrapperWidth - actionWidth}px`;
         barEl.style.width = `${wrapperWidth - actionWidth / 2}px`;
-        if (!isSlot) {
-          checkPass();
-        }
+        isSlideToTheEnd.current = true;
       }
     }
   }
-  function handleDragOver(event: DragEvent): void {
-    if (isMoving && !isPassing) {
-      onEnd?.(event);
-      
-      const wrapperEl = wrapperRef?.current;
-      const actionEl = actionRef?.current;
-      const barEl = barRef?.current;
-      if (!actionEl || !barEl || !wrapperEl) { return; }
-      const { actionWidth, offset, wrapperWidth } = getOffset(wrapperEl, actionEl);
-      const moveX = getEventPageX(event) - moveDistance;
-
-      if (moveX < offset) {
-        if (isSlot) {
-          setTimeout(() => {
-            if (modelValue.current) {
-              const contentEl = contentRef?.current;
-              if (contentEl) {
-                contentEl.style.width = `${Number.parseInt(barEl.style.width)}px`;
-              }
-            } else {
-              resume();
-            }
-          }, 0);
-        } else {
-          resume();
-        }
-      } else {
-        actionEl.style.left = `${wrapperWidth - actionWidth}px`;
-        barEl.style.width = `${wrapperWidth - actionWidth / 2}px`;
-        checkPass();
-      }
+  async function handleDragOver(event: SliderEvent): Promise<void> {
+    if (isMoving && isPassed === undefined) {
       setIsMoving(false);
+      setVerifying(true);
+      setEndTime(Date.now());
+      onEnd?.(event);
+      let isPassed = false;
+      try {
+        const isReset = onlySliderButton && !isSlideToTheEnd?.current;
+        if (isReset) { reset(); return; }
+        const data: SliderCaptchaData = {};
+        isPassed = await onVerify(data);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setVerifying(false);
+      }
+      if (!isPassed) { setTimeout(() => { handleRefresh(); }, 300); }
+      setIsPassed(isPassed);
     }
   }
 
-  function checkPass() {
-    if (isSlot) {
-      resume();
-      return;
-    }
-    setEndTime(Date.now());
-    setIsPassing(true);
-    setIsMoving(false);
+  function handleRefresh() {
+    reset();
+    // setStatus('loading');
+    // try {
+    //   const data = await onGetData();
+    //   setImages(data);
+    //   setStatus('loaded');
+    // } catch (error) {
+    //   setStatus('loadfail');
+    //   console.log(error);
+    // }
   }
 
-
-  function resume() {
-    setIsMoving(false);
-    setIsPassing(false);
-    setMoveDistance(0);
-    toggleTransitionCls(false);
+  function reset() {
     setStartTime(0);
     setEndTime(0);
+    setMoveDistance(0);
+    setIsMoving(undefined);
+    setVerifying(undefined);
+    setIsPassed(undefined);
+    isSlideToTheEnd.current = false;
     const actionEl = actionRef?.current;
     const barEl = barRef?.current;
     const contentEl = contentRef?.current;
     if (!actionEl || !barEl || !contentEl) { return; }
     contentEl.style.width = '100%';
-    toggleTransitionCls(true);
+    toggleTransitionCls(actionEl, barEl, true);
     setTimeout(() => {
-      toggleTransitionCls(false);
+      toggleTransitionCls(actionEl, barEl, false);
       actionEl.style.left = '0px';
       barEl.style.width = '0px';
     }, 500);
   }
-  function toggleTransitionCls(value: boolean) {
-    const actionEl = actionRef?.current;
-    const barEl = barRef?.current;
-    if (!actionEl || !barEl) { return; }
-    actionEl.classList[value ? 'add' : 'remove'](`transition-left`);
-    barEl.classList[value ? 'add' : 'remove'](`transition-width`);
+  function toggleTransitionCls(
+    actionEl: HTMLDivElement | null,
+    barEl: HTMLDivElement | null,
+    value: boolean) {
+    actionEl?.classList[value ? 'add' : 'remove'](`transition-left`);
+    barEl?.classList[value ? 'add' : 'remove'](`transition-width`);
   }
 
-  function getEventPageX(e: DragEvent): number {
-    if ('pageX' in e) {
-      return e.pageX;
-    } else if ('touches' in e && e.touches[0]) {
-      return e.touches[0].pageX;
-    }
-    return 0;
-  }
+  useImperativeHandle(ref, () => ({}));
 
   return wrapSSR(<>
     startTime：{startTime}<br />
@@ -180,20 +159,21 @@ const SliderButtonCaptcha = forwardRef((props: SliderButtonCaptchaProps, ref: Re
       onTouchMove={handleDragMoving}
       onTouchEnd={handleDragOver}
     >
-      <div
-        ref={barRef}
-        style={barStyle}
-        className={classNames(`${prefixCls}-bar`, hashId)} />
-
       <div ref={contentRef}
         style={contentStyle}
         className={classNames(`${prefixCls}-content`, hashId, {
-          [`isPassing`]: isPassing,
+          [`isPassing`]: isPassed,
         })}>
         <div className={classNames(`${prefixCls}-content-text`, hashId)}>
-          {isPassing ? successText : text}
+          {isPassed ? successText : text}
         </div>
       </div>
+
+      <div
+        ref={barRef}
+        style={barStyle}
+        className={classNames(`${prefixCls}-bar`, hashId)}
+      />
 
       <div
         ref={actionRef}
@@ -204,7 +184,14 @@ const SliderButtonCaptcha = forwardRef((props: SliderButtonCaptchaProps, ref: Re
         onMouseDown={handleDragStart}
         onTouchStart={handleDragStart}
       >
-        {isPassing ? <CheckOutlined /> : <DoubleRightOutlined />}
+        {verifying
+          ? <LoadingOutlined />
+          : isPassed === true
+            ? <CheckOutlined />
+            : isPassed === false
+              ? <CloseOutlined />
+              : <DoubleRightOutlined />
+        }
       </div>
 
     </div>

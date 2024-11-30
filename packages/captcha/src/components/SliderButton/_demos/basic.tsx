@@ -8,7 +8,14 @@ import { SliderButtonCaptcha } from '@web-rc/biz-components';
 export default () => {
   return (
     <div style={{ width: 400, padding: 20 }}>
-      <SliderButtonCaptcha />
+      <SliderButtonCaptcha
+        onVerify={(data) => {
+          return new Promise((resolve) => {
+            setTimeout(() => {
+              resolve(true);
+            }, 3000);
+          });
+        }} />
     </div>
   );
 };

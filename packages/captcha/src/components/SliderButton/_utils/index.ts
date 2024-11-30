@@ -1,14 +1,14 @@
-// import { SliderEvent } from "..";
+import { SliderEvent } from "..";
 
-// export function getEventPageCoordinate(e: SliderEvent): [number, number] {
-//   if ('pageX' in e) {
-//     return [e.pageX, e.pageY];
-//   } else if ('touches' in e && e.touches[0]) {
-//     const ev = e.touches[0];
-//     return [ev.pageX, ev.pageY];
-//   }
-//   return [0, 0];
-// }
+export function getEventPageCoordinate(e: SliderEvent): [number, number] {
+  if ('pageX' in e) {
+    return [e.pageX, e.pageY];
+  } else if ('touches' in e && e.touches[0]) {
+    const ev = e.touches[0];
+    return [ev.pageX, ev.pageY];
+  }
+  return [0, 0];
+}
 
 export function getOffset(
   wrapperEl?: HTMLDivElement | null,
@@ -17,7 +17,7 @@ export function getOffset(
   const wrapperWidth = wrapperEl?.offsetWidth ?? 220;
   const actionWidth = actionEl?.offsetWidth ?? 40;
   const offset = wrapperWidth - actionWidth - 6;
-  return { actionWidth, offset, wrapperWidth };
+  return { offset, actionWidth, wrapperWidth };
 }
 
 export function toggleTransitionCls(
