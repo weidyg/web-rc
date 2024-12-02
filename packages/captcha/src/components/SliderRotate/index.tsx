@@ -68,7 +68,7 @@ const SliderRotateCaptcha = forwardRef((props: SliderRotateCaptchaProps, ref: Re
   function handleDragBarMove(ev: SliderEvent, data: { moveDistance: number, moveX: number }) {
     setDragging(true);
     const { moveX } = data;
-    const denominator = imageSize!;
+    const denominator = imageSize;
     if (denominator === 0) { return; }
     const currentRotate = Math.ceil((moveX / denominator) * 1.5 * maxDegree * getFactorRef);
     setCurrentRotate(currentRotate);
@@ -129,7 +129,7 @@ const SliderRotateCaptcha = forwardRef((props: SliderRotateCaptchaProps, ref: Re
         <div className={classNames(`${prefixCls}-img-tip`, hashId)}>
           {showTip && (
             <div style={{
-              background: isPassing ? token.colorSuccessBg : token.colorErrorBg,
+              background: isPassing ? token.colorSuccess : token.colorError,
             }}
             >
               {verifyTip}
