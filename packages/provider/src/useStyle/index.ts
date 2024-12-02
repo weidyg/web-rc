@@ -22,9 +22,9 @@ export type GenerateStyleFn<ComponentToken extends BizAliasToken, Props = any, R
 ) => ReturnType;
 
 
-const genTheme = (): any => { if (typeof theme === 'undefined' || !theme) { return batToken as any; } return theme; };
-const bizTheme = genTheme() as typeof theme;
-const useToken = bizTheme.useToken;
+const genTheme = () => { if (typeof theme === 'undefined' || !theme) { return batToken as any; } return theme; };
+export const bizTheme = genTheme() as typeof theme;
+export const useToken = bizTheme.useToken;
 
 export const setAlpha = (baseColor: string, alpha: number) => new TinyColor(baseColor).setAlpha(alpha).toRgbString();
 export const isDark = (baseColor: string) => new TinyColor(baseColor).isDark();

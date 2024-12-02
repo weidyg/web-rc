@@ -1,35 +1,39 @@
-import { CSSProperties, forwardRef, Ref, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
+import { CSSProperties, forwardRef, Ref, useImperativeHandle, useRef, useState } from 'react';
 import { CheckOutlined, CloseOutlined, DoubleRightOutlined, LoadingOutlined } from '@ant-design/icons';
 import { classNames } from '@web-rc/biz-utils';
 import { useStyles } from './style';
-import { getEventPageCoordinate, getOffset } from './_utils';
+import { getSliderEvent, getOffset } from './_utils';
 
-export type SliderCaptchaData = {};
-export type SliderEvent = React.MouseEvent<HTMLDivElement, MouseEvent> | React.TouchEvent<HTMLDivElement>;
+export type MouseOrTouchEvent<T = HTMLDivElement> = React.MouseEvent<T, MouseEvent> | React.TouchEvent<T>;
+export type SliderEvent = {
+  target: EventTarget;
+  screenX: number; screenY: number;
+  clientX: number; clientY: number;
+  pageX: number; pageY: number;
+};
 export type SliderButtonCaptchaProps = {
   className?: string;
-  wrapperStyle?: CSSProperties;
-  barStyle?: CSSProperties;
-  contentStyle?: CSSProperties;
-  actionStyle?: CSSProperties;
+  style?: CSSProperties;
+  styles?: {
+    bar?: CSSProperties;
+    action?: CSSProperties;
+    content?: CSSProperties;
+  }
   successText?: string;
   text?: string;
+  onlySliderButton?: boolean;
   onStart?: (event: SliderEvent) => void;
-  onMove?: (obj: { event: SliderEvent, moveDistance: number, moveX: number }) => void;
+  onMove?: (event: SliderEvent, data: { moveDistance: number, moveX: number }) => void;
   onEnd?: (event: SliderEvent) => void;
-
-  /**
- * @zh 滑动结束回调
- * @en Slider End Callback
- */
-  onVerify: (data: SliderCaptchaData) => boolean | Promise<boolean>;
+  onVerify: () => boolean | Promise<boolean>;
 };
-export type SliderButtonCaptchaRef = {};
+export type SliderButtonCaptchaRef = {
+  reset: () => void
+};
 const SliderButtonCaptcha = forwardRef((props: SliderButtonCaptchaProps, ref: Ref<SliderButtonCaptchaRef>) => {
-  const { className, wrapperStyle, barStyle, contentStyle, actionStyle,
+  const { className, style, styles, onlySliderButton = true,
     successText = '验证通过', text = '请按住滑块拖动',
-    onStart, onMove, onEnd, onVerify,
-    ...restProps } = props;
+    onStart, onMove, onEnd, onVerify, ...restProps } = props;
 
   const { prefixCls, wrapSSR, hashId, token } = useStyles();
 
@@ -43,31 +47,26 @@ const SliderButtonCaptcha = forwardRef((props: SliderButtonCaptchaProps, ref: Re
   const [isPassed, setIsPassed] = useState<boolean | undefined>(undefined);
   const [moveDistance, setMoveDistance] = useState(0);
 
-  const [startTime, setStartTime] = useState(0);
-  const [endTime, setEndTime] = useState(0);
-  const [tracks, setTracks] = useState<any[]>([]);
-
-  const onlySliderButton = false;
-  function handleDragStart(event: SliderEvent) {
+  function handleDragStart(event: MouseOrTouchEvent) {
     if (isPassed) { return; }
-    if (!actionRef.current) { return; }
-    onStart?.(event);
-    const [eventPageX, _] = getEventPageCoordinate(event);
-    const actionLeft = Number.parseInt(actionRef.current.style.left.replace('px', '') || '0', 10,);
+    const actionEl = actionRef?.current;
+    if (!actionEl) { return; }
+    const ev = getSliderEvent(event);
+    onStart?.(ev);
     setIsMoving(true);
-    setStartTime(Date.now());
-    setMoveDistance(eventPageX - actionLeft);
+    const actionLeft = Number.parseInt(actionEl.style.left.replace('px', '') || '0', 10,);
+    setMoveDistance(ev.pageX - actionLeft);
   }
-  function handleDragMoving(event: SliderEvent): void {
+  function handleDragMoving(event: MouseOrTouchEvent): void {
     if (isMoving) {
       const wrapperEl = wrapperRef?.current;
       const actionEl = actionRef?.current;
       const barEl = barRef?.current;
       if (!actionEl || !barEl || !wrapperEl) { return; }
+      const ev = getSliderEvent(event);
+      const moveX = ev.pageX - moveDistance;
+      onMove?.(ev, { moveDistance, moveX });
       const { actionWidth, offset, wrapperWidth } = getOffset(wrapperEl, actionEl);
-      const [eventPageX, _] = getEventPageCoordinate(event);
-      const moveX = eventPageX - moveDistance;
-      onMove?.({ event, moveDistance, moveX });
       isSlideToTheEnd.current = false;
       if (moveX > 0 && moveX <= offset) {
         actionEl.style.left = `${moveX}px`;
@@ -79,18 +78,17 @@ const SliderButtonCaptcha = forwardRef((props: SliderButtonCaptchaProps, ref: Re
       }
     }
   }
-  async function handleDragOver(event: SliderEvent): Promise<void> {
+  async function handleDragOver(event: MouseOrTouchEvent): Promise<void> {
     if (isMoving && isPassed === undefined) {
       setIsMoving(false);
       setVerifying(true);
-      setEndTime(Date.now());
-      onEnd?.(event);
+      const ev = getSliderEvent(event);
+      onEnd?.(ev);
       let isPassed = false;
       try {
         const isReset = onlySliderButton && !isSlideToTheEnd?.current;
         if (isReset) { reset(); return; }
-        const data: SliderCaptchaData = {};
-        isPassed = await onVerify(data);
+        isPassed = await onVerify();
       } catch (error) {
         console.error(error);
       } finally {
@@ -115,8 +113,9 @@ const SliderButtonCaptcha = forwardRef((props: SliderButtonCaptchaProps, ref: Re
   }
 
   function reset() {
-    setStartTime(0);
-    setEndTime(0);
+    // setStartTime(0);
+    // setEndTime(0);
+    // setTracks([]);
     setMoveDistance(0);
     setIsMoving(undefined);
     setVerifying(undefined);
@@ -142,11 +141,13 @@ const SliderButtonCaptcha = forwardRef((props: SliderButtonCaptchaProps, ref: Re
     barEl?.classList[value ? 'add' : 'remove'](`transition-width`);
   }
 
-  useImperativeHandle(ref, () => ({}));
+  useImperativeHandle(ref, () => ({
+    reset,
+  }));
 
   return wrapSSR(<>
     <div ref={wrapperRef}
-      style={wrapperStyle}
+      style={style}
       className={classNames(`${prefixCls}-wrapper`, prefixCls, className, hashId)}
       onMouseUp={handleDragOver}
       onMouseLeave={handleDragOver}
@@ -155,7 +156,7 @@ const SliderButtonCaptcha = forwardRef((props: SliderButtonCaptchaProps, ref: Re
       onTouchEnd={handleDragOver}
     >
       <div ref={contentRef}
-        style={contentStyle}
+        style={styles?.content}
         className={classNames(`${prefixCls}-content`, hashId, {
           [`isPassing`]: isPassed,
         })}>
@@ -166,13 +167,16 @@ const SliderButtonCaptcha = forwardRef((props: SliderButtonCaptchaProps, ref: Re
 
       <div
         ref={barRef}
-        style={barStyle}
+        style={styles?.bar}
         className={classNames(`${prefixCls}-bar`, hashId)}
       />
 
       <div
         ref={actionRef}
-        style={actionStyle}
+        style={{
+          ...styles?.action,
+          cursor: isMoving ? 'move' : 'pointer',
+        }}
         className={classNames(`${prefixCls}-action`, hashId)}
         onMouseDown={handleDragStart}
         onTouchStart={handleDragStart}
@@ -186,7 +190,6 @@ const SliderButtonCaptcha = forwardRef((props: SliderButtonCaptchaProps, ref: Re
               : <DoubleRightOutlined />
         }
       </div>
-
     </div>
   </>);
 });

@@ -1,13 +1,8 @@
-import { SliderEvent } from "..";
+import { MouseOrTouchEvent, SliderEvent } from "..";
 
-export function getEventPageCoordinate(e: SliderEvent): [number, number] {
-  if ('pageX' in e) {
-    return [e.pageX, e.pageY];
-  } else if ('touches' in e && e.touches[0]) {
-    const ev = e.touches[0];
-    return [ev.pageX, ev.pageY];
-  }
-  return [0, 0];
+export function getSliderEvent<T>(e: MouseOrTouchEvent<T>): SliderEvent {
+  if ('touches' in e && e.touches[0]) { return e.touches[0]; }
+  return e as SliderEvent;
 }
 
 export function getOffset(

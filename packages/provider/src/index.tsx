@@ -7,10 +7,12 @@ import { useCacheToken } from '@ant-design/cssinjs';
 import { merge } from './utils/merge';
 // import dayjs from 'dayjs';
 
-import { bizTheme } from './useStyle';
-import type { BizAliasToken } from './useStyle';
+// import { bizTheme, useToken, type BizAliasToken } from './useStyle';
 import { findIntlKeyByAntdLocaleKey, intlMap, IntlType, zhCNIntl } from './intl';
+import { BizAliasToken, bizTheme } from './useStyle';
 export * from './useStyle';
+
+const { useToken } = bizTheme;
 
 type OmitUndefined<T> = {
   [P in keyof T]: NonNullable<T[P]>;
@@ -113,7 +115,7 @@ const ConfigProviderContainer: React.FC<{
     getPrefixCls,
     ...restConfig
   } = useContext(AntdConfigProvider.ConfigContext);
-  const tokenContext = bizTheme.useToken?.();
+  const tokenContext = useToken();
 
   const antPrefixCls: string = props.antPrefixCls || getPrefixCls();
   const iconPrefixCls: string = props.iconPrefixCls || antIconPrefixCls;

@@ -65,7 +65,7 @@ export const useStyles = generatStyles(({ token }, props: { borderRadius?: strin
         top: '0',
         display: 'flex',
         height: '100%',
-        cursor: 'move',
+        // cursor: 'move',
         alignItems: 'center',
         justifyContent: 'center',
         paddingLeft: '.875rem',
