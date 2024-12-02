@@ -15,25 +15,19 @@ export type BizAliasToken = GlobalToken & {
 };
 export type GenerateStyleUtils<ComponentToken> = {
   token: ComponentToken;
-  isDark: (baseColor: string) => Boolean;
-  setAlpha: (baseColor: string, alpha: number) => string;
 };
 export type GenerateStyleFn<ComponentToken extends BizAliasToken, Props = any, ReturnType = CSSInterpolation> = (
   utils: GenerateStyleUtils<ComponentToken>,
   props: Props,
 ) => ReturnType;
 
-const setAlpha = (baseColor: string, alpha: number) => new TinyColor(baseColor).setAlpha(alpha).toRgbString();
-const isDark = (baseColor: string) => new TinyColor(baseColor).isDark();
-const genTheme = (): any => {
-  if (typeof theme === 'undefined' || !theme) {
-    return batToken as any;
-  }
-  return theme;
-};
 
-export const bizTheme = genTheme() as typeof theme;
-export const useToken = bizTheme.useToken;
+const genTheme = (): any => { if (typeof theme === 'undefined' || !theme) { return batToken as any; } return theme; };
+const bizTheme = genTheme() as typeof theme;
+const useToken = bizTheme.useToken;
+
+export const setAlpha = (baseColor: string, alpha: number) => new TinyColor(baseColor).setAlpha(alpha).toRgbString();
+export const isDark = (baseColor: string) => new TinyColor(baseColor).isDark();
 export function useStyle(
   componentName: string,
   styleFn: (token: BizAliasToken) => CSSInterpolation,
@@ -70,7 +64,6 @@ export function useStyle(
     prefixCls: token.componentCls?.replace(/^\./, ''),
   };
 }
-
 export function generatStyles<ComponentToken extends BizAliasToken, Props = any>(
   genBizStyle: GenerateStyleFn<ComponentToken, Exclude<Props, 'prefixCls'>>,
   componentName: string,
@@ -81,7 +74,7 @@ export function generatStyles<ComponentToken extends BizAliasToken, Props = any>
       componentName,
       (_token) => {
         const token = { ..._token } as ComponentToken;
-        return [genBizStyle({token, isDark, setAlpha }, restProps)];
+        return [genBizStyle({ token }, restProps)];
       },
       prefixCls,
     );

@@ -145,11 +145,6 @@ const SliderButtonCaptcha = forwardRef((props: SliderButtonCaptchaProps, ref: Re
   useImperativeHandle(ref, () => ({}));
 
   return wrapSSR(<>
-    startTime：{startTime}<br />
-    endTime：{endTime}<br />
-    moveDistance：{moveDistance}<br />
-    isMoving：{isMoving + ''}<br />
-
     <div ref={wrapperRef}
       style={wrapperStyle}
       className={classNames(`${prefixCls}-wrapper`, prefixCls, className, hashId)}
@@ -178,9 +173,7 @@ const SliderButtonCaptcha = forwardRef((props: SliderButtonCaptchaProps, ref: Re
       <div
         ref={actionRef}
         style={actionStyle}
-        className={classNames(`${prefixCls}-action`, hashId, {
-          [`dragging`]: isMoving,
-        })}
+        className={classNames(`${prefixCls}-action`, hashId)}
         onMouseDown={handleDragStart}
         onTouchStart={handleDragStart}
       >

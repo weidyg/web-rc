@@ -1,7 +1,8 @@
 ﻿import { Keyframes } from '@ant-design/cssinjs';
 import { generatStyles } from '@web-rc/biz-provider';
 
-export const useStyles = generatStyles(({ token, isDark, setAlpha }) => {
+export const useStyles = generatStyles(({ token }, props: { borderRadius?: string | number }) => {
+  const { borderRadius = token.borderRadius } = props;
   const shine = new Keyframes('shine', {
     '0%': { backgroundPosition: '200% 0' },
     'to': { backgroundPosition: '-200% 0' },
@@ -9,9 +10,6 @@ export const useStyles = generatStyles(({ token, isDark, setAlpha }) => {
   return {
     [token.componentCls]: {
       [`&-wrapper`]: {
-        backgroundColor: token.colorBgContainerDisabled,
-        borderRadius: token.borderRadius,
-        border: `1px solid ${token.colorBorder}`,
         position: 'relative',
         display: 'flex',
         alignItems: 'center',
@@ -19,6 +17,9 @@ export const useStyles = generatStyles(({ token, isDark, setAlpha }) => {
         width: '100%',
         height: '2.5rem',
         overflow: 'hidden',
+        borderRadius: borderRadius,
+        border: `1px solid ${token.colorBorder}`,
+        backgroundColor: token.colorBgContainerDisabled,
       },
       [`&-content`]: {
         zIndex: 1,
@@ -57,6 +58,7 @@ export const useStyles = generatStyles(({ token, isDark, setAlpha }) => {
       },
       [`&-action`]: {
         zIndex: 2,
+        borderRadius: borderRadius,
         background: token.colorBgContainer,
         position: 'absolute',
         left: '0',
@@ -75,20 +77,17 @@ export const useStyles = generatStyles(({ token, isDark, setAlpha }) => {
         0 2px 4px -2px rgba(0,0,0,.1)
         `,
       },
+      [`.transition-left,.transition-width`]: {
+        transitionDuration: '.3s',
+        transitionTimingFunction: 'cubic-bezier(.4,0,.2,1)',
+      },
       [`.transition-left`]: {
         left: '0 !important',
-        transitionDuration: '.3s',
         transitionProperty: 'left',
-        transitionTimingFunction: 'cubic-bezier(.4,0,.2,1)',
       },
       [`.transition-width`]: {
         width: '0 !important',
-        transitionDuration: '.3s',
         transitionProperty: 'width',
-        transitionTimingFunction: 'cubic-bezier(.4,0,.2,1)',
-      },
-      [`.dragging`]: {
-        borderRadius: token.borderRadius,
       },
       [`.isPassing`]: {
         WebkitTextFillColor: 'hsl(0deg 0% 98%)',

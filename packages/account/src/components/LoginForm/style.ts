@@ -1,6 +1,6 @@
-﻿import { generatStyles } from '@web-rc/biz-provider';
+﻿import { generatStyles, isDark, setAlpha } from '@web-rc/biz-provider';
 
-export const useStyles = generatStyles(({ token, isDark, setAlpha }, props: { loginBoxBlur?: boolean }) => {
+export const useStyles = generatStyles(({ token }, props: { loginBoxBlur?: boolean }) => {
   const opacity = props?.loginBoxBlur ? (isDark(token.colorBgBase) ? 0.65 : 0.25) : 0.98;
   return {
     [token.componentCls]: {
