@@ -1,9 +1,7 @@
 import { CSSProperties, forwardRef, Ref, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
+import { classNames } from '@web-rc/biz-utils';
 import { useStyles } from './style';
-import classNames from 'classnames';
-import { Slider } from 'antd';
 import SliderButton, { SliderButtonCaptchaRef, SliderEvent } from '../SliderButton';
-import { set } from 'lodash';
 
 export interface SliderRotateVerifyPassingData {
   event: MouseEvent | TouchEvent;
@@ -35,11 +33,11 @@ const SliderRotateCaptcha = forwardRef((props: SliderRotateCaptchaProps, ref: Re
     return 1;
   }, [minDegree, maxDegree]);
 
+  const imgRef = useRef<HTMLImageElement>(null);
   const slideBarRef = useRef<SliderButtonCaptchaRef>(null);
   const [startTime, setStartTime] = useState(0);
   const [endTime, setEndTime] = useState(0);
   const [isPassing, setIsPassing] = useState<boolean>(false);
-  const [toOrigin, setToOrigin] = useState<boolean>(false);
   const [showTip, setShowTip] = useState<boolean>(false);
   const [dragging, setDragging] = useState<boolean>(false);
   const [randomRotate, setRandomRotate] = useState<number>(0);
@@ -83,9 +81,9 @@ const SliderRotateCaptcha = forwardRef((props: SliderRotateCaptchaProps, ref: Re
     let isPassed = false;
     if (Math.abs(randomRotate - currentRotate) >= diffDegree) {
       setImgRotate(randomRotate);
-      setToOrigin(true);
+      toggleTransitionCls(true);
       setTimeout(() => {
-        setToOrigin(false);
+        toggleTransitionCls(false);
         setShowTip(true);
       }, 300);
     } else {
@@ -104,60 +102,31 @@ const SliderRotateCaptcha = forwardRef((props: SliderRotateCaptchaProps, ref: Re
     slideBarRef?.current?.reset();
     handleImgOnLoad();
   }
+  function toggleTransitionCls(value: boolean) {
+    imgRef?.current?.classList[value ? 'add' : 'remove'](`transition-transform`);
+  }
 
   useImperativeHandle(ref, () => ({}));
 
   return wrapSSR(<>
-    <div style={{
-      position: 'relative',
-      display: 'flex',
-      flexDirection: 'column',
-      justifyContent: 'center',
-      alignItems: 'center',
-    }}>
-      <div style={{
-        height: `${imageSize}px`,
-        width: `${imageSize}px`,
-        ...imageWrapperStyle,
-
-        position: 'relative',
-        cursor: 'pointer',
-        overflow: 'hidden',
-        borderRadius: '50%',
-        border: `1px solid ${token.colorBorder}`,
-        boxShadow: `0 0 transparent,0 0 transparent,0 4px 6px -1px rgba(0,0,0,.1),0 2px 4px -2px rgba(0,0,0,.1)`,
-      }}>
+    <div className={classNames(prefixCls, hashId)}>
+      <div className={classNames(`${prefixCls}-img-wrapper`, hashId)}
+        style={{
+          height: `${imageSize}px`,
+          width: `${imageSize}px`,
+          ...imageWrapperStyle,
+        }}>
         <img
-          className={classNames(
-            {
-              ['transition-transform duration-300']: toOrigin,
-            })
-          }
+          ref={imgRef}
           src={src}
           style={{
-            width: '100%',
-            borderRadius: '50%',
             transform: `rotateZ(${imgRotate}deg)`,
-          }}//
-          alt="verify"
+          }}
           onClick={reset}
           onLoad={handleImgOnLoad}
+          className={classNames(`${prefixCls}-img`, hashId)}
         />
-        <div
-          style={{
-            position: 'absolute',
-            bottom: '.75rem',
-            left: 0,
-            zIndex: 10,
-            display: 'block',
-            height: '1.75rem',
-            width: '100%',
-            textAlign: 'center',
-            fontSize: '0.75rem',
-            lineHeight: '30px',
-            color: token.colorWhite
-          }}
-        >
+        <div className={classNames(`${prefixCls}-img-tip`, hashId)}>
           {showTip && (
             <div style={{
               background: isPassing ? token.colorSuccessBg : token.colorErrorBg,
