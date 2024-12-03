@@ -4,6 +4,7 @@ import { useStyles } from './style';
 import SliderButton, { SliderButtonCaptchaRef, SliderEvent } from '../SliderButton';
 import { drawImage } from './_utils';
 import { setAlpha } from '@web-rc/biz-provider';
+import { time } from 'console';
 
 export interface SliderRotateVerifyPassingData {
   event: MouseEvent | TouchEvent;
@@ -95,6 +96,7 @@ const SliderRotateCaptcha = forwardRef((props: SliderRotateCaptchaProps, ref: Re
       toggleTransitionCls(true);
       setTimeout(() => {
         toggleTransitionCls(false);
+        setIsPassed(undefined);
       }, 300);
     }
     setDragging(false);
@@ -138,22 +140,20 @@ const SliderRotateCaptcha = forwardRef((props: SliderRotateCaptchaProps, ref: Re
           className={classNames(`${prefixCls}-img`, hashId)}
         />
         <div className={classNames(`${prefixCls}-img-tip`, hashId)}>
-          {isPassed !== undefined && (
+          {(isPassed !== undefined || !dragging) && (
             <div style={{
-              background: setAlpha(isPassed ? token.colorSuccess : token.colorError, 0.45),
+              background: isPassed !== undefined
+                ? setAlpha(isPassed ? token.colorSuccess : token.colorError, 0.45)
+                : token.colorBgMask,
             }}
             >
-              {isPassed
-                ? `验证成功，耗时${((endTime - startTime) / 1000).toFixed(1)}秒`
-                : `验证失败`
-              }
-            </div>
-          )}
-          {(!dragging) && (
-            <div style={{
-              background: token.colorBgMask,
-            }}>
-              {defaultTip || '点击图片可刷新'}
+              {isPassed !== undefined ? (
+                isPassed
+                  ? `验证成功，耗时${((endTime - startTime) / 1000).toFixed(1)}秒`
+                  : `验证失败`
+              ) : (
+                defaultTip || '点击图片可刷新'
+              )}
             </div>
           )}
         </div>
