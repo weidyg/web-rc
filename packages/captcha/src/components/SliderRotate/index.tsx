@@ -2,6 +2,7 @@ import { CSSProperties, forwardRef, Ref, useEffect, useImperativeHandle, useMemo
 import { classNames } from '@web-rc/biz-utils';
 import { useStyles } from './style';
 import SliderButton, { SliderButtonCaptchaRef, SliderEvent } from '../SliderButton';
+import { drawImage } from './_utils';
 
 export interface SliderRotateVerifyPassingData {
   event: MouseEvent | TouchEvent;
@@ -9,18 +10,27 @@ export interface SliderRotateVerifyPassingData {
   moveX: number;
 }
 export type SliderRotateCaptchaProps = {
-  diffDegree?: number;
+  // diffDegree?: number;
   maxDegree?: number;
   minDegree?: number;
   defaultTip?: string;
   src?: string;
   imageSize?: number;
   imageWrapperStyle?: CSSProperties;
+
+  onStart?: (event: SliderEvent) => void;
+  onMove?: (event: SliderEvent, data: { currentRotate: number }) => void;
+  onEnd?: (event: SliderEvent) => void;
+  onVerify: () => boolean | Promise<boolean>;
+  onRefresh?: () => void | Promise<void>;
 };
 export type SliderRotateCaptchaRef = {};
 const SliderRotateCaptcha = forwardRef((props: SliderRotateCaptchaProps, ref: Ref<SliderRotateCaptchaRef>) => {
-  const { diffDegree = 20, maxDegree = 300, minDegree = 120,
-    src, imageSize = 260, imageWrapperStyle, defaultTip, ...restProps } = props;
+  const {
+    // diffDegree = 20,
+    maxDegree = 300, minDegree = 120,
+    src, imageSize = 260, imageWrapperStyle, defaultTip,
+    onStart, onMove, onEnd, onVerify, onRefresh, ...restProps } = props;
   const { prefixCls, wrapSSR, hashId, token } = useStyles();
 
   const getFactorRef = useMemo(() => {
@@ -33,37 +43,32 @@ const SliderRotateCaptcha = forwardRef((props: SliderRotateCaptchaProps, ref: Re
     return 1;
   }, [minDegree, maxDegree]);
 
-  const imgRef = useRef<HTMLImageElement>(null);
+  const imgRef = useRef<HTMLCanvasElement>(null);
   const slideBarRef = useRef<SliderButtonCaptchaRef>(null);
   const [startTime, setStartTime] = useState(0);
   const [endTime, setEndTime] = useState(0);
-  const [isPassing, setIsPassing] = useState<boolean>(false);
-  const [showTip, setShowTip] = useState<boolean>(false);
+  const [isPassed, setIsPassed] = useState<boolean | undefined>();
+  // const [showTip, setShowTip] = useState<boolean>(false);
   const [dragging, setDragging] = useState<boolean>(false);
-  const [randomRotate, setRandomRotate] = useState<number>(0);
-  const [currentRotate, setCurrentRotate] = useState<number>(0);
+  // const [randomRotate, setRandomRotate] = useState<number>(0);
+  // const [currentRotate, setCurrentRotate] = useState<number>(0);
   const [imgRotate, setImgRotate] = useState<number>(0);
 
   useEffect(() => {
     reset();
   }, []);
 
-  const verifyTip = useMemo(() => {
-    return isPassing
-      ? `验证成功，耗时${((endTime - startTime) / 1000).toFixed(1)}秒`
-      : `验证失败`;
-  }, [isPassing, endTime, startTime]);
 
+  // function handleImgOnLoad() {
+  //   const ranRotate = Math.floor(minDegree + Math.random() * (maxDegree - minDegree)); // 生成随机角度
+  //   setRandomRotate(ranRotate);
+  //   setImgRotate(ranRotate);
+  // }
 
-
-  function handleImgOnLoad() {
-    const ranRotate = Math.floor(minDegree + Math.random() * (maxDegree - minDegree)); // 生成随机角度
-    setRandomRotate(ranRotate);
-    setImgRotate(ranRotate);
-  }
-
+  const randomRotate = 0;
   function handleStart(ev: SliderEvent) {
     setStartTime(Date.now());
+    onStart?.(ev);
   }
   function handleDragBarMove(ev: SliderEvent, data: { moveDistance: number, moveX: number }) {
     setDragging(true);
@@ -71,37 +76,45 @@ const SliderRotateCaptcha = forwardRef((props: SliderRotateCaptchaProps, ref: Re
     const denominator = imageSize;
     if (denominator === 0) { return; }
     const currentRotate = Math.ceil((moveX / denominator) * 1.5 * maxDegree * getFactorRef);
-    setCurrentRotate(currentRotate);
     setImgRotate(randomRotate - currentRotate);
+    onMove?.(ev, { currentRotate });
   }
   function handleDragEnd(ev: SliderEvent) {
-
+    setEndTime(Date.now());
+    onEnd?.(ev);
   }
-  function handleVerify() {
-    let isPassed = false;
-    if (Math.abs(randomRotate - currentRotate) >= diffDegree) {
+  async function handleVerify() {
+    const isPassed = await onVerify();
+    if (isPassed) {
+      setIsPassed(true);
+    } else {
+      setIsPassed(false);
       setImgRotate(randomRotate);
       toggleTransitionCls(true);
       setTimeout(() => {
         toggleTransitionCls(false);
-        setShowTip(true);
       }, 300);
-    } else {
-      isPassed = true;
-      setIsPassing(isPassed);
-      setEndTime(Date.now());
     }
-    setShowTip(true);
     setDragging(false);
     return isPassed;
   }
 
-  function reset() {
-    setShowTip(false);
-    setIsPassing(false);
+  async function reset() {
+    setIsPassed(undefined);
     slideBarRef?.current?.reset();
-    handleImgOnLoad();
+    await onRefresh?.();
   }
+
+  useEffect(() => {
+    drawImage(
+      imgRef.current,
+      src,
+      {
+        width: imageSize,
+        height: imageSize
+      });
+  }, [src]);
+
   function toggleTransitionCls(value: boolean) {
     imgRef?.current?.classList[value ? 'add' : 'remove'](`transition-transform`);
   }
@@ -116,23 +129,24 @@ const SliderRotateCaptcha = forwardRef((props: SliderRotateCaptchaProps, ref: Re
           width: `${imageSize}px`,
           ...imageWrapperStyle,
         }}>
-        <img
+        <canvas
           ref={imgRef}
-          src={src}
+          onClick={reset}
           style={{
             transform: `rotateZ(${imgRotate}deg)`,
           }}
-          onClick={reset}
-          onLoad={handleImgOnLoad}
           className={classNames(`${prefixCls}-img`, hashId)}
         />
         <div className={classNames(`${prefixCls}-img-tip`, hashId)}>
-          {showTip && (
+          {isPassed !== undefined && (
             <div style={{
-              background: isPassing ? token.colorSuccess : token.colorError,
+              background: isPassed ? token.colorSuccess : token.colorError,
             }}
             >
-              {verifyTip}
+              {isPassed
+                ? `验证成功，耗时${((endTime - startTime) / 1000).toFixed(1)}秒`
+                : `验证失败`
+              }
             </div>
           )}
           {(!dragging) && (

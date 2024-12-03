@@ -166,3 +166,5 @@ export const previewImage = (file: File | Blob, measureSize: number = 200): Prom
     }
   });
 };
+
+

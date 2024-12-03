@@ -3,9 +3,8 @@
  * description: 基本使用
  */
 
-import { ReactNode, useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import { SliderButtonCaptcha } from '@web-rc/biz-components';
-import { set } from 'lodash';
 export default () => {
   const [startTime, setStartTime] = useState(0);
   const [endTime, setEndTime] = useState(0);
