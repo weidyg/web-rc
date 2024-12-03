@@ -132,9 +132,7 @@ const SliderRotateCaptcha = forwardRef((props: SliderRotateCaptchaProps, ref: Re
         <canvas
           ref={imgRef}
           onClick={reset}
-          style={{
-            transform: `rotateZ(${imgRotate}deg)`,
-          }}
+          style={{ transform: `rotateZ(${imgRotate}deg)`, }}
           className={classNames(`${prefixCls}-img`, hashId)}
         />
         <div className={classNames(`${prefixCls}-img-tip`, hashId)}>
