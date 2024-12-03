@@ -34,6 +34,7 @@ export const useStyles = generatStyles(({ token }, props: { borderRadius?: strin
         fontSize: '.75rem',
         lineHeight: '1rem',
         [`&-text`]: {
+          userSelect: 'none',
           animationName: shine,
           animationDuration: '2s',
           animationTimingFunction: 'linear',
@@ -50,6 +51,7 @@ export const useStyles = generatStyles(({ token }, props: { borderRadius?: strin
         }
       },
       [`&-bar`]: {
+        userSelect: 'none',
         zIndex: 0,
         width: 0,
         height: '100%',
@@ -57,6 +59,7 @@ export const useStyles = generatStyles(({ token }, props: { borderRadius?: strin
         backgroundColor: token.colorSuccess,
       },
       [`&-action`]: {
+        userSelect: 'none',
         zIndex: 2,
         borderRadius: borderRadius,
         background: token.colorBgContainer,
@@ -65,7 +68,6 @@ export const useStyles = generatStyles(({ token }, props: { borderRadius?: strin
         top: '0',
         display: 'flex',
         height: '100%',
-        // cursor: 'move',
         alignItems: 'center',
         justifyContent: 'center',
         paddingLeft: '.875rem',

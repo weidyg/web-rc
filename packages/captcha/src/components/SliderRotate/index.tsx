@@ -3,6 +3,7 @@ import { classNames } from '@web-rc/biz-utils';
 import { useStyles } from './style';
 import SliderButton, { SliderButtonCaptchaRef, SliderEvent } from '../SliderButton';
 import { drawImage } from './_utils';
+import { setAlpha } from '@web-rc/biz-provider';
 
 export interface SliderRotateVerifyPassingData {
   event: MouseEvent | TouchEvent;
@@ -67,11 +68,12 @@ const SliderRotateCaptcha = forwardRef((props: SliderRotateCaptchaProps, ref: Re
 
   const randomRotate = 0;
   function handleStart(ev: SliderEvent) {
+    setIsPassed(undefined);
+    setDragging(true);
     setStartTime(Date.now());
     onStart?.(ev);
   }
   function handleDragBarMove(ev: SliderEvent, data: { moveDistance: number, moveX: number }) {
-    setDragging(true);
     const { moveX } = data;
     const denominator = imageSize;
     if (denominator === 0) { return; }
@@ -138,7 +140,7 @@ const SliderRotateCaptcha = forwardRef((props: SliderRotateCaptchaProps, ref: Re
         <div className={classNames(`${prefixCls}-img-tip`, hashId)}>
           {isPassed !== undefined && (
             <div style={{
-              background: isPassed ? token.colorSuccess : token.colorError,
+              background: setAlpha(isPassed ? token.colorSuccess : token.colorError, 0.45),
             }}
             >
               {isPassed
