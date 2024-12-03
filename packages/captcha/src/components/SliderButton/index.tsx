@@ -54,7 +54,7 @@ const SliderButtonCaptcha = forwardRef((props: SliderButtonCaptchaProps, ref: Re
     const ev = getSliderEvent(event);
     onStart?.(ev);
     setIsMoving(true);
-    const actionLeft = Number.parseInt(actionEl.style.left.replace('px', '') || '0', 10,);
+    const actionLeft = Number.parseInt(actionEl.style.left.replace('px', '') || '0', 10);
     setMoveDistance(ev.pageX - actionLeft);
   }
   function handleDragMoving(event: MouseOrTouchEvent): void {
