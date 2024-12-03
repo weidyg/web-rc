@@ -4,15 +4,8 @@ import { useStyles } from './style';
 import SliderButton, { SliderButtonCaptchaRef, SliderEvent } from '../SliderButton';
 import { drawImage } from './_utils';
 import { setAlpha } from '@web-rc/biz-provider';
-import { time } from 'console';
 
-export interface SliderRotateVerifyPassingData {
-  event: MouseEvent | TouchEvent;
-  moveDistance: number;
-  moveX: number;
-}
 export type SliderRotateCaptchaProps = {
-  // diffDegree?: number;
   maxDegree?: number;
   minDegree?: number;
   defaultTip?: string;
@@ -50,22 +43,12 @@ const SliderRotateCaptcha = forwardRef((props: SliderRotateCaptchaProps, ref: Re
   const [startTime, setStartTime] = useState(0);
   const [endTime, setEndTime] = useState(0);
   const [isPassed, setIsPassed] = useState<boolean | undefined>();
-  // const [showTip, setShowTip] = useState<boolean>(false);
   const [dragging, setDragging] = useState<boolean>(false);
-  // const [randomRotate, setRandomRotate] = useState<number>(0);
-  // const [currentRotate, setCurrentRotate] = useState<number>(0);
   const [imgRotate, setImgRotate] = useState<number>(0);
 
   useEffect(() => {
     reset();
   }, []);
-
-
-  // function handleImgOnLoad() {
-  //   const ranRotate = Math.floor(minDegree + Math.random() * (maxDegree - minDegree)); // 生成随机角度
-  //   setRandomRotate(ranRotate);
-  //   setImgRotate(ranRotate);
-  // }
 
   const randomRotate = 0;
   function handleStart(ev: SliderEvent) {

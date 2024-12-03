@@ -56,7 +56,7 @@ export const useStyles = generatStyles(({ token }, props: { borderRadius?: strin
         width: 0,
         height: '100%',
         position: 'absolute',
-        backgroundColor: token.colorSuccess,
+        // backgroundColor: token.colorSuccess,
       },
       [`&-action`]: {
         userSelect: 'none',

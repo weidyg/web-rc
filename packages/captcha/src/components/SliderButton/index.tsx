@@ -22,6 +22,7 @@ export type SliderButtonCaptchaProps = {
   successText?: string;
   text?: string;
   onlySliderButton?: boolean;
+  failedResetTimeout?: number;
   onStart?: (event: SliderEvent) => void;
   onMove?: (event: SliderEvent, data: { moveDistance: number, moveX: number }) => void;
   onEnd?: (event: SliderEvent) => void;
@@ -33,7 +34,8 @@ export type SliderButtonCaptchaRef = {
 const SliderButtonCaptcha = forwardRef((props: SliderButtonCaptchaProps, ref: Ref<SliderButtonCaptchaRef>) => {
   const { className, style, styles, onlySliderButton = true,
     successText = '验证通过', text = '请按住滑块拖动',
-    onStart, onMove, onEnd, onVerify, ...restProps } = props;
+    onStart, onMove, onEnd, onVerify,
+    failedResetTimeout = 300, ...restProps } = props;
 
   const { prefixCls, wrapSSR, hashId, token } = useStyles();
 
@@ -94,7 +96,11 @@ const SliderButtonCaptcha = forwardRef((props: SliderButtonCaptchaProps, ref: Re
       } finally {
         setVerifying(false);
       }
-      if (!isPassed) { setTimeout(() => { handleRefresh(); }, 300); }
+      if (!isPassed) {
+        setTimeout(() => {
+          handleRefresh();
+        }, failedResetTimeout);
+      }
       setIsPassed(isPassed);
     }
   }
@@ -158,16 +164,23 @@ const SliderButtonCaptcha = forwardRef((props: SliderButtonCaptchaProps, ref: Re
       <div ref={contentRef}
         style={styles?.content}
         className={classNames(`${prefixCls}-content`, hashId, {
-          [`isPassing`]: isPassed,
+          // [`isPassing`]: isPassed,
         })}>
-        <div className={classNames(`${prefixCls}-content-text`, hashId)}>
-          {isPassed ? successText : text}
-        </div>
+        {!isMoving && !verifying && isPassed === undefined &&
+          <div className={classNames(`${prefixCls}-content-text`, hashId)}>
+            {isPassed ? successText : text}
+          </div>
+        }
       </div>
 
       <div
         ref={barRef}
-        style={styles?.bar}
+        style={{
+          ...styles?.bar,
+          backgroundColor: isPassed === false
+            ? token.colorErrorBgHover
+            : token.colorSuccessBgHover
+        }}
         className={classNames(`${prefixCls}-bar`, hashId)}
       />
 
@@ -176,6 +189,14 @@ const SliderButtonCaptcha = forwardRef((props: SliderButtonCaptchaProps, ref: Re
         style={{
           ...styles?.action,
           cursor: isMoving ? 'move' : 'pointer',
+          color: isPassed === undefined
+            ? token.colorText
+            : token.colorBgElevated,
+          backgroundColor: isPassed === false
+            ? token.colorError
+            : isPassed === true
+              ? token.colorSuccess
+              : undefined
         }}
         className={classNames(`${prefixCls}-action`, hashId)}
         onMouseDown={handleDragStart}
