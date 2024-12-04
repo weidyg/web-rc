@@ -32,7 +32,6 @@ const SliderPuzzleCaptcha = forwardRef((props: SliderPuzzleCaptchaProps, ref: Re
   const [width, setWidth] = useState(props.width);
   const [height, setHeight] = useState(props.height);
 
-  const imgWapRef = useRef<HTMLDivElement>(null);
   const bgImgRef = useRef<HTMLCanvasElement>(null);
   const jpImgRef = useRef<HTMLCanvasElement>(null);
   const slideBarRef = useRef<SliderButtonCaptchaRef>(null);
@@ -67,26 +66,36 @@ const SliderPuzzleCaptcha = forwardRef((props: SliderPuzzleCaptchaProps, ref: Re
       setIsPassed(true);
     } else {
       setIsPassed(false);
-      toggleTransitionCls(true);
-      setTimeout(() => {
-        toggleTransitionCls(false);
-        setIsPassed(undefined);
-      }, 300);
+      handleReset();
     }
     setDragging(false);
     return isPassed;
   }
   function handleReset() {
-    setIsPassed(undefined);
     const jpImgEl = jpImgRef?.current;
     if (!jpImgEl) { return; }
-    toggleTransitionCls(true);
+    jpImgEl.style.left = '0px';
+    toggleTransitions(0.3, jpImgEl);
     setTimeout(() => {
-      toggleTransitionCls(false);
-      jpImgEl.style.left = '0px';
-    }, 300);
+      setIsPassed(undefined);
+    }, 0.3 * 1000);
   }
 
+  function toggleTransitions(
+    second: number,
+    ...elements: (HTMLElement | null)[]
+  ) {
+    elements.forEach((el) => {
+      if (!el) { return; }
+      el.style.transitionDuration = `${second}s`;
+    });
+    setTimeout(() => {
+      elements.forEach((el) => {
+        if (!el) { return; }
+        el.style.transitionDuration = `0s`;
+      });
+    }, second * 1000);
+  }
 
   async function reset() {
     slideBarRef?.current?.reset();
@@ -132,59 +141,25 @@ const SliderPuzzleCaptcha = forwardRef((props: SliderPuzzleCaptchaProps, ref: Re
     });
   }
 
-  function toggleTransitionCls(value: boolean) {
-    jpImgRef?.current?.classList[value ? 'add' : 'remove'](`transition-left`);
-  }
-
   useImperativeHandle(ref, () => ({}));
-
-
 
   return wrapSSR(<>
     <div
       style={{ width: `${width}px` }}
       className={classNames(prefixCls, hashId)}
-    // ref={imgWapRef}
     >
       <div
         style={{
           height: `${height}px`,
           width: `${width}px`,
-
-          background: 'rgba(0, 0, 0, 0.08)',
-          position: 'relative',
-          // margin: '8px 0',
-          // borderRadius: '5px',
-          overflow: 'hidden'
         }}
         className={classNames(`${prefixCls}-img-wrapper`, hashId)}
-
       >
         <canvas ref={bgImgRef}
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            margin: '0 auto',
-            userSelect: 'none',
-            msUserSelect: 'none',
-            WebkitUserSelect: 'none',
-            MozUserSelect: 'none',
-            WebkitTouchCallout: 'none',
-          }}
+          className={classNames(`${prefixCls}-bgimg`, hashId)}
         />
         <canvas ref={jpImgRef}
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            margin: '0 auto',
-            userSelect: 'none',
-            msUserSelect: 'none',
-            WebkitUserSelect: 'none',
-            MozUserSelect: 'none',
-            WebkitTouchCallout: 'none',
-          }}
+          className={classNames(`${prefixCls}-jpimg`, hashId)}
         />
         <div className={classNames(`${prefixCls}-img-tip`, hashId)}>
           {(isPassed !== undefined || !dragging) && (
@@ -213,7 +188,7 @@ const SliderPuzzleCaptcha = forwardRef((props: SliderPuzzleCaptchaProps, ref: Re
         onEnd={handleDragEnd}
         onVerify={handleVerify}
         onReset={handleReset}
-        style={{ width: `${width}px`, marginTop: '1.25rem' }}
+        style={{ marginTop: token.margin }}
       />
     </div>
   </>);

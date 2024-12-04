@@ -137,19 +137,25 @@ const SliderButtonCaptcha = forwardRef((props: SliderButtonCaptchaProps, ref: Re
     const contentEl = contentRef?.current;
     if (!actionEl || !barEl || !contentEl) { return; }
     contentEl.style.width = '100%';
-    toggleTransitionCls(actionEl, barEl, true);
-    setTimeout(() => {
-      toggleTransitionCls(actionEl, barEl, false);
-      actionEl.style.left = '0px';
-      barEl.style.width = '0px';
-    }, 300);
+    barEl.style.width = '0px';
+    actionEl.style.left = '0px';
+    toggleTransitions(0.3, actionEl, barEl);
   }
-  function toggleTransitionCls(
-    actionEl: HTMLDivElement | null,
-    barEl: HTMLDivElement | null,
-    value: boolean) {
-    actionEl?.classList[value ? 'add' : 'remove'](`transition-left`);
-    barEl?.classList[value ? 'add' : 'remove'](`transition-width`);
+
+  function toggleTransitions(
+    second: number,
+    ...elements: (HTMLElement | null)[]
+  ) {
+    elements.forEach((el) => {
+      if (!el) { return; }
+      el.style.transitionDuration = `${second}s`;
+    });
+    setTimeout(() => {
+      elements.forEach((el) => {
+        if (!el) { return; }
+        el.style.transitionDuration = `0s`;
+      });
+    }, second * 1000);
   }
 
   useImperativeHandle(ref, () => ({
@@ -159,7 +165,7 @@ const SliderButtonCaptcha = forwardRef((props: SliderButtonCaptchaProps, ref: Re
   return wrapSSR(<>
     <div ref={wrapperRef}
       style={style}
-      className={classNames(`${prefixCls}-wrapper`, prefixCls, className, hashId)}
+      className={classNames(prefixCls, className, hashId)}
       onMouseUp={handleDragOver}
       onMouseLeave={handleDragOver}
       onMouseMove={handleDragMoving}
@@ -168,9 +174,8 @@ const SliderButtonCaptcha = forwardRef((props: SliderButtonCaptchaProps, ref: Re
     >
       <div ref={contentRef}
         style={styles?.content}
-        className={classNames(`${prefixCls}-content`, hashId, {
-          // [`isPassing`]: isPassed,
-        })}>
+        className={classNames(`${prefixCls}-content`, hashId)}
+      >
         {!isMoving && !verifying && isPassed === undefined &&
           <div className={classNames(`${prefixCls}-content-text`, hashId)}>
             {isPassed ? successText : text}

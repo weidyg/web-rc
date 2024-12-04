@@ -9,18 +9,16 @@ export const useStyles = generatStyles(({ token }, props: { borderRadius?: strin
   });
   return {
     [token.componentCls]: {
-      [`&-wrapper`]: {
-        position: 'relative',
-        display: 'flex',
-        alignItems: 'center',
-        textAlign: 'center',
-        width: '100%',
-        height: '2.5rem',
-        overflow: 'hidden',
-        borderRadius: borderRadius,
-        border: `1px solid ${token.colorBorder}`,
-        backgroundColor: token.colorBgContainerDisabled,
-      },
+      overflow: 'hidden',
+      position: 'relative',
+      display: 'flex',
+      alignItems: 'center',
+      textAlign: 'center',
+      width: '100%',
+      height: token.controlHeightLG,
+      borderRadius: borderRadius,
+      border: `1px solid ${token.colorBorder}`,
+      backgroundColor: token.colorBgContainerDisabled,
       [`&-content`]: {
         zIndex: 1,
         position: 'absolute',
@@ -31,8 +29,8 @@ export const useStyles = generatStyles(({ token }, props: { borderRadius?: strin
         width: '100%',
         height: '100%',
         userSelect: 'none',
-        fontSize: '.75rem',
-        lineHeight: '1rem',
+        fontSize: token.fontSizeSM,
+        lineHeight: token.lineHeight,
         [`&-text`]: {
           userSelect: 'none',
           animationName: shine,
@@ -56,7 +54,8 @@ export const useStyles = generatStyles(({ token }, props: { borderRadius?: strin
         width: 0,
         height: '100%',
         position: 'absolute',
-        // backgroundColor: token.colorSuccess,
+        transitionProperty: 'width',
+        transitionTimingFunction: token.motionEaseInOut,
       },
       [`&-action`]: {
         userSelect: 'none',
@@ -68,32 +67,13 @@ export const useStyles = generatStyles(({ token }, props: { borderRadius?: strin
         top: '0',
         display: 'flex',
         height: '100%',
+        width: token.controlHeightLG,
         alignItems: 'center',
         justifyContent: 'center',
-        paddingLeft: '.875rem',
-        paddingRight: '.875rem',
-        boxShadow: `
-        0 0 transparent,
-        0 0 transparent,
-        0 4px 6px -1px rgba(0,0,0,.1),
-        0 2px 4px -2px rgba(0,0,0,.1)
-        `,
-      },
-      [`.transition-left,.transition-width`]: {
-        transitionDuration: '.3s',
-        transitionTimingFunction: 'cubic-bezier(.4,0,.2,1)',
-      },
-      [`.transition-left`]: {
-        left: '0 !important',
+        boxShadow: token.boxShadowSecondary,
         transitionProperty: 'left',
+        transitionTimingFunction: token.motionEaseInOut,
       },
-      [`.transition-width`]: {
-        width: '0 !important',
-        transitionProperty: 'width',
-      },
-      [`.isPassing`]: {
-        WebkitTextFillColor: 'hsl(0deg 0% 98%)',
-      }
     },
   };
 }, 'SliderButtonCaptcha');
