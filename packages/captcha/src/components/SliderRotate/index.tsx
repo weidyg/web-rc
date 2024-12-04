@@ -1,9 +1,9 @@
 import { CSSProperties, forwardRef, Ref, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
+import { setAlpha } from '@web-rc/biz-provider';
 import { classNames } from '@web-rc/biz-utils';
 import { useStyles } from './style';
-import SliderButton, { SliderButtonCaptchaRef, SliderEvent } from '../SliderButton';
-import { drawImage } from './_utils';
-import { setAlpha } from '@web-rc/biz-provider';
+import SliderButton, { MoveingData, SliderButtonCaptchaRef, SliderEvent } from '../SliderButton';
+import { drawImage, toggleTransitionDuration } from '../../utils';
 
 export type SliderRotateCaptchaProps = {
   maxDegree?: number;
@@ -57,7 +57,7 @@ const SliderRotateCaptcha = forwardRef((props: SliderRotateCaptchaProps, ref: Re
     setStartTime(Date.now());
     onStart?.(ev);
   }
-  function handleDragBarMove(ev: SliderEvent, data: { moveDistance: number, moveX: number }) {
+  function handleDragBarMove(ev: SliderEvent, data: MoveingData) {
     const { moveX } = data;
     const denominator = imageSize;
     if (denominator === 0) { return; }
@@ -76,11 +76,10 @@ const SliderRotateCaptcha = forwardRef((props: SliderRotateCaptchaProps, ref: Re
     } else {
       setIsPassed(false);
       setImgRotate(randomRotate);
-      toggleTransitionCls(true);
+      toggleTransitionDuration(0.3, imgRef.current);
       setTimeout(() => {
-        toggleTransitionCls(false);
         setIsPassed(undefined);
-      }, 300);
+      }, 0.3 * 1000);
     }
     setDragging(false);
     return isPassed;
@@ -93,18 +92,8 @@ const SliderRotateCaptcha = forwardRef((props: SliderRotateCaptchaProps, ref: Re
   }
 
   useEffect(() => {
-    drawImage(
-      imgRef.current,
-      src,
-      {
-        width: imageSize,
-        height: imageSize
-      });
+    drawImage(imgRef.current, src, { width: imageSize, height: imageSize });
   }, [src]);
-
-  function toggleTransitionCls(value: boolean) {
-    imgRef?.current?.classList[value ? 'add' : 'remove'](`transition-transform`);
-  }
 
   useImperativeHandle(ref, () => ({}));
 

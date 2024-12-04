@@ -152,6 +152,12 @@ const PointSelectionCaptcha = forwardRef((props: PointSelectionCaptchaProps, ref
           src={captchaImage}
           onClick={handleClick}
         />
+        {/* <canvas
+          ref={imgRef}
+          onClick={reset}
+          style={{ transform: `rotateZ(${imgRotate}deg)`, }}
+          className={classNames(`${prefixCls}-img`, hashId)}
+        /> */}
         <div style={{ position: 'absolute', inset: 0 }}>
           {points?.map((point, index) => {
             return (
@@ -192,7 +198,6 @@ const PointSelectionCaptcha = forwardRef((props: PointSelectionCaptchaProps, ref
         {hintImage
           ? (<img
             src={hintImage}
-            className="border-border h-10 w-full rounded border"
             style={{
               border: `1px solid ${token.colorBorder}`,
               borderRadius: token.borderRadius,

@@ -1,10 +1,9 @@
-import { CSSProperties, forwardRef, Ref, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
+import { forwardRef, Ref, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
+import { setAlpha } from '@web-rc/biz-provider';
 import { classNames } from '@web-rc/biz-utils';
 import { useStyles } from './style';
 import SliderButton, { MoveingData, SliderButtonCaptchaRef, SliderEvent } from '../SliderButton';
-import { drawImage } from './_utils';
-import { setAlpha } from '@web-rc/biz-provider';
-import { console } from 'inspector';
+import { drawImage, toggleTransitionDuration } from '../../utils';
 
 export type SliderPuzzleCaptchaProps = {
   defaultTip?: string;
@@ -41,7 +40,7 @@ const SliderPuzzleCaptcha = forwardRef((props: SliderPuzzleCaptchaProps, ref: Re
   const [dragging, setDragging] = useState<boolean>(false);
 
   useEffect(() => {
-    reset();
+    handleRefresh();
   }, []);
 
   function handleStart(ev: SliderEvent) {
@@ -71,74 +70,34 @@ const SliderPuzzleCaptcha = forwardRef((props: SliderPuzzleCaptchaProps, ref: Re
     setDragging(false);
     return isPassed;
   }
+
+  async function handleRefresh() {
+    slideBarRef?.current?.reset();
+    await onRefresh?.();
+  }
+
   function handleReset() {
     const jpImgEl = jpImgRef?.current;
     if (!jpImgEl) { return; }
     jpImgEl.style.left = '0px';
-    toggleTransitions(0.3, jpImgEl);
+    toggleTransitionDuration(0.3, jpImgEl);
     setTimeout(() => {
       setIsPassed(undefined);
     }, 0.3 * 1000);
-  }
-
-  function toggleTransitions(
-    second: number,
-    ...elements: (HTMLElement | null)[]
-  ) {
-    elements.forEach((el) => {
-      if (!el) { return; }
-      el.style.transitionDuration = `${second}s`;
-    });
-    setTimeout(() => {
-      elements.forEach((el) => {
-        if (!el) { return; }
-        el.style.transitionDuration = `0s`;
-      });
-    }, second * 1000);
-  }
-
-  async function reset() {
-    slideBarRef?.current?.reset();
-    await onRefresh?.();
   }
 
   useEffect(() => {
     init();
   }, [props.width, props.height, bgImg, jpImg]);
 
-
   const init = async () => {
-    const { width, height } = await drawImage();
-    setWidth(width);
-    setHeight(height);
-  }
-
-  const drawImage = (pixel?: { width?: number, height?: number }) => {
-    return new Promise<{ width?: number, height?: number }>((resolve) => {
-      const bgCanvas = bgImgRef.current;
-      const jpCanvas = jpImgRef.current;
-      if (bgCanvas && jpCanvas && bgImg && jpImg) {
-        const bgEl = new Image(pixel?.width, pixel?.height);
-        bgEl.src = bgImg;
-        bgEl.onload = function () {
-          bgEl.width = bgEl.width > 0 ? bgEl.width : bgEl.naturalWidth;
-          bgEl.height = bgEl.height > 0 ? bgEl.height : bgEl.naturalHeight;
-          bgCanvas.width = pixel?.width ? bgEl.width : bgEl.width * (bgEl.height / bgEl.naturalHeight);;
-          bgCanvas.height = pixel?.height ? bgEl.height : bgEl.height * (bgEl.width / bgEl.naturalWidth);
-          bgCanvas.getContext("2d")?.drawImage(bgEl, 0, 0, bgCanvas.width, bgCanvas.height);
-
-          const jpEl = new Image();
-          jpEl.src = jpImg;
-          jpEl.onload = function () {
-            jpCanvas.width = jpEl.naturalWidth * (bgCanvas.width / bgEl.naturalWidth);
-            jpCanvas.height = jpEl.naturalHeight * (bgCanvas.height / bgEl.naturalHeight);
-            jpCanvas.getContext("2d")?.drawImage(jpEl, 0, 0, jpCanvas.width, jpCanvas.height);
-          }
-          const { width, height } = bgCanvas;
-          resolve({ width, height });
-        }
-      }
+    const bgPix = await drawImage(bgImgRef.current, bgImg, { width, height });
+    await drawImage(jpImgRef.current, jpImg, {
+      width: (jpEl) => jpEl.naturalWidth * ((bgPix?.width ?? 0) / (bgPix?.naturalWidth ?? 1)),
+      height: (jpEl) => jpEl.naturalHeight * ((bgPix?.height ?? 0) / (bgPix?.naturalHeight ?? 1)),
     });
+    setWidth(bgPix?.width);
+    setHeight(bgPix?.height);
   }
 
   useImperativeHandle(ref, () => ({}));
@@ -156,10 +115,10 @@ const SliderPuzzleCaptcha = forwardRef((props: SliderPuzzleCaptchaProps, ref: Re
         className={classNames(`${prefixCls}-img-wrapper`, hashId)}
       >
         <canvas ref={bgImgRef}
-          className={classNames(`${prefixCls}-bgimg`, hashId)}
+          className={classNames(`${prefixCls}-img-bg`, hashId)}
         />
         <canvas ref={jpImgRef}
-          className={classNames(`${prefixCls}-jpimg`, hashId)}
+          className={classNames(`${prefixCls}-img-jp`, hashId)}
         />
         <div className={classNames(`${prefixCls}-img-tip`, hashId)}>
           {(isPassed !== undefined || !dragging) && (

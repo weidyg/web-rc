@@ -3,6 +3,7 @@ import { CheckOutlined, CloseOutlined, DoubleRightOutlined, LoadingOutlined } fr
 import { classNames } from '@web-rc/biz-utils';
 import { useStyles } from './style';
 import { getSliderEvent, getOffset } from './_utils';
+import { toggleTransitionDuration } from '../../utils';
 
 export type MouseOrTouchEvent<T = HTMLDivElement> = React.MouseEvent<T, MouseEvent> | React.TouchEvent<T>;
 export type SliderEvent = {
@@ -139,23 +140,7 @@ const SliderButtonCaptcha = forwardRef((props: SliderButtonCaptchaProps, ref: Re
     contentEl.style.width = '100%';
     barEl.style.width = '0px';
     actionEl.style.left = '0px';
-    toggleTransitions(0.3, actionEl, barEl);
-  }
-
-  function toggleTransitions(
-    second: number,
-    ...elements: (HTMLElement | null)[]
-  ) {
-    elements.forEach((el) => {
-      if (!el) { return; }
-      el.style.transitionDuration = `${second}s`;
-    });
-    setTimeout(() => {
-      elements.forEach((el) => {
-        if (!el) { return; }
-        el.style.transitionDuration = `0s`;
-      });
-    }, second * 1000);
+    toggleTransitionDuration(0.3, actionEl, barEl);
   }
 
   useImperativeHandle(ref, () => ({

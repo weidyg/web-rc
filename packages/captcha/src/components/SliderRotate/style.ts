@@ -11,6 +11,9 @@ export const useStyles = generatStyles(({ token }) => {
       ['&-img']: {
         width: '100%',
         borderRadius: '50%',
+        transitionProperty: 'transform',
+        transitionTimingFunction: token.motionEaseInOut,
+
         ['&-wrapper']: {
           position: 'relative',
           cursor: 'pointer',
@@ -32,11 +35,6 @@ export const useStyles = generatStyles(({ token }) => {
           lineHeight: '30px',
           color: token.colorWhite
         },
-      },
-      ['.transition-transform']: {
-        transitionProperty: 'transform',
-        transitionDuration: '.3s',
-        transitionTimingFunction: 'cubic-bezier(.4,0,.2,1)',
       }
     },
   };
