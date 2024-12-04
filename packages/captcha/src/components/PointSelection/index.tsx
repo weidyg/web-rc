@@ -1,7 +1,8 @@
-import { forwardRef, Ref, useImperativeHandle, useMemo, useState } from 'react';
+import { forwardRef, Ref, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { Button, Card } from 'antd';
 import { classNames } from '@web-rc/biz-utils';
 import { useStyles } from './style';
+import { drawImage } from '../../utils';
 
 export type CaptchaData = {
   x: number;
@@ -13,8 +14,8 @@ export type CaptchaPoint = CaptchaData & {
 }
 export type PointSelectionCaptchaCardProps = {
   captchaImage: string;
-  height?: number | string;
-  width?: number | string;
+  height?: number;
+  width?: number;
   paddingX?: number | string;
   paddingY?: number | string;
   title?: string;
@@ -31,13 +32,20 @@ export type PointSelectionCaptchaProps = Omit<PointSelectionCaptchaCardProps, 'o
 };
 export type PointSelectionCaptchaRef = {};
 const PointSelectionCaptcha = forwardRef((props: PointSelectionCaptchaProps, ref: Ref<PointSelectionCaptchaRef>) => {
-  const { captchaImage, height = 220, width = 300, paddingX = 12, paddingY = 16,
+  const { captchaImage,
+    height = 220, width = 300,
+    paddingX = 12, paddingY = 16,
     onClick, onRefresh, onConfirm,
     hintImage, hintText, showConfirm,
     title,
     ...restProps } = props;
 
   const { prefixCls, wrapSSR, hashId, token } = useStyles();
+  const imgRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    drawImage(imgRef.current, captchaImage, { width, height });
+  }, [captchaImage]);
 
   useImperativeHandle(ref, () => ({}));
 
@@ -137,18 +145,18 @@ const PointSelectionCaptcha = forwardRef((props: PointSelectionCaptchaProps, ref
     > */}
     <div className={classNames(`${prefixCls}-container`, hashId)}>
       <div className={classNames(`${prefixCls}`, hashId)}>
-        <img
+        {/* <img
           src={captchaImage}
           onClick={handleClick}
           style={{ width, height, }}
           className={classNames(`${prefixCls}-img`, hashId)}
-        />
-        {/* <canvas
-          ref={imgRef}
-          onClick={reset}
-          style={{ transform: `rotateZ(${imgRotate}deg)`, }}
-          className={classNames(`${prefixCls}-img`, hashId)}
         /> */}
+        <canvas
+          ref={imgRef}
+          onClick={handleClick}
+          style={{ width, height, }}
+          className={classNames(`${prefixCls}-img`, hashId)}
+        />
         <div style={{ position: 'absolute', inset: 0 }}>
           {points?.map((point, index) => {
             return (

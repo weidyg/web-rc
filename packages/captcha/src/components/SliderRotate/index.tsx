@@ -137,7 +137,7 @@ const SliderRotateCaptcha = forwardRef((props: SliderRotateCaptchaProps, ref: Re
         onMove={handleDragBarMove}
         onEnd={handleDragEnd}
         onVerify={handleVerify}
-        style={{ width: `${imageSize}px`, marginTop: '1.25rem' }}
+        style={{ marginTop: token.margin }}
       />
     </div>
   </>);
