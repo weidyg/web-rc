@@ -5,9 +5,7 @@ export const useStyles = generatStyles(({ token }) => {
     [token.componentCls]: {
       [`.transition-left`]: {
         left: '0 !important',
-        transitionProperty: 'left',
-        transitionDuration: '.3s',
-        transitionTimingFunction: 'cubic-bezier(.4,0,.2,1)',
+        transition: 'left .3s cubic-bezier(.4,0,.2,1)',
       },
     },
   };

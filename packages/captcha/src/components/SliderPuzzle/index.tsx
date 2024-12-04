@@ -87,6 +87,7 @@ const SliderPuzzleCaptcha = forwardRef((props: SliderPuzzleCaptchaProps, ref: Re
     }, 300);
   }
 
+
   async function reset() {
     slideBarRef?.current?.reset();
     await onRefresh?.();
