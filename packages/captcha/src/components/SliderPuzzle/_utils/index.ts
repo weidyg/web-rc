@@ -5,8 +5,8 @@ export function drawImage(
 ) {
   const { width, height } = pixel || {};
   if (element && imgSrc) {
-    const img = new Image(width, height)
-    img.src = imgSrc
+    const img = new Image(width, height);
+    img.src = imgSrc;
     img.onload = function () {
       element.width = width ? img.width : img.width * (img.height / img.naturalHeight);;
       element.height = height ? img.height : img.height * (img.width / img.naturalWidth);

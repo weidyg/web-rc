@@ -11,6 +11,11 @@ export type SliderEvent = {
   clientX: number; clientY: number;
   pageX: number; pageY: number;
 };
+export type MoveingData = {
+  startDistance: number,
+  moveX: number,
+  isTheEnd: boolean,
+}
 export type SliderButtonCaptchaProps = {
   className?: string;
   style?: CSSProperties;
@@ -24,9 +29,10 @@ export type SliderButtonCaptchaProps = {
   onlySliderButton?: boolean;
   failedResetTimeout?: number;
   onStart?: (event: SliderEvent) => void;
-  onMove?: (event: SliderEvent, data: { moveDistance: number, moveX: number }) => void;
+  onMove?: (event: SliderEvent, data: MoveingData) => void;
   onEnd?: (event: SliderEvent) => void;
   onVerify: () => boolean | Promise<boolean>;
+  onReset?: () => void;
 };
 export type SliderButtonCaptchaRef = {
   reset: () => void
@@ -34,7 +40,7 @@ export type SliderButtonCaptchaRef = {
 const SliderButtonCaptcha = forwardRef((props: SliderButtonCaptchaProps, ref: Ref<SliderButtonCaptchaRef>) => {
   const { className, style, styles, onlySliderButton = true,
     successText = '验证通过', text = '请按住滑块拖动',
-    onStart, onMove, onEnd, onVerify,
+    onStart, onMove, onEnd, onVerify, onReset,
     failedResetTimeout = 300, ...restProps } = props;
 
   const { prefixCls, wrapSSR, hashId, token } = useStyles();
@@ -47,7 +53,7 @@ const SliderButtonCaptcha = forwardRef((props: SliderButtonCaptchaProps, ref: Re
   const [isMoving, setIsMoving] = useState<boolean | undefined>(undefined);
   const [verifying, setVerifying] = useState<boolean | undefined>(undefined);
   const [isPassed, setIsPassed] = useState<boolean | undefined>(undefined);
-  const [moveDistance, setMoveDistance] = useState(0);
+  const [startDistance, setStartDistance] = useState(0);
 
   function handleDragStart(event: MouseOrTouchEvent) {
     if (isPassed) { return; }
@@ -57,7 +63,7 @@ const SliderButtonCaptcha = forwardRef((props: SliderButtonCaptchaProps, ref: Re
     onStart?.(ev);
     setIsMoving(true);
     const actionLeft = Number.parseInt(actionEl.style.left.replace('px', '') || '0', 10);
-    setMoveDistance(ev.pageX - actionLeft);
+    setStartDistance(ev.pageX - actionLeft);
   }
   function handleDragMoving(event: MouseOrTouchEvent): void {
     if (isMoving) {
@@ -66,18 +72,19 @@ const SliderButtonCaptcha = forwardRef((props: SliderButtonCaptchaProps, ref: Re
       const barEl = barRef?.current;
       if (!actionEl || !barEl || !wrapperEl) { return; }
       const ev = getSliderEvent(event);
-      const moveX = ev.pageX - moveDistance;
-      onMove?.(ev, { moveDistance, moveX });
+      const moveX = ev.pageX - startDistance;
       const { actionWidth, offset, wrapperWidth } = getOffset(wrapperEl, actionEl);
-      isSlideToTheEnd.current = false;
+      const isTheEnd = moveX > offset;
+      onMove?.(ev, { startDistance, moveX, isTheEnd });
+
       if (moveX > 0 && moveX <= offset) {
         actionEl.style.left = `${moveX}px`;
         barEl.style.width = `${moveX + actionWidth / 2}px`;
-      } else if (moveX > offset) {
+      } else if (isTheEnd) {
         actionEl.style.left = `${wrapperWidth - actionWidth}px`;
         barEl.style.width = `${wrapperWidth - actionWidth / 2}px`;
-        isSlideToTheEnd.current = true;
       }
+      isSlideToTheEnd.current = isTheEnd;
     }
   }
   async function handleDragOver(event: MouseOrTouchEvent): Promise<void> {
@@ -119,10 +126,8 @@ const SliderButtonCaptcha = forwardRef((props: SliderButtonCaptchaProps, ref: Re
   }
 
   function reset() {
-    // setStartTime(0);
-    // setEndTime(0);
-    // setTracks([]);
-    setMoveDistance(0);
+    onReset?.();
+    setStartDistance(0);
     setIsMoving(undefined);
     setVerifying(undefined);
     setIsPassed(undefined);
@@ -137,7 +142,7 @@ const SliderButtonCaptcha = forwardRef((props: SliderButtonCaptchaProps, ref: Re
       toggleTransitionCls(actionEl, barEl, false);
       actionEl.style.left = '0px';
       barEl.style.width = '0px';
-    }, 500);
+    }, 300);
   }
   function toggleTransitionCls(
     actionEl: HTMLDivElement | null,

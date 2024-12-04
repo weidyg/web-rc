@@ -1,9 +1,10 @@
 import { CSSProperties, forwardRef, Ref, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { classNames } from '@web-rc/biz-utils';
 import { useStyles } from './style';
-import SliderButton, { SliderButtonCaptchaRef, SliderEvent } from '../SliderButton';
+import SliderButton, { MoveingData, SliderButtonCaptchaRef, SliderEvent } from '../SliderButton';
 import { drawImage } from './_utils';
 import { setAlpha } from '@web-rc/biz-provider';
+import { console } from 'inspector';
 
 export type SliderPuzzleCaptchaProps = {
   defaultTip?: string;
@@ -23,12 +24,15 @@ export type SliderPuzzleCaptchaRef = {};
 const SliderPuzzleCaptcha = forwardRef((props: SliderPuzzleCaptchaProps, ref: Ref<SliderPuzzleCaptchaRef>) => {
   const {
     defaultTip,
-    bgImg, width = 300, height = 200,
+    bgImg,
     jpImg,
     onStart, onMove, onEnd, onVerify, onRefresh, ...restProps } = props;
   const { prefixCls, wrapSSR, hashId, token } = useStyles();
 
+  const [width, setWidth] = useState(props.width);
+  const [height, setHeight] = useState(props.height);
 
+  const imgWapRef = useRef<HTMLDivElement>(null);
   const bgImgRef = useRef<HTMLCanvasElement>(null);
   const jpImgRef = useRef<HTMLCanvasElement>(null);
   const slideBarRef = useRef<SliderButtonCaptchaRef>(null);
@@ -47,9 +51,9 @@ const SliderPuzzleCaptcha = forwardRef((props: SliderPuzzleCaptchaProps, ref: Re
     setStartTime(Date.now());
     onStart?.(ev);
   }
-  function handleDragBarMove(ev: SliderEvent, data: { moveDistance: number, moveX: number }) {
-    if (jpImgRef.current) {
-      jpImgRef.current.style.left = `${ev.pageX - data.moveDistance}px`;
+  function handleDragBarMove(ev: SliderEvent, data: MoveingData) {
+    if (jpImgRef.current && !data.isTheEnd) {
+      jpImgRef.current.style.left = `${data.moveX}px`;
     }
     onMove?.(ev);
   }
@@ -72,29 +76,75 @@ const SliderPuzzleCaptcha = forwardRef((props: SliderPuzzleCaptchaProps, ref: Re
     setDragging(false);
     return isPassed;
   }
+  function handleReset() {
+    setIsPassed(undefined);
+    const jpImgEl = jpImgRef?.current;
+    if (!jpImgEl) { return; }
+    toggleTransitionCls(true);
+    setTimeout(() => {
+      toggleTransitionCls(false);
+      jpImgEl.style.left = '0px';
+    }, 300);
+  }
 
   async function reset() {
-    setIsPassed(undefined);
     slideBarRef?.current?.reset();
     await onRefresh?.();
   }
 
   useEffect(() => {
-    drawImage(bgImgRef.current, bgImg, { width, height });
-  }, [bgImg]);
+    init();
+  }, [props.width, props.height, bgImg, jpImg]);
 
-  useEffect(() => {
-    drawImage(jpImgRef.current, jpImg, { width: 52, height });
-  }, [jpImg]);
+
+  const init = async () => {
+    const { width, height } = await drawImage();
+    setWidth(width);
+    setHeight(height);
+  }
+
+  const drawImage = (pixel?: { width?: number, height?: number }) => {
+    return new Promise<{ width?: number, height?: number }>((resolve) => {
+      const bgCanvas = bgImgRef.current;
+      const jpCanvas = jpImgRef.current;
+      if (bgCanvas && jpCanvas && bgImg && jpImg) {
+        const bgEl = new Image(pixel?.width, pixel?.height);
+        bgEl.src = bgImg;
+        bgEl.onload = function () {
+          bgEl.width = bgEl.width > 0 ? bgEl.width : bgEl.naturalWidth;
+          bgEl.height = bgEl.height > 0 ? bgEl.height : bgEl.naturalHeight;
+          bgCanvas.width = pixel?.width ? bgEl.width : bgEl.width * (bgEl.height / bgEl.naturalHeight);;
+          bgCanvas.height = pixel?.height ? bgEl.height : bgEl.height * (bgEl.width / bgEl.naturalWidth);
+          bgCanvas.getContext("2d")?.drawImage(bgEl, 0, 0, bgCanvas.width, bgCanvas.height);
+
+          const jpEl = new Image();
+          jpEl.src = jpImg;
+          jpEl.onload = function () {
+            jpCanvas.width = jpEl.naturalWidth * (bgCanvas.width / bgEl.naturalWidth);
+            jpCanvas.height = jpEl.naturalHeight * (bgCanvas.height / bgEl.naturalHeight);
+            jpCanvas.getContext("2d")?.drawImage(jpEl, 0, 0, jpCanvas.width, jpCanvas.height);
+          }
+          const { width, height } = bgCanvas;
+          resolve({ width, height });
+        }
+      }
+    });
+  }
 
   function toggleTransitionCls(value: boolean) {
-    jpImgRef?.current?.classList[value ? 'add' : 'remove'](`transition-width`);
+    jpImgRef?.current?.classList[value ? 'add' : 'remove'](`transition-left`);
   }
 
   useImperativeHandle(ref, () => ({}));
 
+
+
   return wrapSSR(<>
-    <div className={classNames(prefixCls, hashId)}>
+    <div
+      style={{ width: `${width}px` }}
+      className={classNames(prefixCls, hashId)}
+    // ref={imgWapRef}
+    >
       <div
         style={{
           height: `${height}px`,
@@ -161,6 +211,7 @@ const SliderPuzzleCaptcha = forwardRef((props: SliderPuzzleCaptchaProps, ref: Re
         onMove={handleDragBarMove}
         onEnd={handleDragEnd}
         onVerify={handleVerify}
+        onReset={handleReset}
         style={{ width: `${width}px`, marginTop: '1.25rem' }}
       />
     </div>
