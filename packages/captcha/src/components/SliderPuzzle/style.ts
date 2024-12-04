@@ -3,12 +3,11 @@
 export const useStyles = generatStyles(({ token }) => {
   return {
     [token.componentCls]: {
+      width: 'fit-content',
       [`&-img`]: {
-        [`&-wrapper`]: {
-          background: 'rgba(0, 0, 0, 0.08)',
-          position: 'relative',
-          overflow: 'hidden',
-        },
+        background: 'rgba(0, 0, 0, 0.08)',
+        position: 'relative',
+        overflow: 'hidden',
         [`&-bg,&-jp`]: {
           top: 0,
           left: 0,

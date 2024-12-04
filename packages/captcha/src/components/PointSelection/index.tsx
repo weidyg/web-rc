@@ -1,6 +1,7 @@
 import { forwardRef, Ref, useImperativeHandle, useMemo, useState } from 'react';
-import { useStyles } from './style';
 import { Button, Card } from 'antd';
+import { classNames } from '@web-rc/biz-utils';
+import { useStyles } from './style';
 
 export type CaptchaData = {
   x: number;
@@ -119,7 +120,7 @@ const PointSelectionCaptcha = forwardRef((props: PointSelectionCaptchaProps, ref
   }), [width, paddingX, paddingY]);
 
   return wrapSSR(<>
-    <Card
+    {/* <Card
       title={title || '请完成安全验证'}
       extra={<>
         <Button onClick={handleRefresh}>刷新验证码</Button>
@@ -133,24 +134,14 @@ const PointSelectionCaptcha = forwardRef((props: PointSelectionCaptchaProps, ref
       styles={{
         body: rootStyles
       }}
-    >
-
-      <div style={{
-        position: 'relative',
-        display: 'flex',
-        width: '100%',
-        overflow: 'hidden',
-        borderRadius: token.borderRadius,
-        padding: 0,
-      }}>
+    > */}
+    <div className={classNames(`${prefixCls}-container`, hashId)}>
+      <div className={classNames(`${prefixCls}`, hashId)}>
         <img
-          style={{
-            width, height,
-            position: 'relative',
-            zIndex: 10,
-          }}
           src={captchaImage}
           onClick={handleClick}
+          style={{ width, height, }}
+          className={classNames(`${prefixCls}-img`, hashId)}
         />
         {/* <canvas
           ref={imgRef}
@@ -165,22 +156,8 @@ const PointSelectionCaptcha = forwardRef((props: PointSelectionCaptchaProps, ref
                 style={{
                   top: `${point.y - POINT_OFFSET}px`,
                   left: `${point.x - POINT_OFFSET}px`,
-
-                  color: token.colorBgElevated,
-                  backgroundColor: token.colorPrimary,
-                  borderColor: token.colorBgElevated,
-                  borderRadius: '50%',
-                  border: `2px solid ${token.colorBgElevated}`,
-
-                  position: 'absolute',
-                  zIndex: 20,
-                  width: '1.25rem',
-                  height: '1.25rem',
-                  cursor: 'default',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
                 }}
+                className={classNames(`${prefixCls}-point`, hashId)}
               >
                 {index + 1}
               </div>
@@ -188,45 +165,19 @@ const PointSelectionCaptcha = forwardRef((props: PointSelectionCaptchaProps, ref
           })}
         </div>
       </div>
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        marginTop: '.5rem',
-        padding: 0,
-      }}>
-        {hintImage
-          ? (<img
-            src={hintImage}
-            style={{
-              border: `1px solid ${token.colorBorder}`,
-              borderRadius: token.borderRadius,
-              height: '2.5rem',
-              width: '100%',
-            }}
-          />)
-          : (hintText
-            ? (<div
-              style={{
-                border: `1px solid ${token.colorBorder}`,
-                borderRadius: token.borderRadius,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                height: '2.5rem',
-                width: '100%',
-                objectFit: 'contain',
-              }}
-            >
-              {`请依次点击【${hintText}】`}
-            </div>)
-            : undefined
-          )
-        }
+      <div className={classNames(`${prefixCls}-hint`, hashId)}>
+        {hintImage ? (
+          <img src={hintImage}
+            className={classNames(`${prefixCls}-hint-img`, hashId)}
+          />
+        ) : (hintText ? (
+          <div className={classNames(`${prefixCls}-hint-text`, hashId)}>
+            {`请依次点击【${hintText}】`}
+          </div>
+        ) : undefined)}
       </div>
-
-    </Card>
-
+    </div>
+    {/* </Card> */}
   </>);
 });
 

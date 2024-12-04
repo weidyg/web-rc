@@ -99,7 +99,7 @@ const SliderRotateCaptcha = forwardRef((props: SliderRotateCaptchaProps, ref: Re
 
   return wrapSSR(<>
     <div className={classNames(prefixCls, hashId)}>
-      <div className={classNames(`${prefixCls}-img-wrapper`, hashId)}
+      <div className={classNames(`${prefixCls}-img`, hashId)}
         style={{
           height: `${imageSize}px`,
           width: `${imageSize}px`,
@@ -109,7 +109,7 @@ const SliderRotateCaptcha = forwardRef((props: SliderRotateCaptchaProps, ref: Re
           ref={imgRef}
           onClick={reset}
           style={{ transform: `rotateZ(${imgRotate}deg)`, }}
-          className={classNames(`${prefixCls}-img`, hashId)}
+          className={classNames(`${prefixCls}-img-bg`, hashId)}
         />
         <div className={classNames(`${prefixCls}-img-tip`, hashId)}>
           {(isPassed !== undefined || !dragging) && (

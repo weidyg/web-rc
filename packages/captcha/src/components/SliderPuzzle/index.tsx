@@ -104,7 +104,6 @@ const SliderPuzzleCaptcha = forwardRef((props: SliderPuzzleCaptchaProps, ref: Re
 
   return wrapSSR(<>
     <div
-      style={{ width: `${width}px` }}
       className={classNames(prefixCls, hashId)}
     >
       <div
@@ -112,7 +111,7 @@ const SliderPuzzleCaptcha = forwardRef((props: SliderPuzzleCaptchaProps, ref: Re
           height: `${height}px`,
           width: `${width}px`,
         }}
-        className={classNames(`${prefixCls}-img-wrapper`, hashId)}
+        className={classNames(`${prefixCls}-img`, hashId)}
       >
         <canvas ref={bgImgRef}
           className={classNames(`${prefixCls}-img-bg`, hashId)}

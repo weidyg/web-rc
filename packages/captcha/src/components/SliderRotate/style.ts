@@ -9,18 +9,17 @@ export const useStyles = generatStyles(({ token }) => {
       justifyContent: 'center',
       alignItems: 'center',
       ['&-img']: {
-        width: '100%',
+        position: 'relative',
+        cursor: 'pointer',
+        overflow: 'hidden',
         borderRadius: '50%',
-        transitionProperty: 'transform',
-        transitionTimingFunction: token.motionEaseInOut,
-
-        ['&-wrapper']: {
-          position: 'relative',
-          cursor: 'pointer',
-          overflow: 'hidden',
+        border: `1px solid ${token.colorBorder}`,
+        boxShadow: token.boxShadow,
+        ['&-bg']: {
+          width: '100%',
           borderRadius: '50%',
-          border: `1px solid ${token.colorBorder}`,
-          boxShadow: `0 0 transparent,0 0 transparent,0 4px 6px -1px rgba(0,0,0,.1),0 2px 4px -2px rgba(0,0,0,.1)`,
+          transitionProperty: 'transform',
+          transitionTimingFunction: token.motionEaseInOut,
         },
         ['&-tip']: {
           position: 'absolute',
