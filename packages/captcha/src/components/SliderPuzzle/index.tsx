@@ -6,13 +6,11 @@ import SliderButton, { MoveingData, SliderButtonCaptchaRef, SliderEvent } from '
 import { drawImage, toggleTransitionDuration } from '../../utils';
 
 export type SliderPuzzleCaptchaProps = {
-  defaultTip?: string;
-
-
+  tip?: string;
+  jpImg?: string;
   bgImg?: string;
   width?: number;
   height?: number;
-  jpImg?: string;
   onStart?: (event: SliderEvent) => void;
   onMove?: (event: SliderEvent) => void;
   onEnd?: (event: SliderEvent) => void;
@@ -21,15 +19,9 @@ export type SliderPuzzleCaptchaProps = {
 };
 export type SliderPuzzleCaptchaRef = {};
 const SliderPuzzleCaptcha = forwardRef((props: SliderPuzzleCaptchaProps, ref: Ref<SliderPuzzleCaptchaRef>) => {
-  const {
-    defaultTip,
-    bgImg,
-    jpImg,
+  const { tip, bgImg, jpImg, width: propWidth, height: propHeight,
     onStart, onMove, onEnd, onVerify, onRefresh, ...restProps } = props;
   const { prefixCls, wrapSSR, hashId, token } = useStyles();
-
-  const [width, setWidth] = useState(props.width);
-  const [height, setHeight] = useState(props.height);
 
   const bgImgRef = useRef<HTMLCanvasElement>(null);
   const jpImgRef = useRef<HTMLCanvasElement>(null);
@@ -38,6 +30,8 @@ const SliderPuzzleCaptcha = forwardRef((props: SliderPuzzleCaptchaProps, ref: Re
   const [endTime, setEndTime] = useState(0);
   const [isPassed, setIsPassed] = useState<boolean | undefined>();
   const [dragging, setDragging] = useState<boolean>(false);
+  const [width, setWidth] = useState(propWidth);
+  const [height, setHeight] = useState(propHeight);
 
   useEffect(() => {
     handleRefresh();
@@ -61,19 +55,8 @@ const SliderPuzzleCaptcha = forwardRef((props: SliderPuzzleCaptchaProps, ref: Re
   }
   async function handleVerify() {
     const isPassed = await onVerify();
-    if (isPassed) {
-      setIsPassed(true);
-    } else {
-      setIsPassed(false);
-      handleReset();
-    }
-    setDragging(false);
+    setIsPassed(isPassed);
     return isPassed;
-  }
-
-  async function handleRefresh() {
-    slideBarRef?.current?.reset();
-    await onRefresh?.();
   }
 
   function handleReset() {
@@ -86,11 +69,16 @@ const SliderPuzzleCaptcha = forwardRef((props: SliderPuzzleCaptchaProps, ref: Re
     }, 0.3 * 1000);
   }
 
-  useEffect(() => {
-    init();
-  }, [props.width, props.height, bgImg, jpImg]);
+  async function handleRefresh() {
+    slideBarRef?.current?.reset();
+    await onRefresh?.();
+  }
 
-  const init = async () => {
+  useEffect(() => {
+    drawBgAndJpImage();
+  }, [propWidth, propHeight, bgImg, jpImg]);
+
+  const drawBgAndJpImage = async () => {
     const bgPix = await drawImage(bgImgRef.current, bgImg, { width, height });
     await drawImage(jpImgRef.current, jpImg, {
       width: (jpEl) => jpEl.naturalWidth * ((bgPix?.width ?? 0) / (bgPix?.naturalWidth ?? 1)),
@@ -132,7 +120,7 @@ const SliderPuzzleCaptcha = forwardRef((props: SliderPuzzleCaptchaProps, ref: Re
                   ? `验证成功，耗时${((endTime - startTime) / 1000).toFixed(1)}秒`
                   : `验证失败`
               ) : (
-                defaultTip || '点击图片可刷新'
+                tip || '点击图片可刷新'
               )}
             </div>
           )}

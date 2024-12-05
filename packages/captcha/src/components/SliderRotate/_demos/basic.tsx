@@ -82,6 +82,8 @@ export default () => {
     <>
       <SliderRotateCaptcha
         src={base64Image}
+        maxDegree={maxDegree}
+        minDegree={minDegree}
         // onSuccess={() => {
         //   console.log('success');
         // }}

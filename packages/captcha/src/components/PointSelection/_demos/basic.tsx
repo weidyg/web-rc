@@ -12,31 +12,13 @@ const DEFAULT_HINT_IMAGE = 'https://unpkg.com/@vbenjs/static-source@0.1.7/source
 
 export default () => {
   const [selectedPoints, setSelectedPoints] = useState<CaptchaPoint[]>([]);
-  const [params, setParams] = useState<any>({
-    captchaImage: '',
-    captchaImageUrl: DEFAULT_CAPTCHA_IMAGE,
-    height: undefined,
-    width: undefined,
-    hintImage: '',
-    hintImageUrl: DEFAULT_HINT_IMAGE,
-    hintText: '唇，燕，碴，找',
-    paddingX: undefined,
-    paddingY: undefined,
-    showConfirm: true,
-    showHintImage: false,
-    title: '',
-  });
+  const [width, setWidth] = useState<number | undefined>();
+  const [height, setHeight] = useState<number | undefined>();
+  const [bgImgUrl, setBgImgUrl] = useState(DEFAULT_CAPTCHA_IMAGE);
+  const [tipImg, setTipImg] = useState(DEFAULT_HINT_IMAGE);
+  const [tipText, setTipText] = useState('唇，燕，碴，找');
+  const [tipType, setTipType] = useState<'text' | 'image'>('text');
 
-  const handleConfirm = (points: CaptchaPoint[], clear: () => void) => {
-    message.success({
-      content: `captcha points: ${JSON.stringify(points)}`,
-    });
-    clear();
-    setSelectedPoints([]);
-  };
-  const handleRefresh = () => {
-    setSelectedPoints([]);
-  };
   const handleClick = (point: CaptchaPoint) => {
     setSelectedPoints([...selectedPoints, point]);
   };
@@ -45,87 +27,56 @@ export default () => {
     <>
       <div>
         <Input
-          value={params.title}
-          onChange={(e) => setParams({ ...params, title: e.target.value })}
-          placeholder='验证码标题文案'
-        />
-
-        <Input
-          value={params.captchaImageUrl}
-          onChange={(e) => setParams({ ...params, captchaImageUrl: e.target.value })}
+          value={bgImgUrl}
+          onChange={(e) => setBgImgUrl(e.target.value)}
           placeholder='验证码图片（支持img标签src属性值）'
         />
         <div>
           <Switch
-            checked={params.showHintImage}
+            checked={tipType == 'image'}
             checkedChildren='提示图片'
             unCheckedChildren='提示文本'
-            onChange={(checked) => setParams({ ...params, showHintImage: checked })}
+            onChange={(checked) => setTipType(checked ? 'image' : 'text')}
           />
-          {params?.showHintImage ? <>
+          {tipType == 'image' ? <>
             <Input
-              value={params.hintImageUrl}
-              onChange={(e) => setParams({ ...params, hintImageUrl: e.target.value })}
+              value={tipImg}
+              onChange={(e) => setTipImg(e.target.value)}
               placeholder='提示图片（支持img标签src属性值）'
             />
           </> : <>
             <Input
-              value={params.hintText}
-              onChange={(e) => setParams({ ...params, hintText: e.target.value })}
+              value={tipText}
+              onChange={(e) => setTipText(e.target.value)}
               placeholder='提示文本'
             />
           </>}
-          <Switch
-            checked={params.showConfirm}
-            checkedChildren='展示确认'
-            unCheckedChildren='隐藏确认'
-            onChange={(checked) => setParams({ ...params, showConfirm: checked })}
-          />
         </div>
         <div>
           <InputNumber<number>
             min={1} step={1} precision={0}
             placeholder='验证码图片宽度 默认300px'
-            value={params.width}
-            onChange={(value) => setParams({ ...params, width: value })}
+            value={width}
+            onChange={(value) => setWidth(value ?? undefined)}
             addonAfter={'px'}
           />
           <InputNumber<number>
             min={1} step={1} precision={0}
             placeholder='验证码图片高度 默认220px'
-            value={params.height}
-            onChange={(value) => setParams({ ...params, height: value })}
-            addonAfter={'px'}
-          />
-          <InputNumber<number>
-            min={1} step={1} precision={0}
-            placeholder='水平内边距 默认12px'
-            value={params.paddingX}
-            onChange={(value) => setParams({ ...params, paddingX: value })}
-            addonAfter={'px'}
-          />
-          <InputNumber<number>
-            min={1} step={1} precision={0}
-            placeholder='垂直内边距 默认16px'
-            value={params.paddingY}
-            onChange={(value) => setParams({ ...params, paddingY: value })}
+            value={height}
+            onChange={(value) => setHeight(value ?? undefined)}
             addonAfter={'px'}
           />
         </div>
       </div>
+
       <PointSelectionCaptcha
-        captchaImage={params.captchaImageUrl || params.captchaImage}
-        height={params.height || 220}
-        width={params.width || 400}
-        hintImage={params.showHintImage ? params.hintImageUrl || params.hintImage : ''}
-        hintText={params.hintText}
-        paddingX={params.paddingX}
-        paddingY={params.paddingY}
-        title={params.title || '请完成安全验证'}
-        showConfirm={params.showConfirm}
+        bgImg={bgImgUrl}
+        height={height || 220}
+        width={width || 400}
+        tip={tipType == 'image' ? tipImg : tipText}
+        tipType={tipType}
         onClick={handleClick}
-        onConfirm={handleConfirm}
-        onRefresh={handleRefresh}
       />
 
       {selectedPoints?.map((point, index) => {

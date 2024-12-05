@@ -1,68 +1,49 @@
-import { forwardRef, Ref, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
-import { Button, Card } from 'antd';
+import { forwardRef, Ref, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { classNames } from '@web-rc/biz-utils';
 import { useStyles } from './style';
-import { drawImage } from '../../utils';
+import { drawImage, getElementPosition } from '../../utils';
 
-export type CaptchaData = {
+const POINT_OFFSET = 11;
+export type CaptchaPoint = {
+  i: number;
   x: number;
   y: number;
   t: number;
 }
-export type CaptchaPoint = CaptchaData & {
-  i: number;
-}
-export type PointSelectionCaptchaCardProps = {
-  captchaImage: string;
+export type PointSelectionCaptchaProps = {
+  tip: string;
+  tipType: 'text' | 'image';
+  bgImg?: string;
   height?: number;
   width?: number;
-  paddingX?: number | string;
-  paddingY?: number | string;
-  title?: string;
-  onClick?: (e: React.MouseEvent) => void;
+  onClick?: (data: CaptchaPoint) => void;
 };
 
-export type PointSelectionCaptchaProps = Omit<PointSelectionCaptchaCardProps, 'onClick'> & {
-  showConfirm?: boolean;
-  hintImage?: string;
-  hintText?: string;
-  onClick?: (point: CaptchaPoint) => void;
-  onConfirm?: (points: CaptchaPoint[], clear: () => void) => void;
-  onRefresh?: () => void;
+export type PointSelectionCaptchaRef = {
+  clear: () => void;
+  getPoints: () => CaptchaPoint[]
 };
-export type PointSelectionCaptchaRef = {};
+
 const PointSelectionCaptcha = forwardRef((props: PointSelectionCaptchaProps, ref: Ref<PointSelectionCaptchaRef>) => {
-  const { captchaImage,
-    height = 220, width = 300,
-    paddingX = 12, paddingY = 16,
-    onClick, onRefresh, onConfirm,
-    hintImage, hintText, showConfirm,
-    title,
-    ...restProps } = props;
+  const { bgImg, tip, tipType, width, height, onClick, ...restProps } = props;
 
   const { prefixCls, wrapSSR, hashId, token } = useStyles();
-  const imgRef = useRef<HTMLCanvasElement>(null);
+  const imgBgRef = useRef<HTMLCanvasElement>(null);
+  const [points, setPoints] = useState<CaptchaPoint[]>([]);
 
   useEffect(() => {
-    drawImage(imgRef.current, captchaImage, { width, height });
-  }, [captchaImage]);
+    drawImage(imgBgRef.current, bgImg, { width, height });
+  }, [bgImg]);
 
-  useImperativeHandle(ref, () => ({}));
+  // useEffect(() => {
+  //   drawImage(imgTipRef.current, bgImg, { width, height });
+  // }, [bgImg]);
 
-  const POINT_OFFSET = 11;
-  const [points, setPoints] = useState<CaptchaPoint[]>([]);
-  function getElementPosition(element: HTMLElement) {
-    const rect = element.getBoundingClientRect();
-    return {
-      x: rect.left + window.scrollX,
-      y: rect.top + window.scrollY,
-    };
-  }
 
   function handleClick(e: React.MouseEvent) {
     try {
       const dom = e.currentTarget as HTMLElement;
-      if (!dom) throw new Error('Element not found');
+      if (!dom) { throw new Error('Element not found'); }
       const { x: domX, y: domY } = getElementPosition(dom);
       const mouseX = e.clientX + window.scrollX;
       const mouseY = e.clientY + window.scrollY;
@@ -89,7 +70,7 @@ const PointSelectionCaptcha = forwardRef((props: PointSelectionCaptchaProps, ref
     }
   }
 
-  function clear() {
+  const clear = () => {
     try {
       setPoints([]);
     } catch (error) {
@@ -97,64 +78,20 @@ const PointSelectionCaptcha = forwardRef((props: PointSelectionCaptchaProps, ref
     }
   }
 
-  function handleRefresh() {
-    try {
-      clear();
-      onRefresh?.();
-    } catch (error) {
-      console.error('Error in handleRefresh:', error);
-    }
+  const getPoints = () => {
+    return points;
   }
 
-  function handleConfirm() {
-    if (!showConfirm) return;
-    try {
-      onConfirm?.(points, clear);
-    } catch (error) {
-      console.error('Error in handleConfirm:', error);
-    }
-  }
-
-
-  const parseValue = (value: number | string) => {
-    if (typeof value === 'number') { return value; }
-    const parsed = Number.parseFloat(value);
-    return Number.isNaN(parsed) ? 0 : parsed;
-  };
-
-  const rootStyles = useMemo(() => ({
-    padding: `${parseValue(paddingY)}px ${parseValue(paddingX)}px`,
-    width: `${parseValue(width) + parseValue(paddingX) * 2}px`,
-  }), [width, paddingX, paddingY]);
+  useImperativeHandle(ref, () => ({
+    clear, getPoints
+  }));
 
   return wrapSSR(<>
-    {/* <Card
-      title={title || '请完成安全验证'}
-      extra={<>
-        <Button onClick={handleRefresh}>刷新验证码</Button>
-        {showConfirm &&
-          <Button onClick={handleConfirm}>确认选择</Button>
-        }
-      </>}
-      style={{
-        width: 'fit-content'
-      }}
-      styles={{
-        body: rootStyles
-      }}
-    > */}
     <div className={classNames(`${prefixCls}-container`, hashId)}>
       <div className={classNames(`${prefixCls}`, hashId)}>
-        {/* <img
-          src={captchaImage}
-          onClick={handleClick}
-          style={{ width, height, }}
-          className={classNames(`${prefixCls}-img`, hashId)}
-        /> */}
         <canvas
-          ref={imgRef}
+          ref={imgBgRef}
           onClick={handleClick}
-          style={{ width, height, }}
           className={classNames(`${prefixCls}-img`, hashId)}
         />
         <div style={{ position: 'absolute', inset: 0 }}>
@@ -173,19 +110,18 @@ const PointSelectionCaptcha = forwardRef((props: PointSelectionCaptchaProps, ref
           })}
         </div>
       </div>
-      <div className={classNames(`${prefixCls}-hint`, hashId)}>
-        {hintImage ? (
-          <img src={hintImage}
-            className={classNames(`${prefixCls}-hint-img`, hashId)}
+      <div className={classNames(`${prefixCls}-tip`, hashId)}>
+        {tipType === 'image' ? (
+          <img src={tip}
+            className={classNames(`${prefixCls}-tip-img`, hashId)}
           />
-        ) : (hintText ? (
-          <div className={classNames(`${prefixCls}-hint-text`, hashId)}>
-            {`请依次点击【${hintText}】`}
+        ) : (tipType === 'text' ? (
+          <div className={classNames(`${prefixCls}-tip-text`, hashId)}>
+            {`请依次点击【${tip}】`}
           </div>
         ) : undefined)}
       </div>
     </div>
-    {/* </Card> */}
   </>);
 });
 

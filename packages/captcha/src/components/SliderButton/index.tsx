@@ -26,7 +26,7 @@ export type SliderButtonCaptchaProps = {
     content?: CSSProperties;
   }
   successText?: string;
-  text?: string;
+  texts?: { success: string; default: string; }
   onlySliderButton?: boolean;
   failedResetTimeout?: number;
   onStart?: (event: SliderEvent) => void;
@@ -39,8 +39,7 @@ export type SliderButtonCaptchaRef = {
   reset: () => void
 };
 const SliderButtonCaptcha = forwardRef((props: SliderButtonCaptchaProps, ref: Ref<SliderButtonCaptchaRef>) => {
-  const { className, style, styles, onlySliderButton = true,
-    successText = '验证通过', text = '请按住滑块拖动',
+  const { className, style, styles, onlySliderButton = true, texts,
     onStart, onMove, onEnd, onVerify, onReset,
     failedResetTimeout = 300, ...restProps } = props;
 
@@ -106,27 +105,14 @@ const SliderButtonCaptcha = forwardRef((props: SliderButtonCaptchaProps, ref: Re
       }
       if (!isPassed) {
         setTimeout(() => {
-          handleRefresh();
+          reset();
         }, failedResetTimeout);
       }
       setIsPassed(isPassed);
     }
   }
 
-  function handleRefresh() {
-    reset();
-    // setStatus('loading');
-    // try {
-    //   const data = await onGetData();
-    //   setImages(data);
-    //   setStatus('loaded');
-    // } catch (error) {
-    //   setStatus('loadfail');
-    //   console.log(error);
-    // }
-  }
-
-  function reset() {
+  const reset = () => {
     onReset?.();
     setStartDistance(0);
     setIsMoving(undefined);
@@ -163,11 +149,10 @@ const SliderButtonCaptcha = forwardRef((props: SliderButtonCaptchaProps, ref: Re
       >
         {!isMoving && !verifying && isPassed === undefined &&
           <div className={classNames(`${prefixCls}-content-text`, hashId)}>
-            {isPassed ? successText : text}
+            {isPassed ? (texts?.success || '验证通过') : (texts?.default || '请按住滑块拖动')}
           </div>
         }
       </div>
-
       <div
         ref={barRef}
         style={{

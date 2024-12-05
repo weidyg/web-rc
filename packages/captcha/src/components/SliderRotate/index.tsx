@@ -5,6 +5,7 @@ import { useStyles } from './style';
 import SliderButton, { MoveingData, SliderButtonCaptchaRef, SliderEvent } from '../SliderButton';
 import { drawImage, toggleTransitionDuration } from '../../utils';
 
+const startRotate = 0;
 export type SliderRotateCaptchaProps = {
   maxDegree?: number;
   minDegree?: number;
@@ -22,13 +23,29 @@ export type SliderRotateCaptchaProps = {
 export type SliderRotateCaptchaRef = {};
 const SliderRotateCaptcha = forwardRef((props: SliderRotateCaptchaProps, ref: Ref<SliderRotateCaptchaRef>) => {
   const {
-    // diffDegree = 20,
     maxDegree = 300, minDegree = 120,
     src, imageSize = 260, imageWrapperStyle, defaultTip,
     onStart, onMove, onEnd, onVerify, onRefresh, ...restProps } = props;
   const { prefixCls, wrapSSR, hashId, token } = useStyles();
 
-  const getFactorRef = useMemo(() => {
+  const imgRef = useRef<HTMLCanvasElement>(null);
+  const slideBarRef = useRef<SliderButtonCaptchaRef>(null);
+  const [startTime, setStartTime] = useState(0);
+  const [endTime, setEndTime] = useState(0);
+  const [isPassed, setIsPassed] = useState<boolean | undefined>();
+  const [dragging, setDragging] = useState<boolean>(false);
+  const [imgRotate, setImgRotate] = useState<number>(0);
+  const [denominator, setDenominator] = useState<number>(1);
+
+  useEffect(() => {
+    handleRefresh();
+  }, []);
+
+  useEffect(() => {
+    drawBgImage();
+  }, [src]);
+
+  const getDegreeFactor = useMemo(() => {
     if (minDegree > maxDegree) {
       console.warn('minDegree should not be greater than maxDegree');
     }
@@ -38,19 +55,6 @@ const SliderRotateCaptcha = forwardRef((props: SliderRotateCaptchaProps, ref: Re
     return 1;
   }, [minDegree, maxDegree]);
 
-  const imgRef = useRef<HTMLCanvasElement>(null);
-  const slideBarRef = useRef<SliderButtonCaptchaRef>(null);
-  const [startTime, setStartTime] = useState(0);
-  const [endTime, setEndTime] = useState(0);
-  const [isPassed, setIsPassed] = useState<boolean | undefined>();
-  const [dragging, setDragging] = useState<boolean>(false);
-  const [imgRotate, setImgRotate] = useState<number>(0);
-
-  useEffect(() => {
-    reset();
-  }, []);
-
-  const randomRotate = 0;
   function handleStart(ev: SliderEvent) {
     setIsPassed(undefined);
     setDragging(true);
@@ -59,10 +63,9 @@ const SliderRotateCaptcha = forwardRef((props: SliderRotateCaptchaProps, ref: Re
   }
   function handleDragBarMove(ev: SliderEvent, data: MoveingData) {
     const { moveX } = data;
-    const denominator = imageSize;
     if (denominator === 0) { return; }
-    const currentRotate = Math.ceil((moveX / denominator) * 1.5 * maxDegree * getFactorRef);
-    setImgRotate(randomRotate - currentRotate);
+    const currentRotate = Math.ceil((moveX / denominator) * 1.5 * maxDegree * getDegreeFactor);
+    setImgRotate(startRotate - currentRotate);
     onMove?.(ev, { currentRotate });
   }
   function handleDragEnd(ev: SliderEvent) {
@@ -71,29 +74,28 @@ const SliderRotateCaptcha = forwardRef((props: SliderRotateCaptchaProps, ref: Re
   }
   async function handleVerify() {
     const isPassed = await onVerify();
-    if (isPassed) {
-      setIsPassed(true);
-    } else {
-      setIsPassed(false);
-      setImgRotate(randomRotate);
-      toggleTransitionDuration(0.3, imgRef.current);
-      setTimeout(() => {
-        setIsPassed(undefined);
-      }, 0.3 * 1000);
-    }
-    setDragging(false);
+    setIsPassed(isPassed);
     return isPassed;
   }
-
-  async function reset() {
-    setIsPassed(undefined);
+  function handleReset() {
+    setDragging(false);
+    setStartTime(0);
+    setEndTime(0);
+    setImgRotate(startRotate);
+    toggleTransitionDuration(0.3, imgRef.current);
+    setTimeout(() => {
+      setIsPassed(undefined);
+    }, 0.3 * 1000);
+  }
+  async function handleRefresh() {
     slideBarRef?.current?.reset();
     await onRefresh?.();
   }
 
-  useEffect(() => {
-    drawImage(imgRef.current, src, { width: imageSize, height: imageSize });
-  }, [src]);
+  const drawBgImage = async () => {
+    const { width } = await drawImage(imgRef.current, src, { width: imageSize, height: imageSize });
+    setDenominator(Math.max(width ?? 0, 1));
+  }
 
   useImperativeHandle(ref, () => ({}));
 
@@ -107,7 +109,7 @@ const SliderRotateCaptcha = forwardRef((props: SliderRotateCaptchaProps, ref: Re
         }}>
         <canvas
           ref={imgRef}
-          onClick={reset}
+          onClick={handleRefresh}
           style={{ transform: `rotateZ(${imgRotate}deg)`, }}
           className={classNames(`${prefixCls}-img-bg`, hashId)}
         />
@@ -137,6 +139,7 @@ const SliderRotateCaptcha = forwardRef((props: SliderRotateCaptchaProps, ref: Re
         onMove={handleDragBarMove}
         onEnd={handleDragEnd}
         onVerify={handleVerify}
+        onReset={handleReset}
         style={{ marginTop: token.margin }}
       />
     </div>

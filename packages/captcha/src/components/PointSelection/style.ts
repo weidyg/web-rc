@@ -32,26 +32,22 @@ export const useStyles = generatStyles(({ token }) => {
         alignItems: 'center',
         justifyContent: 'center',
       },
-      [`&-hint`]: {
+      [`&-tip`]: {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
         marginTop: '.5rem',
         padding: 0,
-        [`&-img`]: {
+        [`&-img,&-text`]: {
           border: `1px solid ${token.colorBorder}`,
           borderRadius: token.borderRadius,
-          height: '2.5rem',
+          height: '40px',
           width: '100%',
         },
         [`&-text`]: {
-          border: `1px solid ${token.colorBorder}`,
-          borderRadius: token.borderRadius,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          height: '2.5rem',
-          width: '100%',
           objectFit: 'contain',
         }
       }

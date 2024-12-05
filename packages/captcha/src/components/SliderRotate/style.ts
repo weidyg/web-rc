@@ -8,6 +8,7 @@ export const useStyles = generatStyles(({ token }) => {
       flexDirection: 'column',
       justifyContent: 'center',
       alignItems: 'center',
+      width: 'fit-content',
       ['&-img']: {
         position: 'relative',
         cursor: 'pointer',
@@ -23,15 +24,15 @@ export const useStyles = generatStyles(({ token }) => {
         },
         ['&-tip']: {
           position: 'absolute',
-          bottom: '.75rem',
+          bottom: '12px',
           left: 0,
           zIndex: 10,
           display: 'block',
-          height: '1.75rem',
+          height: '28px',
           width: '100%',
           textAlign: 'center',
-          fontSize: '0.75rem',
           lineHeight: '30px',
+          fontSize: token.fontSizeSM,
           color: token.colorWhite
         },
       }
