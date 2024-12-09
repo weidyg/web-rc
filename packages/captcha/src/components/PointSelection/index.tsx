@@ -35,11 +35,6 @@ const PointSelectionCaptcha = forwardRef((props: PointSelectionCaptchaProps, ref
     drawImage(imgBgRef.current, bgImg, { width, height });
   }, [bgImg]);
 
-  // useEffect(() => {
-  //   drawImage(imgTipRef.current, bgImg, { width, height });
-  // }, [bgImg]);
-
-
   function handleClick(e: React.MouseEvent) {
     try {
       const dom = e.currentTarget as HTMLElement;

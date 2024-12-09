@@ -1,3 +1,23 @@
+
+export const getFileDataURL = (file: Blob | string): Promise<string | ArrayBuffer | null> => {
+  return new Promise<string | ArrayBuffer | null>((resolve, reject) => {
+    if (typeof file == 'string') {
+      resolve(file);
+    } else {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        const data = reader.result;
+        resolve(data);
+      };
+      reader.onerror = () => {
+        const error = reader.error;
+        reject(error);
+      };
+    }
+  });
+};
+
 export const cropImage = (
   file: Blob,
   pixelCrop: {
@@ -43,27 +63,23 @@ export const cropImage = (
 };
 
 export const loadImage = (file: Blob | string): Promise<HTMLImageElement> => {
-  return new Promise<HTMLImageElement>((resolve) => {
-    const loadImgByUrl = (url: string) => {
-      const img = document.createElement('img');
-      img.src = url;
-      img.onload = () => {
-        resolve(img);
-      };
-    };
-    if (typeof file == 'string') {
-      loadImgByUrl(file);
-    } else {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => {
-        loadImgByUrl(reader.result as string);
-      };
+  return new Promise<HTMLImageElement>(async (resolve, reject) => {
+    try {
+      const url:string = await getFileDataURL(file) as string;
+      if (url) {
+        const img = document.createElement('img');
+        img.src = url;
+        img.onload = () => {
+          resolve(img);
+        };
+      }
+    } catch (error) {
+      reject(error);
     }
   });
 };
 
-export const drawImage = async (
+export const adjustImage = async (
   file: File,
   pixel?: {
     width?: number;
@@ -77,10 +93,8 @@ export const drawImage = async (
     return Promise.resolve(file);
   }
   const img = await loadImage(file);
-
   const targetWidth = width || (aspectRatio && height ? img.width * (height / img.height) : img.width);
   const targetHeight = height || (aspectRatio && width ? img.height * (width / img.width) : img.height);
-
   const { name: fileName, type: fileType } = file;
   return new Promise<File>((resolve) => {
     const canvas = document.createElement('canvas');
@@ -95,15 +109,6 @@ export const drawImage = async (
     // ctx.fillText(text, 20, 20);
 
     canvas.toBlob((blob) => resolve(new File([blob!], fileName, { type: fileType })), fileType, quality);
-  });
-};
-
-export const getBase64Image = (file: File): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result as string);
-    reader.onerror = (error) => reject(error);
   });
 };
 

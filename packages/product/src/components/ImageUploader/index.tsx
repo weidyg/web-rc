@@ -1,6 +1,6 @@
 import React, { forwardRef, Ref, useImperativeHandle } from 'react';
 import { Button, Checkbox, Form, InputNumber, Select, UploadFile, UploadProps } from 'antd';
-import { classNames, drawImage, previewImage, useMergedState } from '@web-rc/biz-utils';
+import { classNames, adjustImage, previewImage, useMergedState } from '@web-rc/biz-utils';
 import { UploadResponse, ImageUploaderProps } from './typing';
 import { useStyles } from './style';
 import InternalUploadBox from './UploadBox';
@@ -141,7 +141,7 @@ const InternalUploader = forwardRef(
               if (config.picWidth) {
                 const width = config.picWidthOption == -1 ? config.picWidthValue : config.picWidthOption;
                 if (width > 0) {
-                  return drawImage(file, { width }, true);
+                  return adjustImage(file, { width }, true);
                 }
               }
               return file;

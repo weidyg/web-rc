@@ -1,4 +1,5 @@
 export * from './images';
+export * from './request';
 import classNames from 'classnames';
 import useMergedState from './hooks/useMergedState';
 import useForceUpdate from './hooks/useForceUpdate';
