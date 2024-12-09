@@ -23,6 +23,19 @@ export const useStyles = generatStyles(({ token }) => {
           transitionProperty: 'left',
           transitionTimingFunction: token.motionEaseInOut,
         },
+        ['&-tip']: {
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          zIndex: 10,
+          display: 'block',
+          width: '100%',
+          textAlign: 'center',
+          height: token.controlHeight,
+          lineHeight: `${token.controlHeight}px`,
+          fontSize: token.fontSizeSM,
+          color: token.colorWhite
+        },
       },
     },
   };

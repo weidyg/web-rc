@@ -29,17 +29,21 @@ const SliderPuzzleCaptcha = forwardRef((props: SliderPuzzleCaptchaProps, ref: Re
   const [startTime, setStartTime] = useState(0);
   const [endTime, setEndTime] = useState(0);
   const [isPassed, setIsPassed] = useState<boolean | undefined>();
-  const [dragging, setDragging] = useState<boolean>(false);
+  // const [dragging, setDragging] = useState<boolean>(false);
   const [width, setWidth] = useState(propWidth);
   const [height, setHeight] = useState(propHeight);
 
   useEffect(() => {
     handleRefresh();
   }, []);
+  
+  useEffect(() => {
+    drawBgAndJpImage();
+  }, [propWidth, propHeight, bgImg, jpImg]);
 
   function handleStart(ev: SliderEvent) {
     setIsPassed(undefined);
-    setDragging(true);
+    // setDragging(true);
     setStartTime(Date.now());
     onStart?.(ev);
   }
@@ -54,9 +58,15 @@ const SliderPuzzleCaptcha = forwardRef((props: SliderPuzzleCaptchaProps, ref: Re
     onEnd?.(ev);
   }
   async function handleVerify() {
-    const isPassed = await onVerify();
-    setIsPassed(isPassed);
-    return isPassed;
+    let _isPassed = false;
+    try {
+      _isPassed = await onVerify();
+    } catch (error) {
+      throw error;
+    } finally {
+      setIsPassed(_isPassed);
+      return _isPassed;
+    }
   }
 
   function handleReset() {
@@ -66,6 +76,8 @@ const SliderPuzzleCaptcha = forwardRef((props: SliderPuzzleCaptchaProps, ref: Re
     toggleTransitionDuration(0.3, jpImgEl);
     setTimeout(() => {
       setIsPassed(undefined);
+      setStartTime(0);
+      setEndTime(0);
     }, 0.3 * 1000);
   }
 
@@ -73,10 +85,6 @@ const SliderPuzzleCaptcha = forwardRef((props: SliderPuzzleCaptchaProps, ref: Re
     slideBarRef?.current?.reset();
     await onRefresh?.();
   }
-
-  useEffect(() => {
-    drawBgAndJpImage();
-  }, [propWidth, propHeight, bgImg, jpImg]);
 
   const drawBgAndJpImage = async () => {
     const { canvas, image } = await drawImage(bgImgRef.current, bgImg, { width, height });
@@ -108,20 +116,14 @@ const SliderPuzzleCaptcha = forwardRef((props: SliderPuzzleCaptchaProps, ref: Re
           className={classNames(`${prefixCls}-img-jp`, hashId)}
         />
         <div className={classNames(`${prefixCls}-img-tip`, hashId)}>
-          {(isPassed !== undefined || !dragging) && (
+          {(isPassed !== undefined) && (
             <div style={{
-              background: isPassed !== undefined
-                ? setAlpha(isPassed ? token.colorSuccess : token.colorError, 0.45)
-                : token.colorBgMask,
-            }}
-            >
-              {isPassed !== undefined ? (
-                isPassed
-                  ? `验证成功，耗时${((endTime - startTime) / 1000).toFixed(1)}秒`
-                  : `验证失败`
-              ) : (
-                tip || '点击图片可刷新'
-              )}
+              background: setAlpha(isPassed ? token.colorSuccess : token.colorError, 0.45)
+            }}>
+              {isPassed
+                ? `验证成功，耗时${((endTime - startTime) / 1000).toFixed(1)}秒`
+                : `验证失败`
+              }
             </div>
           )}
         </div>

@@ -39,7 +39,7 @@ export const useStyles = generatStyles(({ token }, props: { borderRadius?: strin
           animationIterationCount: 'infinite',
           animationDirection: 'normal',
           animationPlayState: 'running',
-          background: 'radial-gradient(circle at center, #fffc, #f000) -200% 50% / 200% 100% no-repeat, #000',
+          background: `radial-gradient(circle at center, #fffc, #f000) -200% 50% / 200% 100% no-repeat, ${token.colorText}`,
           WebkitBackgroundClip: 'text',
           backgroundClip: 'text',
           color: 'transparent',

@@ -12,7 +12,7 @@ export default () => {
         bgImg='https://static-captcha.aliyuncs.com/qst/PUZZLE/online/493/b729d19d-fbaa-412a-8a7f-f779a4cd6f51/back.png'
         jpImg='https://static-captcha.aliyuncs.com/qst/PUZZLE/online/493/b729d19d-fbaa-412a-8a7f-f779a4cd6f51/shadow.png'
         onVerify={function (): boolean | Promise<boolean> {
-          throw new Error('Function not implemented.');
+          return false;
         }}
       />
     </>

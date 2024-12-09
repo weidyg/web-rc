@@ -17,6 +17,8 @@ export type PointSelectionCaptchaProps = {
   height?: number;
   width?: number;
   onClick?: (data: CaptchaPoint) => void;
+  onVerify: () => boolean | Promise<boolean>;
+  onRefresh?: () => void | Promise<void>;
 };
 
 export type PointSelectionCaptchaRef = {
@@ -25,11 +27,17 @@ export type PointSelectionCaptchaRef = {
 };
 
 const PointSelectionCaptcha = forwardRef((props: PointSelectionCaptchaProps, ref: Ref<PointSelectionCaptchaRef>) => {
-  const { bgImg, tip, tipType, width, height, onClick, ...restProps } = props;
+  const { bgImg, tip, tipType, width, height,
+    onClick, onVerify, onRefresh,
+    ...restProps } = props;
 
   const { prefixCls, wrapSSR, hashId, token } = useStyles();
   const imgBgRef = useRef<HTMLCanvasElement>(null);
   const [points, setPoints] = useState<CaptchaPoint[]>([]);
+
+  useEffect(() => {
+    handleRefresh();
+  }, []);
 
   useEffect(() => {
     drawImage(imgBgRef.current, bgImg, { width, height });
@@ -65,20 +73,18 @@ const PointSelectionCaptcha = forwardRef((props: PointSelectionCaptchaProps, ref
     }
   }
 
-  const clear = () => {
-    try {
-      setPoints([]);
-    } catch (error) {
-      console.error('Error in clear:', error);
-    }
+  async function handleRefresh() {
+    handleReset();
+    await onRefresh?.();
   }
 
-  const getPoints = () => {
-    return points;
+  function handleReset() {
+    setPoints([]);
   }
 
   useImperativeHandle(ref, () => ({
-    clear, getPoints
+    clear: () => { handleReset(); },
+    getPoints: () => { return points; },
   }));
 
   return wrapSSR(<>
@@ -119,7 +125,5 @@ const PointSelectionCaptcha = forwardRef((props: PointSelectionCaptchaProps, ref
     </div>
   </>);
 });
-
-
 
 export default PointSelectionCaptcha;

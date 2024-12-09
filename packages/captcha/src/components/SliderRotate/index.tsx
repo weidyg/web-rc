@@ -77,6 +77,12 @@ const SliderRotateCaptcha = forwardRef((props: SliderRotateCaptchaProps, ref: Re
     setIsPassed(isPassed);
     return isPassed;
   }
+
+  async function handleRefresh() {
+    slideBarRef?.current?.reset();
+    await onRefresh?.();
+  }
+
   function handleReset() {
     setDragging(false);
     setStartTime(0);
@@ -87,11 +93,7 @@ const SliderRotateCaptcha = forwardRef((props: SliderRotateCaptchaProps, ref: Re
       setIsPassed(undefined);
     }, 0.3 * 1000);
   }
-  async function handleRefresh() {
-    slideBarRef?.current?.reset();
-    await onRefresh?.();
-  }
-
+  
   const drawBgImage = async () => {
     const { canvas } = await drawImage(imgRef.current, src, { width: imageSize, height: imageSize });
     setDenominator(Math.max(canvas?.width ?? 0, 1));
