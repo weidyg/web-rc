@@ -79,13 +79,13 @@ const SliderPuzzleCaptcha = forwardRef((props: SliderPuzzleCaptchaProps, ref: Re
   }, [propWidth, propHeight, bgImg, jpImg]);
 
   const drawBgAndJpImage = async () => {
-    const bgPix = await drawImage(bgImgRef.current, bgImg, { width, height });
+    const { canvas, image } = await drawImage(bgImgRef.current, bgImg, { width, height });
     await drawImage(jpImgRef.current, jpImg, {
-      width: (jpEl) => jpEl.naturalWidth * ((bgPix?.width ?? 0) / (bgPix?.naturalWidth ?? 1)),
-      height: (jpEl) => jpEl.naturalHeight * ((bgPix?.height ?? 0) / (bgPix?.naturalHeight ?? 1)),
+      width: (jpEl) => jpEl.naturalWidth * ((canvas?.width ?? 0) / (image?.naturalWidth ?? 1)),
+      height: (jpEl) => jpEl.naturalHeight * ((canvas?.height ?? 0) / (image?.naturalHeight ?? 1)),
     });
-    setWidth(bgPix?.width);
-    setHeight(bgPix?.height);
+    setWidth(canvas?.width);
+    setHeight(canvas?.height);
   }
 
   useImperativeHandle(ref, () => ({}));

@@ -93,8 +93,8 @@ const SliderRotateCaptcha = forwardRef((props: SliderRotateCaptchaProps, ref: Re
   }
 
   const drawBgImage = async () => {
-    const { width } = await drawImage(imgRef.current, src, { width: imageSize, height: imageSize });
-    setDenominator(Math.max(width ?? 0, 1));
+    const { canvas } = await drawImage(imgRef.current, src, { width: imageSize, height: imageSize });
+    setDenominator(Math.max(canvas?.width ?? 0, 1));
   }
 
   useImperativeHandle(ref, () => ({}));
