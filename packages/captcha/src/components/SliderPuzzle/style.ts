@@ -37,6 +37,25 @@ export const useStyles = generatStyles(({ token }) => {
           color: token.colorWhite
         },
       },
+      [`&-actions`]: {
+        zIndex: 12,
+        position: 'absolute',
+        right: 0,
+        top: 0,
+        maxWidth: '98px',
+        padding: '2px 8px',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        backgroundColor: token.colorBgMask,
+      },
+      [`&-action`]: {
+        cursor: 'pointer',
+        display: 'flex',
+        alignItems: 'center',
+        textDecoration: 'none',
+        color: token.colorTextLightSolid,
+      },
     },
   };
 }, 'SliderPuzzleCaptcha');

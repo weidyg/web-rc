@@ -1,9 +1,11 @@
-import { forwardRef, Ref, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
+import { forwardRef, ReactNode, Ref, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { setAlpha } from '@web-rc/biz-provider';
 import { classNames } from '@web-rc/biz-utils';
 import { useStyles } from './style';
 import SliderButton, { MoveingData, SliderButtonCaptchaRef, SliderEvent } from '../SliderButton';
 import { drawImage, toggleTransitionDuration } from '../../utils';
+import { ReloadOutlined } from '@ant-design/icons';
+import { Button } from 'antd';
 
 export type SliderPuzzleCaptchaProps = {
   tip?: string;
@@ -16,11 +18,12 @@ export type SliderPuzzleCaptchaProps = {
   onEnd?: (event: SliderEvent) => void;
   onVerify: () => boolean | Promise<boolean>;
   onRefresh?: () => void | Promise<void>;
+  actions?: { icon: ReactNode, onClick: () => void | Promise<void>, }[]
 };
 export type SliderPuzzleCaptchaRef = {};
 const SliderPuzzleCaptcha = forwardRef((props: SliderPuzzleCaptchaProps, ref: Ref<SliderPuzzleCaptchaRef>) => {
   const { tip, bgImg, jpImg, width: propWidth, height: propHeight,
-    onStart, onMove, onEnd, onVerify, onRefresh, ...restProps } = props;
+    onStart, onMove, onEnd, onVerify, onRefresh, actions = [], ...restProps } = props;
   const { prefixCls, wrapSSR, hashId, token } = useStyles();
 
   const bgImgRef = useRef<HTMLCanvasElement>(null);
@@ -32,11 +35,12 @@ const SliderPuzzleCaptcha = forwardRef((props: SliderPuzzleCaptchaProps, ref: Re
   // const [dragging, setDragging] = useState<boolean>(false);
   const [width, setWidth] = useState(propWidth);
   const [height, setHeight] = useState(propHeight);
+  // const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     handleRefresh();
   }, []);
-  
+
   useEffect(() => {
     drawBgAndJpImage();
   }, [propWidth, propHeight, bgImg, jpImg]);
@@ -82,8 +86,15 @@ const SliderPuzzleCaptcha = forwardRef((props: SliderPuzzleCaptchaProps, ref: Re
   }
 
   async function handleRefresh() {
-    slideBarRef?.current?.reset();
-    await onRefresh?.();
+    // setLoading(true);
+    try {
+      slideBarRef?.current?.reset();
+      await onRefresh?.();
+    } catch (error) {
+      console.error(error);
+    } finally {
+      // setLoading(false);
+    }
   }
 
   const drawBgAndJpImage = async () => {
@@ -98,6 +109,36 @@ const SliderPuzzleCaptcha = forwardRef((props: SliderPuzzleCaptchaProps, ref: Re
 
   useImperativeHandle(ref, () => ({}));
 
+  const Action = (props: {
+    children?: React.ReactNode | ((loading: boolean) => React.ReactNode),
+    onClick: () => void | Promise<void>,
+  }) => {
+    const { children, onClick } = props;
+    const [loading, setLoading] = useState(false);
+    async function handleClick(): Promise<void> {
+      try {
+        if (loading) { return; }
+        setLoading(true);
+        await onClick?.();
+      } catch (error) {
+
+      } finally {
+        setLoading(false);
+      }
+    }
+    return (
+      <Button
+        type='link'
+        size='small'
+        disabled={loading}
+        onClick={handleClick}
+        className={classNames(`${prefixCls}-action`, hashId)}
+      >
+        {typeof children === 'function' ? children(loading) : children}
+      </Button>
+    )
+  }
+
   return wrapSSR(<>
     <div
       className={classNames(prefixCls, hashId)}
@@ -109,6 +150,19 @@ const SliderPuzzleCaptcha = forwardRef((props: SliderPuzzleCaptchaProps, ref: Re
         }}
         className={classNames(`${prefixCls}-img`, hashId)}
       >
+        {isPassed === undefined && (
+          <div className={classNames(`${prefixCls}-actions`, hashId)}>
+            <Action onClick={handleRefresh} >
+              {(loading) => <ReloadOutlined spin={loading} />}
+            </Action>
+            {actions.map((action, i) => (
+              <Action key={i} onClick={action.onClick} >
+                {action.icon}
+              </Action>
+            ))}
+          </div >
+        )}
+
         <canvas ref={bgImgRef}
           className={classNames(`${prefixCls}-img-bg`, hashId)}
         />
