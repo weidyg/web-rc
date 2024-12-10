@@ -1,11 +1,11 @@
-import { forwardRef, ReactNode, Ref, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
-import { setAlpha } from '@web-rc/biz-provider';
+import { forwardRef, ReactNode, Ref, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import { ReloadOutlined } from '@ant-design/icons';
 import { classNames } from '@web-rc/biz-utils';
 import { useStyles } from './style';
 import SliderButton, { MoveingData, SliderButtonCaptchaRef, SliderEvent } from '../SliderButton';
 import { drawImage, toggleTransitionDuration } from '../../utils';
-import { ReloadOutlined } from '@ant-design/icons';
-import { Button } from 'antd';
+import ActionButton, { ActionButtonProps } from '../ActionButton';
+import { setAlpha } from '@web-rc/biz-provider';
 
 export type SliderPuzzleCaptchaProps = {
   tip?: string;
@@ -18,7 +18,7 @@ export type SliderPuzzleCaptchaProps = {
   onEnd?: (event: SliderEvent) => void;
   onVerify: () => boolean | Promise<boolean>;
   onRefresh?: () => void | Promise<void>;
-  actions?: { icon: ReactNode, onClick: () => void | Promise<void>, }[]
+  actions?: ActionButtonProps[]
 };
 export type SliderPuzzleCaptchaRef = {};
 const SliderPuzzleCaptcha = forwardRef((props: SliderPuzzleCaptchaProps, ref: Ref<SliderPuzzleCaptchaRef>) => {
@@ -109,36 +109,6 @@ const SliderPuzzleCaptcha = forwardRef((props: SliderPuzzleCaptchaProps, ref: Re
 
   useImperativeHandle(ref, () => ({}));
 
-  const Action = (props: {
-    children?: React.ReactNode | ((loading: boolean) => React.ReactNode),
-    onClick: () => void | Promise<void>,
-  }) => {
-    const { children, onClick } = props;
-    const [loading, setLoading] = useState(false);
-    async function handleClick(): Promise<void> {
-      try {
-        if (loading) { return; }
-        setLoading(true);
-        await onClick?.();
-      } catch (error) {
-
-      } finally {
-        setLoading(false);
-      }
-    }
-    return (
-      <Button
-        type='link'
-        size='small'
-        disabled={loading}
-        onClick={handleClick}
-        className={classNames(`${prefixCls}-action`, hashId)}
-      >
-        {typeof children === 'function' ? children(loading) : children}
-      </Button>
-    )
-  }
-
   return wrapSSR(<>
     <div
       className={classNames(prefixCls, hashId)}
@@ -152,17 +122,16 @@ const SliderPuzzleCaptcha = forwardRef((props: SliderPuzzleCaptchaProps, ref: Re
       >
         {isPassed === undefined && (
           <div className={classNames(`${prefixCls}-actions`, hashId)}>
-            <Action onClick={handleRefresh} >
-              {(loading) => <ReloadOutlined spin={loading} />}
-            </Action>
-            {actions.map((action, i) => (
-              <Action key={i} onClick={action.onClick} >
-                {action.icon}
-              </Action>
+            <ActionButton title='刷新' onClick={handleRefresh} icon={<ReloadOutlined />}
+              className={classNames(`${prefixCls}-action`, hashId)}
+            />
+            {actions.map(({ title, icon, onClick }, i) => (
+              <ActionButton key={i} title={title} onClick={onClick} icon={icon}
+                className={classNames(`${prefixCls}-action`, hashId)}
+              />
             ))}
           </div >
         )}
-
         <canvas ref={bgImgRef}
           className={classNames(`${prefixCls}-img-bg`, hashId)}
         />

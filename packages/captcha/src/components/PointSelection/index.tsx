@@ -2,6 +2,8 @@ import { forwardRef, Ref, useEffect, useImperativeHandle, useRef, useState } fro
 import { classNames } from '@web-rc/biz-utils';
 import { useStyles } from './style';
 import { drawImage, getElementPosition } from '../../utils';
+import ActionButton, { ActionButtonProps } from '../ActionButton';
+import { ReloadOutlined } from '@ant-design/icons';
 
 const POINT_OFFSET = 11;
 export type CaptchaPoint = {
@@ -19,6 +21,7 @@ export type PointSelectionCaptchaProps = {
   onClick?: (data: CaptchaPoint) => void;
   onVerify: () => boolean | Promise<boolean>;
   onRefresh?: () => void | Promise<void>;
+  actions?: ActionButtonProps[]
 };
 
 export type PointSelectionCaptchaRef = {
@@ -29,11 +32,12 @@ export type PointSelectionCaptchaRef = {
 const PointSelectionCaptcha = forwardRef((props: PointSelectionCaptchaProps, ref: Ref<PointSelectionCaptchaRef>) => {
   const { bgImg, tip, tipType, width, height,
     onClick, onVerify, onRefresh,
-    ...restProps } = props;
+    actions=[], ...restProps } = props;
 
   const { prefixCls, wrapSSR, hashId, token } = useStyles();
   const imgBgRef = useRef<HTMLCanvasElement>(null);
   const [points, setPoints] = useState<CaptchaPoint[]>([]);
+  const [isPassed, setIsPassed] = useState<boolean | undefined>();
 
   useEffect(() => {
     handleRefresh();
@@ -90,6 +94,18 @@ const PointSelectionCaptcha = forwardRef((props: PointSelectionCaptchaProps, ref
   return wrapSSR(<>
     <div className={classNames(`${prefixCls}-container`, hashId)}>
       <div className={classNames(`${prefixCls}`, hashId)}>
+        {isPassed === undefined && (
+          <div className={classNames(`${prefixCls}-actions`, hashId)}>
+            <ActionButton title='刷新' onClick={handleRefresh} icon={<ReloadOutlined />}
+              className={classNames(`${prefixCls}-action`, hashId)}
+            />
+            {actions.map(({ title, icon, onClick }, i) => (
+              <ActionButton key={i} title={title} onClick={onClick} icon={icon}
+                className={classNames(`${prefixCls}-action`, hashId)}
+              />
+            ))}
+          </div >
+        )}
         <canvas
           ref={imgBgRef}
           onClick={handleClick}

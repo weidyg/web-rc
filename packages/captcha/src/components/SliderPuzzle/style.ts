@@ -47,14 +47,12 @@ export const useStyles = generatStyles(({ token }) => {
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-        backgroundColor: token.colorBgMask,
       },
       [`&-action`]: {
         cursor: 'pointer',
         display: 'flex',
         alignItems: 'center',
         textDecoration: 'none',
-        color: token.colorTextLightSolid,
       },
     },
   };
