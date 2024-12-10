@@ -59,6 +59,9 @@ export const useStyles = generatStyles(({ token }) => {
         },
         '&-text': {
           width: '56px',
+          display: 'block',
+          overflow: 'hidden',
+          whiteSpace: 'nowrap',
         },
       },
     },
