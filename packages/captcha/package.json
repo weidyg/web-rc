@@ -1,6 +1,6 @@
 {
+  "version": "0.4.9",
   "name": "@web-rc/biz-captcha",
-  "version": "0.3.0",
   "description": "@web-rc/biz-captcha",
   "main": "lib/index.js",
   "module": "es/index.js",
