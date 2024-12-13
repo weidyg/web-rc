@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.4.10](https://github.com/weidyg/web-rc/compare/@web-rc/biz-components@0.2.1...@web-rc/biz-components@0.4.10) (2024-12-13)
+
+**Note:** Version bump only for package @web-rc/biz-components
+
 ## [0.2.1](https://github.com/weidyg/web-rc/compare/@web-rc/biz-components@0.1.3...@web-rc/biz-components@0.2.1) (2024-12-13)
 
 **Note:** Version bump only for package @web-rc/biz-components

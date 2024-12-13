@@ -1,5 +1,5 @@
 {
-  "version": "0.4.9",
+  "version": "0.4.10",
   "name": "@web-rc/biz-components",
   "description": "@web-rc/biz-components",
   "keywords": [],
@@ -33,10 +33,10 @@
     "weidyg <weidyg@163.com> (https://github.com/weidyg)"
   ],
   "dependencies": {
-    "@web-rc/biz-account": "0.4.9",
-    "@web-rc/biz-captcha": "0.4.9",
-    "@web-rc/biz-product": "0.4.9",
-    "@web-rc/biz-provider": "0.4.9",
-    "@web-rc/biz-utils": "0.4.9"
+    "@web-rc/biz-account": "0.4.10",
+    "@web-rc/biz-captcha": "0.4.10",
+    "@web-rc/biz-product": "0.4.10",
+    "@web-rc/biz-provider": "0.4.10",
+    "@web-rc/biz-utils": "0.4.10"
   }
 }

@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.4.10](https://github.com/weidyg/web-rc/compare/@web-rc/biz-utils@0.3.0...@web-rc/biz-utils@0.4.10) (2024-12-13)
+
+**Note:** Version bump only for package @web-rc/biz-utils
+
 # [0.3.0](https://github.com/weidyg/web-rc/compare/@web-rc/biz-utils@0.0.4...@web-rc/biz-utils@0.3.0) (2024-12-13)
 
 ### Features
