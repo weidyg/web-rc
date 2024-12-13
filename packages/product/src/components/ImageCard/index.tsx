@@ -1,6 +1,6 @@
 import { forwardRef, Ref, useImperativeHandle, useMemo } from 'react';
 import { Dropdown, FormItemProps, Image, MenuProps } from 'antd';
-import { PictureOutlined } from '@ant-design/icons';
+import { EyeOutlined, PictureOutlined } from '@ant-design/icons';
 import { classNames, useMergedState } from '@web-rc/biz-utils';
 import { useStyles } from './style';
 
@@ -42,7 +42,14 @@ const ImageCard = forwardRef<ImageCardRef, ImageCardProps>((props: ImageCardProp
       const dom = (
         <Image
           src={imgUrl}
-          preview={{ maskClassName: `${prefixCls}-mask` }}
+          preview={{ 
+            maskClassName: `${prefixCls}-mask` ,
+            mask: (
+              <div className={`${prefixCls}-mask-info`}>
+                <EyeOutlined />
+              </div>
+            ),
+          }}
           wrapperClassName={classNames(`${prefixCls}-content`, hashId)}
           className={classNames(`${prefixCls}-img`, hashId)}
         />

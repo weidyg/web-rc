@@ -1,10 +1,10 @@
-﻿import { BizAliasToken, generatStyles } from '@web-rc/biz-provider';
+﻿import { BizAliasToken, generatStyles, setAlpha } from '@web-rc/biz-provider';
 
 interface PicCardToken extends BizAliasToken {
   colorBgPicCard: string;
   colorControlText: string;
 }
-export const useStyles = generatStyles<PicCardToken>(({ token, setAlpha }) => {
+export const useStyles = generatStyles<PicCardToken>(({ token }) => {
   token.colorBgPicCard = token.colorBgLayout;
   token.colorControlText = token.colorWhite;
   return {

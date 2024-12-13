@@ -18,8 +18,8 @@ export const useStyles = generatStyles(({ token }) => {
         overflow: 'hidden',
       },
       '&-img': {
-        width: 'calc(100% - 2px) !important',
-        height: 'calc(100% - 2px) !important',
+        width: '100% !important',
+        height: '100% !important',
         borderRadius: 'inherit',
         objectFit: 'contain',
       },
@@ -53,12 +53,18 @@ export const useStyles = generatStyles(({ token }) => {
       [`&-mask`]: {
         borderRadius: 'inherit',
         padding: `0 ${unit(token.paddingXXS)}`,
-        [`.${token.antPrefixCls}`]: {
-          marginInlineEnd: token.marginXXS,
-          svg: {
-            verticalAlign: 'baseline',
-          },
+        [`&-info`]: {
+          overflow: 'hidden',
+          whiteSpace: 'nowrap',
+          textOverflow: 'ellipsis',
+          padding: `0 ${unit(token.paddingXXS)}`,
         },
+        // [`.${token.antPrefixCls}-mask-info`]: {
+        //   marginInlineEnd: token.marginXXS,
+        //   svg: {
+        //     verticalAlign: 'baseline',
+        //   },
+        // },
       },
       '&-status': {
         '&-warning': {
