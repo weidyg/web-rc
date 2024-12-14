@@ -4,6 +4,12 @@ import { generatStyles } from '@web-rc/biz-provider';
 export const useStyles = generatStyles(({ token }) => {
   return {
     [token.componentCls]: {
+      borderRadius: 'inherit',
+      overflow: 'hidden',
+      height: '100%',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
       '&-wrap': {
         cursor: 'pointer',
         width: token.controlHeight,
@@ -11,15 +17,9 @@ export const useStyles = generatStyles(({ token }) => {
         borderRadius: token.borderRadius,
         border: `1px solid ${token.colorBorder}`,
       },
-      '&-content': {
-        width: 'inherit',
-        height: 'inherit',
-        borderRadius: 'inherit',
-        overflow: 'hidden',
-      },
       '&-img': {
-        width: '100% !important',
-        height: '100% !important',
+        width: '100%',
+        height: '100%',
         borderRadius: 'inherit',
         objectFit: 'contain',
       },
@@ -52,7 +52,23 @@ export const useStyles = generatStyles(({ token }) => {
       },
       [`&-mask`]: {
         borderRadius: 'inherit',
-        padding: `0 ${unit(token.paddingXXS)}`,
+        // padding: `0 ${unit(token.paddingXXS)}`,
+
+        // width: '100%',
+        // height: '100%',
+        // position: 'relative',
+        // inset: '0',
+        // display: 'flex',
+        // alignItems: 'center',
+        // justifyContent: 'center',
+        // color: token.colorWhite,
+        // background: token.colorBgMask,
+        // cursor: 'pointer',
+        // transition: 'opacity 0.3s',
+        // opacity: 0,
+        // [`&:hover`]: {
+        //   opacity: 1,
+        // },
         [`&-info`]: {
           overflow: 'hidden',
           whiteSpace: 'nowrap',

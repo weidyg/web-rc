@@ -50,7 +50,7 @@ const ImageCard = forwardRef<ImageCardRef, ImageCardProps>((props: ImageCardProp
               </div>
             ),
           }}
-          wrapperClassName={classNames(`${prefixCls}-content`, hashId)}
+          wrapperClassName={classNames(`${prefixCls}`, hashId)}
           className={classNames(`${prefixCls}-img`, hashId)}
         />
       );
