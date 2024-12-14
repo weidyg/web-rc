@@ -13,7 +13,7 @@
     "prettier": "prettier --write \"**/**.{js,jsx,tsx,ts,less,md,yaml,json}\" --loglevel warn",
     "release": "node ./scripts/release.js",
     "release:latest": "node ./scripts/release.js --tag latest",
-    "publish:only": "node ./scripts/release.js --publishOnly --tag latest",
+    "publish:only": "node ./scripts/release.js --publishOnly --tag 0.4.10",
     "start": "npm run dev",
     "version": "node ./scripts/gen_version.js",
     "dumi": "node ./scripts/preDeploy && cross-env SITE_DEPLOY='TRUE' dumi build",
