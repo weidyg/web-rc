@@ -5,7 +5,7 @@ export const useStyles = generatStyles(({ token }, props: { borderRadius?: strin
   const { borderRadius = token.borderRadius } = props;
   const shine = new Keyframes('shine', {
     '0%': { backgroundPosition: '200% 0' },
-    'to': { backgroundPosition: '-200% 0' },
+    to: { backgroundPosition: '-200% 0' },
   });
   return {
     [token.componentCls]: {
@@ -45,8 +45,8 @@ export const useStyles = generatStyles(({ token }, props: { borderRadius?: strin
           color: 'transparent',
           display: 'flex',
           height: '100%',
-          alignItems: 'center'
-        }
+          alignItems: 'center',
+        },
       },
       [`&-bar`]: {
         userSelect: 'none',

@@ -29,40 +29,44 @@ export default () => {
         <Input
           value={bgImgUrl}
           onChange={(e) => setBgImgUrl(e.target.value)}
-          placeholder='验证码图片（支持img标签src属性值）'
+          placeholder="验证码图片（支持img标签src属性值）"
         />
         <div>
           <Switch
             checked={tipType == 'image'}
-            checkedChildren='提示图片'
-            unCheckedChildren='提示文本'
+            checkedChildren="提示图片"
+            unCheckedChildren="提示文本"
             onChange={(checked) => setTipType(checked ? 'image' : 'text')}
           />
-          {tipType == 'image' ? <>
-            <Input
-              value={tipImg}
-              onChange={(e) => setTipImg(e.target.value)}
-              placeholder='提示图片（支持img标签src属性值）'
-            />
-          </> : <>
-            <Input
-              value={tipText}
-              onChange={(e) => setTipText(e.target.value)}
-              placeholder='提示文本'
-            />
-          </>}
+          {tipType == 'image' ? (
+            <>
+              <Input
+                value={tipImg}
+                onChange={(e) => setTipImg(e.target.value)}
+                placeholder="提示图片（支持img标签src属性值）"
+              />
+            </>
+          ) : (
+            <>
+              <Input value={tipText} onChange={(e) => setTipText(e.target.value)} placeholder="提示文本" />
+            </>
+          )}
         </div>
         <div>
           <InputNumber<number>
-            min={1} step={1} precision={0}
-            placeholder='验证码图片宽度 默认300px'
+            min={1}
+            step={1}
+            precision={0}
+            placeholder="验证码图片宽度 默认300px"
             value={width}
             onChange={(value) => setWidth(value ?? undefined)}
             addonAfter={'px'}
           />
           <InputNumber<number>
-            min={1} step={1} precision={0}
-            placeholder='验证码图片高度 默认220px'
+            min={1}
+            step={1}
+            precision={0}
+            placeholder="验证码图片高度 默认220px"
             value={height}
             onChange={(value) => setHeight(value ?? undefined)}
             addonAfter={'px'}

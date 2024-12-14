@@ -42,8 +42,8 @@ const ImageCard = forwardRef<ImageCardRef, ImageCardProps>((props: ImageCardProp
       const dom = (
         <Image
           src={imgUrl}
-          preview={{ 
-            maskClassName: `${prefixCls}-mask` ,
+          preview={{
+            maskClassName: `${prefixCls}-mask`,
             mask: (
               <div className={`${prefixCls}-mask-info`}>
                 <EyeOutlined />

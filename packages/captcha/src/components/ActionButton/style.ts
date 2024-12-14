@@ -2,8 +2,6 @@
 
 export const useStyles = generatStyles(({ token }) => {
   return {
-    [token.componentCls]: {
-
-    },
+    [token.componentCls]: {},
   };
 }, 'ActionButton');

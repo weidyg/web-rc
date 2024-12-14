@@ -21,8 +21,12 @@ export type GenerateStyleFn<ComponentToken extends BizAliasToken, Props = any, R
   props: Props,
 ) => ReturnType;
 
-
-const genTheme = () => { if (typeof theme === 'undefined' || !theme) { return batToken as any; } return theme; };
+const genTheme = () => {
+  if (typeof theme === 'undefined' || !theme) {
+    return batToken as any;
+  }
+  return theme;
+};
 export const bizTheme = genTheme() as typeof theme;
 export const useToken = bizTheme.useToken;
 

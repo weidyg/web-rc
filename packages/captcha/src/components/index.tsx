@@ -8,9 +8,4 @@ import SliderPuzzleCaptcha from './SliderPuzzle';
 import SliderRotateCaptcha from './SliderRotate';
 import PointSelectionCaptcha from './PointSelection';
 
-export {
-    SliderButtonCaptcha,
-    SliderPuzzleCaptcha,
-    SliderRotateCaptcha,
-    PointSelectionCaptcha
-};
+export { SliderButtonCaptcha, SliderPuzzleCaptcha, SliderRotateCaptcha, PointSelectionCaptcha };

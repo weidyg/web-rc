@@ -8,15 +8,18 @@ import { toggleTransitionDuration } from '../../utils';
 export type MouseOrTouchEvent<T = HTMLDivElement> = React.MouseEvent<T, MouseEvent> | React.TouchEvent<T>;
 export type SliderEvent = {
   target: EventTarget;
-  screenX: number; screenY: number;
-  clientX: number; clientY: number;
-  pageX: number; pageY: number;
+  screenX: number;
+  screenY: number;
+  clientX: number;
+  clientY: number;
+  pageX: number;
+  pageY: number;
 };
 export type MoveingData = {
-  startDistance: number,
-  moveX: number,
-  isTheEnd: boolean,
-}
+  startDistance: number;
+  moveX: number;
+  isTheEnd: boolean;
+};
 export type SliderButtonCaptchaProps = {
   className?: string;
   style?: CSSProperties;
@@ -24,9 +27,9 @@ export type SliderButtonCaptchaProps = {
     bar?: CSSProperties;
     action?: CSSProperties;
     content?: CSSProperties;
-  }
+  };
   successText?: string;
-  texts?: { success: string; default: string; }
+  texts?: { success: string; default: string };
   onlySliderButton?: boolean;
   failedResetTimeout?: number;
   onStart?: (event: SliderEvent) => void;
@@ -36,12 +39,23 @@ export type SliderButtonCaptchaProps = {
   onReset?: () => void;
 };
 export type SliderButtonCaptchaRef = {
-  reset: () => void
+  reset: () => void;
 };
 const SliderButtonCaptcha = forwardRef((props: SliderButtonCaptchaProps, ref: Ref<SliderButtonCaptchaRef>) => {
-  const { className, style, styles, onlySliderButton = true, texts,
-    onStart, onMove, onEnd, onVerify, onReset,
-    failedResetTimeout = 300, ...restProps } = props;
+  const {
+    className,
+    style,
+    styles,
+    onlySliderButton = true,
+    texts,
+    onStart,
+    onMove,
+    onEnd,
+    onVerify,
+    onReset,
+    failedResetTimeout = 300,
+    ...restProps
+  } = props;
 
   const { prefixCls, wrapSSR, hashId, token } = useStyles();
 
@@ -56,9 +70,13 @@ const SliderButtonCaptcha = forwardRef((props: SliderButtonCaptchaProps, ref: Re
   const [startDistance, setStartDistance] = useState(0);
 
   function handleDragStart(event: MouseOrTouchEvent) {
-    if (isPassed) { return; }
+    if (isPassed) {
+      return;
+    }
     const actionEl = actionRef?.current;
-    if (!actionEl) { return; }
+    if (!actionEl) {
+      return;
+    }
     const ev = getSliderEvent(event);
     onStart?.(ev);
     setIsMoving(true);
@@ -70,7 +88,9 @@ const SliderButtonCaptcha = forwardRef((props: SliderButtonCaptchaProps, ref: Re
       const wrapperEl = wrapperRef?.current;
       const actionEl = actionRef?.current;
       const barEl = barRef?.current;
-      if (!actionEl || !barEl || !wrapperEl) { return; }
+      if (!actionEl || !barEl || !wrapperEl) {
+        return;
+      }
       const ev = getSliderEvent(event);
       const moveX = ev.pageX - startDistance;
       const { actionWidth, offset, wrapperWidth } = getOffset(wrapperEl, actionEl);
@@ -96,7 +116,10 @@ const SliderButtonCaptcha = forwardRef((props: SliderButtonCaptchaProps, ref: Re
       let isPassed = false;
       try {
         const isReset = onlySliderButton && !isSlideToTheEnd?.current;
-        if (isReset) { reset(); return; }
+        if (isReset) {
+          reset();
+          return;
+        }
         isPassed = await onVerify();
       } catch (error) {
         console.error(error);
@@ -122,76 +145,71 @@ const SliderButtonCaptcha = forwardRef((props: SliderButtonCaptchaProps, ref: Re
     const actionEl = actionRef?.current;
     const barEl = barRef?.current;
     const contentEl = contentRef?.current;
-    if (!actionEl || !barEl || !contentEl) { return; }
+    if (!actionEl || !barEl || !contentEl) {
+      return;
+    }
     contentEl.style.width = '100%';
     barEl.style.width = '0px';
     actionEl.style.left = '0px';
     toggleTransitionDuration(0.3, actionEl, barEl);
-  }
+  };
 
   useImperativeHandle(ref, () => ({
     reset,
   }));
 
-  return wrapSSR(<>
-    <div ref={wrapperRef}
-      style={style}
-      className={classNames(prefixCls, className, hashId)}
-      onMouseUp={handleDragOver}
-      onMouseLeave={handleDragOver}
-      onMouseMove={handleDragMoving}
-      onTouchMove={handleDragMoving}
-      onTouchEnd={handleDragOver}
-    >
-      <div ref={contentRef}
-        style={styles?.content}
-        className={classNames(`${prefixCls}-content`, hashId)}
-      >
-        {!isMoving && !verifying && isPassed === undefined &&
-          <div className={classNames(`${prefixCls}-content-text`, hashId)}>
-            {isPassed ? (texts?.success || '验证通过') : (texts?.default || '请按住滑块拖动')}
-          </div>
-        }
-      </div>
+  return wrapSSR(
+    <>
       <div
-        ref={barRef}
-        style={{
-          ...styles?.bar,
-          backgroundColor: isPassed === false
-            ? token.colorErrorBgHover
-            : token.colorSuccessBgHover
-        }}
-        className={classNames(`${prefixCls}-bar`, hashId)}
-      />
+        ref={wrapperRef}
+        style={style}
+        className={classNames(prefixCls, className, hashId)}
+        onMouseUp={handleDragOver}
+        onMouseLeave={handleDragOver}
+        onMouseMove={handleDragMoving}
+        onTouchMove={handleDragMoving}
+        onTouchEnd={handleDragOver}
+      >
+        <div ref={contentRef} style={styles?.content} className={classNames(`${prefixCls}-content`, hashId)}>
+          {!isMoving && !verifying && isPassed === undefined && (
+            <div className={classNames(`${prefixCls}-content-text`, hashId)}>
+              {isPassed ? texts?.success || '验证通过' : texts?.default || '请按住滑块拖动'}
+            </div>
+          )}
+        </div>
+        <div
+          ref={barRef}
+          style={{
+            ...styles?.bar,
+            backgroundColor: isPassed === false ? token.colorErrorBgHover : token.colorSuccessBgHover,
+          }}
+          className={classNames(`${prefixCls}-bar`, hashId)}
+        />
 
-      <div
-        ref={actionRef}
-        style={{
-          ...styles?.action,
-          cursor: isMoving ? 'move' : 'pointer',
-          color: isPassed === undefined
-            ? token.colorText
-            : token.colorBgElevated,
-          backgroundColor: isPassed === false
-            ? token.colorError
-            : isPassed === true
-              ? token.colorSuccess
-              : undefined
-        }}
-        className={classNames(`${prefixCls}-action`, hashId)}
-        onMouseDown={handleDragStart}
-        onTouchStart={handleDragStart}
-      >
-        {verifying
-          ? <LoadingOutlined />
-          : isPassed === true
-            ? <CheckOutlined />
-            : isPassed === false
-              ? <CloseOutlined />
-              : <DoubleRightOutlined />
-        }
+        <div
+          ref={actionRef}
+          style={{
+            ...styles?.action,
+            cursor: isMoving ? 'move' : 'pointer',
+            color: isPassed === undefined ? token.colorText : token.colorBgElevated,
+            backgroundColor: isPassed === false ? token.colorError : isPassed === true ? token.colorSuccess : undefined,
+          }}
+          className={classNames(`${prefixCls}-action`, hashId)}
+          onMouseDown={handleDragStart}
+          onTouchStart={handleDragStart}
+        >
+          {verifying ? (
+            <LoadingOutlined />
+          ) : isPassed === true ? (
+            <CheckOutlined />
+          ) : isPassed === false ? (
+            <CloseOutlined />
+          ) : (
+            <DoubleRightOutlined />
+          )}
+        </div>
       </div>
-    </div>
-  </>);
+    </>,
+  );
 });
 export default SliderButtonCaptcha;

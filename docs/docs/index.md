@@ -44,19 +44,18 @@ export default () => {
 
 直接引入
 
-``` html
+```html
 <script src="https://unpkg.com/react@latest/umd/react.development.js"></script>
 <script src="https://unpkg.com/react-dom@latest/umd/react-dom.development.js"></script>
 <script src="https://unpkg.com/@web-rc/biz-components@latest/dist/biz-components.min.js"></script>
 <div id="root"></div>
 <script type="text/javascript">
-    const { ImageCard } = BizComponents;
-    const imageCardDom = React.createElement(ImageCard, {
-        style: { width: 90, height: 90 }
-    })
-    const domNode = document.getElementById('root');
-    const root = ReactDOM.createRoot(domNode);
-    root.render(imageCardDom);
+  const { ImageCard } = BizComponents;
+  const imageCardDom = React.createElement(ImageCard, {
+    style: { width: 90, height: 90 },
+  });
+  const domNode = document.getElementById('root');
+  const root = ReactDOM.createRoot(domNode);
+  root.render(imageCardDom);
 </script>
 ```
-

@@ -33,9 +33,9 @@ export const useStyles = generatStyles(({ token }) => {
           textAlign: 'center',
           lineHeight: '30px',
           fontSize: token.fontSizeSM,
-          color: token.colorWhite
+          color: token.colorWhite,
         },
-      }
+      },
     },
   };
 }, 'SliderRotateCaptcha');

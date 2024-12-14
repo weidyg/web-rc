@@ -34,7 +34,7 @@ export const useStyles = generatStyles(({ token }) => {
           height: token.controlHeight,
           lineHeight: `${token.controlHeight}px`,
           fontSize: token.fontSizeSM,
-          color: token.colorWhite
+          color: token.colorWhite,
         },
       },
       [`&-actions`]: {

@@ -18,12 +18,24 @@ export type SliderPuzzleCaptchaProps = {
   onEnd?: (event: SliderEvent) => void;
   onVerify: () => boolean | Promise<boolean>;
   onRefresh?: () => void | Promise<void>;
-  actions?: ActionButtonProps[]
+  actions?: ActionButtonProps[];
 };
 export type SliderPuzzleCaptchaRef = {};
 const SliderPuzzleCaptcha = forwardRef((props: SliderPuzzleCaptchaProps, ref: Ref<SliderPuzzleCaptchaRef>) => {
-  const { tip, bgImg, jpImg, width: propWidth, height: propHeight,
-    onStart, onMove, onEnd, onVerify, onRefresh, actions = [], ...restProps } = props;
+  const {
+    tip,
+    bgImg,
+    jpImg,
+    width: propWidth,
+    height: propHeight,
+    onStart,
+    onMove,
+    onEnd,
+    onVerify,
+    onRefresh,
+    actions = [],
+    ...restProps
+  } = props;
   const { prefixCls, wrapSSR, hashId, token } = useStyles();
 
   const bgImgRef = useRef<HTMLCanvasElement>(null);
@@ -75,7 +87,9 @@ const SliderPuzzleCaptcha = forwardRef((props: SliderPuzzleCaptchaProps, ref: Re
 
   function handleReset() {
     const jpImgEl = jpImgRef?.current;
-    if (!jpImgEl) { return; }
+    if (!jpImgEl) {
+      return;
+    }
     jpImgEl.style.left = '0px';
     toggleTransitionDuration(0.3, jpImgEl);
     setTimeout(() => {
@@ -105,63 +119,65 @@ const SliderPuzzleCaptcha = forwardRef((props: SliderPuzzleCaptchaProps, ref: Re
     });
     setWidth(canvas?.width);
     setHeight(canvas?.height);
-  }
+  };
 
   useImperativeHandle(ref, () => ({}));
 
-  return wrapSSR(<>
-    <div
-      className={classNames(prefixCls, hashId)}
-    >
-      <div
-        style={{
-          height: `${height}px`,
-          width: `${width}px`,
-        }}
-        className={classNames(`${prefixCls}-img`, hashId)}
-      >
-        {isPassed === undefined && (
-          <div className={classNames(`${prefixCls}-actions`, hashId)}>
-            <ActionButton title='刷新' onClick={handleRefresh} icon={<ReloadOutlined />}
-              className={classNames(`${prefixCls}-action`, hashId)}
-            />
-            {actions.map(({ title, icon, onClick }, i) => (
-              <ActionButton key={i} title={title} onClick={onClick} icon={icon}
+  return wrapSSR(
+    <>
+      <div className={classNames(prefixCls, hashId)}>
+        <div
+          style={{
+            height: `${height}px`,
+            width: `${width}px`,
+          }}
+          className={classNames(`${prefixCls}-img`, hashId)}
+        >
+          {isPassed === undefined && (
+            <div className={classNames(`${prefixCls}-actions`, hashId)}>
+              <ActionButton
+                title="刷新"
+                onClick={handleRefresh}
+                icon={<ReloadOutlined />}
                 className={classNames(`${prefixCls}-action`, hashId)}
               />
-            ))}
-          </div >
-        )}
-        <canvas ref={bgImgRef}
-          className={classNames(`${prefixCls}-img-bg`, hashId)}
-        />
-        <canvas ref={jpImgRef}
-          className={classNames(`${prefixCls}-img-jp`, hashId)}
-        />
-        <div className={classNames(`${prefixCls}-img-tip`, hashId)}>
-          {(isPassed !== undefined) && (
-            <div style={{
-              background: setAlpha(isPassed ? token.colorSuccess : token.colorError, 0.45)
-            }}>
-              {isPassed
-                ? `验证成功，耗时${((endTime - startTime) / 1000).toFixed(1)}秒`
-                : `验证失败`
-              }
+              {actions.map(({ title, icon, onClick }, i) => (
+                <ActionButton
+                  key={i}
+                  title={title}
+                  onClick={onClick}
+                  icon={icon}
+                  className={classNames(`${prefixCls}-action`, hashId)}
+                />
+              ))}
             </div>
           )}
+          <canvas ref={bgImgRef} className={classNames(`${prefixCls}-img-bg`, hashId)} />
+          <canvas ref={jpImgRef} className={classNames(`${prefixCls}-img-jp`, hashId)} />
+          <div className={classNames(`${prefixCls}-img-tip`, hashId)}>
+            {isPassed !== undefined && (
+              <div
+                style={{
+                  background: setAlpha(isPassed ? token.colorSuccess : token.colorError, 0.45),
+                }}
+              >
+                {isPassed ? `验证成功，耗时${((endTime - startTime) / 1000).toFixed(1)}秒` : `验证失败`}
+              </div>
+            )}
+          </div>
         </div>
-      </div >
-      <SliderButton
-        ref={slideBarRef}
-        onlySliderButton={false}
-        onStart={handleStart}
-        onMove={handleDragBarMove}
-        onEnd={handleDragEnd}
-        onVerify={handleVerify}
-        onReset={handleReset}
-        style={{ marginTop: token.margin }}
-      />
-    </div>
-  </>);
+        <SliderButton
+          ref={slideBarRef}
+          onlySliderButton={false}
+          onStart={handleStart}
+          onMove={handleDragBarMove}
+          onEnd={handleDragEnd}
+          onVerify={handleVerify}
+          onReset={handleReset}
+          style={{ marginTop: token.margin }}
+        />
+      </div>
+    </>,
+  );
 });
 export default SliderPuzzleCaptcha;

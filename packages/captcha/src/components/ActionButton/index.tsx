@@ -4,9 +4,9 @@ import { classNames } from '@web-rc/biz-utils';
 import { useStyles } from './style';
 
 export type ActionButtonProps = {
-  title?: string,
-  icon?: ReactNode,
-  onClick?: () => void | Promise<void>,
+  title?: string;
+  icon?: ReactNode;
+  onClick?: () => void | Promise<void>;
   className?: string;
 };
 
@@ -19,28 +19,29 @@ const ActionButton = forwardRef((props: ActionButtonProps, ref: Ref<ActionButton
 
   async function handleClick(): Promise<void> {
     try {
-      if (loading) { return; }
+      if (loading) {
+        return;
+      }
       setLoading(true);
       await onClick?.();
     } catch (error) {
-
     } finally {
       setLoading(false);
     }
   }
 
   useImperativeHandle(ref, () => ({}));
-  
+
   return wrapSSR(
     <Button
       title={title}
-      type='text'
-      size='small'
+      type="text"
+      size="small"
       loading={loading}
       icon={icon}
       onClick={handleClick}
-      className={classNames(`${prefixCls}`,className, hashId)}
-    />
-  )
+      className={classNames(`${prefixCls}`, className, hashId)}
+    />,
+  );
 });
 export default ActionButton;

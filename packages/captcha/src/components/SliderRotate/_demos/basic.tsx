@@ -6,7 +6,9 @@
 import { SliderRotateCaptcha } from '@web-rc/biz-components';
 import { useEffect, useState } from 'react';
 export default () => {
-  const diffDegree = 20, maxDegree = 300, minDegree = 120;
+  const diffDegree = 20,
+    maxDegree = 300,
+    minDegree = 120;
   const [currentRotate, setCurrentRotate] = useState<number>(0);
   const [randomRotate, setRandomRotate] = useState<number>(0);
   const [base64Image, setBase64Image] = useState<string>('');
@@ -73,7 +75,10 @@ export default () => {
   // 使用示例
   async function handleImgOnLoad() {
     const ranRotate = Math.floor(minDegree + Math.random() * (maxDegree - minDegree)); // 生成随机角度
-    const data = await getRotatedImage('https://unpkg.com/@vbenjs/static-source@0.1.7/source/avatar-v1.webp', ranRotate);
+    const data = await getRotatedImage(
+      'https://unpkg.com/@vbenjs/static-source@0.1.7/source/avatar-v1.webp',
+      ranRotate,
+    );
     setRandomRotate(ranRotate);
     setBase64Image(data);
   }

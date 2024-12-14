@@ -1,4 +1,3 @@
-
 export const getFileDataURL = (file: Blob | string): Promise<string | ArrayBuffer | null> => {
   return new Promise<string | ArrayBuffer | null>((resolve, reject) => {
     if (typeof file == 'string') {
@@ -65,7 +64,7 @@ export const cropImage = (
 export const loadImage = (file: Blob | string): Promise<HTMLImageElement> => {
   return new Promise<HTMLImageElement>(async (resolve, reject) => {
     try {
-      const url:string = await getFileDataURL(file) as string;
+      const url: string = (await getFileDataURL(file)) as string;
       if (url) {
         const img = document.createElement('img');
         img.src = url;
@@ -171,5 +170,3 @@ export const previewImage = (file: File | Blob, measureSize: number = 200): Prom
     }
   });
 };
-
-

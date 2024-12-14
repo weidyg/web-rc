@@ -11,7 +11,7 @@ export type CaptchaPoint = {
   x: number;
   y: number;
   t: number;
-}
+};
 export type PointSelectionCaptchaProps = {
   tip: string;
   tipType: 'text' | 'image';
@@ -21,18 +21,16 @@ export type PointSelectionCaptchaProps = {
   onClick?: (data: CaptchaPoint) => void;
   onVerify: () => boolean | Promise<boolean>;
   onRefresh?: () => void | Promise<void>;
-  actions?: ActionButtonProps[]
+  actions?: ActionButtonProps[];
 };
 
 export type PointSelectionCaptchaRef = {
   clear: () => void;
-  getPoints: () => CaptchaPoint[]
+  getPoints: () => CaptchaPoint[];
 };
 
 const PointSelectionCaptcha = forwardRef((props: PointSelectionCaptchaProps, ref: Ref<PointSelectionCaptchaRef>) => {
-  const { bgImg, tip, tipType, width, height,
-    onClick, onVerify, onRefresh,
-    actions=[], ...restProps } = props;
+  const { bgImg, tip, tipType, width, height, onClick, onVerify, onRefresh, actions = [], ...restProps } = props;
 
   const { prefixCls, wrapSSR, hashId, token } = useStyles();
   const imgBgRef = useRef<HTMLCanvasElement>(null);
@@ -50,7 +48,9 @@ const PointSelectionCaptcha = forwardRef((props: PointSelectionCaptchaProps, ref
   function handleClick(e: React.MouseEvent) {
     try {
       const dom = e.currentTarget as HTMLElement;
-      if (!dom) { throw new Error('Element not found'); }
+      if (!dom) {
+        throw new Error('Element not found');
+      }
       const { x: domX, y: domY } = getElementPosition(dom);
       const mouseX = e.clientX + window.scrollX;
       const mouseY = e.clientY + window.scrollY;
@@ -67,8 +67,8 @@ const PointSelectionCaptcha = forwardRef((props: PointSelectionCaptchaProps, ref
       }
       const x = Math.ceil(xPos);
       const y = Math.ceil(yPos);
-      const point = { i: points.length, t: Date.now(), x, y, };
-      setPoints([...points, point])
+      const point = { i: points.length, t: Date.now(), x, y };
+      setPoints([...points, point]);
       onClick?.(point);
       e.stopPropagation();
       e.preventDefault();
@@ -87,59 +87,65 @@ const PointSelectionCaptcha = forwardRef((props: PointSelectionCaptchaProps, ref
   }
 
   useImperativeHandle(ref, () => ({
-    clear: () => { handleReset(); },
-    getPoints: () => { return points; },
+    clear: () => {
+      handleReset();
+    },
+    getPoints: () => {
+      return points;
+    },
   }));
 
-  return wrapSSR(<>
-    <div className={classNames(`${prefixCls}-container`, hashId)}>
-      <div className={classNames(`${prefixCls}`, hashId)}>
-        {isPassed === undefined && (
-          <div className={classNames(`${prefixCls}-actions`, hashId)}>
-            <ActionButton title='刷新' onClick={handleRefresh} icon={<ReloadOutlined />}
-              className={classNames(`${prefixCls}-action`, hashId)}
-            />
-            {actions.map(({ title, icon, onClick }, i) => (
-              <ActionButton key={i} title={title} onClick={onClick} icon={icon}
+  return wrapSSR(
+    <>
+      <div className={classNames(`${prefixCls}-container`, hashId)}>
+        <div className={classNames(`${prefixCls}`, hashId)}>
+          {isPassed === undefined && (
+            <div className={classNames(`${prefixCls}-actions`, hashId)}>
+              <ActionButton
+                title="刷新"
+                onClick={handleRefresh}
+                icon={<ReloadOutlined />}
                 className={classNames(`${prefixCls}-action`, hashId)}
               />
-            ))}
-          </div >
-        )}
-        <canvas
-          ref={imgBgRef}
-          onClick={handleClick}
-          className={classNames(`${prefixCls}-img`, hashId)}
-        />
-        <div style={{ position: 'absolute', inset: 0 }}>
-          {points?.map((point, index) => {
-            return (
-              <div key={index}
-                style={{
-                  top: `${point.y - POINT_OFFSET}px`,
-                  left: `${point.x - POINT_OFFSET}px`,
-                }}
-                className={classNames(`${prefixCls}-point`, hashId)}
-              >
-                {index + 1}
-              </div>
-            );
-          })}
+              {actions.map(({ title, icon, onClick }, i) => (
+                <ActionButton
+                  key={i}
+                  title={title}
+                  onClick={onClick}
+                  icon={icon}
+                  className={classNames(`${prefixCls}-action`, hashId)}
+                />
+              ))}
+            </div>
+          )}
+          <canvas ref={imgBgRef} onClick={handleClick} className={classNames(`${prefixCls}-img`, hashId)} />
+          <div style={{ position: 'absolute', inset: 0 }}>
+            {points?.map((point, index) => {
+              return (
+                <div
+                  key={index}
+                  style={{
+                    top: `${point.y - POINT_OFFSET}px`,
+                    left: `${point.x - POINT_OFFSET}px`,
+                  }}
+                  className={classNames(`${prefixCls}-point`, hashId)}
+                >
+                  {index + 1}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+        <div className={classNames(`${prefixCls}-tip`, hashId)}>
+          {tipType === 'image' ? (
+            <img src={tip} className={classNames(`${prefixCls}-tip-img`, hashId)} />
+          ) : tipType === 'text' ? (
+            <div className={classNames(`${prefixCls}-tip-text`, hashId)}>{`请依次点击【${tip}】`}</div>
+          ) : undefined}
         </div>
       </div>
-      <div className={classNames(`${prefixCls}-tip`, hashId)}>
-        {tipType === 'image' ? (
-          <img src={tip}
-            className={classNames(`${prefixCls}-tip-img`, hashId)}
-          />
-        ) : (tipType === 'text' ? (
-          <div className={classNames(`${prefixCls}-tip-text`, hashId)}>
-            {`请依次点击【${tip}】`}
-          </div>
-        ) : undefined)}
-      </div>
-    </div>
-  </>);
+    </>,
+  );
 });
 
 export default PointSelectionCaptcha;

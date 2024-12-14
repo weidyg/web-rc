@@ -10,7 +10,7 @@ export const useStyles = generatStyles(({ token }) => {
       borderRadius: token.borderRadius,
       padding: 0,
       [`&-container`]: {
-        width: 'fit-content'
+        width: 'fit-content',
       },
       [`&-img`]: {
         position: 'relative',
@@ -49,8 +49,8 @@ export const useStyles = generatStyles(({ token }) => {
           alignItems: 'center',
           justifyContent: 'center',
           objectFit: 'contain',
-        }
-      }
+        },
+      },
     },
   };
 }, 'PointSelectionCaptcha');

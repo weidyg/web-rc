@@ -23,9 +23,19 @@ export type SliderRotateCaptchaProps = {
 export type SliderRotateCaptchaRef = {};
 const SliderRotateCaptcha = forwardRef((props: SliderRotateCaptchaProps, ref: Ref<SliderRotateCaptchaRef>) => {
   const {
-    maxDegree = 300, minDegree = 120,
-    src, imageSize = 260, imageWrapperStyle, defaultTip,
-    onStart, onMove, onEnd, onVerify, onRefresh, ...restProps } = props;
+    maxDegree = 300,
+    minDegree = 120,
+    src,
+    imageSize = 260,
+    imageWrapperStyle,
+    defaultTip,
+    onStart,
+    onMove,
+    onEnd,
+    onVerify,
+    onRefresh,
+    ...restProps
+  } = props;
   const { prefixCls, wrapSSR, hashId, token } = useStyles();
 
   const imgRef = useRef<HTMLCanvasElement>(null);
@@ -63,7 +73,9 @@ const SliderRotateCaptcha = forwardRef((props: SliderRotateCaptchaProps, ref: Re
   }
   function handleDragBarMove(ev: SliderEvent, data: MoveingData) {
     const { moveX } = data;
-    if (denominator === 0) { return; }
+    if (denominator === 0) {
+      return;
+    }
     const currentRotate = Math.ceil((moveX / denominator) * 1.5 * maxDegree * getDegreeFactor);
     setImgRotate(startRotate - currentRotate);
     onMove?.(ev, { currentRotate });
@@ -93,58 +105,62 @@ const SliderRotateCaptcha = forwardRef((props: SliderRotateCaptchaProps, ref: Re
       setIsPassed(undefined);
     }, 0.3 * 1000);
   }
-  
+
   const drawBgImage = async () => {
     const { canvas } = await drawImage(imgRef.current, src, { width: imageSize, height: imageSize });
     setDenominator(Math.max(canvas?.width ?? 0, 1));
-  }
+  };
 
   useImperativeHandle(ref, () => ({}));
 
-  return wrapSSR(<>
-    <div className={classNames(prefixCls, hashId)}>
-      <div className={classNames(`${prefixCls}-img`, hashId)}
-        style={{
-          height: `${imageSize}px`,
-          width: `${imageSize}px`,
-          ...imageWrapperStyle,
-        }}>
-        <canvas
-          ref={imgRef}
-          onClick={handleRefresh}
-          style={{ transform: `rotateZ(${imgRotate}deg)`, }}
-          className={classNames(`${prefixCls}-img-bg`, hashId)}
-        />
-        <div className={classNames(`${prefixCls}-img-tip`, hashId)}>
-          {(isPassed !== undefined || !dragging) && (
-            <div style={{
-              background: isPassed !== undefined
-                ? setAlpha(isPassed ? token.colorSuccess : token.colorError, 0.45)
-                : token.colorBgMask,
-            }}
-            >
-              {isPassed !== undefined ? (
-                isPassed
-                  ? `验证成功，耗时${((endTime - startTime) / 1000).toFixed(1)}秒`
-                  : `验证失败`
-              ) : (
-                defaultTip || '点击图片可刷新'
-              )}
-            </div>
-          )}
+  return wrapSSR(
+    <>
+      <div className={classNames(prefixCls, hashId)}>
+        <div
+          className={classNames(`${prefixCls}-img`, hashId)}
+          style={{
+            height: `${imageSize}px`,
+            width: `${imageSize}px`,
+            ...imageWrapperStyle,
+          }}
+        >
+          <canvas
+            ref={imgRef}
+            onClick={handleRefresh}
+            style={{ transform: `rotateZ(${imgRotate}deg)` }}
+            className={classNames(`${prefixCls}-img-bg`, hashId)}
+          />
+          <div className={classNames(`${prefixCls}-img-tip`, hashId)}>
+            {(isPassed !== undefined || !dragging) && (
+              <div
+                style={{
+                  background:
+                    isPassed !== undefined
+                      ? setAlpha(isPassed ? token.colorSuccess : token.colorError, 0.45)
+                      : token.colorBgMask,
+                }}
+              >
+                {isPassed !== undefined
+                  ? isPassed
+                    ? `验证成功，耗时${((endTime - startTime) / 1000).toFixed(1)}秒`
+                    : `验证失败`
+                  : defaultTip || '点击图片可刷新'}
+              </div>
+            )}
+          </div>
         </div>
-      </div >
-      <SliderButton
-        ref={slideBarRef}
-        onlySliderButton={false}
-        onStart={handleStart}
-        onMove={handleDragBarMove}
-        onEnd={handleDragEnd}
-        onVerify={handleVerify}
-        onReset={handleReset}
-        style={{ marginTop: token.margin }}
-      />
-    </div>
-  </>);
+        <SliderButton
+          ref={slideBarRef}
+          onlySliderButton={false}
+          onStart={handleStart}
+          onMove={handleDragBarMove}
+          onEnd={handleDragEnd}
+          onVerify={handleVerify}
+          onReset={handleReset}
+          style={{ marginTop: token.margin }}
+        />
+      </div>
+    </>,
+  );
 });
 export default SliderRotateCaptcha;
