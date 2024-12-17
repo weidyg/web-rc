@@ -10,7 +10,7 @@ group:
 
 <code src="./_demos/basic.tsx" ></code>
 
-<!-- <code src="./_demos/form-item.tsx" ></code> -->
+<!-- <code src="./_demos/form-list.tsx" ></code> -->
 
 ## API
 
