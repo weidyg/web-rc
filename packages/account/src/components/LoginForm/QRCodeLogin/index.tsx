@@ -22,7 +22,7 @@ export type QRCodeLoginProps = Omit<QRCodeProps, 'value' | 'status' | 'onRefresh
 
 export type QRCodeLoginRef = {};
 
-const QRCodeLogin = forwardRef((props: QRCodeLoginProps, ref: Ref<QRCodeLoginRef>) => {
+const QRCodeLogin = (props: QRCodeLoginProps, ref: Ref<QRCodeLoginRef>) => {
   const { rootClassName, title, subTitle, description, onRefresh, onValidate, statusRender, ...rest } = props || {};
   const { prefixCls, hashId, wrapSSR } = useStyles();
   const [value, setValue] = useState('loading...');
@@ -115,5 +115,5 @@ const QRCodeLogin = forwardRef((props: QRCodeLoginProps, ref: Ref<QRCodeLoginRef
       {description && <Typography.Paragraph style={{ marginTop: '1em' }}>{description}</Typography.Paragraph>}
     </div>,
   );
-});
-export default QRCodeLogin;
+};
+export default forwardRef(QRCodeLogin);

@@ -21,7 +21,7 @@ export type SliderPuzzleCaptchaProps = {
   actions?: ActionButtonProps[];
 };
 export type SliderPuzzleCaptchaRef = {};
-const SliderPuzzleCaptcha = forwardRef((props: SliderPuzzleCaptchaProps, ref: Ref<SliderPuzzleCaptchaRef>) => {
+const SliderPuzzleCaptcha = (props: SliderPuzzleCaptchaProps, ref: Ref<SliderPuzzleCaptchaRef>) => {
   const {
     tip,
     bgImg,
@@ -179,5 +179,5 @@ const SliderPuzzleCaptcha = forwardRef((props: SliderPuzzleCaptchaProps, ref: Re
       </div>
     </>,
   );
-});
-export default SliderPuzzleCaptcha;
+};
+export default forwardRef(SliderPuzzleCaptcha);

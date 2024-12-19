@@ -21,7 +21,7 @@ export type SliderRotateCaptchaProps = {
   onRefresh?: () => void | Promise<void>;
 };
 export type SliderRotateCaptchaRef = {};
-const SliderRotateCaptcha = forwardRef((props: SliderRotateCaptchaProps, ref: Ref<SliderRotateCaptchaRef>) => {
+const SliderRotateCaptcha = (props: SliderRotateCaptchaProps, ref: Ref<SliderRotateCaptchaRef>) => {
   const {
     maxDegree = 300,
     minDegree = 120,
@@ -162,5 +162,5 @@ const SliderRotateCaptcha = forwardRef((props: SliderRotateCaptchaProps, ref: Re
       </div>
     </>,
   );
-});
-export default SliderRotateCaptcha;
+};
+export default forwardRef(SliderRotateCaptcha);

@@ -22,7 +22,7 @@ type ImageDescProps = {
     remove: (index: number) => ReactNode;
   };
 };
-const ImageDesc = forwardRef((props: ImageDescProps, ref: Ref<ImageDescRef>) => {
+const ImageDesc = (props: ImageDescProps, ref: Ref<ImageDescRef>) => {
   const { actionsRender } = props;
   const { add, edit, remove } = actionsRender || {};
   const { prefixCls, wrapSSR, hashId, token } = useStyles();
@@ -95,6 +95,6 @@ const ImageDesc = forwardRef((props: ImageDescProps, ref: Ref<ImageDescRef>) => 
       </div>
     </>,
   );
-});
+};
 export type { ImageDescRef, ImageDescProps };
-export default ImageDesc;
+export default forwardRef(ImageDesc);

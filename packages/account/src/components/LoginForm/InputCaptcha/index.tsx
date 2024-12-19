@@ -30,7 +30,7 @@ export type InputCaptchaRef = {
   endTiming: () => void;
 };
 
-const InputCaptcha = forwardRef((props: InputCaptchaProps, ref: Ref<InputCaptchaRef>) => {
+const InputCaptcha = (props: InputCaptchaProps, ref: Ref<InputCaptchaRef>) => {
   const {
     name,
     phoneName,
@@ -113,6 +113,6 @@ const InputCaptcha = forwardRef((props: InputCaptchaProps, ref: Ref<InputCaptcha
       </Button>
     </div>
   );
-});
+};
 
-export default InputCaptcha;
+export default forwardRef(InputCaptcha);

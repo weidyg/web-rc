@@ -29,7 +29,7 @@ export type PointSelectionCaptchaRef = {
   getPoints: () => CaptchaPoint[];
 };
 
-const PointSelectionCaptcha = forwardRef((props: PointSelectionCaptchaProps, ref: Ref<PointSelectionCaptchaRef>) => {
+const PointSelectionCaptcha = (props: PointSelectionCaptchaProps, ref: Ref<PointSelectionCaptchaRef>) => {
   const { bgImg, tip, tipType, width, height, onClick, onVerify, onRefresh, actions = [], ...restProps } = props;
 
   const { prefixCls, wrapSSR, hashId, token } = useStyles();
@@ -146,6 +146,6 @@ const PointSelectionCaptcha = forwardRef((props: PointSelectionCaptchaProps, ref
       </div>
     </>,
   );
-});
+};
 
-export default PointSelectionCaptcha;
+export default forwardRef(PointSelectionCaptcha);

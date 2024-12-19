@@ -12,7 +12,7 @@ type LoginFormPageProps = LoginFormProps & {
 };
 type LoginFormPageRef = {};
 
-const LoginFormPage = forwardRef((props: LoginFormPageProps, ref: Ref<LoginFormPageRef>) => {
+const LoginFormPage = (props: LoginFormPageProps, ref: Ref<LoginFormPageRef>) => {
   const {
     // urlPath,
     // currentUser,
@@ -105,7 +105,7 @@ const LoginFormPage = forwardRef((props: LoginFormPageProps, ref: Ref<LoginFormP
       </div>
     </>,
   );
-});
+};
 
 export type { LoginFormPageProps, LoginFormPageRef };
-export default LoginFormPage;
+export default forwardRef(LoginFormPage);

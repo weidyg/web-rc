@@ -32,10 +32,7 @@ type SalePropCardProps = {
 
 type SalePropCardRef = {};
 
-const SalePropCard = forwardRef<SalePropCardRef, SalePropCardProps>((
-  props: SalePropCardProps,
-  ref: Ref<SalePropCardRef>
-) => {
+const SalePropCard = (props: SalePropCardProps, ref: Ref<SalePropCardRef>) => {
   const { style, className, options = [], single, uniqueGroup, current, value, onOk, onCancel } = props;
   const { prefixCls, wrapSSR, hashId, token } = useStyles();
   const [loading, setLoading] = useState(false);
@@ -226,8 +223,7 @@ const SalePropCard = forwardRef<SalePropCardRef, SalePropCardProps>((
       </Card>
     </>,
   );
-},
-);
+};
 
 export type { SalePropCardProps, SalePropCardRef };
-export default SalePropCard;
+export default forwardRef(SalePropCard);

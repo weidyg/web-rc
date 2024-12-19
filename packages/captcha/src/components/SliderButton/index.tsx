@@ -41,7 +41,7 @@ export type SliderButtonCaptchaProps = {
 export type SliderButtonCaptchaRef = {
   reset: () => void;
 };
-const SliderButtonCaptcha = forwardRef((props: SliderButtonCaptchaProps, ref: Ref<SliderButtonCaptchaRef>) => {
+const SliderButtonCaptcha = (props: SliderButtonCaptchaProps, ref: Ref<SliderButtonCaptchaRef>) => {
   const {
     className,
     style,
@@ -211,5 +211,5 @@ const SliderButtonCaptcha = forwardRef((props: SliderButtonCaptchaProps, ref: Re
       </div>
     </>,
   );
-});
-export default SliderButtonCaptcha;
+};
+export default forwardRef(SliderButtonCaptcha);

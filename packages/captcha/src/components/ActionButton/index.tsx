@@ -12,7 +12,7 @@ export type ActionButtonProps = {
 
 export type ActionButtonRef = {};
 
-const ActionButton = forwardRef((props: ActionButtonProps, ref: Ref<ActionButtonRef>) => {
+const ActionButton = (props: ActionButtonProps, ref: Ref<ActionButtonRef>) => {
   const { title, icon, onClick, className } = props;
   const { prefixCls, wrapSSR, hashId, token } = useStyles();
   const [loading, setLoading] = useState(false);
@@ -43,5 +43,5 @@ const ActionButton = forwardRef((props: ActionButtonProps, ref: Ref<ActionButton
       className={classNames(`${prefixCls}`, className, hashId)}
     />,
   );
-});
-export default ActionButton;
+};
+export default forwardRef(ActionButton);

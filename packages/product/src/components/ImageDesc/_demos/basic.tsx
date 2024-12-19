@@ -297,6 +297,7 @@ const ImageSpaceDom = forwardRef(
     );
   },
 );
+
 export default () => {
   const [value, setValue] = useState<string[]>([]);
   function handleRemove(index: number) {

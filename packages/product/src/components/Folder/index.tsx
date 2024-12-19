@@ -35,7 +35,7 @@ type FolderProps = {
 };
 
 interface FolderRef {}
-const InternalFolder = forwardRef((props: FolderProps, ref: Ref<FolderRef>) => {
+const InternalFolder = (props: FolderProps, ref: Ref<FolderRef>) => {
   const { data = [], type = 'defalut', loading: propLoading = false } = props;
   const { prefixCls, wrapSSR, hashId } = useStyles();
 
@@ -139,9 +139,6 @@ const InternalFolder = forwardRef((props: FolderProps, ref: Ref<FolderRef>) => {
       )}
     </>,
   );
-});
-
-type CompoundedComponent = typeof InternalFolder & {};
-const Folder = InternalFolder as CompoundedComponent;
+};
 export { DirType, FolderProps };
-export default Folder;
+export default forwardRef(InternalFolder);
