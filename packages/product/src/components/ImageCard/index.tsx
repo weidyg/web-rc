@@ -22,7 +22,7 @@ type ImageCardRef = {
   setValue: (val?: string) => void;
 };
 
-const ImageCard = forwardRef<ImageCardRef, ImageCardProps>((props: ImageCardProps, ref: Ref<ImageCardRef>) => {
+const ImageCard = (props: ImageCardProps, ref: Ref<ImageCardRef>) => {
   const { status, className, style, placeholder, menus, children } = props;
   const { prefixCls, wrapSSR, hashId, token } = useStyles();
   const [imgUrl, setImgUrl] = useMergedState(undefined, {
@@ -89,7 +89,7 @@ const ImageCard = forwardRef<ImageCardRef, ImageCardProps>((props: ImageCardProp
       {children?.(_children) || _children}
     </div>,
   );
-});
+};
 
 export type { ImageCardProps, ImageCardRef };
-export default ImageCard;
+export default forwardRef(ImageCard);
