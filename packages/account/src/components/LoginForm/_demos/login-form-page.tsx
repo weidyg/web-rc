@@ -1,9 +1,3 @@
-/**
- * iframe: true
- * title: 登录页面
- * description: 登录表单页面
- */
-
 import { AlipayOutlined, DingdingOutlined, GithubOutlined, WechatOutlined, WeiboOutlined } from '@ant-design/icons';
 import { useToken, LoginFormPage } from '@web-rc/biz-components';
 import { ConfigProvider } from 'antd';
@@ -76,11 +70,11 @@ export default () => {
         }}
         qrCodeProps={{
           title: '扫码登录',
-          subTitle: '打开淘宝APP—点击左上角扫一扫',
+          subTitle: '打开APP—点击左上角扫一扫',
           description: (
             <>
               <div style={{ color: token.colorTextDescription }}>
-                使用<span style={{ color: token.colorText }}>阿里云APP/支付宝/钉钉</span>
+                使用<span style={{ color: token.colorText }}>XX应用</span>
               </div>
               <a
                 style={{ color: token.colorTextDescription }}
@@ -88,7 +82,7 @@ export default () => {
                   e.currentTarget.style.color = token.colorLinkHover;
                 }}
               >
-                下载阿里云APP，上云更轻松
+                这里是XX应用简介
               </a>
             </>
           ),

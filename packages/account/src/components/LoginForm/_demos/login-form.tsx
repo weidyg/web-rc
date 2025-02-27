@@ -1,8 +1,3 @@
-/**
- * title: 基本使用
- * description: 登录表单
- */
-
 import { AlipayOutlined, DingdingOutlined, GithubOutlined, WechatOutlined, WeiboOutlined } from '@ant-design/icons';
 import { LoginForm } from '@web-rc/biz-components';
 import { ConfigProvider } from 'antd';
