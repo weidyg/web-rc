@@ -49,22 +49,24 @@ export default () => {
       <Typography.Title level={5}>
         <Flex gap={8}>
           <span>当前值</span>
-          <Typography.Link onClick={() => {
-            setUniqueGroup(false);
-            setCurrentValue(undefined);
-            setValue([]);
-          }}>
+          <Typography.Link
+            onClick={() => {
+              setUniqueGroup(false);
+              setCurrentValue(undefined);
+              setValue([]);
+            }}
+          >
             清除
           </Typography.Link>
         </Flex>
       </Typography.Title>
-      <Typography.Text >
+      <Typography.Text>
         <pre>
           <code>{JSON.stringify(currentValue || {}, null, 2)}</code>
         </pre>
       </Typography.Text>
       <Typography.Title level={5}>所有值</Typography.Title>
-      <Typography.Text >
+      <Typography.Text>
         <pre>
           <code>{JSON.stringify(value, null, 2)}</code>
         </pre>

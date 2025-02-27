@@ -26,7 +26,7 @@ export default () => {
           onChange={(e) => setBgImgUrl(e.target.value)}
           placeholder="验证码图片（支持img标签src属性值）"
         />
-        <Flex gap={8} align='center'>
+        <Flex gap={8} align="center">
           <Switch
             style={{ width: 100 }}
             checked={tipType == 'image'}
@@ -36,13 +36,13 @@ export default () => {
           />
           <Input
             value={tipType == 'image' ? tipImg : tipText}
-            placeholder={tipType == 'image' ? "提示图片（支持img标签src属性值）" : "提示文本"}
+            placeholder={tipType == 'image' ? '提示图片（支持img标签src属性值）' : '提示文本'}
             onChange={(e) => {
               if (tipType == 'image') {
-                setTipImg(e.target.value)
+                setTipImg(e.target.value);
               }
               if (tipType == 'text') {
-                setTipText(e.target.value)
+                setTipText(e.target.value);
               }
             }}
           />
@@ -77,7 +77,7 @@ export default () => {
         tipType={tipType}
         onClick={handleClick}
         onVerify={() => {
-          return true
+          return true;
         }}
       />
 

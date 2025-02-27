@@ -55,7 +55,7 @@ type LoginFormRef = {};
 
 const LoginForm = <Values extends { [k: string]: any } = any>(
   props: LoginFormProps<Values>,
-  ref: Ref<LoginFormRef>
+  ref: Ref<LoginFormRef>,
 ) => {
   const {
     // urlPath,
@@ -68,7 +68,7 @@ const LoginForm = <Values extends { [k: string]: any } = any>(
     isKeyPressSubmit,
     form,
     captchaProps,
-    onGetCaptcha = () => { },
+    onGetCaptcha = () => {},
     qrCodeProps,
     onGetQrCode,
     onVerifyQrCode,
@@ -160,8 +160,8 @@ const LoginForm = <Values extends { [k: string]: any } = any>(
   const L = (type: 'required' | 'placeholder', nane: string, label: string) => {
     return type == 'required'
       ? intl.getMessage(`loginForm.${type}`, '请输入${label}', {
-        label: intl.getMessage(`loginForm.label.${nane}`, label),
-      })
+          label: intl.getMessage(`loginForm.label.${nane}`, label),
+        })
       : intl.getMessage(`loginForm.label.${nane}`, label);
   };
   return wrapSSR(
