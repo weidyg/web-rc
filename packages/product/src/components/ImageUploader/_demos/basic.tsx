@@ -1,8 +1,3 @@
-/**
- * iframe: true
- * title: 基本使用
- * description: 图片上传器
- */
 import { ImageUploader, DirType } from '@web-rc/biz-components';
 
 const dirs: DirType[] = Array.from({ length: 10 }, (_, i) => ({
@@ -22,7 +17,7 @@ const dirs: DirType[] = Array.from({ length: 10 }, (_, i) => ({
 
 export default () => {
   return (
-    <div style={{ height: '100vh' }}>
+    <div style={{ height: '420px' }}>
       <ImageUploader
         defaultFolder={'0'}
         folders={dirs}

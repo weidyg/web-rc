@@ -1,11 +1,6 @@
-/**
- * title: 基本使用
- * description: 基本的选项卡片
- */
-
 import { useState } from 'react';
 import { SalePropCard } from '@web-rc/biz-components';
-import { message, Segmented, Space, Switch, Typography } from 'antd';
+import { Flex, message, Segmented, Space, Switch, Typography } from 'antd';
 import dataJson from './_data.json';
 
 export default () => {
@@ -51,13 +46,25 @@ export default () => {
         }}
         style={{ maxWidth: 580, maxHeight: 400 }}
       />
-
-      <Typography.Text title="当前值">
+      <Typography.Title level={5}>
+        <Flex gap={8}>
+          <span>当前值</span>
+          <Typography.Link onClick={() => {
+            setUniqueGroup(false);
+            setCurrentValue(undefined);
+            setValue([]);
+          }}>
+            清除
+          </Typography.Link>
+        </Flex>
+      </Typography.Title>
+      <Typography.Text >
         <pre>
-          <code>{JSON.stringify(currentValue, null, 2)}</code>
+          <code>{JSON.stringify(currentValue || {}, null, 2)}</code>
         </pre>
       </Typography.Text>
-      <Typography.Text title="所有值">
+      <Typography.Title level={5}>所有值</Typography.Title>
+      <Typography.Text >
         <pre>
           <code>{JSON.stringify(value, null, 2)}</code>
         </pre>

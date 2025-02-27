@@ -1,8 +1,3 @@
-/**
- * title: 基本使用
- * description: 基本的图片卡片
- */
-
 import { ReactNode, useEffect, useRef, useState } from 'react';
 import { DirType, ImageFile, ImageCard, ImageSpace, ImageSpaceRef, ImageUploader } from '@web-rc/biz-components';
 import { Button, Flex, Form, Input, MenuProps, Popover, Segmented, Select, Space, theme } from 'antd';

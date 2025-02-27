@@ -1,11 +1,6 @@
-/**
- * title: 基本使用
- * description: 基本使用
- */
-
 import { ReactNode, useEffect, useRef, useState } from 'react';
 import { CaptchaPoint, PointSelectionCaptcha } from '@web-rc/biz-components';
-import { Input, InputNumber, message, Switch } from 'antd';
+import { Flex, Input, InputNumber, message, Space, Switch } from 'antd';
 
 const DEFAULT_CAPTCHA_IMAGE = 'https://unpkg.com/@vbenjs/static-source@0.1.7/source/default-captcha-image.jpeg';
 const DEFAULT_HINT_IMAGE = 'https://unpkg.com/@vbenjs/static-source@0.1.7/source/default-hint-image.png';
@@ -25,34 +20,34 @@ export default () => {
 
   return (
     <>
-      <div>
+      <Flex gap={8} vertical style={{ marginBottom: 16 }}>
         <Input
           value={bgImgUrl}
           onChange={(e) => setBgImgUrl(e.target.value)}
           placeholder="验证码图片（支持img标签src属性值）"
         />
-        <div>
+        <Flex gap={8} align='center'>
           <Switch
+            style={{ width: 100 }}
             checked={tipType == 'image'}
             checkedChildren="提示图片"
             unCheckedChildren="提示文本"
             onChange={(checked) => setTipType(checked ? 'image' : 'text')}
           />
-          {tipType == 'image' ? (
-            <>
-              <Input
-                value={tipImg}
-                onChange={(e) => setTipImg(e.target.value)}
-                placeholder="提示图片（支持img标签src属性值）"
-              />
-            </>
-          ) : (
-            <>
-              <Input value={tipText} onChange={(e) => setTipText(e.target.value)} placeholder="提示文本" />
-            </>
-          )}
-        </div>
-        <div>
+          <Input
+            value={tipType == 'image' ? tipImg : tipText}
+            placeholder={tipType == 'image' ? "提示图片（支持img标签src属性值）" : "提示文本"}
+            onChange={(e) => {
+              if (tipType == 'image') {
+                setTipImg(e.target.value)
+              }
+              if (tipType == 'text') {
+                setTipText(e.target.value)
+              }
+            }}
+          />
+        </Flex>
+        <Flex gap={8}>
           <InputNumber<number>
             min={1}
             step={1}
@@ -71,8 +66,8 @@ export default () => {
             onChange={(value) => setHeight(value ?? undefined)}
             addonAfter={'px'}
           />
-        </div>
-      </div>
+        </Flex>
+      </Flex>
 
       <PointSelectionCaptcha
         bgImg={bgImgUrl}
@@ -81,6 +76,9 @@ export default () => {
         tip={tipType == 'image' ? tipImg : tipText}
         tipType={tipType}
         onClick={handleClick}
+        onVerify={() => {
+          return true
+        }}
       />
 
       {selectedPoints?.map((point, index) => {

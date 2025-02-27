@@ -51,6 +51,23 @@ export const useStyles = generatStyles(({ token }) => {
           objectFit: 'contain',
         },
       },
+      [`&-actions`]: {
+        zIndex: 12,
+        position: 'absolute',
+        right: 0,
+        top: 0,
+        maxWidth: '98px',
+        padding: '2px 8px',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+      },
+      [`&-action`]: {
+        cursor: 'pointer',
+        display: 'flex',
+        alignItems: 'center',
+        textDecoration: 'none',
+      },
     },
   };
 }, 'PointSelectionCaptcha');

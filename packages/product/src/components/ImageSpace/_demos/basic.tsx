@@ -1,7 +1,5 @@
 /**
  * iframe: false
- * title: 图片上传器
- * description: 基本的图片空间展示
  */
 import { ReactNode, useEffect, useRef, useState } from 'react';
 import { Button, Flex, Input, Select, Space } from 'antd';

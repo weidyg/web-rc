@@ -26,11 +26,11 @@
     ]
   },
   "devDependencies": {
-    "@ant-design/cssinjs": "^1.21.1",
-    "@ant-design/icons": "^5.4.0",
+    "@ant-design/cssinjs": "^1.23.0",
+    "@ant-design/icons": "^5.6.1",
     "@ctrl/tinycolor": "^4.1.0",
-    "@types/lodash": "^4.17.13",
-    "@types/node": "^20.14.11",
+    "@types/lodash": "^4.17.15",
+    "@types/node": "^22.13.5",
     "@types/react": "^18.3.3",
     "@umijs/mako": "^0.8.14",
     "@umijs/utils": "^4.3.24",
@@ -50,6 +50,6 @@
     "prettier": "^2.7.1",
     "rc-util": "^5.43.0",
     "react": "^18.3.1",
-    "swr": "^2.2.5"
+    "swr": "^2.3.2"
   }
 }

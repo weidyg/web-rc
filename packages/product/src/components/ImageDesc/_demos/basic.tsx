@@ -1,7 +1,3 @@
-/**
- * title: 基本使用
- * description: 基本的描述图编辑器
- */
 import { forwardRef, ReactNode, Ref, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { Button, Flex, Input, Modal, Popover, Select, Space } from 'antd';
 import { DeleteOutlined, EditOutlined, FileImageOutlined, SearchOutlined } from '@ant-design/icons';

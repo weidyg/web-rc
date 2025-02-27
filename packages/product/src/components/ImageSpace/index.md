@@ -3,13 +3,14 @@ order: 0
 atomId: ImageSpace
 title: ImageSpace 图片空间
 group:
-  title: 商品编辑
+  title: 图片空间
 ---
 
 ## 代码演示
 
 <!-- https://d.umijs.org/config/demo -->
 
+### 基本使用
 <code src="./_demos/basic.tsx" ></code>
 
 ## API

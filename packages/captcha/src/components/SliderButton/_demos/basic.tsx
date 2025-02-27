@@ -1,8 +1,3 @@
-/**
- * title: 基本使用
- * description: 基本使用
- */
-
 import { useState } from 'react';
 import { SliderButtonCaptcha } from '@web-rc/biz-components';
 export default () => {
@@ -46,11 +41,13 @@ export default () => {
       <br />
       tracks:
       <br />
-      {tracks?.map((item, index) => (
-        <div key={index}>
-          {index}、x:{item.x},y:{item.y},t:{item.t}
-        </div>
-      ))}
+      <div style={{ maxHeight: 200, overflow: 'auto' }}>
+        {tracks?.map((item, index) => (
+          <div key={index}>
+            {index}、x:{item.x},y:{item.y},t:{item.t}
+          </div>
+        ))}
+      </div>
     </>
   );
 };
