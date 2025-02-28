@@ -15,7 +15,9 @@ export const useStyles = generatStyles<PicCardToken>(({ token }) => {
       '&:hover': {
         [token.componentCls]: {
           '&-checkbox': {
-            display: 'flex !important;',
+            '&.showbox': {
+              display: 'flex !important;',
+            },
           },
           '&-spec': {
             display: 'none !important;',
@@ -67,7 +69,9 @@ export const useStyles = generatStyles<PicCardToken>(({ token }) => {
         top: '8px',
         right: '8px',
         '&.checked': {
-          display: 'flex',
+          '&.showbox': {
+            display: 'flex',
+          },
         },
       },
       '&-ai-entry': {

@@ -181,7 +181,7 @@ export default () => {
                         }, 1000);
                       });
                     }}
-                    mutiple={false}
+                    single={true}
                     onChange={({ files }) => {
                       if (files?.length > 0) {
                         handleOpen(false);

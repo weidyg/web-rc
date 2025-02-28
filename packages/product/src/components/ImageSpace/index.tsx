@@ -30,7 +30,7 @@ type DataType = {
 type ImageSpaceProps = {
   className?: string;
   style?: CSSProperties;
-  mutiple?: boolean;
+  single?: true | { type: 'radio' };
   pageSize?: number;
   actionsRender?: (dom?: ReactNode) => ReactNode;
   footerRender?: (dom?: ReactNode) => ReactNode;
@@ -56,7 +56,7 @@ const ImageSpace = (props: ImageSpaceProps, ref: Ref<ImageSpaceRef>) => {
     style,
     debounceTime = 10,
     pageSize = 20,
-    mutiple = true,
+    single,
     folderLoading,
     defaultFolder,
     folders,
@@ -112,7 +112,7 @@ const ImageSpace = (props: ImageSpaceProps, ref: Ref<ImageSpaceRef>) => {
     }
   };
 
-  const loadData = debounce(async (param: { page: number; [key: string]: any }) => {
+  const loadData = debounce(async (param: { page: number;[key: string]: any }) => {
     const { page, ...rest } = param;
     const totalPage = page == 1 ? 1 : Math.ceil(data.totalCount / pageSize);
     if (page > totalPage) {
@@ -136,17 +136,17 @@ const ImageSpace = (props: ImageSpaceProps, ref: Ref<ImageSpaceRef>) => {
     return selectKeys?.includes(id) ?? false;
   };
   const checkChange = (id: Key, checked: boolean) => {
-    const keys = !mutiple
+    const keys = single
       ? checked
         ? [id]
         : []
       : selectKeys.includes(id)
-      ? checked
-        ? selectKeys
-        : selectKeys.filter((k) => k !== id)
-      : checked
-      ? [...selectKeys, id]
-      : selectKeys;
+        ? checked
+          ? selectKeys
+          : selectKeys.filter((k) => k !== id)
+        : checked
+          ? [...selectKeys, id]
+          : selectKeys;
     setSelectKeys(keys);
   };
 
@@ -263,7 +263,7 @@ const ImageSpace = (props: ImageSpaceProps, ref: Ref<ImageSpaceRef>) => {
                   <div className={classNames(`${prefixCls}-list`, hashId)}>
                     {data.imageFiles.map((item, index) => (
                       <PicCard
-                        mutiple={mutiple}
+                        single={single}
                         key={index}
                         id={item.id}
                         name={item.name}

@@ -9,7 +9,7 @@ const refImage =
 
 type PicCardProps = {
   prefixCls?: string;
-  mutiple?: boolean;
+  single?: true | { type: 'radio' };
   defaultChecked?: boolean;
   checked?: boolean;
   onChange?: (value: boolean, prevValue: boolean) => void;
@@ -22,7 +22,7 @@ type PicCardProps = {
   onAiEdit?: (id?: Key, fullUrl?: string) => void | Promise<void>;
 };
 const InternalPicCard: React.FC<PicCardProps> = (props) => {
-  const { mutiple, id, name, fullUrl = '', pixel, isRef, onAiEdit } = props;
+  const { single, id, name, fullUrl = '', pixel, isRef, onAiEdit } = props;
   const { prefixCls, wrapSSR, hashId } = useStyles(props?.prefixCls);
   const [preview, setPreview] = useState(false);
   const { copied, copyLoading, onClick: onCopyClick } = useCopyClick({ copyConfig: { text: fullUrl } });
@@ -36,7 +36,7 @@ const InternalPicCard: React.FC<PicCardProps> = (props) => {
     value: props?.checked,
     onChange: props?.onChange,
   });
-  const Selectbox = mutiple ? Checkbox : Radio;
+  const Selectbox = (single == true || single?.type == 'radio') ? Radio : Checkbox;
   return wrapSSR(
     <div className={classNames(`${prefixCls}`, hashId)}>
       <div className={classNames(`${prefixCls}-background`, hashId)}>
@@ -79,6 +79,7 @@ const InternalPicCard: React.FC<PicCardProps> = (props) => {
                 }}
                 className={classNames(`${prefixCls}-checkbox`, hashId, {
                   ['checked']: checked,
+                  ['showbox']: single !== true,
                 })}
               />
               <div

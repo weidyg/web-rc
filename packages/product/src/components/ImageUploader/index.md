@@ -3,7 +3,7 @@ order: 0
 atomId: ImageUploader
 title: ImageUploader 图片上传器
 group:
-  title: 商品编辑
+  title: 图片空间
 ---
 
 ## 代码演示
