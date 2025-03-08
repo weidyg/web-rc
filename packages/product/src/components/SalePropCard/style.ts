@@ -43,8 +43,15 @@ export const useStyles = generatStyles(({ token }) => {
         marginInline: 0,
         borderRadius: token.borderRadius,
         backgroundColor: token.colorFillContent,
-        '&-action': {
+        // '&-disabled': {
+        //   backgroundColor: token.colorTextDisabled,
+        // },
+        [`&:hover:not(&-disabled)`]: {
           backgroundColor: token.colorPrimaryBg,
+        },
+        [`&-action:not(&-disabled)`]: {
+          backgroundColor: token.colorPrimaryBg,
+          boxShadow: `0 0 0 1px ${token.colorPrimaryBorder} inset`,
         },
         '&-hidden': {
           display: 'none',
@@ -57,12 +64,32 @@ export const useStyles = generatStyles(({ token }) => {
         '&-wrapper': {
           padding: '8px',
         },
+        '&-hasColor': {
+          [`.${token.antPrefixCls}-checkbox,
+            .${token.antPrefixCls}-radio`]: {
+            display: 'none'
+          },
+          [`.${token.antPrefixCls}-checkbox+span,
+            .${token.antPrefixCls}-radio+span`]: {
+            paddingInlineStart: 0,
+            paddingInlineEnd: 0,
+          },
+        },
+        '&-color': {
+          boxSizing: 'border-box',
+          display: 'block',
+          width: '16px',
+          height: '16px',
+          borderRadius: '4px',
+          borderCollapse: 'separate',
+          transition: 'all 0.3s'
+        },
         '&-text': {
           width: '56px',
           display: 'block',
           overflow: 'hidden',
           whiteSpace: 'nowrap',
-        },
+        }
       },
     },
   };
