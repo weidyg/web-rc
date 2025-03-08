@@ -36,7 +36,7 @@ const InternalPicCard: React.FC<PicCardProps> = (props) => {
     value: props?.checked,
     onChange: props?.onChange,
   });
-  const Selectbox = (single == true || single?.type == 'radio') ? Radio : Checkbox;
+  const Selectbox = single == true || single?.type == 'radio' ? Radio : Checkbox;
   return wrapSSR(
     <div className={classNames(`${prefixCls}`, hashId)}>
       <div className={classNames(`${prefixCls}-background`, hashId)}>

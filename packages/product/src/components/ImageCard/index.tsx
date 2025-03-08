@@ -10,7 +10,7 @@ type ImageCardProps = {
   /** 样式 */
   style?: React.CSSProperties;
   styles?: {
-    wrap: React.CSSProperties
+    wrap: React.CSSProperties;
   };
   placeholder?: string;
   defaultValue?: string;
@@ -64,8 +64,7 @@ const ImageCard = (props: ImageCardProps, ref: Ref<ImageCardRef>) => {
         />
       );
       return (menus?.length ?? 0) > 0 ? (
-        <Dropdown menu={{ items: menus }}
-          arrow={false} placement="bottom">
+        <Dropdown menu={{ items: menus }} arrow={false} placement="bottom">
           {dom}
         </Dropdown>
       ) : (
@@ -81,22 +80,27 @@ const ImageCard = (props: ImageCardProps, ref: Ref<ImageCardRef>) => {
     );
   }, [imgUrl, menus, wrapHeight]);
 
-  return wrapSSR(<>
-    <div ref={wrapRef} style={styles?.wrap}
-      className={classNames(`${prefixCls}-wrap`, className,
-        {
-          [`${prefixCls}-empty`]: !!!imgUrl,
-          [`${prefixCls}-status-success`]: status === 'success',
-          [`${prefixCls}-status-warning`]: status === 'warning',
-          [`${prefixCls}-status-error`]: status === 'error',
-          [`${prefixCls}-status-validating`]: status === 'validating',
-        },
-        hashId,
-      )}
-    >
-      {children?.(_children) || _children}
-    </div>
-  </>
+  return wrapSSR(
+    <>
+      <div
+        ref={wrapRef}
+        style={styles?.wrap}
+        className={classNames(
+          `${prefixCls}-wrap`,
+          className,
+          {
+            [`${prefixCls}-empty`]: !!!imgUrl,
+            [`${prefixCls}-status-success`]: status === 'success',
+            [`${prefixCls}-status-warning`]: status === 'warning',
+            [`${prefixCls}-status-error`]: status === 'error',
+            [`${prefixCls}-status-validating`]: status === 'validating',
+          },
+          hashId,
+        )}
+      >
+        {children?.(_children) || _children}
+      </div>
+    </>,
   );
 };
 

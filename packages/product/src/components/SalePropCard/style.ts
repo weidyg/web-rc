@@ -67,7 +67,7 @@ export const useStyles = generatStyles(({ token }) => {
         '&-hasColor': {
           [`.${token.antPrefixCls}-checkbox,
             .${token.antPrefixCls}-radio`]: {
-            display: 'none'
+            display: 'none',
           },
           [`.${token.antPrefixCls}-checkbox+span,
             .${token.antPrefixCls}-radio+span`]: {
@@ -86,7 +86,7 @@ export const useStyles = generatStyles(({ token }) => {
           display: 'block',
           overflow: 'hidden',
           whiteSpace: 'nowrap',
-        }
+        },
       },
     },
   };

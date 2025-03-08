@@ -10,7 +10,7 @@ import { compareValue } from './_utils';
 export type OptionItemType = {
   label: string;
   value: string;
-  features?: { [k: string]: any }
+  features?: { [k: string]: any };
 };
 export type OptionGroupType = OptionItemType & { children: OptionItemType[] };
 export type SalePropValueType = { value: string; text?: string; group?: { value: string; text?: string } };
@@ -125,118 +125,124 @@ const SalePropCard = (props: SalePropCardProps, ref: Ref<SalePropCardRef>) => {
 
   const CheckComponent = single ? Radio : Checkbox;
   const groupItemCls = classNames(`${prefixCls}-group-item`, hashId);
-  return wrapSSR(<>
-    <Card
-      className={classNames(prefixCls, className, hashId)}
-      classNames={{
-        header: classNames(`${prefixCls}-header`, hashId),
-        body: classNames(`${prefixCls}-body`, hashId),
-      }}
-      style={{ ...style }}
-      title={
-        <Flex justify="space-between">
-          <Flex gap={8} align="center">
-            <span className={classNames(`${prefixCls}-header-selected`, hashId)}>
-              已选 {currentValues?.length || 0} 个
-            </span>
-            <Button type="primary" shape="round" size="small" loading={loading} onClick={handleOk}>
-              确 认
-            </Button>
-            <Button shape="round" size="small" onClick={handleCancel}>
-              取 消
-            </Button>
-            <Input
-              allowClear
-              placeholder="请输入搜索"
-              style={{ width: '160px' }}
-              suffix={<SearchOutlined />}
-              value={searchKeyword}
-              onChange={(event) => {
-                setSearchKeyword(event?.target?.value);
-              }}
-            />
-          </Flex>
-          <Flex gap={8} align="center">
-            <Switch
-              checkedChildren="已选"
-              unCheckedChildren="全部"
-              checked={onlyShowChecked}
-              onChange={(checked) => {
-                setOnlyShowChecked(checked);
-              }}
-            />
-          </Flex>
-        </Flex>
-      }
-    >
-      <Flex style={{ marginTop: 1, height: 'calc(100% - 2px)' }}>
-        {isGroup && (
-          <div className={classNames(`${prefixCls}-group-wrapper`, hashId)}>
-            <Menu
-              className={classNames(`${prefixCls}-group-menu`, hashId)}
-              selectedKeys={[currentGroupValue || '']}
-              onClick={({ key }) => {
-                handleGroupChange(key);
-              }}
-              items={options?.map(({ value: key, label, features = {} }, _i) => {
-                const color = features['color'];
-                const hasColor = !!color;
-                const labelDom = (
-                  <Flex gap={8} align='center' title={label} >
-                    {hasColor && <span className={`${prefixCls}-item-color`} style={{ background: color }}></span>}
-                    <span className={classNames(`${prefixCls}-item-text`, hashId)}>{label}</span>
-                  </Flex>
-                )
-                return { key, label: labelDom, className: groupItemCls, }
-              })}
-            />
-          </div>
-        )}
-        <div style={{ overflow: 'auto' }}>
-          {isGroup && uniqueGroup && (
-            <Alert banner type="info" message="切换分组会清空您已勾选尺码与SKU数据，请谨慎操作" />
-          )}
-          <div className={classNames(`${prefixCls}-item-wrapper`, hashId)}>
-            <Flex wrap gap="small" justify="space-around">
-              {itemOpts?.map((item, i) => {
-                const { value: val, label: text = '', features = {} } = item;
-                const { disabled, checked, hidden } = getStatus(val, text);
-                const color = features['color'];
-                const hasColor = !!color;
-                return (<>
-                  <CheckComponent
-                    key={i}
-                    disabled={disabled}
-                    checked={checked}
-                    onChange={(e) => {
-                      const _checked = e.target.checked;
-                      if (_checked != checked) {
-                        handleValueChange(_checked, val);
-                      }
-                    }}
-                    className={classNames(`${prefixCls}-item`, hashId, {
-                      [`${prefixCls}-item-hidden`]: hidden || (!checked && onlyShowChecked),
-                      [`${prefixCls}-item-action`]: checked && !disabled,
-                      [`${prefixCls}-item-disabled`]: disabled,
-                      [`${prefixCls}-item-hasColor`]: hasColor,
-                    })}
-                  >
-                    <Flex gap={8} align='center' title={text} >
-                      {hasColor && <span className={`${prefixCls}-item-color`} style={{ background: color }}></span>}
-                      <span className={classNames(`${prefixCls}-item-text`, hashId)}>{text}</span>
-                    </Flex>
-                  </CheckComponent>
-                </>);
-              })}
-              {Array.from({ length: 20 }, (_, i) => (
-                <div key={i} className={classNames(`${prefixCls}-item-empty`, hashId)} />
-              ))}
+  return wrapSSR(
+    <>
+      <Card
+        className={classNames(prefixCls, className, hashId)}
+        classNames={{
+          header: classNames(`${prefixCls}-header`, hashId),
+          body: classNames(`${prefixCls}-body`, hashId),
+        }}
+        style={{ ...style }}
+        title={
+          <Flex justify="space-between">
+            <Flex gap={8} align="center">
+              <span className={classNames(`${prefixCls}-header-selected`, hashId)}>
+                已选 {currentValues?.length || 0} 个
+              </span>
+              <Button type="primary" shape="round" size="small" loading={loading} onClick={handleOk}>
+                确 认
+              </Button>
+              <Button shape="round" size="small" onClick={handleCancel}>
+                取 消
+              </Button>
+              <Input
+                allowClear
+                placeholder="请输入搜索"
+                style={{ width: '160px' }}
+                suffix={<SearchOutlined />}
+                value={searchKeyword}
+                onChange={(event) => {
+                  setSearchKeyword(event?.target?.value);
+                }}
+              />
             </Flex>
+            <Flex gap={8} align="center">
+              <Switch
+                checkedChildren="已选"
+                unCheckedChildren="全部"
+                checked={onlyShowChecked}
+                onChange={(checked) => {
+                  setOnlyShowChecked(checked);
+                }}
+              />
+            </Flex>
+          </Flex>
+        }
+      >
+        <Flex style={{ marginTop: 1, height: 'calc(100% - 2px)' }}>
+          {isGroup && (
+            <div className={classNames(`${prefixCls}-group-wrapper`, hashId)}>
+              <Menu
+                className={classNames(`${prefixCls}-group-menu`, hashId)}
+                selectedKeys={[currentGroupValue || '']}
+                onClick={({ key }) => {
+                  handleGroupChange(key);
+                }}
+                items={options?.map(({ value: key, label, features = {} }, _i) => {
+                  const color = features['color'];
+                  const hasColor = !!color;
+                  const labelDom = (
+                    <Flex gap={8} align="center" title={label}>
+                      {hasColor && <span className={`${prefixCls}-item-color`} style={{ background: color }}></span>}
+                      <span className={classNames(`${prefixCls}-item-text`, hashId)}>{label}</span>
+                    </Flex>
+                  );
+                  return { key, label: labelDom, className: groupItemCls };
+                })}
+              />
+            </div>
+          )}
+          <div style={{ overflow: 'auto' }}>
+            {isGroup && uniqueGroup && (
+              <Alert banner type="info" message="切换分组会清空您已勾选尺码与SKU数据，请谨慎操作" />
+            )}
+            <div className={classNames(`${prefixCls}-item-wrapper`, hashId)}>
+              <Flex wrap gap="small" justify="space-around">
+                {itemOpts?.map((item, i) => {
+                  const { value: val, label: text = '', features = {} } = item;
+                  const { disabled, checked, hidden } = getStatus(val, text);
+                  const color = features['color'];
+                  const hasColor = !!color;
+                  return (
+                    <>
+                      <CheckComponent
+                        key={i}
+                        disabled={disabled}
+                        checked={checked}
+                        onChange={(e) => {
+                          const _checked = e.target.checked;
+                          if (_checked != checked) {
+                            handleValueChange(_checked, val);
+                          }
+                        }}
+                        className={classNames(`${prefixCls}-item`, hashId, {
+                          [`${prefixCls}-item-hidden`]: hidden || (!checked && onlyShowChecked),
+                          [`${prefixCls}-item-action`]: checked && !disabled,
+                          [`${prefixCls}-item-disabled`]: disabled,
+                          [`${prefixCls}-item-hasColor`]: hasColor,
+                        })}
+                      >
+                        <Flex gap={8} align="center" title={text}>
+                          {hasColor && (
+                            <span className={`${prefixCls}-item-color`} style={{ background: color }}></span>
+                          )}
+                          <span className={classNames(`${prefixCls}-item-text`, hashId)}>{text}</span>
+                        </Flex>
+                      </CheckComponent>
+                    </>
+                  );
+                })}
+                {Array.from({ length: 20 }, (_, i) => (
+                  <div key={i} className={classNames(`${prefixCls}-item-empty`, hashId)} />
+                ))}
+              </Flex>
+            </div>
           </div>
-        </div>
-      </Flex>
-    </Card>
-  </>);
+        </Flex>
+      </Card>
+    </>,
+  );
 };
 
 export type { SalePropCardProps, SalePropCardRef };
