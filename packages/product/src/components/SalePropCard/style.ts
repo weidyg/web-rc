@@ -76,13 +76,10 @@ export const useStyles = generatStyles(({ token }) => {
           },
         },
         '&-color': {
-          boxSizing: 'border-box',
-          display: 'block',
           width: '16px',
           height: '16px',
-          borderRadius: '4px',
-          borderCollapse: 'separate',
-          transition: 'all 0.3s'
+          display: 'block',
+          boxShadow: `0 0 0 1px ${token.colorBorderSecondary} inset`,
         },
         '&-text': {
           width: '56px',

@@ -6,8 +6,10 @@ import dataJson from './_data.json';
 export default () => {
   const [uniqueGroup, setUniqueGroup] = useState<boolean>(false);
   const [isSize, setIsSize] = useState<boolean>(false);
+  const [isGroup, setIsGroup] = useState<boolean>(false);
   const [currentValue, setCurrentValue] = useState<any>();
   const [value, setValue] = useState<any>([]);
+  const { size, color } = dataJson;
   return (
     <>
       <Space style={{ marginBottom: 16 }}>
@@ -17,7 +19,7 @@ export default () => {
             setIsSize(value == '尺码' ? true : false);
           }}
         />
-        {isSize && (
+        {isSize ? (
           <Switch
             value={uniqueGroup}
             checkedChildren="唯一组"
@@ -28,6 +30,15 @@ export default () => {
               setValue([]);
             }}
           />
+        ) : (
+          <Switch
+            value={isGroup}
+            checkedChildren="分组"
+            unCheckedChildren="不分组"
+            onChange={(val) => {
+              setIsGroup(val);
+            }}
+          />
         )}
       </Space>
 
@@ -35,7 +46,7 @@ export default () => {
         single={!!currentValue?.value}
         current={currentValue}
         uniqueGroup={uniqueGroup}
-        options={isSize ? dataJson.size : dataJson.color}
+        options={isSize ? size : isGroup ? color : color.flatMap(f => f.children)}
         value={value}
         onOk={({ all, current, adds }) => {
           setValue(all);
