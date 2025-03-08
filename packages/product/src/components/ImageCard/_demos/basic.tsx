@@ -60,7 +60,7 @@ export default () => {
     {
       key: '3',
       label: '裁剪',
-      onClick: () => {},
+      onClick: () => { },
     },
   ];
 
@@ -87,8 +87,8 @@ export default () => {
           type == '1_1'
             ? { width: 90, height: 90 }
             : type == '3_4'
-            ? { width: 90, height: 120 }
-            : { width: 32, height: 32 }
+              ? { width: 90, height: 120 }
+              : { width: 32, height: 32 }
         }
       >
         {(children) => {
@@ -233,7 +233,9 @@ export default () => {
                 }
               }}
             >
-              {children}
+              <div>
+                {children}
+              </div>
             </Popover>
           );
         }}

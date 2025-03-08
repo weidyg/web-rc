@@ -1,4 +1,4 @@
-import { forwardRef, Ref, useImperativeHandle, useMemo } from 'react';
+import { forwardRef, Ref, useImperativeHandle, useMemo, useRef } from 'react';
 import { Dropdown, FormItemProps, Image, MenuProps } from 'antd';
 import { EyeOutlined, PictureOutlined } from '@ant-design/icons';
 import { classNames, useMergedState } from '@web-rc/biz-utils';
@@ -37,6 +37,11 @@ const ImageCard = (props: ImageCardProps, ref: Ref<ImageCardRef>) => {
     },
   }));
 
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const wrapHeight = useMemo(() => {
+    return wrapRef.current?.clientHeight;
+  }, [wrapRef.current?.clientHeight]);
+
   const _children = useMemo(() => {
     if (imgUrl) {
       const dom = (
@@ -52,30 +57,30 @@ const ImageCard = (props: ImageCardProps, ref: Ref<ImageCardRef>) => {
           }}
           wrapperClassName={classNames(`${prefixCls}`, hashId)}
           className={classNames(`${prefixCls}-img`, hashId)}
+          style={style}
         />
       );
       return (menus?.length ?? 0) > 0 ? (
-        <Dropdown menu={{ items: menus }} arrow={false} placement="bottom">
+        <Dropdown menu={{ items: menus }}
+          arrow={false} placement="bottom">
           {dom}
         </Dropdown>
       ) : (
         dom
       );
     }
+
     return (
-      <div className={classNames(`${prefixCls}-placeholder`, hashId)}>
+      <div style={style} className={classNames(`${prefixCls}-placeholder`, hashId)}>
         <PictureOutlined className={classNames(`${prefixCls}-placeholder-icon`, hashId)} />
         {placeholder && <span className={classNames(`${prefixCls}-placeholder-text`, hashId)}>{placeholder}</span>}
       </div>
     );
-  }, [imgUrl, menus]);
+  }, [imgUrl, menus, wrapHeight]);
 
-  return wrapSSR(
-    <div
-      style={style}
-      className={classNames(
-        `${prefixCls}-wrap`,
-        className,
+  return wrapSSR(<>
+    <div ref={wrapRef}
+      className={classNames(`${prefixCls}-wrap`, className,
         {
           [`${prefixCls}-empty`]: !!!imgUrl,
           [`${prefixCls}-status-success`]: status === 'success',
@@ -87,7 +92,8 @@ const ImageCard = (props: ImageCardProps, ref: Ref<ImageCardRef>) => {
       )}
     >
       {children?.(_children) || _children}
-    </div>,
+    </div>
+  </>
   );
 };
 

@@ -12,20 +12,21 @@ export const useStyles = generatStyles(({ token }) => {
       justifyContent: 'center',
       '&-wrap': {
         cursor: 'pointer',
-        width: token.controlHeight,
-        height: token.controlHeight,
+        width: 'fit-content',
+        height: 'fit-content',
         borderRadius: token.borderRadius,
         border: `1px solid ${token.colorBorder}`,
+        overflow: 'hidden',
+      },
+      '&-img,&-placeholder': {
+        width: token.controlHeight,
+        height: token.controlHeight,
       },
       '&-img': {
-        width: '100%',
-        height: '100%',
         borderRadius: 'inherit',
         objectFit: 'contain',
       },
       '&-placeholder': {
-        // width: 'inherit',
-        height: 'inherit',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -52,35 +53,12 @@ export const useStyles = generatStyles(({ token }) => {
       },
       [`&-mask`]: {
         borderRadius: 'inherit',
-        // padding: `0 ${unit(token.paddingXXS)}`,
-
-        // width: '100%',
-        // height: '100%',
-        // position: 'relative',
-        // inset: '0',
-        // display: 'flex',
-        // alignItems: 'center',
-        // justifyContent: 'center',
-        // color: token.colorWhite,
-        // background: token.colorBgMask,
-        // cursor: 'pointer',
-        // transition: 'opacity 0.3s',
-        // opacity: 0,
-        // [`&:hover`]: {
-        //   opacity: 1,
-        // },
         [`&-info`]: {
           overflow: 'hidden',
           whiteSpace: 'nowrap',
           textOverflow: 'ellipsis',
           padding: `0 ${unit(token.paddingXXS)}`,
         },
-        // [`.${token.antPrefixCls}-mask-info`]: {
-        //   marginInlineEnd: token.marginXXS,
-        //   svg: {
-        //     verticalAlign: 'baseline',
-        //   },
-        // },
       },
       '&-status': {
         '&-warning': {
