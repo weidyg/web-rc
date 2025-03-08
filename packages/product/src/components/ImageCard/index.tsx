@@ -9,6 +9,9 @@ type ImageCardProps = {
   className?: string;
   /** 样式 */
   style?: React.CSSProperties;
+  styles?: {
+    wrap: React.CSSProperties
+  };
   placeholder?: string;
   defaultValue?: string;
   value?: string;
@@ -23,7 +26,7 @@ type ImageCardRef = {
 };
 
 const ImageCard = (props: ImageCardProps, ref: Ref<ImageCardRef>) => {
-  const { status, className, style, placeholder, menus, children } = props;
+  const { status, className, style, styles, placeholder, menus, children } = props;
   const { prefixCls, wrapSSR, hashId, token } = useStyles();
   const [imgUrl, setImgUrl] = useMergedState(undefined, {
     defaultValue: props?.defaultValue,
@@ -79,7 +82,7 @@ const ImageCard = (props: ImageCardProps, ref: Ref<ImageCardRef>) => {
   }, [imgUrl, menus, wrapHeight]);
 
   return wrapSSR(<>
-    <div ref={wrapRef}
+    <div ref={wrapRef} style={styles?.wrap}
       className={classNames(`${prefixCls}-wrap`, className,
         {
           [`${prefixCls}-empty`]: !!!imgUrl,
