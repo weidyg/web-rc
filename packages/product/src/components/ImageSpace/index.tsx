@@ -1,9 +1,9 @@
 import { CSSProperties, forwardRef, Key, ReactNode, Ref, useEffect, useImperativeHandle, useState } from 'react';
-import { Image, Button, Checkbox, Divider, message, Radio, Segmented, Space, Spin, Empty } from 'antd';
+import { Image, Button, Checkbox, Divider, message, Radio, Segmented, Space, Spin, Empty, SegmentedProps } from 'antd';
 import { AppstoreOutlined, BarsOutlined } from '@ant-design/icons';
 import { classNames, convertByteUnit, useMergedState } from '@web-rc/biz-utils';
 import { useStyles } from './style';
-import { debounce } from 'lodash';
+import { debounce, rest } from 'lodash';
 
 import PicCard from './PicCard';
 import Folder, { FolderProps } from '../Folder';
@@ -50,6 +50,109 @@ interface ImageSpaceRef {
   clearSelected: () => void;
 }
 
+
+const Defaultactions = (
+  props: ({
+    loading?: boolean;
+    onRefresh?: () => void,
+  } & Omit<SegmentedProps<'list' | 'table'>, 'options'>)
+) => {
+  const { loading, onRefresh, ...rest } = props;
+  return <Space>
+    <Segmented
+      options={[
+        { value: 'list', icon: <AppstoreOutlined /> },
+        { value: 'table', icon: <BarsOutlined /> },
+      ]}
+      {...rest}
+    />
+    <Button disabled={loading} onClick={onRefresh}>
+      刷新
+    </Button>
+  </Space>
+};
+
+const LoadMore = (props: {
+  hasMore: boolean;
+  loading: boolean;
+  onLoadMore: () => void;
+  wrapper?: (node: React.ReactNode) => React.ReactNode
+}) => {
+  const { loading, hasMore, onLoadMore, wrapper } = props;
+  const { token } = useStyles();
+
+  if (loading || hasMore) {
+    return <></>;
+  }
+  const node = (
+    <Divider dashed={true}>
+      <span
+        style={{
+          cursor: 'pointer',
+          fontSize: token.fontSize,
+          color: token.colorTextTertiary,
+        }}
+        onClick={() => {
+          onLoadMore?.();
+        }}
+      >
+        加载更多...
+      </span>
+    </Divider>
+  );
+  return wrapper?.(node) || node;
+};
+
+
+const RenderFileName = (props: {
+  file: ImageFile; mutiple?: boolean,
+  checked?: boolean,
+  onChange?: (id: Key, checked: boolean) => void
+}) => {
+  const { file, mutiple = true, checked, onChange } = props;
+  const { prefixCls, wrapSSR, hashId, token } = useStyles();
+
+  const [preview, setPreview] = useState(false);
+  const Selectbox = mutiple ? Checkbox : Radio;
+  function checkChange(id: Key, checked: boolean) {
+    onChange?.(id, checked);
+  }
+
+  return wrapSSR(
+    <div className={classNames(`${prefixCls}-fileName`, hashId)}>
+      <div className={classNames(`${prefixCls}-fileName-checkbox`, hashId)}>
+        <Selectbox
+          checked={checked}
+          onChange={(e) => {
+            checkChange(file.id, e.target.checked);
+          }}
+        />
+      </div>
+      <div className={classNames(`${prefixCls}-fileName-img`, hashId)}>
+        <Image
+          src={file?.fullUrl}
+          onClick={() => {
+            setPreview(true);
+          }}
+          preview={{
+            visible: preview,
+            maskStyle: { backgroundColor: 'rgba(0, 0, 0, 0.65)' },
+            src: file?.fullUrl,
+            mask: undefined,
+            onVisibleChange: (value: boolean, prevValue: boolean) => {
+              if (value == false && prevValue == true) {
+                setPreview(value);
+              }
+            },
+          }}
+        />
+      </div>
+      <div className={classNames(`${prefixCls}-fileName-title`, hashId)}>
+        <p>{file?.name}</p>
+      </div>
+    </div>
+  );
+};
 const ImageSpace = (props: ImageSpaceProps, ref: Ref<ImageSpaceRef>) => {
   const {
     className,
@@ -68,10 +171,6 @@ const ImageSpace = (props: ImageSpaceProps, ref: Ref<ImageSpaceRef>) => {
   const [loading, setLoading] = useState(false);
   const [folderId, setFolderId] = useState(defaultFolder);
   const [data, setData] = useState<DataType>({ curPage: 0, totalCount: 0, imageFiles: [] });
-
-  // const [curPage, setCurPage] = useState(0);
-  // const [totalCount, setTotalCount] = useState(0);
-  // const [imageFiles, setImageFiles] = useState<ImageFile[]>([]);
   const [showType, setShowType] = useState<'list' | 'table'>('list');
 
   const [selectKeys, setSelectKeys] = useMergedState<Key[]>([], {
@@ -112,7 +211,7 @@ const ImageSpace = (props: ImageSpaceProps, ref: Ref<ImageSpaceRef>) => {
     }
   };
 
-  const loadData = debounce(async (param: { page: number; [key: string]: any }) => {
+  const loadData = debounce(async (param: { page: number;[key: string]: any }) => {
     const { page, ...rest } = param;
     const totalPage = page == 1 ? 1 : Math.ceil(data.totalCount / pageSize);
     if (page > totalPage) {
@@ -141,97 +240,26 @@ const ImageSpace = (props: ImageSpaceProps, ref: Ref<ImageSpaceRef>) => {
         ? [id]
         : []
       : selectKeys.includes(id)
-      ? checked
-        ? selectKeys
-        : selectKeys.filter((k) => k !== id)
-      : checked
-      ? [...selectKeys, id]
-      : selectKeys;
+        ? checked
+          ? selectKeys
+          : selectKeys.filter((k) => k !== id)
+        : checked
+          ? [...selectKeys, id]
+          : selectKeys;
     setSelectKeys(keys);
   };
 
+  const hasMore = data.curPage * pageSize >= data.totalCount;
   const defaultactions = (
-    <Space>
-      <Segmented
-        defaultValue={showType}
-        options={[
-          { value: 'list', icon: <AppstoreOutlined /> },
-          { value: 'table', icon: <BarsOutlined /> },
-        ]}
-        onChange={(value: any) => {
-          setShowType(value);
-        }}
-      />
-      <Button disabled={loading} onClick={handleRefresh}>
-        刷新
-      </Button>
-    </Space>
+    <Defaultactions
+      loading={loading}
+      onRefresh={handleRefresh}
+      defaultValue={showType}
+      onChange={(value) => {
+        setShowType(value);
+      }}
+    />
   );
-
-  const LoadMore = (props: { wrapper?: (node: React.ReactNode) => React.ReactNode }) => {
-    const hasMore = data.curPage * pageSize >= data.totalCount;
-    if (loading || hasMore) {
-      return <></>;
-    }
-    const node = (
-      <Divider dashed={true}>
-        <span
-          style={{
-            cursor: 'pointer',
-            fontSize: token.fontSize,
-            color: token.colorTextTertiary,
-          }}
-          onClick={() => {
-            handleLoadMore?.();
-          }}
-        >
-          加载更多...
-        </span>
-      </Divider>
-    );
-    return props?.wrapper?.(node) || node;
-  };
-
-  const RenderFileName = (props: { file: ImageFile; mutiple?: boolean }) => {
-    const { file, mutiple = true } = props;
-    const [preview, setPreview] = useState(false);
-    const checked = isChecked(file.id);
-    const Selectbox = mutiple ? Checkbox : Radio;
-    return (
-      <div className={classNames(`${prefixCls}-fileName`, hashId)}>
-        <div className={classNames(`${prefixCls}-fileName-checkbox`, hashId)}>
-          <Selectbox
-            checked={checked}
-            onChange={(e) => {
-              checkChange(file.id, e.target.checked);
-            }}
-          />
-        </div>
-        <div className={classNames(`${prefixCls}-fileName-img`, hashId)}>
-          <Image
-            src={file?.fullUrl}
-            onClick={() => {
-              setPreview(true);
-            }}
-            preview={{
-              visible: preview,
-              maskStyle: { backgroundColor: 'rgba(0, 0, 0, 0.65)' },
-              src: file?.fullUrl,
-              mask: undefined,
-              onVisibleChange: (value: boolean, prevValue: boolean) => {
-                if (value == false && prevValue == true) {
-                  setPreview(value);
-                }
-              },
-            }}
-          />
-        </div>
-        <div className={classNames(`${prefixCls}-fileName-title`, hashId)}>
-          <p>{file?.name}</p>
-        </div>
-      </div>
-    );
-  };
   return wrapSSR(
     <div style={style} className={classNames(`${prefixCls}`, className, hashId)}>
       {/* <div className={classNames(`${prefixCls}-header`, hashId)}>
@@ -279,7 +307,11 @@ const ImageSpace = (props: ImageSpaceProps, ref: Ref<ImageSpaceRef>) => {
                     {Array.from({ length: 10 }).map((_, index) => (
                       <PicCard.Empty key={index} />
                     ))}
-                    <LoadMore />
+                    <LoadMore
+                      hasMore={hasMore}
+                      loading={loading}
+                      onLoadMore={handleLoadMore}
+                    />
                   </div>
                 )}
               </div>
@@ -310,7 +342,10 @@ const ImageSpace = (props: ImageSpaceProps, ref: Ref<ImageSpaceRef>) => {
                         {data.imageFiles.map((record, index) => (
                           <tr key={index}>
                             <td>
-                              <RenderFileName file={record} />
+                              <RenderFileName file={record}
+                                checked={isChecked(record.id)}
+                                onChange={checkChange}
+                              />
                             </td>
                             <td style={{ width: 120 }}>{record.pixel}</td>
                             <td style={{ width: 120 }}>{convertByteUnit(record.size || 0)}</td>
@@ -318,7 +353,11 @@ const ImageSpace = (props: ImageSpaceProps, ref: Ref<ImageSpaceRef>) => {
                         ))}
                         <tr>
                           <td colSpan={3} style={{ padding: 0, borderBottom: 'none' }}>
-                            <LoadMore />
+                            <LoadMore
+                              hasMore={hasMore}
+                              loading={loading}
+                              onLoadMore={handleLoadMore}
+                            />
                           </td>
                         </tr>
                       </tbody>
