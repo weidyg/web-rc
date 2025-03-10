@@ -3,8 +3,7 @@ import { generatStyles } from '@web-rc/biz-provider';
 export const useStyles = generatStyles(({ token }) => {
   return {
     [token.componentCls]: {
-      width: 88,
-      height: 88,
+      display: 'flex',
       position: 'relative',
       borderRadius: token.borderRadius,
       border: `1px solid ${token.colorBorderSecondary}`,
@@ -14,9 +13,6 @@ export const useStyles = generatStyles(({ token }) => {
             opacity: '1',
           },
         },
-      },
-      '&-drag': {
-        cursor: 'move',
       },
       '&-no': {
         left: '0',
@@ -33,8 +29,8 @@ export const useStyles = generatStyles(({ token }) => {
         borderRadius: `${token.borderRadius}px 0 ${token.borderRadius}px 0`,
       },
       '&-img': {
-        width: 'inherit',
-        height: 'inherit',
+        width: 88,
+        height: 88,
         objectFit: 'scale-down',
         borderRadius: token.borderRadius,
         backgroundColor: token.colorFillContent,

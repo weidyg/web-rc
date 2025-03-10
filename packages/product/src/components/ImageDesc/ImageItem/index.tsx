@@ -6,52 +6,20 @@ import { useStyles } from './style';
 type ImageItemProps = {
   prefixCls?: string;
   imgUrl: string;
-  index: number;
-  showNo?: boolean;
-  draggable?: boolean;
-  onDragEnd?: (droppedIndex: number) => void;
+  showNo?: { index: number };
   renderActions?: {
     edit: ReactNode;
     remove: ReactNode;
   };
 };
 const ImageItem = (props: ImageItemProps) => {
-  const { index, imgUrl, showNo, draggable, onDragEnd, renderActions } = props;
+  const { imgUrl, showNo, renderActions, } = props;
   const { prefixCls, wrapSSR, hashId, token } = useStyles(props.prefixCls);
-  const animateWrap = useRef<HTMLSpanElement>(null);
 
-  const handleDragStart = (ev: DragEvent<HTMLSpanElement>) => {
-    ev.dataTransfer.effectAllowed = 'move';
-    ev.dataTransfer.setData('index', `${index}`);
-  };
-  const handleDragOver = (ev: DragEvent<HTMLSpanElement>) => {
-    ev.preventDefault();
-    ev.stopPropagation();
-  };
-  const handleDrop = (ev: DragEvent<HTMLSpanElement>) => {
-    ev.dataTransfer.dropEffect = 'move';
-    const droppedIndex = ev.dataTransfer.getData('index') as any;
-    if (droppedIndex !== undefined) {
-      onDragEnd?.(droppedIndex);
-    }
-  };
   return wrapSSR(
-    <span
-      ref={animateWrap}
-      draggable={draggable}
-      onDragStart={handleDragStart}
-      onDragOver={handleDragOver}
-      onDrop={handleDrop}
-      className={classNames(
-        `${prefixCls}`,
-        {
-          [`${prefixCls}-drag`]: draggable,
-        },
-        hashId,
-      )}
-    >
-      {showNo && <div className={classNames(`${prefixCls}-no`, hashId)}>{index + 1}</div>}
-      <img src={imgUrl} draggable={draggable} className={classNames(`${prefixCls}-img`, hashId)} />
+    <span className={classNames(`${prefixCls}`, hashId,)}>
+      {showNo && <div className={classNames(`${prefixCls}-no`, hashId)}>{showNo?.index + 1}</div>}
+      <img src={imgUrl} className={classNames(`${prefixCls}-img`, hashId)} />
       {renderActions && (
         <div className={classNames(`${prefixCls}-mask`, hashId)}>
           <Flex justify="space-evenly" style={{ width: '100%', padding: '4px 2px' }}>
@@ -63,4 +31,58 @@ const ImageItem = (props: ImageItemProps) => {
     </span>,
   );
 };
+
+export type ImageItemDragProps = {
+  prefixCls?: string;
+  index: number;
+  onDrag?: (index: number, droppedIndex: number) => void;
+  children: ReactNode;
+};
+const ImageItemDrag = (props: ImageItemDragProps) => {
+  const { index, onDrag, children } = props;
+  const { prefixCls, wrapSSR, hashId, token } = useStyles(props.prefixCls);
+
+  const handleDragStart = (e: DragEvent<HTMLSpanElement>) => {
+    e.dataTransfer.setData('text/plain', index.toString());
+    e.currentTarget.style.opacity = '0.5';
+    e.currentTarget.style.transform = 'scale(1.05)';
+    e.currentTarget.style.transition = 'transform 0.2s';
+  };
+  const handleDragOver = (e: DragEvent<HTMLSpanElement>) => {
+    e.preventDefault();
+    e.currentTarget.style.transform = 'scale(1.05)';
+  };
+  const handleDrop = (e: DragEvent<HTMLSpanElement>) => {
+    const droppedIndex = parseInt(e.dataTransfer.getData('text/plain'), 10);
+    if (droppedIndex !== undefined) {
+      onDrag?.(index, droppedIndex);
+      e.currentTarget.style.opacity = '1';
+      e.currentTarget.style.transform = 'scale(1)';
+    }
+  };
+  const handleDropEnd = (e: DragEvent<HTMLSpanElement>) => {
+    e.currentTarget.style.opacity = '1';
+    e.currentTarget.style.transform = 'scale(1)';
+  };
+  const handleDropLeave = (e: DragEvent<HTMLSpanElement>) => {
+    e.currentTarget.style.transform = 'scale(1)';
+  };
+  
+  return wrapSSR(
+    <span
+      key={index}
+      draggable={true}
+      onDragStart={handleDragStart}
+      onDragOver={handleDragOver}
+      onDrop={handleDrop}
+      onDragEnd={handleDropEnd}
+      onDragLeave={handleDropLeave}
+      style={{ cursor: 'move', transition: 'opacity 0.2s, transform 0.2s' }}
+    >
+      {children}
+    </span>
+  );
+};
+
+ImageItem.Drag = ImageItemDrag
 export default ImageItem;
